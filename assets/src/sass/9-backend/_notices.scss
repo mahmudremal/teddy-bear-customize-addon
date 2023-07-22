@@ -1,0 +1,116 @@
+// WordPress Admin Notice CSS
+.fwp-notice {
+  --is-notice-extended: 1;
+  --bg-notice-primary: #283fcd;
+  --bg-notice-secondary: #445de5;
+  opacity: 1;
+  display: flex;
+  position: relative;
+  background: #fff;
+  margin: 5px 20px 5px 2px;
+  transition: all .3s ease;
+  border: 1px solid #ccd0d4;
+  border-inline-start-width: 4px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.15);
+  font-family: Roboto,Arial,Helvetica,Verdana,sans-serif;
+  &.notice {
+    padding: 0;
+  }
+  &:before {
+    display: block;
+    content: "";
+    position: absolute;
+    left: -4px;
+    top: -1px;
+    bottom: -1px;
+    width: 4px;
+    background-color: var(--bg-notice-primary);
+  }
+  &__dismiss {
+    top: 0;
+    margin: 0;
+    width: 20px;
+    height: 20px;
+    padding: 9px;
+    border: none;
+    display: block;
+    cursor: pointer;
+    background: none;
+    line-height: 20px;
+    text-align: center;
+    position: absolute;
+    font-size: .8125rem;
+    font-style: normal;
+    border-radius: 20px;
+    inset-inline-end: 1px;
+    &:before {
+      background: 0 0;
+      color: #787c82;
+      content: "\f335"; // f153
+      display: block;
+      speak: never;
+      text-align: center;
+      height: 20px;
+      width: 20px;
+      font: normal 16px/20px dashicons;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+  }
+  &__aside {
+    overflow: hidden;
+    background-color: rgba(147,0,60,0.04);
+    width: calc(var(--is-notice-extended, 0) * 50px);
+    text-align: center;
+    padding-top: 15px;
+    flex-grow: 0;
+    flex-shrink: 0;
+  }
+  &__icon-wrapper {
+    display: inline-block;
+    font-size: .625rem;
+    max-height: 1.5rem;
+    width: 1.5rem;
+    line-height: 1.5rem;
+    border-radius: 100px;
+    background: var(--bg-notice-primary);
+    color: #fff;
+    text-shadow: 0 0 3px #eee;
+  }
+  &__content {
+    padding: 20px;
+    p {
+      line-height: 1.2;
+      padding: 0;
+      margin: 0;
+      & + .fwp-notice__actions {
+        margin-top: 1rem;
+      }
+    }
+    h3 {
+      font-size: 1.0625rem;
+      line-height: 1.2;
+      margin: 0;
+      & + p {
+        margin-top: 8px;
+      }
+    }
+  }
+  &__actions {
+    display: flex;
+    > *+* {
+      -webkit-margin-start: 8px;
+      margin-inline-start: 8px;
+    }
+  }
+  .animating {
+    // padding: 0;
+    // min-height: 50px;
+    transition: all 3s ease;
+    // /* height: 1px; */
+    // overflow: hidden;
+    // position: relative;
+    // display: b;
+  }
+  // &__cancel {}
+}

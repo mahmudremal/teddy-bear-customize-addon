@@ -1,0 +1,23 @@
+// Site variables.
+$primary_color: #283fcd;
+$secondary_color: #2271b1; //  #445de5;
+
+// Default Border Radius
+$border-radius: 3px;
+
+// mq breakpoints.
+$mq-breakpoints: (
+	mobile: 450px,
+	small: 600px,
+	medium: 768px,
+	large: 1024px,
+	xlarge: 1240px
+) !default;
+
+$site_width: 1140px;
+$wide_width: 1240px;
+$padding-left: 15px;
+$padding-right: 15px;
+
+$margin-top: 60px;
+$margin-bottom: 60px;

@@ -1,0 +1,18 @@
+// Essentials.
+@import "essentials";
+
+// Generic
+@import "2-generic/generic";
+
+// Utilities
+@import "3-utilities/animations";
+
+// Library
+// @import 'bootstrap/dist/css/bootstrap.min.css';
+@import 'bootstrap/scss/bootstrap';
+
+// Components
+@import "9-backend/backend";
+// @import "9-backend/notices";
+// @import "modules/dropzone";
+
