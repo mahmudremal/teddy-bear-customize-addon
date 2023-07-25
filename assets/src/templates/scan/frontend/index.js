@@ -37,7 +37,6 @@ import flatpickr from "flatpickr";
 			this.popupCart = popupCart;
 			this.init_toast();
 			this.init_events();
-			this.init_i18n();
 			this.init_search_form();
 			voiceRecord.i18n = this.i18n;
 			PROMPTS.i18n = this.i18n;
@@ -135,17 +134,6 @@ import flatpickr from "flatpickr";
 				var submit = document.querySelector('.popup_foot .button[data-react="continue"]');
 				if(submit) {submit.removeAttribute('disabled');}
 			});
-			document.body.addEventListener('ajaxi18nloaded', async (event) => {
-				if(!(thisClass.lastJson?.translates??false)) {return;}
-				voiceRecord.i18n = thisClass.i18n = PROMPTS.i18n = {...thisClass.i18n, ...thisClass.lastJson.translates};
-			});
-		}
-		init_i18n() {
-			const thisClass = this;
-			var formdata = new FormData();
-			formdata.append('action', 'futurewordpress/project/ajax/i18n/js');
-			formdata.append('_nonce', thisClass.ajaxNonce);
-			thisClass.sendToServer(formdata);
 		}
 		sendToServer( data ) {
 			const thisClass = this;var message;
@@ -295,9 +283,9 @@ import flatpickr from "flatpickr";
 				el.dataset.handled = true;
 
 				// Mode add to cart & action button on a div to fix justify spaces.
-				// card = el.parentElement;node = document.createElement('div');
-				// node.classList.add('fwp_custom_actions');node.appendChild(el.previousElementSibling);
-				// node.appendChild(el);card.appendChild(node);
+				card = el.parentElement;node = document.createElement('div');
+				node.classList.add('fwp_custom_actions');node.appendChild(el.previousElementSibling);
+				node.appendChild(el);card.appendChild(node);
 				
 				el.addEventListener('click', (event) => {
 					event.preventDefault();

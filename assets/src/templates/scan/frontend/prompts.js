@@ -258,7 +258,6 @@ const PROMPTS = {
         
         input = level = false;
         fieldset = document.createElement('fieldset');
-        fieldset.classList.add('popup_step__fieldset');
         level = document.createElement('label');
         level.innerHTML = PROMPTS.str_replace(field?.label??'');
         level.setAttribute('for',`field_${field?.fieldID??i}`);

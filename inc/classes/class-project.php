@@ -11,6 +11,7 @@ class Project {
 	use Singleton;
 	protected function __construct() {
 		// Load class.
+		I18n::get_instance();
 		Cart::get_instance();
 		Ajax::get_instance();
 		Order::get_instance();

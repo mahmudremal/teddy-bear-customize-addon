@@ -42,7 +42,7 @@ class Cart {
 		}
 		$json = [
 			'hooks' => ['popup_submitting_failed'],
-			'message' => __('Something went wrong. Please try again.', 'domain')
+			'message' => __('Something went wrong. Please try again.', 'teddybearsprompts')
 		];
 		$product_id = intval($_POST['product_id']);
 		$quantity = intval($_POST['quantity']);
@@ -50,19 +50,38 @@ class Cart {
 		if (!$product || !$product->is_purchasable()) {
 			wp_send_json_error('Invalid product or product is not purchasable.');
 		}
-		$meta_data = $request = json_decode(preg_replace('/[\x00-\x1F\x80-\xFF]/', '', stripslashes(html_entity_decode($_POST['dataset']))), true);
-		WC()->cart->add_to_cart($product_id, $quantity, 0, [], [
-			'custom_teddey_bear_makeup' => $meta_data
-		]);
-		$json['hooks'] = ['popup_submitting_done'];
-		$json['redirectedTo'] = wc_get_checkout_url();
-		$json['message'] = __('Product added to cart successfully. Please hold on until you\'re redirected to checkout page.', 'domain');
-		wp_send_json_success($json);
+		
+		
+		try {
+			$dataset = json_decode(preg_replace('/[\x00-\x1F\x80-\xFF]/', '', stripslashes(html_entity_decode($_POST['dataset']))), true);
+			$charges = json_decode(preg_replace('/[\x00-\x1F\x80-\xFF]/', '', stripslashes(html_entity_decode($_POST['charges']))), true);
+			if(isset($_FILES['voice'])) {
+				$is_uploaded = $this->custom_upload_audio_video($_FILES['voice']);
+			}
+			WC()->cart->add_to_cart($product_id, $quantity, 0, [], [
+				'custom_teddey_bear_makeup' => $charges,
+				'custom_teddey_bear_data'	=> $dataset
+			]);
+			$cart_item_key = WC()->cart->generate_cart_id($product_id);
+        	$cart_item = WC()->cart->get_cart_item($cart_item_key);
+
+			// print_r(WC()->cart->get_cart());
+			// wc_add_order_item_meta($cart_item['data']->get_id(), 'custom_teddey_bear_data', $dataset);
+
+			$json['hooks'] = ['popup_submitting_done'];
+			$json['redirectedTo'] = wc_get_checkout_url();
+			$json['message'] = __('Product added to cart successfully. Please hold on until you\'re redirected to checkout page.', 'teddybearsprompts');
+			wp_send_json_success($json);
+		} catch (\Exception $e) {
+			// Handle the exception here
+			$json['message'] = 'Error: ' . $e->getMessage();
+			wp_send_json_error($json);
+		}
+		
 	}
 	public function woocommerce_cart_calculate_fees() {
 		if (is_admin() && !defined('DOING_AJAX')) {return;}
 		$cart = WC()->cart;
-
 		
 		foreach($cart->get_cart() as $cart_item_key => $cart_item) {
 			if(array_key_exists('custom_teddey_bear_makeup', $cart_item)) {
@@ -123,6 +142,39 @@ class Cart {
 				$item->add_meta_data(esc_html($meta['item']), $meta['price'], true);
 			}
 		}
+		if(isset($values['custom_teddey_bear_data'])) {
+			$extra_data = (array) $values['custom_teddey_bear_data'];
+			if(isset($extra_data['field'])) {
+				$extra_data['field'] = empty($extra_data['field'])?[]:(array) $extra_data['field'];
+				foreach($extra_data['field'] as $key => $fields) {
+					$fields = empty($fields)?[]:(array) $fields;
+					foreach($fields as $fkey => $field) {
+						$field['title'] = empty($field['title'])?__('N/A', 'teddybearsprompts'):$field['title'];
+						$item->add_meta_data($field['title'], $field['value'], true);
+					}
+				}
+			}
+		}
+	}
+
+	public function custom_upload_audio_video($file) {
+		$upload_dir = wp_upload_dir();$custom_dir = 'custom_popup';
+		$target_dir = $upload_dir['basedir'].'/'.$custom_dir.'/';
+		if(!file_exists($target_dir)) {mkdir($target_dir, 0755, true);}
+		$file_name = $file['name'];$file_tmp = $file['tmp_name'];$file_type = $file['type'];
+		$allowed_regex = '/^(audio|video)\/(.*?)/i';
+		if(!preg_match($allowed_regex, $file_type)) {
+			throw new \Exception(__('Error: Only audio and video files are allowed.', 'teddybearsprompts'));
+		}
+		$max_file_size = 400 * 1024 * 1024;
+		if($file['size'] > $max_file_size) {
+			throw new \Exception(__('Error: File size exceeds the maximum limit of 400 MB.', 'teddybearsprompts'));
+		}
+		$target_file = $target_dir . $file_name;
+		if(!move_uploaded_file($file_tmp, $target_file)) {
+			throw new \Exception(__('Error uploading file.', 'teddybearsprompts'));
+		}
+		return true;
 	}
   
 }

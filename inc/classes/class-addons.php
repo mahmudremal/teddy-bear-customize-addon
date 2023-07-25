@@ -19,7 +19,6 @@ class Addons {
 	public function tm_epo_fields($field_types) {
 		require_once(untrailingslashit(TEDDY_BEAR_CUSTOMIZE_ADDON_DIR_PATH).'/inc/widgets/elementor/widget-voice-upload.php');
 		$field_types['voice_upload'] = '\TEDDYBEAR_CUSTOMIZE_ADDON\inc\Widget\VOICE_UPLOAD';
-		wp_die('I got it');
 		return $field_types;
 	}
 }

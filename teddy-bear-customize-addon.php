@@ -13,7 +13,7 @@
  * Author URI:        https://github.com/mahmudremal/
  * License:           GPL v2 or later
  * License URI:       https://www.gnu.org/licenses/gpl-2.0.html
- * Text Domain:       quiz-and-filter-search-domain
+ * Text Domain:       teddybearsprompts
  * Domain Path:       /languages
  * 
  * @package QuizAndFilterSearch
@@ -44,7 +44,7 @@ defined( 'TEDDY_BEAR_CUSTOMIZE_ADDON_BUILD_CSS_DIR_PATH' ) || define( 'TEDDY_BEA
 defined( 'TEDDY_BEAR_CUSTOMIZE_ADDON_BUILD_LIB_URI' ) || define( 'TEDDY_BEAR_CUSTOMIZE_ADDON_BUILD_LIB_URI', untrailingslashit( TEDDY_BEAR_CUSTOMIZE_ADDON_DIR_URI ) . '/assets/build/library' );
 defined( 'TEDDY_BEAR_CUSTOMIZE_ADDON_ARCHIVE_POST_PER_PAGE' ) || define( 'TEDDY_BEAR_CUSTOMIZE_ADDON_ARCHIVE_POST_PER_PAGE', 9 );
 defined( 'TEDDY_BEAR_CUSTOMIZE_ADDON_SEARCH_RESULTS_POST_PER_PAGE' ) || define( 'TEDDY_BEAR_CUSTOMIZE_ADDON_SEARCH_RESULTS_POST_PER_PAGE', 9 );
-defined( 'TEDDY_BEAR_CUSTOMIZE_ADDON_OPTIONS' ) || define( 'TEDDY_BEAR_CUSTOMIZE_ADDON_OPTIONS', get_option( 'quiz-and-filter-search-domain' ) );
+defined( 'TEDDY_BEAR_CUSTOMIZE_ADDON_OPTIONS' ) || define( 'TEDDY_BEAR_CUSTOMIZE_ADDON_OPTIONS', get_option( 'teddybearsprompts' ) );
 
 require_once TEDDY_BEAR_CUSTOMIZE_ADDON_DIR_PATH . '/inc/helpers/autoloader.php';
 // require_once TEDDY_BEAR_CUSTOMIZE_ADDON_DIR_PATH . '/inc/helpers/template-tags.php';

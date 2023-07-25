@@ -30,7 +30,6 @@ import WaveSurfer from 'wavesurfer.js';
 			this.Swal = Swal;
 			this.init_toast();
 			this.init_events();
-			this.init_i18n();
 			this.init_button();
 			this.init_wavesurfer();
 		}
@@ -98,17 +97,6 @@ import WaveSurfer from 'wavesurfer.js';
 				var button = document.querySelector('.save-this-popup');
 				if(button) {button.removeAttribute('disabled');}
 			});
-			document.body.addEventListener('ajaxi18nloaded', async (event) => {
-				if(!(thisClass.lastJson?.translates??false)) {return;}
-				thisClass.i18n = PROMPTS.i18n = {...thisClass.i18n, ...thisClass.lastJson.translates};
-			});
-		}
-		init_i18n() {
-			const thisClass = this;
-			var formdata = new FormData();
-			formdata.append('action', 'futurewordpress/project/ajax/i18n/js');
-			formdata.append('_nonce', thisClass.ajaxNonce);
-			thisClass.sendToServer(formdata);
 		}
 		sendToServer( data ) {
 			const thisClass = this;var message;

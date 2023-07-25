@@ -552,4 +552,10 @@
   &__price {
     font-weight: 600;
   }
+  &__audio {
+    display: block;
+    position: relative;
+    height: auto;
+    width: 100%;
+  }
 }
