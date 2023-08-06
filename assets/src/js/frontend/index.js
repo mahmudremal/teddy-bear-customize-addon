@@ -45,6 +45,9 @@ import flatpickr from "flatpickr";
 			this.voiceRecord = voiceRecord;
 
 			// this.move_lang_switcher();
+
+			this.popup_show_only4israel();
+			this.move_cart_icon2header();
 		}
 		init_toast() {
 			const thisClass = this;
@@ -101,7 +104,7 @@ import flatpickr from "flatpickr";
 					thisClass.Swal.update({
 						progressSteps: thisClass.prompts.progressSteps,
 						currentProgressStep: 0,
-						progressStepsDistance: '10px',
+						// progressStepsDistance: '10px',
 
 						// showCloseButton: true,
 						// allowOutsideClick: true,
@@ -129,7 +132,47 @@ import flatpickr from "flatpickr";
 			document.body.addEventListener('popup_submitting_done', async (event) => {
 				var submit = document.querySelector('.popup_foot .button[data-react="continue"]');
 				if(submit) {submit.removeAttribute('disabled');}
-				if(thisClass.lastJson.redirectedTo) {location.href = thisClass.lastJson.redirectedTo;}
+				// if(thisClass.lastJson.redirectedTo) {location.href = thisClass.lastJson.redirectedTo;}
+				if((thisClass.lastJson?.confirmation??false)) {
+					const popupNode = thisClass.Swal.getHtmlContainer();
+					thisClass.popupNode = document.createElement('div');
+					thisClass.popupNode.appendChild(popupNode.childNodes[0]);
+					thisClass.Swal.fire({
+						title: thisClass.lastJson.confirmation?.title??'',
+						// buttons: true,
+						// width: 600,
+						// padding: '3em',
+						// color: '#716add',
+						background: 'rgb(255 255 255)',
+						showConfirmButton: true,
+						showCancelButton: true,
+						showCloseButton: true,
+						allowOutsideClick: false,
+						allowEscapeKey: true,
+						showDenyButton: true,
+						confirmButtonText: thisClass.i18n?.checkout??'Checkout',
+						denyButtonText: thisClass.i18n?.buymoreplushies??'Buy more plushies',
+						cancelButtonText: thisClass.i18n?.addaccessories??'Add accessories',
+						confirmButtonColor: '#ffc52f',
+						cancelButtonColor: '#de424b',
+						dismissButtonColor: '#de424b',
+						customClass: {confirmButton: 'text-dark'},
+						// focusConfirm: true,
+						// reverseButtons: true,
+						// backdrop: `rgba(0,0,123,0.4) url("https://sweetalert2.github.io/images/nyan-cat.gif") left top no-repeat`,
+						backdrop: `rgb(137 137 137 / 74%)`,
+
+						showLoaderOnConfirm: true,
+						allowOutsideClick: () => !Swal.isLoading(),
+					}).then((res) => {
+						if(res.isConfirmed) {
+							location.href = thisClass.lastJson.confirmation?.checkoutUrl??false;
+						} else if(res.isDenied) {
+							location.href = thisClass.lastJson.confirmation?.accessoriesUrl??false;
+						} else if(res.isDismissed) {} else {}
+						console.log(res);
+					});
+				}
 			});
 			document.body.addEventListener('popup_submitting_failed', async (event) => {
 				var submit = document.querySelector('.popup_foot .button[data-react="continue"]');
@@ -294,6 +337,8 @@ import flatpickr from "flatpickr";
 			document.querySelectorAll('.init_cusomizeaddtocartbtn:not([data-handled])').forEach((el)=>{
 				el.dataset.handled = true;
 
+				thisClass.resizeCartButtons(el);
+
 				// Mode add to cart & action button on a div to fix justify spaces.
 				// card = el.parentElement;node = document.createElement('div');
 				// node.classList.add('fwp_custom_actions');node.appendChild(el.previousElementSibling);
@@ -359,6 +404,17 @@ import flatpickr from "flatpickr";
 					})
 				});
 			});
+			window.addEventListener("resize", () => {
+				document.querySelectorAll('.init_cusomizeaddtocartbtn').forEach((el)=>{
+					thisClass.resizeCartButtons(el);
+				});
+			});
+		}
+		resizeCartButtons(el) {
+			// [el, el.previousElementSibling].forEach((btn)=>{
+			// 	// btn.setAttribute('style',((window?.innerWidth??(screen?.width??0)) <= 500)?'width: 48% !important;padding: 10px 10px !important;font-size: 10px !important;display: unset !important;':'padding: 10px 5px !important;font-size: 15px !important;');
+			// });
+			el.previousElementSibling.classList.remove('button');
 		}
 
 		move_lang_switcher() {
@@ -372,6 +428,54 @@ import flatpickr from "flatpickr";
 				next.parentElement.insertBefore(node, next);
 			}
 		}
+		popup_show_only4israel() {
+			const dateString = new Date().toString();
+			const isIsrael = /\bIsrael\b/i.test(dateString);
+			if(isIsrael) {
+				let i = 0;
+				var theTimeout = setTimeout(() => {
+					const hasPopup = document.querySelector('.dialog-widget.dialog-lightbox-widget.dialog-type-buttons.dialog-type-lightbox.elementor-popup-modal');
+					if(hasPopup) {
+						hasPopup.setAttribute('style', 'display: flex !important');
+						clearTimeout(theTimeout);
+					}
+					// if(i >= 200) {clearTimeout(theTimeout);}i++;
+				}, 500);
+			}
+		}
+		move_cart_icon2header() {
+			const heart = document.querySelector('.elementor-location-header .elementor-container .elementor-column:last-child .elementor-widget-wrap .elementor-widget-icon:last-child');
+			const cart = document.querySelector('.cc-compass .licon');
+			if(!heart || !cart) {return;}
+			cart.innerHTML = `
+			<svg width="18" height="16" viewBox="0 0 21 21" fill="none" xmlns="http://www.w3.org/2000/svg">
+				<path d="M8.43555 15.75C7.35011 15.75 6.4668 16.6333 6.4668 17.7188C6.4668 18.8042 7.35011 19.6875 8.43555 19.6875C9.52098 19.6875 10.4043 18.8042 10.4043 17.7188C10.4043 16.6333 9.52098 15.75 8.43555 15.75ZM8.43555 18.375C8.0733 18.375 7.7793 18.0803 7.7793 17.7188C7.7793 17.3572 8.0733 17.0625 8.43555 17.0625C8.7978 17.0625 9.0918 17.3572 9.0918 17.7188C9.0918 18.0803 8.7978 18.375 8.43555 18.375ZM14.998 15.75C13.9126 15.75 13.0293 16.6333 13.0293 17.7188C13.0293 18.8042 13.9126 19.6875 14.998 19.6875C16.0835 19.6875 16.9668 18.8042 16.9668 17.7188C16.9668 16.6333 16.0835 15.75 14.998 15.75ZM14.998 18.375C14.6358 18.375 14.3418 18.0803 14.3418 17.7188C14.3418 17.3572 14.6358 17.0625 14.998 17.0625C15.3603 17.0625 15.6543 17.3572 15.6543 17.7188C15.6543 18.0803 15.3603 18.375 14.998 18.375ZM19.3989 5.39306C19.0235 4.88513 18.446 4.59375 17.8147 4.59375H5.26323L4.60764 2.26931C4.44948 1.70559 3.92973 1.3125 3.3437 1.3125H1.87305C1.51014 1.3125 1.2168 1.6065 1.2168 1.96875C1.2168 2.331 1.51014 2.625 1.87305 2.625H3.34436L4.13252 5.42063L5.50867 11.3853C5.92342 13.1821 7.50105 14.4375 9.34577 14.4375H14.5433C16.2823 14.4375 17.7956 13.3206 18.3069 11.6576L19.6961 7.14197C19.8819 6.53888 19.7736 5.901 19.3989 5.39306ZM18.4414 6.75544L17.0521 11.2718C16.7109 12.3802 15.7029 13.125 14.5433 13.125H9.34577C8.11595 13.125 7.06398 12.2883 6.78836 11.0906L5.59202 5.90625H17.8147C18.0253 5.90625 18.2176 6.00338 18.343 6.17269C18.4676 6.342 18.5037 6.55397 18.4414 6.75544Z" fill="#444444"/>
+			</svg>`;
+			const node = document.createElement('div');node.classList.add('elementor-element', 'elementor-element-afd7b23', 'elementor-widget__width-auto', 'elementor-view-default', 'elementor-widget', 'elementor-widget-icon');node.dataset.element_type = 'widget';
+			node.dataset.widget_type = 'icon.default';
+			node.innerHTML = `
+				<div class="elementor-widget-container">
+					<div class="elementor-icon-wrapper">
+						<a class="elementor-icon fwp-custom-cart-icon">
+						</a>
+					</div>
+				</div>
+			`;
+			node.querySelector('.fwp-custom-cart-icon').appendChild(cart.parentElement);
+			heart.parentElement.appendChild(node);
+			const mobileIcon = document.querySelector('#uael-mc__btn').parentElement;
+			mobileIcon.innerHTML = '';
+			mobileIcon.appendChild(
+				node.querySelector('.fwp-custom-cart-icon').cloneNode(true)
+			);
+			// console.log(heart.parentElement, node);
+		}
+		
+		clearAllFromCart() {
+			document.querySelectorAll('.woocommerce-page #content table.cart td.product-remove a').forEach((el)=>{el.click();});
+		}
+
+		
 	}
 	new FutureWordPress_Frontend();
 } )( jQuery );

@@ -41,6 +41,7 @@ class I18n {
 			'remove' => __('Remove', 'teddybearsprompts'),
 			'select_thumbnail' => __('Select thumbnail', 'teddybearsprompts'),
 			'field_type' => __('Field type', 'teddybearsprompts'),
+			'row_title' => __('Row title', 'teddybearsprompts'),
 			'layer_order' => __('Layer Order', 'teddybearsprompts'),
 
 			// frontend JS

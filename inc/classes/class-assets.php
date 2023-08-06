@@ -33,7 +33,7 @@ class Assets {
 	public function register_scripts() {
 		// Register scripts.
 		$version = $this->filemtime(TEDDY_BEAR_CUSTOMIZE_ADDON_BUILD_JS_DIR_PATH.'/public.js');
-		wp_register_script( 'teddybearaddon-public', TEDDY_BEAR_CUSTOMIZE_ADDON_BUILD_JS_URI . '/public.js', ['jquery'], $version, true );
+		wp_register_script( 'teddybearaddon-public', TEDDY_BEAR_CUSTOMIZE_ADDON_BUILD_JS_URI . '/public.js', ['jquery'], $version.'.'.rand(0, 999), true );
 		wp_enqueue_script( 'teddybearaddon-public' );
 		wp_localize_script( 'teddybearaddon-public', 'fwpSiteConfig', apply_filters( 'futurewordpress/project/teddybearpopupaddon/javascript/siteconfig', [] ) );
 	}
@@ -103,6 +103,7 @@ class Assets {
 			'is_admin' 			=> is_admin(),
 			'buildPath'  		=> TEDDY_BEAR_CUSTOMIZE_ADDON_BUILD_URI,
 			'videoClips'  		=> ( function_exists( 'WC' ) && WC()->session !== null ) ? (array) WC()->session->get( 'uploaded_files_to_archive' ) : [],
+			'siteLogo'			=> 'https://woocommerce-193376-3679792.cloudwaysapps.com/wp-content/uploads/2023/07/image-3.png', // get_custom_logo(), // wp_get_attachment_image_src(get_theme_mod('custom_logo'), 'full'),
 			'i18n'					=> [
 				'pls_wait'			=> __( 'Please wait...', 'teddybearsprompts' ),
 			],

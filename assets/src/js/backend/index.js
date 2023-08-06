@@ -313,7 +313,7 @@ import WaveSurfer from 'wavesurfer.js';
 				}
 			})
 		}
-		init_wavesurfer() {
+		init_wavesurfer__() {
 			document.querySelectorAll('.fwp-outfit__player[data-audio]').forEach((el)=>{
 				const wavesurfer = WaveSurfer.create({
 					container: el,
@@ -327,6 +327,90 @@ import WaveSurfer from 'wavesurfer.js';
 				  })
 			});
 		}
+		init_wavesurfer() {
+			document.querySelectorAll('.fwp-outfit__player[data-audio]').forEach((el) => {
+			  // Web Audio example
+		  
+			  const audio = new Audio();
+			  audio.controls = true;
+			  audio.src = el.dataset.audio;
+		  
+			  // Create a WaveSurfer instance and pass the media element
+			  const wavesurfer = WaveSurfer.create({
+				container: el,
+				media: audio,
+				waveColor: 'rgb(200, 0, 200)',
+				progressColor: 'rgb(100, 0, 100)',
+				interact: false, // Disable user interactions with the waveform
+			  });
+		  
+			  // Optionally, add the audio to the page to see the controls
+			  el.parentElement.insertBefore(audio, el);
+		  
+			  // Play the audio and the WaveSurfer when the audio starts playing
+			  audio.addEventListener('play', () => {
+				wavesurfer.play();
+			  });
+		  
+			  // Pause the WaveSurfer when the audio is paused
+			  audio.addEventListener('pause', () => {
+				wavesurfer.pause();
+			  });
+		  
+			  // Create Web Audio context
+			  const audioContext = new AudioContext();
+		  
+			  // Define the equalizer bands
+			  const eqBands = [32, 64, 125, 250, 500, 1000, 2000, 4000, 8000, 16000];
+		  
+			  // Create a biquad filter for each band
+			  const filters = eqBands.map((band) => {
+				const filter = audioContext.createBiquadFilter();
+				filter.type = band <= 32 ? 'lowshelf' : band >= 16000 ? 'highshelf' : 'peaking'; // Fixed 'hishelf' to 'highshelf'
+				filter.gain.value = Math.random() * 40 - 20;
+				filter.Q.value = 1; // resonance
+				filter.frequency.value = band; // the cut-off frequency
+				return filter;
+			  });
+		  
+			  // Connect the audio to the equalizer
+			//   audio.addEventListener(
+			// 	'canplay',
+			// 	() => {
+			// 	  // Create a MediaElementSourceNode from the audio element
+			// 	  const mediaNode = audioContext.createMediaElementSource(audio);
+		  
+			// 	  // Connect the filters and media node sequentially
+			// 	  const equalizer = filters.reduce((prev, curr) => {
+			// 		prev.connect(curr);
+			// 		return curr;
+			// 	  }, mediaNode);
+		  
+			// 	  // Connect the filters to the audio output
+			// 	  equalizer.connect(audioContext.destination);
+			// 	},
+			// 	{ once: true }
+			//   );
+		  
+			  // Create a vertical slider for each band
+			//   const container = document.createElement('p');
+			//   filters.forEach((filter) => {
+			// 	const slider = document.createElement('input');
+			// 	slider.type = 'range';
+			// 	slider.orient = 'vertical';
+			// 	slider.style.appearance = 'slider-vertical';
+			// 	slider.style.width = '8%';
+			// 	slider.step = 0.1;
+			// 	slider.min = -40;
+			// 	slider.max = 40;
+			// 	slider.value = filter.gain.value;
+			// 	slider.oninput = (e) => (filter.gain.value = e.target.value);
+			// 	container.appendChild(slider);
+			//   });
+			//   el.parentElement.insertBefore(container, el);
+			});
+		}
+		  
 	}
 
 	new FWPListivoBackendJS();

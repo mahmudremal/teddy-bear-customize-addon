@@ -69,8 +69,14 @@ class Cart {
 			// wc_add_order_item_meta($cart_item['data']->get_id(), 'custom_teddey_bear_data', $dataset);
 
 			$json['hooks'] = ['popup_submitting_done'];
-			$json['redirectedTo'] = wc_get_checkout_url();
-			$json['message'] = __('Product added to cart successfully. Please hold on until you\'re redirected to checkout page.', 'teddybearsprompts');
+			// $json['redirectedTo'] = wc_get_checkout_url();
+			// $json['message'] = __('Product added to cart successfully. Please hold on until you\'re redirected to checkout page.', 'teddybearsprompts');
+			$json['message'] = false;
+			$json['confirmation'] = [
+				'title'				=> sprintf(__('%s added to your cart successfully', 'teddybearsprompts'), get_the_title($product_id)),
+				'accessoriesUrl'	=> esc_url(TEDDY_BEAR_CUSTOMIZE_ADDON_OPTIONS['accessoriesUrl']),
+				'checkoutUrl'		=> wc_get_checkout_url()
+			];
 			wp_send_json_success($json);
 		} catch (\Exception $e) {
 			// Handle the exception here

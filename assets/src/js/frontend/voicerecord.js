@@ -22,8 +22,8 @@ const voiceRecord = {
       // Create record button
       voiceRecord.recordButton = document.createElement('button');
       voiceRecord.recordButton.dataset.cost = rootElement.dataset.cost;
-      voiceRecord.recordButton.textContent = '🎙️ ' + (voiceRecord.i18n?.record??'Record');voiceRecord.recordButton.type = 'button';
-      // voiceRecord.recordButton.addEventListener('click', voiceRecord.startRecording);
+      voiceRecord.recordButton.textContent = '🎙️' + (voiceRecord.i18n?.record??'Record');voiceRecord.recordButton.type = 'button';
+      voiceRecord.recordButton.addEventListener('click', voiceRecord.startRecording);
       rootElement.appendChild(voiceRecord.recordButton);
   
       // Create stop button
@@ -32,12 +32,6 @@ const voiceRecord = {
       // stopButton.addEventListener('click', voiceRecord.stopRecording);
       // rootElement.appendChild(stopButton);
   
-      // Create release button
-      voiceRecord.releaseButton = document.createElement('button');
-      voiceRecord.releaseButton.textContent = voiceRecord.i18n?.remove??'Remove';voiceRecord.releaseButton.type = 'button';voiceRecord.releaseButton.style.display = 'none';
-      voiceRecord.releaseButton.addEventListener('click', voiceRecord.releaseRecording);
-      rootElement.appendChild(voiceRecord.releaseButton);
-
       // Create release button
       voiceRecord.playButton = document.createElement('button');
       voiceRecord.playButton.textContent = '⏹ ' + (voiceRecord.i18n?.play??'play');voiceRecord.playButton.type = 'button';
@@ -60,6 +54,15 @@ const voiceRecord = {
       voiceRecord.uploadButton.addEventListener('change', voiceRecord.uploadAudio);
       rootElement.appendChild(voiceRecord.uploadButton);
   
+      
+      // Create release button
+      voiceRecord.releaseButton = document.createElement('button');
+      voiceRecord.releaseButton.textContent = voiceRecord.i18n?.idontprefervoice??'I prefer not to add my voice';
+      voiceRecord.releaseButton.type = 'button';voiceRecord.releaseButton.classList.add('I_dont_prefer_voice');
+      // voiceRecord.releaseButton.style.display = 'none';
+      voiceRecord.releaseButton.addEventListener('click', voiceRecord.releaseRecording);
+      rootElement.appendChild(voiceRecord.releaseButton);
+
       // Create audio element for preview
       const audioPreview = document.createElement('audio');
       // audioPreview.controls = true;
@@ -110,8 +113,8 @@ const voiceRecord = {
         recButton.disabled = true
       
         voiceRecord.record.startRecording().then(() => {
-          recButton.textContent = '⏹ ' + (voiceRecord.i18n?.stop??'Stop');
-          recButton.disabled = false;
+          recButton.textContent = '⏹ ' + (voiceRecord.i18n?.stop??'Stop');recButton.disabled = false;
+          document.querySelector('.I_dont_prefer_voice').style.borderColor = '#c1c1c1';
         })
       }
       
@@ -199,10 +202,13 @@ const voiceRecord = {
       if(voiceRecord.recorder) {
         voiceRecord.recorder.destroy();
         voiceRecord.recorder = null;
-        voiceRecord.recordedBlob = null;
-        voiceRecord.audioPreview.src = '';
       }
+      if(voiceRecord.wavesurfer) {
+        voiceRecord.wavesurfer.destroy()
+      }
+      voiceRecord.recordedBlob = null;voiceRecord.audioPreview.src = '';
       voiceRecord.popupCart.removeAdditionalPrice(voiceRecord.i18n?.voice_record??'Voice Record');
+      document.querySelector('.I_dont_prefer_voice').style.borderColor = '#e63f51';
     },
     recordedFileName: () => {
       const unique = (new Date()).getTime();
@@ -213,10 +219,16 @@ const voiceRecord = {
 
     uploadAudio: (event) => {
       var file = event.target.files[0];
+      // Max file size
       if (file) {
-        const fileURL = URL.createObjectURL(file);
-        voiceRecord.audioPreview.src = fileURL;
-        voiceRecord.wavesurfer.load(fileURL);
+        document.querySelector('.I_dont_prefer_voice').style.borderColor = '#c1c1c1';
+        if(file.size > (1024 * 1024 * 400)) {
+          alert('Max uploaded file size is 400MB');
+        } else {
+          const fileURL = URL.createObjectURL(file);
+          voiceRecord.audioPreview.src = fileURL;
+          voiceRecord.wavesurfer.load(fileURL);
+        }
       }
     },
 

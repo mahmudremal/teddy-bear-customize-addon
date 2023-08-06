@@ -797,6 +797,13 @@ const PROMPTS = {
         input.name='groups.'+groupAt+'.layer';input.id = 'group-layer-'+groupAt;
         input.type = 'number';body.appendChild(input);
 
+        label = document.createElement('label');label.classList.add('form-label');
+        label.innerHTML = PROMPTS.i18n?.row_title??'Row title';
+        label.setAttribute('for', 'group-title-'+order);body.appendChild(label);
+        input = document.createElement('input');input.classList.add('form-control');
+        input.name='groups.'+groupAt+'.title';input.id = 'group-title-'+groupAt;
+        input.type = 'text';body.appendChild(input);
+
 
         input = document.createElement('button');input.classList.add('btn', 'button', 'my-3', 'do_repeater_field');input.type='button';input.dataset.order=0;input.dataset.isGroup=groupAt;
         input.innerHTML = PROMPTS.i18n?.add_new_option??'Add new option';input.dataset.optionGroup=group?.type??'';

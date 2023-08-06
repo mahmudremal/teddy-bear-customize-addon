@@ -14,7 +14,7 @@ const PROMPTS = {
         PROMPTS.core = thisClass;
     },
     init_events: (thisClass) => {
-        document.querySelectorAll('.popup_foot .button[data-react]').forEach((el) => {
+        document.querySelectorAll('.popup_foot .button[data-react], .back2previous_step[data-react="back"]').forEach((el) => {
             el.addEventListener('click', (event) => {
                 event.preventDefault();
                 switch (el.dataset.react) {
@@ -194,17 +194,22 @@ const PROMPTS = {
         json = PROMPTS.lastJson;
         html = '';
         html += (json.header)?`
-            ${(json.header.product_photo)?`<div class="header_image" ${(json.header.product_photo != 'empty')?`style="background-image: url('${json.header.product_photo}');"`:``}></div>`:''}
+            ${(json.header.product_photo)?`
+            <div class="dynamic_popup__header">
+                <span class="back2previous_step" data-icon="dashicons-before dashicons-arrow-left-alt" type="button" data-react="back">Back</span>
+                <img class="dynamic_popup__header__image" src="${thisClass.config?.siteLogo??''}" alt="">
+                <div class="popup_close fa fa-times"></div>
+            </div>
+            <div class="header_image" ${(json.header.product_photo != 'empty')?`style="background-image: url('${json.header.product_photo}');"`:``}></div>`:''}
         `:'';
         html += PROMPTS.generate_fields(thisClass);
         return html;
     },
     generate_fields: (thisClass) => {
-        var div, node, step, foot, btn, back, close, prices, fields = PROMPTS.get_data(thisClass);
+        var div, node, step, foot, footwrap, btn, back, prices, fields = PROMPTS.get_data(thisClass);
         if(!fields && (thisClass.config?.buildPath??false)) {
             return '<img src="'+thisClass.config.buildPath+'/icons/undraw_file_bundle_re_6q1e.svg">';
         }
-        close = document.createElement('div');close.classList.add('popup_close', 'fa', 'fa-times');
         div = document.createElement('div');node = document.createElement('form');
         node.action=thisClass.ajaxUrl;node.type='post';node.classList.add('popup_body');
         fields.forEach((field, i) => {
@@ -214,21 +219,31 @@ const PROMPTS = {
             PROMPTS.totalSteps=(i+1);
         });
         foot = document.createElement('div');foot.classList.add('popup_foot');
+        footwrap = document.createElement('div');footwrap.classList.add('popup_foot__wrap');
+        footwrap.innerHTML = `
+            <ul class="pagination_list">
+                ${(thisClass?.progressSteps??[]).map((row, i)=>`
+                <li class="pagination_list__item" data-order="${i}">
+                    <span class="pagination_list__rounded">${row}</span>
+                </li>
+                `).join('')}
+            </ul>
+        `;
 
         back = document.createElement('button');back.classList.add('btn', 'btn-default', 'button');
         back.type='button';back.dataset.react = 'back';back.innerHTML=PROMPTS.i18n?.back??'Back';
-        foot.appendChild(back);
+        footwrap.appendChild(back);
         
         prices = document.createElement('div');prices.classList.add('calculated-prices');
         prices.innerHTML=`<span>${PROMPTS.i18n?.total??'Total'}</span><div class="price_amount">${(PROMPTS.lastJson.product && PROMPTS.lastJson.product.priceHtml)?PROMPTS.lastJson.product.priceHtml:(thisClass.config?.currencySign??'')+'0.00'}</div>`;
-        foot.appendChild(prices);
+        footwrap.appendChild(prices);
         
         btn = document.createElement('button');btn.classList.add('btn', 'btn-primary', 'button');
         btn.type='button';btn.dataset.react='continue';
         btn.innerHTML=`<span>${PROMPTS.i18n?.continue??'Continue'}</span><div class="spinner-circular-tube"></div>`;
-        foot.appendChild(btn);
+        footwrap.appendChild(btn);
         
-        div.appendChild(close);div.appendChild(node);div.appendChild(foot);
+        div.appendChild(node);foot.appendChild(footwrap);div.appendChild(foot);
         return div.innerHTML;
     },
     str_replace: (str) => {
@@ -246,7 +261,7 @@ const PROMPTS = {
         return fields;
     },
     do_field: (field, child = false) => {
-        var fields, form, group, fieldset, input, level, span, option, head, image, others, body, div, info, i = 0;
+        var fields, form, group, fieldset, input, level, span, option, head, image, others, body, div, info, title, i = 0;
         div = document.createElement('div');if(!child) {div.classList.add('popup_step', 'd-none', 'popup_step__'+field.type.replaceAll(' ', '-'));}
         head = document.createElement('h2');head.innerHTML=PROMPTS.str_replace(field?.heading??'');
         div.appendChild(head);
@@ -300,6 +315,11 @@ const PROMPTS = {
                 input = document.createElement('div');input.classList.add('form-wrap');
                 field.options = (field.options)?field.options:[];
                 field.type = (field.type == 'doll')?'radio':field.type;
+                if((field?.title??'') != '') {
+                    title = document.createElement('h4');title.classList.add('title');
+                    title.innerHTML = field?.title??'';fieldset.appendChild(title);
+                }
+                
                 // field.options = field.options.reverse();
                 Object.values(field.options).forEach((opt, optI)=> {
                     if(opt && opt.label) {
@@ -381,34 +401,44 @@ const PROMPTS = {
                 var inputsArgs = {}, inputs = {
                     teddy_name: {
                         type: 'text',
-                        // label: PROMPTS.i18n?.teddyname??'DubiDo\'s Name',
+                        // label: PROMPTS.i18n?.teddyname??'Teddy name',
                         placeholder: PROMPTS.i18n?.teddyfullname??'Teddy full Name',
                         dataset: {title: PROMPTS.i18n?.teddyfullname??'Teddy full Name'}
                     },
+                    choose_name: {
+                        type: 'checkbox',
+                        label: PROMPTS.i18n?.chooseaname4me??'Choose a name for me',
+                        // placeholder: PROMPTS.i18n?.teddyfullname??'Teddy full Name',
+                        dataset: {title: PROMPTS.i18n?.teddyfullname??'Teddy full Name'},
+                        options: [{value: 'Choose a name for me', label: 'Choose a name for me'}]
+                    },
                     teddy_birth: {
                         type: 'date', // default: new Date().toLocaleDateString('en-US'),
-                        // label: PROMPTS.i18n?.teddybirth??'DubiDo\'s Birthday',
-                        placeholder: PROMPTS.i18n?.teddybirth??'Birth date',
+                        label: PROMPTS.i18n?.teddybirth??'Date of teddy\'s birth',
+                        // placeholder: PROMPTS.i18n?.teddybirth??'Birth date',
                         dataset: {title: PROMPTS.i18n?.teddybirth??'Birth date'}
-                    },
-                    teddy_sender: {
-                        type: 'text',
-                        // label: PROMPTS.i18n?.sendersname??'Sender\'s Name',
-                        placeholder: PROMPTS.i18n?.sendersname??'Sender\'s Name',
-                        dataset: {title: PROMPTS.i18n?.sendersname??'Sender\'s Name'}
                     },
                     teddy_reciever: {
                         type: 'text',
-                        // label: PROMPTS.i18n?.recieversname??'Reciever\'s Name',
-                        placeholder: PROMPTS.i18n?.recieversname??'Reciever\'s Name',
+                        label: PROMPTS.i18n?.recieversname??'Reciever\'s Name',
+                        // placeholder: PROMPTS.i18n?.recieversname??'Reciever\'s Name',
                         dataset: {title: PROMPTS.i18n?.recieversname??'Reciever\'s Name'}
-                    }
+                    },
+                    teddy_sender: {
+                        type: 'text',
+                        label: PROMPTS.i18n?.sendersname??'Created with love by',
+                        // placeholder: PROMPTS.i18n?.sendersname??'Created with love by',
+                        dataset: {title: PROMPTS.i18n?.sendersname??'Created with love by'}
+                    },
                 };
                 Object.keys(inputs).forEach((type, typeI)=>{
                     inputsArgs = {
                         fieldID: (field?.fieldID??0)+'.'+(type?.fieldID??typeI),
                         ...inputs[type]
                     };
+                    if(type == 'choose_name' && Object.keys(inputs)[(typeI-1)] == 'teddy_name') {
+                        field[type] = 'on';
+                    }
                     if(field[type] == 'on') {fields.appendChild(PROMPTS.do_field(inputsArgs, true));}
                 });
                 fieldset.appendChild(fields);div.appendChild(fieldset);
@@ -460,7 +490,7 @@ const PROMPTS = {
             submit = document.querySelector('.popup_foot .button[data-react="continue"]');
             if(submit && submit.classList) {
                 if(PROMPTS.currentStep >= (PROMPTS.totalSteps-1)) {
-                    submit.firstElementChild.innerHTML = PROMPTS.i18n?.checkout??'Checkout';
+                    submit.firstElementChild.innerHTML = PROMPTS.i18n?.add_to_cart??'Add To Cart';
                 } else {
                     submit.firstElementChild.innerHTML = PROMPTS.i18n?.continue??'Continue';
                 }
@@ -498,10 +528,10 @@ const PROMPTS = {
                 // if(PROMPTS.validateField(step, data, thisClass)) {
                 // } else {console.log('Didn\'t Submit');}
             } else {
-                back = document.querySelector('.popup_foot .button[data-react="back"]');
-                if(back && back.classList) {
-                    if(!plus && PROMPTS.currentStep<=1) {back.classList.add('invisible');} else {back.classList.remove('invisible');}
-                }
+                document.querySelectorAll('.popup_foot .button[data-react="back"], .back2previous_step[data-react="back"]').forEach((back)=>{
+                    if(!plus && PROMPTS.currentStep<=1) {back.classList.add('invisible');}
+                    else {back.classList.remove('invisible');}
+                });
                 
                 field = PROMPTS.lastJson.product.custom_fields.find((row)=>row.orderAt==PROMPTS.currentStep);
                 header = document.querySelector('.header_image');
@@ -529,9 +559,9 @@ const PROMPTS = {
                 var found = PROMPTS.progressSteps.indexOf(find?.steptitle??false);
                 thisClass.Swal.update({
                     currentProgressStep: ((found)?found:(PROMPTS.currentStep-1)),
-                    progressStepsDistance: (PROMPTS.progressSteps.length<=5)?'2rem':(
-                        (PROMPTS.progressSteps.length>=8)?'0rem':'1rem'
-                    )
+                    // progressStepsDistance: (PROMPTS.progressSteps.length<=5)?'2rem':(
+                    //     (PROMPTS.progressSteps.length>=8)?'0rem':'1rem'
+                    // )
                 });
                 // thisClass.Swal.update({currentProgressStep: (PROMPTS.currentStep-1)});
 

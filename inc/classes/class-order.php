@@ -63,7 +63,7 @@ class Order {
 						$item_meta_data = $order_item->get_meta_data();
 						if(!empty($item_meta_data)) {
 							?>
-							<pre><?php print_r([$meta_data, $extra_data]); ?></pre>
+							<!-- <pre><?php // print_r([$meta_data, $extra_data]); ?></pre> -->
 							<span class="fwp-outfit__product"><?php echo esc_html(sprintf('Item: %s', $item_name)); ?></span>
 							<ul class="fwp-outfit__list">
 							<?php
@@ -74,7 +74,9 @@ class Order {
 									<?php if(!$target_file): ?>
 										<img src="" alt="" class="fwp-outfit__image">
 										<span class="fwp-outfit__title"><?php echo esc_html($meta->key); ?></span>
-										<span class="fwp-outfit__price"><?php echo esc_html($meta->value); ?></span>
+										<span class="fwp-outfit__price"><?php echo wp_kses_post(
+											is_numeric($meta->value)?wc_price($meta->value):$meta->value
+											); ?></span>
 									<?php else: ?>
 										<div class="fwp-outfit__player" data-audio="<?php echo esc_url(site_url(str_replace([ABSPATH], [''], $target_file))); ?>" title="<?php echo esc_attr($meta->value); ?>"></div>
 									<?php endif; ?>
