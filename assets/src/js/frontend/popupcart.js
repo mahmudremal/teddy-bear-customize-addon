@@ -34,7 +34,7 @@ const popupCart = {
     updateTotalPrice: () => {
         const priceAlt = document.querySelector('.calculated-prices .price_amount');
         if(priceAlt) {
-            priceAlt.innerHTML = popupCart.priceSign +''+ parseFloat(popupCart.getTotalPrice()).toFixed(2);
+            priceAlt.innerHTML = popupCart.priceSign +''+ parseFloat(popupCart.getTotalPrice()).toFixed(2) + popupCart.cartIcon;
         }
     }
 };

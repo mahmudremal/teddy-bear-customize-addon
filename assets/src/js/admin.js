@@ -10,3 +10,8 @@ import './backend/index';
 import '../sass/admin.scss';
 
 // Images.
+import '../img/signature.png';
+import '../img/blank_certificate.jpg';
+import '../img/dubido_certificate.png';
+import '../img/certificate_email_sky.jpg';
+import '../img/certificate_email_header.png';

@@ -112,7 +112,7 @@ const PROMPTS = {
         form.appendChild(button);
         button = document.createElement('button');button.type='button';
         button.classList.add('btn', 'button', 'add-new-types');
-        button.innerHTML = PROMPTS.i18n?.proceed??'Add new field';
+        button.innerHTML = PROMPTS.i18n?.addnewfield??'Add new field';
         button.style.display = 'inline-block';
         form.appendChild(button);
         button = document.createElement('button');button.type='button';
@@ -188,10 +188,12 @@ const PROMPTS = {
             }
             // Close all card after generating
             jQuery('.popup_step .popup_step__body').slideUp();
+
+            PROMPTS.init_context_menu(thisClass);
         }, 300);
     },
     do_field: (field, data) => {
-        var header, fields, form, fieldset, input, label, level, hidden, span, option, head, others, body, div, remove, img, preview, cross, node;PROMPTS.currentFieldID++;
+        var header, fields, form, fieldset, input, label, level, hidden, span, option, head, others, body, div, remove, img, icon, preview, cross, node;PROMPTS.currentFieldID++;
         div = document.createElement('form');div.classList.add('popup_step');header = true;
         div.action = '';div.method = 'post';div.id = 'popupstepform_'+PROMPTS.currentFieldID;
         // head = document.createElement('h2');head.innerHTML=field;div.appendChild(head);
@@ -211,13 +213,24 @@ const PROMPTS = {
         if(field.steptitle) {
             PROMPTS.lastfieldID++;
             fieldset = document.createElement('div');fieldset.classList.add('form-group');
+
+            input = document.createElement('input');input.classList.add('form-control');
+            input.name = 'stepicon';input.type = 'text';input.id = 'thefield'+PROMPTS.lastfieldID;
+            input.setAttribute('value', data?.stepicon??'');
+            input.placeholder=PROMPTS.i18n?.svg_icon??'SVG icon';
+            label = document.createElement('label');label.classList.add('form-label');
+            label.setAttribute('for', input.id);
+            label.innerHTML = PROMPTS.i18n?.give_svg_text_conts??'Your SVG text content here.';
+            fieldset.appendChild(label);fieldset.appendChild(input);
+            
+            PROMPTS.lastfieldID++;
             input = document.createElement('input');input.classList.add('form-control');
             input.name = 'steptitle';input.type = 'text';input.maxlength = 10;
             input.id = 'thefield'+PROMPTS.lastfieldID;input.setAttribute('value', data?.steptitle??'');
-            input.placeholder=PROMPTS.i18n?.popup_subheading_text??'PopUp Step text';
+            input.placeholder=PROMPTS.i18n?.popup_step_text??'PopUp Step text';
             label = document.createElement('label');label.classList.add('form-label');
             label.setAttribute('for', input.id);
-            label.innerHTML = PROMPTS.i18n?.popup_subheading??'PopUp Step text not more then 10 characters.';
+            label.innerHTML = PROMPTS.i18n?.popup_steptext_desc??'PopUp Step text not more then 10 characters.';
             
             fieldset.appendChild(label);fieldset.appendChild(input);div.appendChild(fieldset);
         }
@@ -372,7 +385,17 @@ const PROMPTS = {
                 label = document.createElement('label');label.classList.add('form-label');
                 label.setAttribute('for', input.id);
                 label.innerHTML = PROMPTS.i18n?.placeholder_ordefault??'Additional cost';
-                fieldset.appendChild(label);fieldset.appendChild(input);div.appendChild(fieldset);
+                fieldset.appendChild(label);fieldset.appendChild(input);
+                
+                PROMPTS.lastfieldID++;
+                input = document.createElement('input');input.classList.add('form-control', 'form-control-'+field.type);input.type = data?.type??field.type;
+                input.id = 'thefield'+PROMPTS.lastfieldID;input.type = 'number';
+                input.setAttribute('value', data?.duration??'');input.name = 'duration';
+                label = document.createElement('label');label.classList.add('form-label');
+                label.setAttribute('for', input.id);input.placeholder = 20;
+                label.innerHTML = PROMPTS.i18n?.duration_sec??'Duration (sec.).';
+                fieldset.appendChild(label);fieldset.appendChild(input);
+                div.appendChild(fieldset);
                 break;
             case 'info':
                 fieldset = document.createElement('div');fieldset.classList.add('form-group');
@@ -831,6 +854,111 @@ const PROMPTS = {
         cross.title = PROMPTS.i18n?.remove??'Remove';
         image = document.createElement('img');image.src = src;image.alt = name;
         preview.appendChild(image);preview.appendChild(cross);return preview;
+    },
+    init_context_menu: (thisClass) => {
+        var ul, li, a, file;
+        const button = document.querySelector(".dynamic_popup .save-this-popup:not([data-context])");
+        if(!button) {return;}
+        button.dataset.context = true;
+        const contextMenu = document.createElement('div');
+        contextMenu.classList.add('contextmenu');
+        var ul = document.createElement('ul');ul.classList.add('contextmenu__list');
+
+        // Update Menu
+        li = document.createElement('li');li.classList.add('contextmenu__list__item');
+        a = document.createElement('a');a.href = '#';a.innerHTML = thisClass.i18n?.update??'Update';
+        a.addEventListener('click', (event) => {
+            event.preventDefault();
+            document.querySelector('.save-this-popup')?.click();
+        });
+        li.appendChild(a);ul.appendChild(li);
+        // Export Menu
+        li = document.createElement('li');li.classList.add('contextmenu__list__item');
+        a = document.createElement('a');a.href = '#';a.innerHTML = thisClass.i18n?.export??'Export';
+        a.addEventListener('click', (event) => {
+            event.preventDefault();
+            document.querySelector('.swal2-html-container')?.classList.add('loading-exim');
+            setTimeout(() => {
+                var json_export = thisClass.prompts.lastJson.product;
+                var prod_title = thisClass.prompts.lastJson.info.prod_title;
+                var dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(json_export));
+                var dlAnchorElem = document.createElement('a');
+                dlAnchorElem.target = '_blank';
+                dlAnchorElem.setAttribute("href", dataStr);
+                dlAnchorElem.setAttribute("download", prod_title + ".json");
+                dlAnchorElem.click();
+                setTimeout(() => {dlAnchorElem.remove();}, 1500);
+                document.querySelector('.swal2-html-container')?.classList.remove('loading-exim');
+            }, 3500);
+        });
+        li.appendChild(a);ul.appendChild(li);
+        // Import Menu
+        li = document.createElement('li');li.classList.add('contextmenu__list__item');
+        file = document.createElement('input');file.type = 'file';
+        file.accept = '.json';file.style.display = 'none';
+        a = document.createElement('a');a.href = '#';a.innerHTML = thisClass.i18n?.import??'Import';
+        file.addEventListener('change', (event) => {
+            if(event.target.files[0]) {
+                const selectedFile = event.target.files[0];
+                document.querySelector('.swal2-html-container')?.classList.add('loading-exim');
+                setTimeout(() => {
+                    // console.log('You selected ' + event.target.files[0].name);
+
+                    const reader = new FileReader();
+                    reader.onload = function(event) {
+                        const fileContents = event.target.result;
+                        try {
+                            const parsedData = JSON.parse(fileContents);
+                            // console.log('Parsed JSON data:', parsedData);
+                            // Now you can work with the parsed JSON data
+
+                            thisClass.isImporting = true;
+                            var formdata = new FormData();
+                            formdata.append('action', 'futurewordpress/project/ajax/save/product');
+                            formdata.append('product_id', thisClass.config?.product_id??'');
+                            formdata.append('dataset', JSON.stringify(parsedData));
+                            formdata.append('_nonce', thisClass.ajaxNonce);
+                            thisClass.sendToServer(formdata);
+
+                            setTimeout(() => {
+                                document.querySelector('.swal2-html-container')?.classList.remove('loading-exim');
+                            }, 20000);
+                        } catch (error) {
+                            // console.error('Error parsing JSON:', error);
+                            var message = thisClass.i18n?.errorparsingjson??'Error parsing JSON:';
+                            thisClass.toastify({text: message + error,className: "error", duration: 3000, stopOnFocus: true, style: {background: "linear-gradient(to right, #ffb8b8, #ff7575)"}}).showToast();
+                        }
+                    };
+                    reader.readAsText(selectedFile);
+                }, 5000);
+            }
+        });
+        a.addEventListener('click', (event) => {
+            event.preventDefault();file.click();
+        });
+        li.appendChild(a);ul.appendChild(li);
+        
+        contextMenu.appendChild(ul);
+        document.querySelector('.swal2-html-container')?.appendChild(contextMenu);
+        
+        button.addEventListener("contextmenu", function(event) {
+            event.preventDefault();
+            contextMenu.style.left = event.clientX + "px";
+            contextMenu.style.top = (event.clientY - 0) + "px";
+            contextMenu.style.display = "block";
+        });
+        // Prevent the context menu from disappearing when clicking inside it
+        contextMenu.addEventListener("click", function(event) {
+            event.stopPropagation();
+        });
+        // Hide the context menu on click outside
+        document.addEventListener("click", function(event) {
+            contextMenu.style.display = "none";
+        });
+        // Prevent the context menu from appearing on right-click
+        contextMenu.addEventListener("contextmenu", function(event) {
+            event.preventDefault();
+        });
     }
 };
 export default PROMPTS;

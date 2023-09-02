@@ -283,6 +283,13 @@
         &__body {
           padding: 1rem;
           .form-group {
+            label.form-label {
+              font-size: 14px;
+              line-height: 25px;
+              margin-bottom: auto;
+              padding-bottom: unset;
+              text-transform: inherit;
+            }
             .single-repeater-option {
               margin: auto;
               padding: 0.8rem;
@@ -463,6 +470,7 @@
     user-select: all;
   }
   table tbody tr td {
+    position: relative;
     input:not([type="checkbox"]):not([type="radio"]), select, textarea {
       width: auto;
       display: block;
@@ -472,6 +480,22 @@
     }
     textarea {
       height: 300px;
+    }
+    label[for^="teddy-name-"] {
+      top: 0px;
+      right: 15px;
+      width: 20px;
+      height: 40px;
+      display: flex;
+      overflow: hidden;
+      position: absolute;
+      align-items: center;
+      transform: translateY(40%);
+      @include mq($until: 782px) {
+        top: 3px;right: 5px;
+        transform: unset;
+      }
+      // .description {}
     }
   }
 }
@@ -546,8 +570,14 @@
     flex-wrap: nowrap;
   }
   &__image {
+    border: none;
+    cursor: pointer;
     max-width: 20px;
     max-height: 20px;
+    &:hover {
+      border-radius: 10px;
+      box-shadow: 0 0 3px #c0c0c0;
+    }
   }
   &__price {
     font-weight: 600;
@@ -557,5 +587,124 @@
     position: relative;
     height: auto;
     width: 100%;
+  }
+}
+.fwp-image {
+  &__tippy {
+    display: block;
+    max-width: 150px;
+    overflow: hidden;
+    &__image {
+      border-radius: 3px;
+    }
+    &__image, &__title, &__price {
+      width: 100%;
+      display: block;
+      text-align: center;
+    }
+  }
+}
+.fwp-button {
+  &.fwppopspopup-open {
+    width: 90%;
+    margin: auto;
+    align-items: center;
+    display: flex;
+    padding: 10px 10px;
+    text-align: center;
+    justify-content: center;
+    &:disabled {
+      background: #878787;
+    }
+  }
+}
+.fwp-form {
+  margin-top: 20px;
+  &__field {
+    width: 100%;
+    display: block;
+    &__text {
+      display: flex;
+      flex-wrap: wrap;
+      input {
+        order: 1;
+        width: 100%;
+        display: block;
+      }
+    }
+    label {
+      font-size: 12px;
+    }
+    &:not(:first-child) {
+      border: none;
+      margin-top: 5px;
+      border-top: 1px solid #ddd;
+    }
+  }
+}
+// Context menu css
+.contextmenu {
+  padding: 5px;
+  display: none;
+  position: fixed;
+  background: white;
+  border: 1px solid #ddd;
+  box-shadow: 1px 1px 5px #ddd;
+  &__list {
+    list-style: none;
+    padding: 5px;
+    margin: auto;
+    &__item {
+      margin: auto;
+      background: none;
+      min-width: 100px;
+      text-align: -webkit-auto;
+      transition: all .3s ease;
+      &:not(:last-child) {
+        margin-bottom: 5px;
+      }
+      a {
+        width: 100%;
+        display: block;
+        color: #333;
+        text-decoration: none;
+      }
+      &:hover {
+        background: #dedede;
+        a {
+          padding-left: 10px;
+        }
+      }
+    }
+  }
+}
+.loading-exim {
+  position: relative;
+  &::before {
+    top: 40%;
+    left: 40%;
+    z-index: 1;
+    width: 80px;
+    height: 80px;
+    content: " ";
+    background: none;
+    position: absolute;
+    border-radius: 100%;
+    border: 10px solid #6b6bed;
+    border-left-color: transparent;
+    // transform: translate(-50%, -50%);
+    animation: spinner-bulqg1 0.8s infinite linear alternate, spinner-oaa3wk 1.6s infinite linear;
+  }
+  &::after {
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    content: " ";
+    height: 100%;
+    position: absolute;
+    border-radius: 10px;
+    background: #0000001f;
   }
 }

@@ -78,12 +78,13 @@ class Assets {
 			'all'
 		);
 	}
-	public function admin_enqueue_scripts( $curr_page ) {
+	public function admin_enqueue_scripts($curr_page) {
 		global $post;
-		if(!in_array($curr_page,['post-new.php', 'post.php'])) {return;}
-		wp_register_style( 'teddybearaddon-admin', TEDDY_BEAR_CUSTOMIZE_ADDON_BUILD_CSS_URI . '/admin.css', [], $this->filemtime( TEDDY_BEAR_CUSTOMIZE_ADDON_BUILD_CSS_DIR_PATH . '/admin.css' ), 'all' );
-		wp_register_script( 'teddybearaddon-admin', TEDDY_BEAR_CUSTOMIZE_ADDON_BUILD_JS_URI . '/admin.js', [ 'jquery' ], $this->filemtime( TEDDY_BEAR_CUSTOMIZE_ADDON_BUILD_JS_DIR_PATH . '/admin.js' ), true );
+		if(!in_array($curr_page, ['post-new.php', 'post.php', 'settings_page_teddybearsprompts'])) {return;}
+		wp_register_style('teddybearaddon-admin', TEDDY_BEAR_CUSTOMIZE_ADDON_BUILD_CSS_URI . '/admin.css', [], $this->filemtime(TEDDY_BEAR_CUSTOMIZE_ADDON_BUILD_CSS_DIR_PATH . '/admin.css'), 'all');
+		wp_register_script('teddybearaddon-admin', TEDDY_BEAR_CUSTOMIZE_ADDON_BUILD_JS_URI . '/admin.js', ['jquery'], $this->filemtime( TEDDY_BEAR_CUSTOMIZE_ADDON_BUILD_JS_DIR_PATH . '/admin.js' ), true);
 		
+		// if(!in_array($curr_page, ['settings_page_teddybearsprompts'])) {}
 		wp_enqueue_style('teddybearaddon-admin');
 		wp_enqueue_script('teddybearaddon-admin');
 		wp_enqueue_style('teddybearaddon-public');wp_enqueue_script('teddybearaddon-admin');
@@ -102,7 +103,7 @@ class Assets {
 			'ajax_nonce' 		=> wp_create_nonce( 'futurewordpress/project/teddybearpopupaddon/verify/nonce' ),
 			'is_admin' 			=> is_admin(),
 			'buildPath'  		=> TEDDY_BEAR_CUSTOMIZE_ADDON_BUILD_URI,
-			'videoClips'  		=> ( function_exists( 'WC' ) && WC()->session !== null ) ? (array) WC()->session->get( 'uploaded_files_to_archive' ) : [],
+			'audioDuration'  	=> TEDDY_BEAR_CUSTOMIZE_ADDON_AUDIO_DURATION,
 			'siteLogo'			=> 'https://woocommerce-193376-3679792.cloudwaysapps.com/wp-content/uploads/2023/07/image-3.png', // get_custom_logo(), // wp_get_attachment_image_src(get_theme_mod('custom_logo'), 'full'),
 			'i18n'					=> [
 				'pls_wait'			=> __( 'Please wait...', 'teddybearsprompts' ),

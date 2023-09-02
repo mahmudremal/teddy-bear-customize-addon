@@ -17,10 +17,13 @@ class Project {
 		Order::get_instance();
 		Hooks::get_instance();
 		Media::get_instance();
-		Popup::get_instance();
+		Menus::get_instance();
 		Addons::get_instance();
 		Assets::get_instance();
+		Option::get_instance();
+		Product::get_instance();
 		Meta_Boxes::get_instance();
+		Certificate::get_instance();
 
 		// $this->setup_hooks();
 	}

@@ -28,6 +28,11 @@ class Ajax {
 
 		add_action('wp_ajax_futurewordpress/project/ajax/search/popup', [$this, 'search_popup'], 10, 0);
 		add_action('wp_ajax_nopriv_futurewordpress/project/ajax/search/popup', [$this, 'search_popup'], 10, 0);
+		
+		add_action('wp_ajax_futurewordpress/project/ajax/update/orderitem', [$this, 'update_orderitem'], 10, 0);
+
+		add_action('wp_ajax_nopriv_futurewordpress/project/ajax/suggested/names', [$this, 'suggested_names'], 10, 0);
+		add_action('wp_ajax_futurewordpress/project/ajax/suggested/names', [$this, 'suggested_names'], 10, 0);
 	}
 	public function get_autocomplete() {
 		global $wpdb;
@@ -53,7 +58,7 @@ class Ajax {
 		wp_send_json_success( $res, 200 );
 	}
 	public function search_product() {
-		global $wpdb;global  $woocommerce;
+		global $wpdb;global  $woocommerce;global $teddyProduct;
 		// check_ajax_referer('futurewordpress/project/teddybearpopupaddon/verify/nonce', '_nonce', true);
 		$dataset = $request = json_decode(preg_replace('/[\x00-\x1F\x80-\xFF]/', '', stripslashes(html_entity_decode(isset($_POST['dataset'])?$_POST['dataset']:'{}'))), true);
 		
@@ -95,7 +100,7 @@ class Ajax {
 				'is_parent' => false,
 				'toast'		=> false, // '<strong>' . count($requested) . '</strong> people requested this service in the last 10 minutes!',
 				'thumbnail'	=> ['1x' => '', '2x' => ''],
-				'custom_fields' => get_post_meta($dataset['product_id'],'_product_custom_popup',true)
+				'custom_fields' => $teddyProduct->get_post_meta($dataset['product_id'],'_product_custom_popup',true)
 			],
 		];
 
@@ -193,8 +198,8 @@ class Ajax {
 		wp_send_json_success($result, 200);
 	}
 	public function edit_product() {
-		$json = [];
-		$json['product'] = get_post_meta($_POST['product_id'],'_product_custom_popup',true);
+		global $teddyProduct;$json = [];
+		$json['product'] = $teddyProduct->get_post_meta($_POST['product_id'],'_product_custom_popup',true);
 		$json['hooks'] = ['gotproductpopupresult'];
 		$json['product'] = ($json['product'] && !empty($json['product']))?(array)$json['product']:[];
 		foreach($json['product'] as $i => $_prod) {
@@ -222,6 +227,9 @@ class Ajax {
 				}
 			}
 		}
+		$json['info'] = [
+			'prod_title'			=> get_the_title($_POST['product_id'])
+		];
 		wp_send_json_success($json, 200);
 	}
 	public function merge_customfields($fields) {
@@ -310,5 +318,73 @@ class Ajax {
 			$fieldID = ($fieldID + 4);
 		}
 		return $fields;
+	}
+
+	public function update_orderitem() {
+		global $teddyProduct;
+		$json = ['hooks' => ['order_item_update_failed'], 'message' => __('Something went wrong. Please review your request again.', 'teddybearsprompts')];
+		if(!isset($_GET['order_id']) || empty($_GET['order_id']) || !isset($_GET['item_id']) || empty($_GET['item_id']) || !isset($_GET['teddyname']) || empty($_GET['teddyname'])) {
+			wp_send_json_error($json);
+		}
+
+		$order_id = $_GET['order_id'];
+		$item_id = $_GET['item_id'];
+		$order = wc_get_order($order_id);
+		foreach($order->get_items() as $order_item_id => $order_item) {
+			if($order_item_id != $item_id) {continue;}
+			$product_id = $order_item->get_product_id();
+			$popup_meta = $teddyProduct->get_post_meta($product_id, '_product_custom_popup', true);
+			foreach($popup_meta as $i => $field) {
+				if($field['type'] == 'info') {
+					$item_meta_data = $order_item->get_meta('custom_teddey_bear_data', true);
+					if(!$item_meta_data) {continue;}
+					foreach($item_meta_data['field'] as $i => $iRow) {
+						foreach($iRow as $j => $jRow) {
+							if($field['steptitle'] == $jRow['title'] && $j == 0) {
+								if(
+									isset($item_meta_data['field'][$i][0]['value'])
+									// && isset($item_meta_data['field'][$i][1]['value'])
+									// && isset($item_meta_data['field'][$i][2]['value'])
+									// && isset($item_meta_data['field'][$i][3]['value'])
+								) {
+									$item_meta_data['field'][$i][0]['value'] = $_GET['teddyname'];
+									global $wpdb;
+									$wpdb->update(
+										"{$wpdb->prefix}woocommerce_order_itemmeta",
+										[
+											'meta_value'		=> maybe_serialize($item_meta_data)
+										],
+										[
+											'meta_key'		=> 'custom_teddey_bear_data',
+											'order_item_id'	=> $item_id
+										],
+										['%s'],
+										['%s', '%d']
+									);
+									$json['message'] = __('Successfully Updated your teddy bear name.', 'teddybearsprompts');
+									$json['message'] = ['order_item_update_success'];
+									wp_send_json_success($json, 200);
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		wp_send_json_error($json);
+	}
+	public function suggested_names() {
+		$args = ['names' => [], 'hooks' => ['namesuggestionloaded']];
+		$filteredKeys = array_keys(TEDDY_BEAR_CUSTOMIZE_ADDON_OPTIONS);
+		$filteredData = [];
+		foreach($filteredKeys as $key) {
+			if(strpos($key, 'teddy-name-') !== false) {
+				$filteredData[] = TEDDY_BEAR_CUSTOMIZE_ADDON_OPTIONS[$key];
+			}
+		}
+		foreach($filteredData as $i => $name) {
+			$args['names'][] = $name;
+		}
+		wp_send_json_success($args);
 	}
 }

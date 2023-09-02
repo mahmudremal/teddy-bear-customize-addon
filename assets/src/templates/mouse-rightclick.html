@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Custom Context Menu</title>
+<style>
+  .context-menu {
+    position: absolute;
+    display: none;
+    background: white;
+    border: 1px solid #ccc;
+    padding: 5px;
+  }
+</style>
+</head>
+<body>
+  <button class="all-options">Right-click me</button>
+  
+  <div class="context-menu" id="customContextMenu">
+    <ul>
+      <li><a href="#">Reload</a></li>
+      <li><a href="#">Update</a></li>
+      <li><a href="#">Save</a></li>
+    </ul>
+  </div>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function() {
+      const button = document.querySelector(".all-options");
+      const contextMenu = document.getElementById("customContextMenu");
+      
+      button.addEventListener("contextmenu", function(event) {
+        event.preventDefault();
+        
+        contextMenu.style.left = event.clientX + "px";
+        contextMenu.style.top = event.clientY + "px";
+        contextMenu.style.display = "block";
+      });
+
+      // Hide the context menu on click outside
+      document.addEventListener("click", function(event) {
+        contextMenu.style.display = "none";
+      });
+
+      // Prevent the context menu from appearing on right-click
+      contextMenu.addEventListener("contextmenu", function(event) {
+        event.preventDefault();
+      });
+    });
+  </script>
+</body>
+</html>

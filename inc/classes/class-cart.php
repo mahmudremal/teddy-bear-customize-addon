@@ -13,9 +13,11 @@ class Cart {
 	use Singleton;
 	private $base;
 	private $showedAlready;
+	private $calculatedAlready;
 	protected function __construct() {
 		$this->base = [];
 		$this->showedAlready = [];
+		$this->calculatedAlready = [];
 		$this->setup_hooks();
 	}
 	protected function setup_hooks() {
@@ -29,11 +31,9 @@ class Cart {
 		// add_filter('woocommerce_order_item_name', [$this, 'woocommerce_order_item_name'], 10, 3);
 		
 		add_action('woocommerce_before_calculate_totals', [$this, 'woocommerce_calculate_totals'], 10, 1);
-		add_action('woocommerce_checkout_create_order_line_item', [$this, 'woocommerce_checkout_create_order_line_item'], 10, 4);
-	}
-	public function get_cart_item_meta($cart_item) {
-		$meta_key = 'custom_teddey_bear_makeup';
-		return isset($cart_item[$meta_key])?floatval($cart_item[$meta_key]):0;
+
+		add_filter('woocommerce_add_cart_item_data', [$this, 'woocommerce_add_cart_item_data'], 10, 4);
+		// add_filter('woocommerce_get_item_data', [$this, 'woocommerce_get_item_data'], 10, 4);
 	}
 
 	public function ajax_add_to_cart() {
@@ -58,23 +58,15 @@ class Cart {
 			if(isset($_FILES['voice'])) {
 				$is_uploaded = $this->custom_upload_audio_video($_FILES['voice']);
 			}
-			WC()->cart->add_to_cart($product_id, $quantity, 0, [], [
-				'custom_teddey_bear_makeup' => $charges,
-				'custom_teddey_bear_data'	=> $dataset
-			]);
-			$cart_item_key = WC()->cart->generate_cart_id($product_id);
-        	$cart_item = WC()->cart->get_cart_item($cart_item_key);
-
-			// print_r(WC()->cart->get_cart());
-			// wc_add_order_item_meta($cart_item['data']->get_id(), 'custom_teddey_bear_data', $dataset);
-
+			$cart_item_key = WC()->cart->add_to_cart($product_id, $quantity);
 			$json['hooks'] = ['popup_submitting_done'];
 			// $json['redirectedTo'] = wc_get_checkout_url();
 			// $json['message'] = __('Product added to cart successfully. Please hold on until you\'re redirected to checkout page.', 'teddybearsprompts');
 			$json['message'] = false;
+			$custom_data = (array) get_post_meta($product_id, '_teddy_custom_data', true);
 			$json['confirmation'] = [
 				'title'				=> sprintf(__('%s added to your cart successfully', 'teddybearsprompts'), get_the_title($product_id)),
-				'accessoriesUrl'	=> esc_url(TEDDY_BEAR_CUSTOMIZE_ADDON_OPTIONS['accessoriesUrl']),
+				'accessoriesUrl'	=> isset($custom_data['accessoriesUrl'])?esc_url($custom_data['accessoriesUrl']):false,
 				'checkoutUrl'		=> wc_get_checkout_url()
 			];
 			wp_send_json_success($json);
@@ -84,6 +76,31 @@ class Cart {
 			wp_send_json_error($json);
 		}
 		
+	}
+	public function woocommerce_add_cart_item_data($cart_item_data, $product_id, $variation_id, $quantity) {
+		if(!isset($_POST['dataset']) || !isset($_POST['dataset'])) {return $cart_item_data;}
+		$dataset = json_decode(preg_replace('/[\x00-\x1F\x80-\xFF]/', '', stripslashes(html_entity_decode($_POST['dataset']))), true);
+		$charges = json_decode(preg_replace('/[\x00-\x1F\x80-\xFF]/', '', stripslashes(html_entity_decode($_POST['charges']))), true);
+		
+		$cart_item_data['custom_teddey_bear_makeup'] = $charges;
+		$cart_item_data['custom_teddey_bear_data'] = $dataset;
+		
+		return $cart_item_data;
+	}
+	public function woocommerce_get_item_data($item_data, $cart_item) {
+		if(isset($cart_item['custom_teddey_bear_makeup'])) {
+			$item_data[] = [
+				'key' => 'Custom Makeup Charges',
+				'value' => $cart_item['custom_teddey_bear_makeup']
+			];
+		}
+		if(isset($cart_item['custom_teddey_bear_data'])) {
+			$item_data[] = [
+				'key' => 'Custom Teddy Bear Data',
+				'value' => $cart_item['custom_teddey_bear_data']
+			];
+		}
+		return $item_data;
 	}
 	public function woocommerce_cart_calculate_fees() {
 		if (is_admin() && !defined('DOING_AJAX')) {return;}
@@ -119,9 +136,10 @@ class Cart {
 	public function display_additional_charges($item_name, $cart_item, $cart_item_key) {
 		// if(isset($cart_item['_additional_charges_applied'])) {return $item_name;}
 		if(isset($cart_item['custom_teddey_bear_makeup']) && !in_array($cart_item_key, $this->showedAlready)) {
-			foreach ($cart_item['custom_teddey_bear_makeup'] as $fee) {
-				$item_name .= '<br>
-				<small class="additional-charges">'.esc_html($fee['item']).': '.wc_price($fee['price']).' x '.esc_html(number_format_i18n($cart_item['quantity'], 0)).'</small>';
+			foreach($cart_item['custom_teddey_bear_makeup'] as $fee) {
+				if(!empty($fee['price']) && is_numeric($fee['price'])) {
+					$item_name .= '<br><small class="additional-charges">'.esc_html($fee['item']).': '.wc_price($fee['price']).' x '.esc_html(number_format_i18n($cart_item['quantity'], 0)).'</small>';
+				}
 			}
 			// $cart_item['_additional_charges_applied'] = true;
 			$this->showedAlready[] = $cart_item_key;
@@ -132,33 +150,17 @@ class Cart {
 		if(is_admin() && !defined('DOING_AJAX')) {return;}
 	
 		foreach ($cart->get_cart() as $cart_item_key => $cart_item) {
-			if (array_key_exists('custom_teddey_bear_makeup', $cart_item)) {
+			if(array_key_exists('custom_teddey_bear_makeup', $cart_item) && !in_array($cart_item_key, $this->calculatedAlready)) {
 				$additional_cost = 0;
 				foreach($cart_item['custom_teddey_bear_makeup'] as $fee) {
-					$additional_cost += ($fee['price'] * $cart_item['quantity']);
-				}
-				$cart_item['data']->set_price($cart_item['data']->get_price() + $additional_cost);
-			}
-		}
-	}
-
-	public function woocommerce_checkout_create_order_line_item($item, $cart_item_key, $values, $order) {
-		if(isset($values['custom_teddey_bear_makeup'])) {
-			foreach($values['custom_teddey_bear_makeup'] as $meta) {
-				$item->add_meta_data(esc_html($meta['item']), $meta['price'], true);
-			}
-		}
-		if(isset($values['custom_teddey_bear_data'])) {
-			$extra_data = (array) $values['custom_teddey_bear_data'];
-			if(isset($extra_data['field'])) {
-				$extra_data['field'] = empty($extra_data['field'])?[]:(array) $extra_data['field'];
-				foreach($extra_data['field'] as $key => $fields) {
-					$fields = empty($fields)?[]:(array) $fields;
-					foreach($fields as $fkey => $field) {
-						$field['title'] = empty($field['title'])?__('N/A', 'teddybearsprompts'):$field['title'];
-						$item->add_meta_data($field['title'], $field['value'], true);
+					if(!empty($fee['price']) && is_numeric($fee['price'])) {
+						$additional_cost += ($fee['price'] * $cart_item['quantity']);
 					}
 				}
+				if($additional_cost > 0) {
+					$cart_item['data']->set_price($cart_item['data']->get_price() + $additional_cost);
+				}
+				$this->calculatedAlready[] = $cart_item_key;
 			}
 		}
 	}
@@ -168,7 +170,7 @@ class Cart {
 		$target_dir = $upload_dir['basedir'].'/'.$custom_dir.'/';
 		if(!file_exists($target_dir)) {mkdir($target_dir, 0755, true);}
 		$file_name = $file['name'];$file_tmp = $file['tmp_name'];$file_type = $file['type'];
-		$allowed_regex = '/^(audio|video)\/(.*?)/i';
+		$allowed_regex = '/^(audio|video|text)\/(.*?)/i';
 		if(!preg_match($allowed_regex, $file_type)) {
 			throw new \Exception(__('Error: Only audio and video files are allowed.', 'teddybearsprompts'));
 		}

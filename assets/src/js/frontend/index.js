@@ -46,6 +46,7 @@ import flatpickr from "flatpickr";
 
 			// this.move_lang_switcher();
 
+			this.show_add_to_wishlist();
 			this.popup_show_only4israel();
 			this.move_cart_icon2header();
 		}
@@ -94,13 +95,20 @@ import flatpickr from "flatpickr";
 			const thisClass = this;var template, html;
 			document.body.addEventListener('gotproductpopupresult', async (event) => {
 				thisClass.prompts.lastJson = thisClass.lastJson;
+				thisClass.popupCart.additionalPrices = [];
 				thisClass.popupCart.basePrice = parseFloat(thisClass.prompts.lastJson.product.price);
 				thisClass.popupCart.priceSign = thisClass.prompts.lastJson.product.currency;
 				template = await thisClass.prompts.get_template(thisClass);
 				html = document.createElement('div');html.appendChild(template);
 				// && json.header.product_photo
 				if(thisClass.Swal && thisClass.Swal.isVisible()) {
-					thisClass.prompts.progressSteps = [...new Set(thisClass.prompts.lastJson.product.custom_fields.map((row, i)=>(row.steptitle=='')?(i+1):row.steptitle))];
+					// thisClass.prompts.progressSteps = [...new Set(thisClass.prompts.lastJson.product.custom_fields.map((row, i)=>(row.steptitle=='')?(i+1):row.steptitle))];
+					thisClass.prompts.progressSteps = [...new Set(
+						thisClass.prompts.lastJson.product.custom_fields.map((row, i)=>(row.steptitle=='')?(i+1):(
+							`${(row?.stepicon)?`<div class="swal2-progress-step__icon">${row.stepicon}</div>`:``}
+							<span>${row.steptitle}</span>`
+						))
+					)];
 					thisClass.Swal.update({
 						progressSteps: thisClass.prompts.progressSteps,
 						currentProgressStep: 0,
@@ -125,6 +133,14 @@ import flatpickr from "flatpickr";
 						}).showToast();
 					}
 					setTimeout(() => {
+						var fields = thisClass.prompts.get_data(thisClass);
+						var voice = fields.find((row)=>row.type=='voice');
+						if(voice) {
+							voice.cost = (voice.cost == '')?0:voice.cost;
+							voiceRecord.meta_tag = voice.steptitle;
+							voiceRecord.duration = parseFloat((voice.duration == '')?'20':voice.duration);
+							// popupCart.addAdditionalPrice(voice.steptitle, parseFloat(voice.cost));
+						}
 						thisClass.prompts.init_events(thisClass);
 					}, 300);
 				}
@@ -151,18 +167,23 @@ import flatpickr from "flatpickr";
 						allowEscapeKey: true,
 						showDenyButton: true,
 						confirmButtonText: thisClass.i18n?.checkout??'Checkout',
-						denyButtonText: thisClass.i18n?.buymoreplushies??'Buy more plushies',
-						cancelButtonText: thisClass.i18n?.addaccessories??'Add accessories',
+						denyButtonText: thisClass.i18n?.addaccessories??'Add accessories',
+						cancelButtonText: thisClass.i18n?.buymoreplushies??'Buy more plushies',
 						confirmButtonColor: '#ffc52f',
 						cancelButtonColor: '#de424b',
 						dismissButtonColor: '#de424b',
-						customClass: {confirmButton: 'text-dark'},
+						customClass: {popup: 'fwp-confirmed_popup', confirmButton: 'text-dark'},
 						// focusConfirm: true,
 						// reverseButtons: true,
 						// backdrop: `rgba(0,0,123,0.4) url("https://sweetalert2.github.io/images/nyan-cat.gif") left top no-repeat`,
 						backdrop: `rgb(137 137 137 / 74%)`,
-
+						html: `<div class="dynamic_popup"></div>`,
 						showLoaderOnConfirm: true,
+						didOpen: async () => {
+							document.querySelector('.dynamic_popup')?.appendChild(
+								thisClass.popupNode.querySelector('.header_image')
+							);
+						},
 						allowOutsideClick: () => !Swal.isLoading(),
 					}).then((res) => {
 						if(res.isConfirmed) {
@@ -170,7 +191,6 @@ import flatpickr from "flatpickr";
 						} else if(res.isDenied) {
 							location.href = thisClass.lastJson.confirmation?.accessoriesUrl??false;
 						} else if(res.isDismissed) {} else {}
-						console.log(res);
 					});
 				}
 			});
@@ -182,11 +202,20 @@ import flatpickr from "flatpickr";
 				if(!(thisClass.lastJson?.translates??false)) {return;}
 				voiceRecord.i18n = thisClass.i18n = PROMPTS.i18n = {...thisClass.i18n, ...thisClass.lastJson.translates};
 			});
+			document.body.addEventListener('namesuggestionloaded', async (event) => {
+				if(!(thisClass.lastJson?.names??false)) {return;}
+				PROMPTS.names = thisClass.lastJson.names;
+			});
 		}
 		init_i18n() {
 			const thisClass = this;
 			var formdata = new FormData();
 			formdata.append('action', 'futurewordpress/project/ajax/i18n/js');
+			formdata.append('_nonce', thisClass.ajaxNonce);
+			thisClass.sendToServer(formdata);
+
+			var formdata = new FormData();
+			formdata.append('action', 'futurewordpress/project/ajax/suggested/names');
 			formdata.append('_nonce', thisClass.ajaxNonce);
 			thisClass.sendToServer(formdata);
 		}
@@ -336,9 +365,7 @@ import flatpickr from "flatpickr";
 			const thisClass = this;var form, html, config, json, card, node;
 			document.querySelectorAll('.init_cusomizeaddtocartbtn:not([data-handled])').forEach((el)=>{
 				el.dataset.handled = true;
-
 				thisClass.resizeCartButtons(el);
-
 				// Mode add to cart & action button on a div to fix justify spaces.
 				// card = el.parentElement;node = document.createElement('div');
 				// node.classList.add('fwp_custom_actions');node.appendChild(el.previousElementSibling);
@@ -431,15 +458,18 @@ import flatpickr from "flatpickr";
 		popup_show_only4israel() {
 			const dateString = new Date().toString();
 			const isIsrael = /\bIsrael\b/i.test(dateString);
+			// const isIsrael = /\bBangladesh\b/i.test(dateString);
 			if(isIsrael) {
 				let i = 0;
-				var theTimeout = setTimeout(() => {
-					const hasPopup = document.querySelector('.dialog-widget.dialog-lightbox-widget.dialog-type-buttons.dialog-type-lightbox.elementor-popup-modal');
+				var theInterval = setInterval(() => {
+					const hasPopup = document.querySelector('.dialog-widget.dialog-lightbox-widget.dialog-type-buttons.dialog-type-lightbox.elementor-popup-modal#elementor-popup-modal-788');
 					if(hasPopup) {
 						hasPopup.setAttribute('style', 'display: flex !important');
-						clearTimeout(theTimeout);
+						clearInterval(theInterval);
+					} else {
+						i++;
 					}
-					// if(i >= 200) {clearTimeout(theTimeout);}i++;
+					if(i >= 200) {clearInterval(theInterval);}i++;
 				}, 500);
 			}
 		}
@@ -463,16 +493,33 @@ import flatpickr from "flatpickr";
 			`;
 			node.querySelector('.fwp-custom-cart-icon').appendChild(cart.parentElement);
 			heart.parentElement.appendChild(node);
-			const mobileIcon = document.querySelector('#uael-mc__btn').parentElement;
-			mobileIcon.innerHTML = '';
-			mobileIcon.appendChild(
-				node.querySelector('.fwp-custom-cart-icon').cloneNode(true)
-			);
-			// console.log(heart.parentElement, node);
+			const mobileIcon = document.querySelector('#uael-mc__btn')?.parentElement;
+			if(!mobileIcon) {return;}mobileIcon.innerHTML = '';
+			const clonedNode = node.querySelector('.fwp-custom-cart-icon').cloneNode(true);
+			clonedNode.onclick = null;
+			mobileIcon.appendChild(clonedNode);
+		}
+		show_add_to_wishlist() {
+			const store = document.createElement('div');
+			setInterval(() => {
+				document.querySelectorAll('.teddy.bears .yith-wcwl-add-to-wishlist:not([data-handled])').forEach((el)=>{
+					el.dataset.handled = true;
+					var btn = el.querySelector('.yith-wcwl-add-button a');
+					var icon = btn?.querySelector('i');
+					if(btn && icon) {
+						store.appendChild(icon);
+						btn.innerHTML = '';
+						btn.appendChild(store.querySelector('i'));
+					}
+				});
+			}, 1500);
 		}
 		
 		clearAllFromCart() {
 			document.querySelectorAll('.woocommerce-page #content table.cart td.product-remove a').forEach((el)=>{el.click();});
+		}
+		esc_attr(text) {
+			return text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 		}
 
 		
