@@ -16,6 +16,30 @@ const popupCart = {
         }
         popupCart.updateTotalPrice();
     },
+    wc_addAdditionalPrice: (el, thisClass) => {
+        const price = parseFloat(el.dataset?.cost??'0');
+        var formdata = new FormData();
+        formdata.append('action', 'futurewordpress/project/ajax/update/cart');
+        formdata.append('_product', parseInt(el.dataset.product));
+        formdata.append('_nonce', thisClass.ajaxNonce);
+        formdata.append('_key', thisClass.cartItemKey);
+        formdata.append('_price', price);
+        formdata.append('_quantity', 1);
+        formdata.append('_mode', 'add');
+        thisClass.sendToServer(formdata);
+    },
+    wc_removeAdditionalPrice: (el, thisClass) => {
+        const price = parseFloat(el.dataset?.cost??'0');
+        var formdata = new FormData();
+        formdata.append('action', 'futurewordpress/project/ajax/update/cart');
+        formdata.append('_product', parseInt(el.dataset.product));
+        formdata.append('_nonce', thisClass.ajaxNonce);
+        formdata.append('_key', thisClass.cartItemKey);
+        formdata.append('_price', price);
+        formdata.append('_mode', 'del');
+        formdata.append('_quantity', 1);
+        thisClass.sendToServer(formdata);
+    },
     removeAdditionalPrice: (itemName, itemPrice = false) => {
         const index = popupCart.additionalPrices.findIndex(item => item.item === itemName);
         if (index !== -1) {

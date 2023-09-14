@@ -11,6 +11,7 @@ import Toastify from 'toastify-js';
 import voiceRecord from "./voicerecord";
 import popupCart from "./popupcart";
 import flatpickr from "flatpickr";
+import KeenSlider from 'keen-slider';
 
 
 ( function ( $ ) {
@@ -49,6 +50,7 @@ import flatpickr from "flatpickr";
 			this.show_add_to_wishlist();
 			this.popup_show_only4israel();
 			this.move_cart_icon2header();
+			this.init_wrapping_on_checkout();
 		}
 		init_toast() {
 			const thisClass = this;
@@ -153,6 +155,7 @@ import flatpickr from "flatpickr";
 					const popupNode = thisClass.Swal.getHtmlContainer();
 					thisClass.popupNode = document.createElement('div');
 					thisClass.popupNode.appendChild(popupNode.childNodes[0]);
+					thisClass.cartItemKey = thisClass.lastJson.confirmation?.cartItemKey??'';
 					thisClass.Swal.fire({
 						title: thisClass.lastJson.confirmation?.title??'',
 						// buttons: true,
@@ -179,10 +182,41 @@ import flatpickr from "flatpickr";
 						backdrop: `rgb(137 137 137 / 74%)`,
 						html: `<div class="dynamic_popup"></div>`,
 						showLoaderOnConfirm: true,
+						footer: `
+						<div class="swal2-footer__footer">
+							<h3 class="swal2-footer__footer__title">${thisClass.i18n?.youmayalsolike??'You may also like'}</h3>
+							<div class="keen-slider">
+								${thisClass.lastJson.confirmation.suggestion.map((product, i)=>`
+								<div class="keen-slider__slide ${i}" title="${thisClass.esc_attr(product.title)}" data-cost="${product.price}" data-product="${product.ID}">
+									${product.thumbnail} ${product.priceHtml}
+								</div>
+								`).join('')}
+							</div>
+						</div>
+						`,
 						didOpen: async () => {
 							document.querySelector('.dynamic_popup')?.appendChild(
 								thisClass.popupNode.querySelector('.header_image')
 							);
+							// document.querySelector('.dynamic_popup__footer')
+							const slider = new KeenSlider('.keen-slider', {
+								loop: true,
+								mode: "free",
+								slides: {perView: 5, spacing: 5},
+							});
+							setTimeout(() => {
+								document.querySelectorAll('.keen-slider .keen-slider__slide').forEach((el)=>{
+									el.addEventListener('click', (e) => {
+										if(el.classList.contains('active')) {
+											el.classList.remove('active');
+											popupCart.wc_removeAdditionalPrice(el, thisClass);
+										} else {
+											el.classList.add('active');
+											popupCart.wc_addAdditionalPrice(el, thisClass);
+										}
+									});
+								});
+							}, 1500);
 						},
 						allowOutsideClick: () => !Swal.isLoading(),
 					}).then((res) => {
@@ -205,6 +239,13 @@ import flatpickr from "flatpickr";
 			document.body.addEventListener('namesuggestionloaded', async (event) => {
 				if(!(thisClass.lastJson?.names??false)) {return;}
 				PROMPTS.names = thisClass.lastJson.names;
+			});
+			document.body.addEventListener('wrapping_adding_success', async (event) => {
+				if(thisClass?.addWrappingBtn) {
+					thisClass.addWrappingBtn.disabled = false;
+					thisClass.addWrappingBtn.querySelector('i.fa')?.classList.remove('fa-circle-o-notch', 'fa-spin');
+					location.reload();
+				}
 			});
 		}
 		init_i18n() {
@@ -513,6 +554,29 @@ import flatpickr from "flatpickr";
 					}
 				});
 			}, 1500);
+		}
+		init_wrapping_on_checkout() {
+			const thisClass = this;
+			const wrapping = document.querySelector('.wc_add_wrapping');
+			if(wrapping) {
+				const button = wrapping?.querySelector('.btn-rounded');
+				button?.addEventListener('click', (event) => {
+					event.preventDefault();
+					button.disabled = true;button.querySelector('i.fa')?.classList.add('fa-circle-o-notch', 'fa-spin');
+					thisClass.addWrappingBtn = button;
+					var formdata = new FormData();
+					formdata.append('action', 'futurewordpress/project/ajax/add/wrapping');
+					formdata.append('_nonce', thisClass.ajaxNonce);
+					formdata.append('_quantity', 1);
+					formdata.append('_mode', button.dataset?.mode);
+					thisClass.sendToServer(formdata);
+
+					setTimeout(() => {
+						button.disabled = false;button.querySelector('i.fa')?.classList.remove('fa-circle-o-notch', 'fa-spin');
+						setTimeout(() => {location.reload();}, 2000);
+					}, 20000);
+				});
+			}
 		}
 		
 		clearAllFromCart() {
