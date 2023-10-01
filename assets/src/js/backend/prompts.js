@@ -106,10 +106,12 @@ const PROMPTS = {
             div.appendChild(input);div.appendChild(label);node.appendChild(div);
         });
         wrap.appendChild(node);form.appendChild(wrap);
+
         button = document.createElement('button');button.type='button';
         button.classList.add('btn', 'button', 'save-this-popup');
         button.innerHTML = `<span>${PROMPTS.i18n?.update??'Update'}</span><div class="spinner-material"></div>`;
         form.appendChild(button);
+        
         button = document.createElement('button');button.type='button';
         button.classList.add('btn', 'button', 'add-new-types');
         button.innerHTML = PROMPTS.i18n?.addnewfield??'Add new field';
@@ -120,6 +122,7 @@ const PROMPTS = {
         button.innerHTML = PROMPTS.i18n?.proceed??'Proceed';
         button.style.display = 'none';
         form.appendChild(button);
+        
         // template.innerHTML='';
         template.appendChild(form);
         setTimeout(() => {

@@ -23,10 +23,11 @@ class Project {
 		Option::get_instance();
 		Install::get_instance();
 		Product::get_instance();
+		Myaccount::get_instance();
 		Meta_Boxes::get_instance();
 		Certificate::get_instance();
 
-		// $this->setup_hooks();
+		$this->setup_hooks();
 	}
 	protected function setup_hooks() {
 		add_filter( 'body_class', [ $this, 'body_class' ], 10, 1 );

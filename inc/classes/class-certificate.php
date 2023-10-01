@@ -16,24 +16,7 @@ class Certificate {
 	public function setup_hooks() {
 		add_filter('teddybearpopupaddon_generate_certificate', [$this, 'teddybearpopupaddon_generate_certificate'], 1, 2);
 		add_action('teddybearpopupaddon_mail_certificates', [$this, 'teddybearpopupaddon_mail_certificates'], 1, 2);
-		add_action('init', function() {
-			global $teddyBear__Order;
-			if(isset($_GET['certificate_preview'])) {
-				$parts = explode('-', $_GET['certificate_preview']);
-				// $parts = explode('', $parts[0]);
-				// $order_id = base_convert($parts[0], 36, 10);
-				// $item_id = base_convert($parts[1], 36, 10);
-
-				$order_id = $parts[0];
-				$item_id = $parts[1];
-
-				$order = wc_get_order((int) $order_id);
-				if(!$order || is_wp_error($order)) {
-					wp_die(__('Certificate not found!', 'teddybearsprompts'));
-				}
-				$teddyBear__Order->woocommerce_order_action_send_birth_certificates($order, $item_id);
-			}
-		}, 10, 0 );
+		add_action('init', [$this, 'teddybearpopupaddon_preview_certificate'], 10, 0);
 		
 	}
 	public function do_certificate__blank($args) {
@@ -264,6 +247,24 @@ class Certificate {
 			// print_r($args);wp_die();
 		} else {
 			throw new \ErrorException(__('Something went wrong. Email not sent.', 'teddybearsprompts'));
+		}
+	}
+	public function teddybearpopupaddon_preview_certificate() {
+		global $teddyBear__Order;
+		if(isset($_GET['certificate_preview']) && !empty($_GET['certificate_preview'])) {
+			$parts = explode('-', $_GET['certificate_preview']);
+			// $parts = explode('', $parts[0]);
+			// $order_id = base_convert($parts[0], 36, 10);
+			// $item_id = base_convert($parts[1], 36, 10);
+
+			$order_id = $parts[0];
+			$item_id = $parts[1];
+
+			$order = wc_get_order((int) $order_id);
+			if(!$order || is_wp_error($order)) {
+				wp_die(__('Certificate not found!', 'teddybearsprompts'));
+			}
+			$teddyBear__Order->woocommerce_order_action_send_birth_certificates($order, $item_id);
 		}
 	}
 	

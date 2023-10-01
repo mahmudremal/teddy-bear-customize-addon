@@ -15,12 +15,13 @@ class Addons {
 	}
 	protected function setup_hooks() {
 		add_filter('tm_epo_fields', [$this, 'tm_epo_fields'], 10, 1);
-		add_action('woocommerce_review_order_before_payment', [$this, 'woocommerce_review_order_before_payment'], 10, 0);
+		// add_action('woocommerce_review_order_before_payment', [$this, 'woocommerce_review_order_before_payment'], 10, 0);
 
 		add_action('wp_ajax_nopriv_futurewordpress/project/ajax/add/wrapping', [$this, 'add_wrapping'], 10, 0);
 		add_action('wp_ajax_futurewordpress/project/ajax/add/wrapping', [$this, 'add_wrapping'], 10, 0);
 
 		add_action('woocommerce_cart_calculate_fees', [$this, 'woocommerce_cart_calculate_fees'], 10, 0);
+		
 	}
 	public function tm_epo_fields($field_types) {
 		require_once(untrailingslashit(TEDDY_BEAR_CUSTOMIZE_ADDON_DIR_PATH).'/inc/widgets/elementor/widget-voice-upload.php');
@@ -59,25 +60,77 @@ class Addons {
 	}
 	public function add_wrapping() {
 		$json = ['message' => __('Something went wrong', 'teddybearsprompts'), 'hooks' => ['wrapping_adding_failed']];
+		if(!apply_filters('teddybear/project/system/isactive', 'addons-enable')) {
+			wp_send_json_error($json);
+		}
 		if(isset($_POST['_quantity']) && isset($_POST['_mode'])) {
 			switch($_POST['_mode']) {
 				case 'add':
+					if(isset($_POST['cartitemkey']) && !empty($_POST['cartitemkey'])) {
+						$cart = WC()->cart;$cart_item_key = $_POST['cartitemkey'];
+						$cart_contents = $cart->get_cart();
+						if(isset($cart_contents[$cart_item_key])) {
+							// Add additional data to the cart item
+							$cart_item = $cart_contents[$cart_item_key];
+							$cart_item['custom_teddey_bear_makeup'] = isset($cart_item['custom_teddey_bear_makeup'])?(array) $cart_item['custom_teddey_bear_makeup']:[];
+							foreach($cart_contents[$cart_item_key]['custom_teddey_bear_makeup'] as $i => $row) {
+								if($row['item'] == apply_filters('teddybear/project/system/getoption', 'addons-feetitle', 'Wrapping box')) {
+									unset($cart_contents[$cart_item_key]['custom_teddey_bear_makeup'][$i]);
+								}
+							}
+							$cart_contents[$cart_item_key]['custom_teddey_bear_makeup'][] = [
+								'item' => apply_filters('teddybear/project/system/getoption', 'addons-feetitle', 'Wrapping box'),
+								'price' => apply_filters('teddybear/project/system/getoption', 'addons-feeamount', 0.00)
+							];
+
+							// Update the cart with the modified item
+							$cart->set_cart_contents($cart_contents);
+
+							// Optionally, you can also update the cart totals
+							$cart->calculate_totals();
+						} else {
+							wp_send_json_error($json);
+						}
+					} else {
+						WC()->session->set('added_wrapping', 'yes');
+					}
 					$json['message'] = __('Wrapping added successfully!', 'teddybearsprompts');
 					$json['hooks'] = ['wrapping_adding_success'];
-					WC()->session->set('added_wrapping', 'yes');
 					wp_send_json_success($json);
 					break;
 				case 'del':
+					if(isset($_POST['cartitemkey']) && !empty($_POST['cartitemkey'])) {
+						$cart = WC()->cart;$cart_item_key = $_POST['cartitemkey'];
+						$cart_contents = $cart->get_cart();
+						if(isset($cart_contents[$cart_item_key])) {
+							// Add additional data to the cart item
+							$cart_item = $cart_contents[$cart_item_key];
+							$cart_item['custom_teddey_bear_makeup'] = isset($cart_item['custom_teddey_bear_makeup'])?(array) $cart_item['custom_teddey_bear_makeup']:[];
+							foreach($cart_item['custom_teddey_bear_makeup'] as $i => $fee) {
+								if(isset($fee['item']) && $fee['item'] == apply_filters('teddybear/project/system/getoption', 'addons-feetitle', 'Wrapping box')) {
+									unset($cart_item['custom_teddey_bear_makeup'][$i]);
+									$cart_contents[$cart_item_key] = $cart_item;
+									// Update the cart with the modified item
+									$cart->set_cart_contents($cart_contents);
+									// Optionally, you can also update the cart totals
+									$cart->calculate_totals();
+								}
+							}
+						} else {
+							wp_send_json_error($json);
+						}
+					} else {
+						WC()->session->set('added_wrapping', false);
+					}
 					$json['message'] = __('Wrapping removed successfully!', 'teddybearsprompts');
-					$json['hooks'] = ['wrapping_adding_success'];
-					WC()->session->set('added_wrapping', false);
+					$json['hooks'] = ['wrapping_removing_success'];
 					wp_send_json_error($json);
 					break;
 				default:
 					break;
 			}
 		}
-		wp_send_json_error($json);
+		
 	}
 	public function woocommerce_cart_calculate_fees() {
 		if(WC()->session->get('added_wrapping') != 'yes') {return;}

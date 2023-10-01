@@ -271,31 +271,22 @@ import tippy from 'tippy.js';
 			html = document.createElement('div');
 			html.appendChild(PROMPTS.get_template(thisClass));
 			Swal.fire({
-				title: false, // thisClass.i18n?.generateaicontent??'Generate AI content',
+				title: false,
 				width: 600,
-				// padding: '3em',
-				// color: '#716add',
-				// background: 'url(https://png.pngtree.com/thumb_back/fh260/background/20190221/ourmid/pngtree-ai-artificial-intelligence-technology-concise-image_19646.jpg) rgb(255, 255, 255) center center no-repeat',
 				showConfirmButton: false,
 				showCancelButton: false,
 				showCloseButton: true,
-				// confirmButtonText: 'Generate',
 				cancelButtonText: 'Close',
 				confirmButtonColor: '#3085d6',
 				cancelButtonColor: '#d33',
 				customClass: {
 					popup: 'fwp-swal2-popup'
 				},
-				// focusConfirm: true,
-				// reverseButtons: true,
-				// backdrop: `rgba(0,0,123,0.4) url("https://sweetalert2.github.io/images/nyan-cat.gif") left top no-repeat`,
 				backdrop: `rgba(0,0,123,0.4)`,
 
 				showLoaderOnConfirm: true,
-				allowOutsideClick: false, // () => !Swal.isLoading(),
-				
+				allowOutsideClick: false,
 				html: html.innerHTML,
-				// footer: '<a href="">Why do I have this issue?</a>',
 				didOpen: async () => {
 					var formdata = new FormData();
 					formdata.append('action', 'futurewordpress/project/ajax/edit/product');
@@ -342,48 +333,41 @@ import tippy from 'tippy.js';
 		init_wavesurfer() {
 			document.querySelectorAll('.fwp-outfit__player[data-audio]').forEach((el) => {
 			  // Web Audio example
-		  
 			  const audio = new Audio();
 			  audio.controls = true;
 			  audio.src = el.dataset.audio;
-		  
 			  // Create a WaveSurfer instance and pass the media element
-			  const wavesurfer = WaveSurfer.create({
-				container: el,
-				media: audio,
-				waveColor: 'rgb(200, 0, 200)',
-				progressColor: 'rgb(100, 0, 100)',
-				interact: false, // Disable user interactions with the waveform
-			  });
+				const wavesurfer = WaveSurfer.create({
+					container: el,
+					media: audio,
+					waveColor: 'rgb(200, 0, 200)',
+					progressColor: 'rgb(100, 0, 100)',
+					interact: false, // Disable user interactions with the waveform
+					height: 20, // Set the desired canvas height in pixels
+					barWidth: 2,
+					barGap: 1,
+					barRadius: 2,
+				});
+				// Optionally, add the audio to the page to see the controls
+				el.parentElement.insertBefore(audio, el);
+				audio.addEventListener('play', () => {wavesurfer.play();});
+				audio.addEventListener('pause', () => {wavesurfer.pause();});
 		  
-			  // Optionally, add the audio to the page to see the controls
-			  el.parentElement.insertBefore(audio, el);
-		  
-			  // Play the audio and the WaveSurfer when the audio starts playing
-			  audio.addEventListener('play', () => {
-				wavesurfer.play();
-			  });
-		  
-			  // Pause the WaveSurfer when the audio is paused
-			  audio.addEventListener('pause', () => {
-				wavesurfer.pause();
-			  });
-		  
-			  // Create Web Audio context
-			  const audioContext = new AudioContext();
-		  
-			  // Define the equalizer bands
-			  const eqBands = [32, 64, 125, 250, 500, 1000, 2000, 4000, 8000, 16000];
-		  
-			  // Create a biquad filter for each band
-			  const filters = eqBands.map((band) => {
-				const filter = audioContext.createBiquadFilter();
-				filter.type = band <= 32 ? 'lowshelf' : band >= 16000 ? 'highshelf' : 'peaking'; // Fixed 'hishelf' to 'highshelf'
-				filter.gain.value = Math.random() * 40 - 20;
-				filter.Q.value = 1; // resonance
-				filter.frequency.value = band; // the cut-off frequency
-				return filter;
-			  });
+				// Create Web Audio context
+				const audioContext = new AudioContext();
+
+				// Define the equalizer bands
+				const eqBands = [32, 64, 125, 250, 500, 1000, 2000, 4000, 8000, 16000];
+
+				// Create a biquad filter for each band
+				const filters = eqBands.map((band) => {
+					const filter = audioContext.createBiquadFilter();
+					filter.type = band <= 32 ? 'lowshelf' : band >= 16000 ? 'highshelf' : 'peaking'; // Fixed 'hishelf' to 'highshelf'
+					filter.gain.value = Math.random() * 40 - 20;
+					filter.Q.value = 1; // resonance
+					filter.frequency.value = band; // the cut-off frequency
+					return filter;
+				});
 		  
 			  // Connect the audio to the equalizer
 			//   audio.addEventListener(

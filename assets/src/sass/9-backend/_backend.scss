@@ -471,7 +471,7 @@
   }
   table tbody tr td {
     position: relative;
-    input:not([type="checkbox"]):not([type="radio"]), select, textarea {
+    input:not([type="checkbox"]):not([type="radio"]):not([type="color"]), select, textarea {
       width: auto;
       display: block;
       max-width: unset;

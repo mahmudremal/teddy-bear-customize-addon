@@ -99,7 +99,7 @@ class Menus {
 		return $args;
 	}
 	public function menus($args) {
-		$args['standard'] 		= [
+		$args['standard']		= [
 			'title'							=> __('General', 'teddybearsprompts'),
 			'description'					=> __('General settings for teddy-bear customization popup.', 'teddybearsprompts'),
 			'fields'						=> [
@@ -142,7 +142,7 @@ class Menus {
 				],
 			]
 		];
-		$args['default'] 		= [
+		$args['default']		= [
 			'title'							=> __('Teddy Meta', 'teddybearsprompts'),
 			'description'					=> __('Teddy bear\'s default data that will be replaced if meta on specific product not exists or empty exists. Existing data won\'t be replaced.', 'teddybearsprompts'),
 			'fields'						=> [
@@ -183,7 +183,7 @@ class Menus {
 				],
 			]
 		];
-		$args['names'] 		= [
+		$args['names']			= [
 			'title'							=> __('Teddy name', 'teddybearsprompts'),
 			'description'					=> __('List of teddy names that will include in a lottery when user choose to suggest a teddy name.', 'teddybearsprompts'),
 			'fields'						=> [
@@ -197,7 +197,7 @@ class Menus {
 				],
 			]
 		];
-		$args['addons'] 		= [
+		$args['addons']			= [
 			'title'							=> __('Addons', 'teddybearsprompts'),
 			'description'					=> __('Necessary addons for after customization process. Including packaging wrappings.', 'teddybearsprompts'),
 			'fields'						=> [
@@ -256,6 +256,61 @@ class Menus {
 					'description'			=> __('The amount for the label or wrapping box.', 'teddybearsprompts'),
 					'type'					=> 'text',
 					'default'				=> false
+				],
+			]
+		];
+		$args['badges']		= [
+			'title'							=> __('Badges', 'teddybearsprompts'),
+			'description'					=> __('Products shop grid featured & Best Seller badges', 'teddybearsprompts'),
+			'fields'						=> [
+				[
+					'id' 						=> 'badges-enable',
+					'label'					=> __('Enable', 'teddybearsprompts'),
+					'description'			=> __('Mark to enable badges on products grid.', 'teddybearsprompts'),
+					'type'					=> 'checkbox',
+					'default'				=> false
+				],
+				[
+					'id' 						=> 'badges-featured',
+					'label'					=> __('Enable Featured', 'teddybearsprompts'),
+					'description'			=> __('Mark to enable individual featured badge.', 'teddybearsprompts'),
+					'type'					=> 'checkbox',
+					'default'				=> false
+				],
+				[
+					'id' 						=> 'badges-bestseller',
+					'label'					=> __('Enable Best Seller', 'teddybearsprompts'),
+					'description'			=> __('Mark to enable individual best seller badge.', 'teddybearsprompts'),
+					'type'					=> 'checkbox',
+					'default'				=> false
+				],
+				[
+					'id' 						=> 'badges-featured-bgcolor',
+					'label'					=> __('Featured BG color', 'teddybearsprompts'),
+					'description'			=> __('Define a color as background color for featured image badge.', 'teddybearsprompts'),
+					'type'					=> 'color',
+					'default'				=> '#e63f51'
+				],
+				[
+					'id' 						=> 'badges-featured-color',
+					'label'					=> __('Featured Text color', 'teddybearsprompts'),
+					'description'			=> __('Define a color as text color for featured image badge.', 'teddybearsprompts'),
+					'type'					=> 'color',
+					'default'				=> '#ffffff'
+				],
+				[
+					'id' 						=> 'badges-bestseller-bgcolor',
+					'label'					=> __('Bestseller BG color', 'teddybearsprompts'),
+					'description'			=> __('Define a color as background color for bestseller image badge.', 'teddybearsprompts'),
+					'type'					=> 'color',
+					'default'				=> '#FFCF02'
+				],
+				[
+					'id' 						=> 'badges-bestseller-color',
+					'label'					=> __('Bestseller Text color', 'teddybearsprompts'),
+					'description'			=> __('Define a color as text color for bestseller image badge.', 'teddybearsprompts'),
+					'type'					=> 'color',
+					'default'				=> '#333'
 				],
 			]
 		];

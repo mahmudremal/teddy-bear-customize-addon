@@ -115,7 +115,8 @@ class Ajax {
 						$json['product']['custom_fields'][$i]['options'][$j]['imageUrl'] = wp_get_attachment_url($option['image']);
 					}
 					if(isset($option['thumb']) && !empty($option['thumb'])) {
-						$json['product']['custom_fields'][$i]['groups'][$k]['options'][$l]['thumbUrl'] = wp_get_attachment_url($option['thumb']);
+						// $json['product']['custom_fields'][$i]['groups'][$k]['options'][$l]['thumbUrl'] = wp_get_attachment_url($option['thumb']);
+						$json['product']['custom_fields'][$i]['options'][$j]['thumbUrl'] = wp_get_attachment_url($option['thumb']);
 					}
 				}
 			}

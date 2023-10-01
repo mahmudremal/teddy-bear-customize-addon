@@ -49,6 +49,18 @@ const PROMPTS = {
                 }
             });
         });
+        document.querySelectorAll('hgf.form-fields__group__outfit fieldset > .form-wrap__image:not([data-handled])').forEach((el) => {
+            const random = 'abcdefghijklmnopqrstuvwxyz';
+            const size = 8;let code = '';
+            for(let i = 1; i < size; i++) {code += random[Math.abs(Math.floor(Math.random() * random.length))];}
+            code = code.toLowerCase() + Date.now().toString();
+            el.classList.add('keen-slider');el.id = code;code = '#' + code;
+            el?.childNodes.forEach((item) => {item.classList.add('keen-slider__slide');});
+            const slider = new thisClass.KeenSlider(code, {
+                loop: false, mode: "free", slides: {perView: 5, spacing: 5},
+            });
+            document.querySelectorAll(code).forEach((id) => {id.dataset.handled = true;});
+        });
         document.querySelectorAll('.form-control[name="field.9000"]:not([data-handled])').forEach((input)=>{
             input.dataset.handled = true;
             let awesomplete = new Awesomplete(input, {
@@ -261,8 +273,10 @@ const PROMPTS = {
                 } else {}
             });
         });
-        document.querySelector('.calculated-prices .price_amount')?.addEventListener('click', (event) => {
-            document.querySelector('.popup_foot .button[data-react="continue"]')?.click();
+        document.querySelectorAll('.popup-prices > .button, .calculated-prices .price_amount').forEach((el) => {
+            el.addEventListener('click', (event) => {
+                document.querySelector('.popup_foot .button[data-react="continue"]')?.click();
+            });
         });
         
         PROMPTS.currentStep=0;PROMPTS.do_pagination(true, thisClass);
@@ -278,6 +292,9 @@ const PROMPTS = {
                 <span class="back2previous_step d-none" data-icon="dashicons-before dashicons-arrow-left-alt" type="button" data-react="back">Back</span>
                 <img class="dynamic_popup__header__image" src="${thisClass.config?.siteLogo??''}" alt="">
                 <div class="popup-prices">
+                    <button class="btn btn-primary button">
+                        <span>${PROMPTS.i18n?.add_to_cart??'Add To Cart'}</span><div class="spinner-circular-tube"></div>
+                    </button>
                     <button class="calculated-prices">
                         <span>${PROMPTS.i18n?.total??'Total'}</span><div class="price_amount">${(PROMPTS.lastJson.product && PROMPTS.lastJson.product.priceHtml)?PROMPTS.lastJson.product.priceHtml:(thisClass.config?.currencySign??'$')+'0.00'}</div>
                     </button>

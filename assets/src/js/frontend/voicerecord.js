@@ -70,6 +70,11 @@ const voiceRecord = {
       voiceRecord.uploadInput.click();
     });
     voiceRecord.uploadInput.addEventListener('change', voiceRecord.uploadAudio);
+    voiceRecord.uploadInput.addEventListener('click', (event) => {
+        const audioupload_instuction = voiceRecord.i18n?.audioupload_instuction??`Please upload file upto 20 seconds.`;
+        voiceRecord.audioInstructPreview.innerHTML = audioupload_instuction.replace(/(\r\n|\n\r|\r|\n)/g, '<br>' + '$1');
+        voiceRecord.audioInstructPreview.classList.remove('d-none');
+    });
     rootElement.appendChild(voiceRecord.uploadButton);
 
     // Create release button
@@ -91,7 +96,7 @@ const voiceRecord = {
       voiceRecord.skipButton.classList.add('do_recorder__skipped');
       voiceRecord.releaseButton.classList.remove('do_recorder__released');
       voiceRecord.popupCart.removeAdditionalPrice(voiceRecord.meta_tag, parseFloat(voiceRecord.recordButton.dataset.cost));
-      voiceRecord.laterPreview.classList.add('d-none');
+      voiceRecord.audioInstructPreview.classList.add('d-none');
     });
     rootElement.appendChild(voiceRecord.skipButton);
 
@@ -103,12 +108,11 @@ const voiceRecord = {
     audioPreview.style.display = 'none';
     rootElement.appendChild(audioPreview);
 
-    // Create audio element for preview
-    voiceRecord.laterPreview = document.createElement('p');
-    voiceRecord.laterPreview.classList.add('audio-later-instruction', 'd-none');
-    var audiolater_instuction = voiceRecord.i18n?.audiolater_instuction??`1. Receive instructions & button in order email.\n2. Upload audio file anytime later.\n3. Send audio when ready.`;
-    voiceRecord.laterPreview.innerHTML = audiolater_instuction.replace(/(\r\n|\n\r|\r|\n)/g, '<br>' + '$1');
-    rootElement.appendChild(voiceRecord.laterPreview);
+    // Instruction for recording audio
+    voiceRecord.audioInstructPreview = document.createElement('p');
+    voiceRecord.audioInstructPreview.classList.add('audio-record-instruction', 'd-none');
+    voiceRecord.audioInstructPreview.innerHTML = '';
+    rootElement.appendChild(voiceRecord.audioInstructPreview);
 
     // Create audio element for preview
     voiceRecord.wavePreview = document.createElement('div');
@@ -158,7 +162,9 @@ const voiceRecord = {
           voiceRecord.recordButton.dataset.cost == ''
         )?'0':voiceRecord.recordButton.dataset.cost;
         voiceRecord.popupCart.addAdditionalPrice(voiceRecord.meta_tag, parseFloat(voiceRecord.recordButton.dataset.cost));
-        voiceRecord.recordedBlob = await fetch(voiceRecord.record.getRecordedUrl()).then(r => r.blob());
+        setTimeout(async () => {
+          voiceRecord.recordedBlob = await fetch(voiceRecord.record.getRecordedUrl()).then(r => r.blob());
+        }, 800);
         return;
       }
       recButton.disabled = true;
@@ -169,7 +175,9 @@ const voiceRecord = {
         recButton.disabled = false;
         voiceRecord.skipButton.classList.remove('do_recorder__skipped');
         voiceRecord.releaseButton.classList.remove('do_recorder__released');
-        voiceRecord.laterPreview.classList.add('d-none');
+        const audiorecord_instuction = voiceRecord.i18n?.audiorecord_instuction??`Please record your voice upto 20 seconds.`;
+        voiceRecord.audioInstructPreview.innerHTML = audiorecord_instuction.replace(/(\r\n|\n\r|\r|\n)/g, '<br>' + '$1');
+        voiceRecord.audioInstructPreview.classList.remove('d-none');
         /** **here** */
       })
     }
@@ -190,9 +198,9 @@ const voiceRecord = {
         voiceRecord.wavesurfer.setTime(0);
       });
     });
-    voiceRecord.record.on('stopRecording', () => {
+    voiceRecord.record.on('stopRecording', async () => {
       voiceRecord.downloadButton.href = voiceRecord.audioPreview.src = voiceRecord.record.getRecordedUrl();
-      voiceRecord.downloadButton.download = voiceRecord.recordedFileName();voiceRecord.downloadButton.style.display = '';
+      voiceRecord.downloadButton.download = await voiceRecord.recordedFileName();voiceRecord.downloadButton.style.display = '';
       if(voiceRecord?.recordInterval) {clearInterval(voiceRecord.recordInterval);}
     });
     voiceRecord.record.on('startRecording', () => {
@@ -235,6 +243,7 @@ const voiceRecord = {
     if (voiceRecord.recorder) {
       voiceRecord.recorder.stopRecording(function () {
         voiceRecord.recordedBlob = voiceRecord.recorder.getBlob();
+
         voiceRecord.audioPreview.src = URL.createObjectURL(voiceRecord.recordedBlob);
   
         // Stop and destroy the wavesurfer instance
@@ -290,14 +299,30 @@ const voiceRecord = {
     // voiceRecord.releaseButton.innerHTML = icons.tick + voiceRecord.releaseButton.innerHTML;
     voiceRecord.skipButton.classList.remove('do_recorder__skipped');
     voiceRecord.releaseButton.classList.add('do_recorder__released');
-    voiceRecord.laterPreview.classList.remove('d-none');
+    const audiolater_instuction = voiceRecord.i18n?.audiolater_instuction??`1. Receive instructions & button in order email.\n2. Upload audio file anytime later.\n3. Send audio when ready.`;
+    voiceRecord.audioInstructPreview.innerHTML = audiolater_instuction.replace(/(\r\n|\n\r|\r|\n)/g, '<br>' + '$1');
+    voiceRecord.audioInstructPreview.classList.remove('d-none');
     voiceRecord.rootElement.classList.remove('visible_audio');
   },
-  recordedFileName: () => {
-    const unique = (new Date()).getTime();
+  recordedFileName: async () => {
+    const unique = (new Date()).getTime();const prefix = 'recorded-';
     // Math.floor(Math.random() * (999999999999 - 123 + 1) + 123);
-    const prefix = 'recorded-';const suffix = '.webm';
-    return prefix+unique+suffix;
+
+    const mimeType = voiceRecord.recordedBlob?.type;
+    const audioMimeTypeRegex = /^audio\//;
+    const videoMimeTypeRegex = /^video\//;
+    if (audioMimeTypeRegex.test(mimeType)) {
+      const extension = mimeType.split('/')[1];
+      const suffix = (extension.trim() == '')?'.webm':'.' + extension;return prefix+unique+suffix;
+    } else if (videoMimeTypeRegex.test(mimeType)) {
+      const extension = mimeType.split('/')[1];
+      const suffix = (extension.trim() == '')?'.webm':'.' + extension;return prefix+unique+suffix;
+    } else {
+      const extension = 'webm';
+      voiceRecord.recordedBlob = await new Blob([voiceRecord.recordedBlob], { type: 'audio/webm' });
+      const suffix = (extension.trim() == '')?'.webm':'.' + extension;return prefix+unique+suffix;
+    }
+    // const suffix = (extension.trim() == '')?'.webm':'.' + extension;return prefix+unique+suffix;
   },
   uploadAudio: async (event) => {
     var file = event.target.files[0];
@@ -305,7 +330,6 @@ const voiceRecord = {
     if (file) {
       voiceRecord.skipButton.classList.remove('do_recorder__skipped');
       voiceRecord.releaseButton.classList.remove('do_recorder__released');
-      voiceRecord.laterPreview.classList.add('d-none');
       if(file.size > (1024 * 1024 * 400)) {
         alert('Max uploaded file size is 400MB');
       } else {
@@ -314,11 +338,12 @@ const voiceRecord = {
         voiceRecord.audioPreview.src = fileURL;
         await voiceRecord.wavesurfer.load(fileURL);
         voiceRecord.rootElement.classList.add('visible_audio');
+        var second = voiceRecord?.waveAudioPreview.querySelector('[data-timer-type="s"]');
+        if(second) {second.innerHTML = (voiceRecord.wavesurfer?.duration??0.00)?.toFixed(2).replace('.', ':')??'0:00';}
         if((voiceRecord.wavesurfer?.duration??0) > voiceRecord.duration) {
           var text = voiceRecord.i18n?.audioexcedduration??'Your selected audio file exceed maximum duration of 20sec.';
           voiceRecord.toastify({text: text,duration: 45000,close: true,gravity: "top",position: "right",stopOnFocus: true,style: {background: 'linear-gradient(to right, rgb(255 180 117), rgb(251, 122, 72))'}}).showToast();
-          // console.log(voiceRecord.wavesurfer?.duration);
-          
+
           voiceRecord.wavesurfer.stop();
           voiceRecord.recordedBlob = null;
           // voiceRecord.wavesurfer.destroy();

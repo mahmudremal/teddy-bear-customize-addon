@@ -32,7 +32,7 @@ class Order {
 		 * Actions
 		 */
 		// add_shortcode( 'checkout_video', [ $this, 'checkout_video' ] );
-		add_action('add_meta_boxes',[$this, 'add_custom_meta_box']);
+		add_action('add_meta_boxes', [$this, 'add_custom_meta_box']);
 
 		add_action('woocommerce_order_item_meta_end', [$this, 'woocommerce_order_item_add_certificate_link'], 11, 4);
 
@@ -41,7 +41,7 @@ class Order {
 
 		add_filter('woocommerce_order_actions', [$this, 'woocommerce_order_actions'], 10, 1);
 		add_action('woocommerce_order_action_send_birth_certificates', [$this, 'woocommerce_order_action_send_birth_certificates'], 10, 1);
-		
+
 		add_action('woocommerce_checkout_create_order_line_item', [$this, 'woocommerce_checkout_create_order_line_item'], 10, 4);
 		add_action('woocommerce_new_order_item', [$this, 'woocommerce_new_order_item'], 10, 3);
 		// add_action('woocommerce_order_item_get_internal_meta_keys', [$this, 'woocommerce_order_item_get_internal_meta_keys'], 10, 1);
@@ -87,8 +87,9 @@ class Order {
 						<ul class="fwp-outfit__list">
 						<?php
 						foreach($item_meta_data as $meta) {
+
 							if(is_array($meta->value)) {continue;}
-							$thumbnailImage = false;
+							$thumbnailImage = $voiceFileExists = $voiceFileArgs = false;
 							
 							// Getting Icons.
 							$custom_data = (array) $this->get_order_item_meta($order_item->get_id(), 'custom_teddey_bear_data');
@@ -96,6 +97,12 @@ class Order {
 								foreach((array) $custom_data['field'] as $i => $iRow) {
 									if(is_array($iRow)) {
 										foreach($iRow as $j => $jRow) {
+
+											if(isset($jRow['voice']) && !empty($jRow['voice'])) {
+												// $voiceFileExists = $target_dir.$jRow['voice'];
+												$voiceFileArgs = ['url' => $target_dir.$jRow['voice'], 'key' => $jRow['title'], 'name' => $jRow['voice']];
+												// print_r($voiceFileExists);
+											}
 											$jRow = (object) $jRow;
 											if(
 												isset($jRow->value) && isset($jRow->price) && isset($jRow->image) && 
@@ -115,18 +122,22 @@ class Order {
 								}
 							}
 							
-							$target_file = (file_exists($target_dir.$meta->value) && !is_dir($target_dir.$meta->value))?$target_dir.$meta->value:false;
+							// $target_file = (file_exists($target_dir.$meta->value) && !is_dir($target_dir.$meta->value))?$target_dir.$meta->value:false;
+							$target_file = ($voiceFileExists && file_exists($voiceFileExists) && !is_dir($voiceFileExists))?$voiceFileExists:false;
 							?>
-							<li class="fwp-outfit__items <?php echo esc_attr(($target_file)?'fwp-outfit__audio':''); ?>">
-								<?php if(!$target_file): ?>
-									<?php if($thumbnailImage): ?><img src="<?php echo esc_url($thumbnailImage); ?>" alt="<?php echo esc_attr($meta->value); ?>" class="fwp-outfit__image" data-product="<?php echo esc_attr($item_name); ?>" data-item="<?php echo esc_attr($meta->key); ?>" data-price="<?php echo esc_attr($meta->value); ?>"><?php endif; ?>
-									<span class="fwp-outfit__title"><?php echo esc_html($meta->key); ?></span>
-									<span class="fwp-outfit__price"><?php echo wp_kses_post($meta->value); ?></span>
-								<?php else: ?>
-									<div class="fwp-outfit__player" data-audio="<?php echo esc_url(site_url(str_replace([ABSPATH], [''], $target_file))); ?>" title="<?php echo esc_attr($meta->value); ?>"></div>
-								<?php endif; ?>
+							<li class="fwp-outfit__items">
+								<?php if($thumbnailImage): ?><img src="<?php echo esc_url($thumbnailImage); ?>" alt="<?php echo esc_attr($meta->value); ?>" class="fwp-outfit__image" data-product="<?php echo esc_attr($item_name); ?>" data-item="<?php echo esc_attr($meta->key); ?>" data-price="<?php echo esc_attr($meta->value); ?>"><?php endif; ?>
+								<span class="fwp-outfit__title"><?php echo esc_html($meta->key); ?></span>
+								<span class="fwp-outfit__price"><?php echo wp_kses_post($meta->value); ?></span>
 							</li>
 							<?php
+							if(isset($voiceFileArgs['url']) && isset($voiceFileArgs['key']) && !empty($voiceFileArgs['key']) && $meta->key == $voiceFileArgs['key']) {
+								?>
+								<li class="fwp-outfit__items fwp-outfit__audio">
+									<div class="fwp-outfit__player" data-audio="<?php echo esc_url(site_url(str_replace([ABSPATH], [''], $voiceFileArgs['url']))); ?>" title="<?php echo esc_attr($meta->value); ?>"></div>
+								</li>
+								<?php
+							}
 						}
 						?>
 						<?php if($custom_data): ?>
@@ -137,7 +148,7 @@ class Order {
 						</ul>
 						<?php
 					} else {
-						echo '<p>No custom meta data found for this item.</p>';
+						// echo '<p>No custom meta data found for this item.</p>';
 					}
 				}
 				if(count($teddyNameRequired) >= 1) {
@@ -175,11 +186,12 @@ class Order {
 	public function woocommerce_order_item_meta_end($item_id, $item, $order, $plain_text) {
 		// if(!isset($order->is_order_confirmation) || $order->is_order_confirmation !== true) {return;}
 		if($this->confirmMailTrack !== true) {return;}global $teddyProduct;
-
+		
 		$order_id  = $order->get_id();
 		$product_id = $item->get_product_id();
 		$custom_popup = $teddyProduct->get_post_meta($product_id, '_product_custom_popup', true);
 		if(!$custom_popup || empty($custom_popup)) {return;}
+		
 		
 		
 		$item_metas = $item->get_meta_data();
@@ -193,15 +205,20 @@ class Order {
 				}
 				if($voiceShouldExists) {
 					$meta_data = $item->get_meta('custom_teddey_bear_data', true);
-					foreach($meta_data['field'] as $field) {
-						foreach($field as $i => $row) {
-							if($row['title'] == $voiceShouldExists) {
-								$voiceFileExists = true;
+					if(isset($meta_data['field'])) {
+						if( ! is_array($meta_data['field'])) {
+							$meta_data = (array) $meta_data;
+						}
+						foreach($meta_data['field'] as $field) {
+							foreach($field as $i => $row) {
+								if($row['title'] == $voiceShouldExists) {
+									$voiceFileExists = true;
+								}
 							}
 						}
 					}
 				}
-				if($voiceShouldExists && !$voiceFileExists) {
+				if($voiceShouldExists && ! $voiceFileExists) {
 					// $uploadVoiceURL = site_url('upload-voice/'.$order_id.'/'.$item_id.'/');
 					$uploadVoiceURL = 'mailto:'.get_option('admin_email').'?subject='.esc_attr(__('Voice Record', 'teddybearsprompts')).'&body='.esc_attr(sprintf(__('Order #%d, Cart Item: #%d, Item Subtotal: %s %s Product: %s', 'teddybearsprompts'), $order_id, $item_id, $item->get_subtotal(), '%0D%0A', get_the_title($product_id)));
 					?>
@@ -375,7 +392,7 @@ class Order {
 				foreach($item_meta_data['field'] as $i => $iRow) {
 					foreach($iRow as $j => $jRow) {
 						if($field['steptitle'] == $jRow['title'] && $j == 0) {
-							return (trim($iRow[0]['value']) == '');
+							return (isset($iRow[0]) && isset($iRow[0]['value']) && trim($iRow[0]['value']) == '');
 						}
 					}
 				}

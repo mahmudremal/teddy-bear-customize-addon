@@ -25,10 +25,18 @@ class Product {
 		// do_action('woocommerce_before_shop_loop_item');
 		echo do_shortcode('[yith_wcwl_add_to_wishlist]', false);
 		
+		if(!apply_filters('teddybear/project/system/isactive', 'badges-enable')) {return;}
+		
 		$_meta = (array) get_post_meta($product_id, '_teddy_custom_data', true);
 		if(isset($_meta['isFeatured']) || isset($_meta['isBestSeller'])) {
-		  if(isset($_meta['isFeatured'])) { ?><span class="uael-woo-featured"><?php esc_html_e('Featured', 'teddybearsprompts'); ?></span><?php }
-		  if(isset($_meta['isBestSeller'])) { ?><span class="uael-woo-bestseller"><?php esc_html_e('Best Seller', 'teddybearsprompts'); ?></span><?php }
+		  if(isset($_meta['isFeatured']) && apply_filters('teddybear/project/system/isactive', 'badges-featured')) { ?><span class="uael-woo-featured" style="<?php echo esc_attr(
+			'color: ' . apply_filters('teddybear/project/system/getoption', 'badges-featured-color', '#') . ';'.
+			'background: ' . apply_filters('teddybear/project/system/getoption', 'badges-featured-bgcolor', '#') . ';'
+		  ); ?>;"><?php esc_html_e('Featured', 'teddybearsprompts'); ?></span><?php }
+		  if(isset($_meta['isBestSeller']) && apply_filters('teddybear/project/system/isactive', 'badges-bestseller')) { ?><span class="uael-woo-bestseller" style="<?php echo esc_attr(
+			'color: ' . apply_filters('teddybear/project/system/getoption', 'badges-bestseller-color', '#') . ';'.
+			'background: ' . apply_filters('teddybear/project/system/getoption', 'badges-bestseller-bgcolor', '#') . ';'
+		  ); ?>;"><?php esc_html_e('Best Seller', 'teddybearsprompts'); ?></span><?php }
 		}
 	}
 	public function get_post_meta($post_id, $meta_key, $single) {

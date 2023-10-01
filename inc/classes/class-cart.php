@@ -55,7 +55,6 @@ class Cart {
 			wp_send_json_error('Invalid product or product is not purchasable.');
 		}
 		
-		
 		try {
 			$dataset = json_decode(preg_replace('/[\x00-\x1F\x80-\xFF]/', '', stripslashes(html_entity_decode($_POST['dataset']))), true);
 			$charges = json_decode(preg_replace('/[\x00-\x1F\x80-\xFF]/', '', stripslashes(html_entity_decode($_POST['charges']))), true);
@@ -66,10 +65,14 @@ class Cart {
 			$json['hooks'] = ['popup_submitting_done'];
 			// $json['redirectedTo'] = wc_get_checkout_url();
 			// $json['message'] = __('Product added to cart successfully. Please hold on until you\'re redirected to checkout page.', 'teddybearsprompts');
+			$json['wrapping'] = [
+				'title' => apply_filters('teddybear/project/system/getoption', 'addons-feetitle', 'Wrapping box'),
+				'price' => floatval(apply_filters('teddybear/project/system/getoption', 'addons-feeamount', 0))
+			];
 			$json['message'] = false;
 			$custom_data = (array) get_post_meta($product_id, '_teddy_custom_data', true);
 			$json['confirmation'] = [
-				'title'				=> sprintf(__('%s added to your cart successfully', 'teddybearsprompts'), get_the_title($product_id)),
+				'title'				=> sprintf(__('Added successfully %s', 'teddybearsprompts'), get_the_title($product_id)),
 				'accessoriesUrl'	=> isset($custom_data['accessoriesUrl'])?esc_url($custom_data['accessoriesUrl']):false,
 				'checkoutUrl'		=> wc_get_checkout_url(),
 				'suggestion'		=> $this->get_products_by_category_id(),
@@ -81,7 +84,6 @@ class Cart {
 			$json['message'] = 'Error: ' . $e->getMessage();
 			wp_send_json_error($json);
 		}
-		
 	}
 	public function ajax_update_cart() {
 		$json = ['message' => __('Something went wrong. Please try again.', 'teddybearsprompts'), 'hooks' => ['popup_submitting_failed']];
@@ -182,8 +184,11 @@ class Cart {
 		return $item_name;
 	}
 	public function woocommerce_calculate_totals($cart) {
-		if(is_admin() && !defined('DOING_AJAX')) {return;}
+		// if(is_admin()) {return;}
+		if(!defined('DOING_AJAX')) {return;}
 	
+		// wp_die('Hi there');
+
 		foreach ($cart->get_cart() as $cart_item_key => $cart_item) {
 			if(array_key_exists('custom_teddey_bear_makeup', $cart_item) && !in_array($cart_item_key, $this->calculatedAlready)) {
 				$additional_cost = 0;
@@ -199,7 +204,6 @@ class Cart {
 			}
 		}
 	}
-
 	public function custom_upload_audio_video($file) {
 		$upload_dir = wp_upload_dir();$custom_dir = 'custom_popup';
 		$target_dir = $upload_dir['basedir'].'/'.$custom_dir.'/';
@@ -249,5 +253,5 @@ class Cart {
 		}
 		return $results;
 	}
-  
+
 }

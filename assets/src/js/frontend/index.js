@@ -13,7 +13,6 @@ import popupCart from "./popupcart";
 import flatpickr from "flatpickr";
 import KeenSlider from 'keen-slider';
 
-
 ( function ( $ ) {
 	class FutureWordPress_Frontend {
 		constructor() {
@@ -21,7 +20,7 @@ import KeenSlider from 'keen-slider';
 			this.ajaxNonce = fwpSiteConfig?.ajax_nonce??'';
 			this.lastAjax = false;this.profile = fwpSiteConfig?.profile??false;
 			var i18n = fwpSiteConfig?.i18n??{};this.noToast = true;
-			this.config = fwpSiteConfig;
+			this.config = fwpSiteConfig;this.KeenSlider = KeenSlider;
 			this.i18n = {
 				confirming								: 'Confirming',
 				...i18n
@@ -51,6 +50,8 @@ import KeenSlider from 'keen-slider';
 			this.popup_show_only4israel();
 			this.move_cart_icon2header();
 			this.init_wrapping_on_checkout();
+			this.single_product_input_stepper();
+			this.remove_my_account_points_tab();
 		}
 		init_toast() {
 			const thisClass = this;
@@ -96,6 +97,35 @@ import KeenSlider from 'keen-slider';
 		init_events() {
 			const thisClass = this;var template, html;
 			document.body.addEventListener('gotproductpopupresult', async (event) => {
+
+				if(typeof woocs_convert_price_filter == 'function') {
+					const product = thisClass.lastJson.product;
+					product.price = woocs_convert_price_filter(parseFloat(product.price));
+					thisClass.lastJson.product.custom_fields = thisClass.lastJson.product.custom_fields.map((row) => {
+						if(row?.cost) {row.cost = woocs_convert_price_filter(parseFloat(row.cost));}
+						if(row?.options) {
+							row.options = Object.values(row.options).map((crow) => {
+								if(crow?.cost) {crow.cost = woocs_convert_price_filter(parseFloat(crow.cost));}
+								return crow;
+							});
+						}
+						if(row?.groups) {
+							row.groups = Object.values(row.groups).map((grow) => {
+								if(grow?.cost) {grow.cost = woocs_convert_price_filter(parseFloat(grow.cost));}
+								if(grow?.options) {
+									grow.options = Object.values(grow.options).map((crow) => {
+										if(crow?.cost) {crow.cost = woocs_convert_price_filter(parseFloat(crow.cost));}
+										return crow;
+									});
+								}
+								return grow;
+							});
+						}
+						return row;
+					});
+				}
+				// thisClass.prompts.lastJson.product.price
+
 				thisClass.prompts.lastJson = thisClass.lastJson;
 				thisClass.popupCart.additionalPrices = [];
 				thisClass.popupCart.basePrice = parseFloat(thisClass.prompts.lastJson.product.price);
@@ -182,41 +212,70 @@ import KeenSlider from 'keen-slider';
 						backdrop: `rgb(137 137 137 / 74%)`,
 						html: `<div class="dynamic_popup"></div>`,
 						showLoaderOnConfirm: true,
-						footer: `
-						<div class="swal2-footer__footer">
-							<h3 class="swal2-footer__footer__title">${thisClass.i18n?.youmayalsolike??'You may also like'}</h3>
-							<div class="keen-slider">
-								${thisClass.lastJson.confirmation.suggestion.map((product, i)=>`
-								<div class="keen-slider__slide ${i}" title="${thisClass.esc_attr(product.title)}" data-cost="${product.price}" data-product="${product.ID}">
-									${product.thumbnail} ${product.priceHtml}
-								</div>
-								`).join('')}
-							</div>
-						</div>
-						`,
+						footer: false,
 						didOpen: async () => {
 							document.querySelector('.dynamic_popup')?.appendChild(
 								thisClass.popupNode.querySelector('.header_image')
 							);
-							// document.querySelector('.dynamic_popup__footer')
-							const slider = new KeenSlider('.keen-slider', {
-								loop: true,
-								mode: "free",
-								slides: {perView: 5, spacing: 5},
+							const addition = document.createElement('div');
+							addition.innerHTML = `
+							<div class="swal2-footer__wraping">
+								<label class="">
+									<input type="checkbox" name="add_wraping" value="true" onchange="this.nextElementSibling?.click();"/>${(thisClass.lastJson?.wrapping)?.title??(thisClass.i18n?.addwrapping??'Add wrapping paper')} (${((thisClass.lastJson?.wrapping)?.price??0).toFixed(2)})
+									<button class="btn btn-primary button" data-mode="add">
+										<span>${thisClass.i18n?.addwrapping??'Add wrapping'}</span>
+										<div class="spinner-circular-tube"></div>
+									</button>
+								</label>
+							</div>
+							<div class="swal2-footer__footer">
+								<h3 class="swal2-footer__footer__title">${thisClass.i18n?.youmayalsolike??'You may also like'}</h3>
+								<div class="keen-slider">
+									${thisClass.lastJson.confirmation.suggestion.map((product, i)=>`
+									<div class="keen-slider__slide ${i}" title="${thisClass.esc_attr(product.title)}" data-cost="${product.price}" data-product="${product.ID}">
+										${product.thumbnail} ${product.priceHtml}
+									</div>
+									`).join('')}
+								</div>
+							</div>
+							`;
+							Object.values(addition.children).forEach((child) => {
+								document.querySelector('.dynamic_popup')?.appendChild(child);
 							});
+							
 							setTimeout(() => {
-								document.querySelectorAll('.keen-slider .keen-slider__slide').forEach((el)=>{
-									el.addEventListener('click', (e) => {
-										if(el.classList.contains('active')) {
-											el.classList.remove('active');
-											popupCart.wc_removeAdditionalPrice(el, thisClass);
-										} else {
-											el.classList.add('active');
-											popupCart.wc_addAdditionalPrice(el, thisClass);
-										}
-									});
+								const slider = new thisClass.KeenSlider('.keen-slider', {
+									loop: true, mode: "free",
+									slides: {perView: 5, spacing: 5},
 								});
-							}, 1500);
+								setTimeout(() => {
+									document.querySelectorAll('.keen-slider .keen-slider__slide').forEach((el)=>{
+										el.addEventListener('click', (e) => {
+											if(el.classList.contains('active')) {
+												el.classList.remove('active');
+												popupCart.wc_removeAdditionalPrice(el, thisClass);
+											} else {
+												el.classList.add('active');
+												popupCart.wc_addAdditionalPrice(el, thisClass);
+											}
+										});
+									});
+									document.querySelectorAll('.swal2-footer__wraping .btn').forEach((el)=>{
+										el.addEventListener('click', (event) => {
+											event.preventDefault();el.disabled = true;
+											// thisClass.addWrappingBtn = el;
+											var formdata = new FormData();
+											formdata.append('action', 'futurewordpress/project/ajax/add/wrapping');
+											formdata.append('_quantity', 1);
+											formdata.append('_mode', el.dataset?.mode);
+											formdata.append('cartitemkey', thisClass.cartItemKey);
+											formdata.append('_nonce', thisClass.ajaxNonce);
+											thisClass.sendToServer(formdata);
+											setTimeout(() => {el.disabled = false;}, 20000);
+										});
+									});
+								}, 1200);
+							}, 300);
 						},
 						allowOutsideClick: () => !Swal.isLoading(),
 					}).then((res) => {
@@ -242,9 +301,20 @@ import KeenSlider from 'keen-slider';
 			});
 			document.body.addEventListener('wrapping_adding_success', async (event) => {
 				if(thisClass?.addWrappingBtn) {
-					thisClass.addWrappingBtn.disabled = false;
-					thisClass.addWrappingBtn.querySelector('i.fa')?.classList.remove('fa-circle-o-notch', 'fa-spin');
-					location.reload();
+					// thisClass.addWrappingBtn.disabled = false;
+					// thisClass.addWrappingBtn.querySelector('i.fa')?.classList.remove('fa-circle-o-notch', 'fa-spin');
+					// location.reload();
+					thisClass.addWrappingBtn.dataset.mode = 'del';thisClass.addWrappingBtn.disabled = false;
+					thisClass.addWrappingBtn.querySelector('span').innerHTML = thisClass.i18n?.removewrapping??'Remove Wrapping';
+				}
+			});
+			document.body.addEventListener('wrapping_removing_success', async (event) => {
+				if(thisClass?.addWrappingBtn) {
+					// thisClass.addWrappingBtn.disabled = false;
+					// thisClass.addWrappingBtn.querySelector('i.fa')?.classList.remove('fa-circle-o-notch', 'fa-spin');
+					// location.reload();
+					thisClass.addWrappingBtn.dataset.mode = 'add';thisClass.addWrappingBtn.disabled = false;
+					thisClass.addWrappingBtn.querySelector('span').innerHTML = thisClass.i18n?.addwrapping??'Add Wrapping';
 				}
 			});
 		}
@@ -416,31 +486,19 @@ import KeenSlider from 'keen-slider';
 					event.preventDefault();
 					html = PROMPTS.get_template(thisClass);
 					Swal.fire({
-						title: false, // thisClass.i18n?.generateaicontent??'Generate AI content',
+						title: false,
 						width: 600,
-						// padding: '3em',
-						// color: '#716add',
-						// background: 'url(https://png.pngtree.com/thumb_back/fh260/background/20190221/ourmid/pngtree-ai-artificial-intelligence-technology-concise-image_19646.jpg) rgb(255, 255, 255) center center no-repeat',
 						showConfirmButton: false,
 						showCancelButton: false,
 						showCloseButton: false,
 						allowOutsideClick: false,
 						allowEscapeKey: true,
-						// confirmButtonText: 'Generate',
-						// cancelButtonText: 'Close',
-						// confirmButtonColor: '#3085d6',
-						// cancelButtonColor: '#d33',
 						customClass: {popup: 'fwp-swal2-popup'},
-						// focusConfirm: true,
-						// reverseButtons: true,
-						// backdrop: `rgba(0,0,123,0.4) url("https://sweetalert2.github.io/images/nyan-cat.gif") left top no-repeat`,
-						backdrop: `rgb(255 255 255)`,
-
+						backdrop: `rgb(255 255 255 / 90%)`,
 						showLoaderOnConfirm: true,
 						allowOutsideClick: false, // () => !Swal.isLoading(),
 						
 						html: html,
-						// footer: '<a href="">Why do I have this issue?</a>',
 						didOpen: async () => {
 							config = JSON.parse(el.dataset.config);
 							json = {product_id: config.id};
@@ -449,7 +507,6 @@ import KeenSlider from 'keen-slider';
 							formdata.append('action', 'futurewordpress/project/ajax/search/product');
 							formdata.append('dataset', await JSON.stringify(json));
 							formdata.append('_nonce', thisClass.ajaxNonce);
-
 							thisClass.sendToServer(formdata);
 							thisClass.prompts.init_prompts(thisClass);
 						},
@@ -578,6 +635,36 @@ import KeenSlider from 'keen-slider';
 				});
 			}
 		}
+		single_product_input_stepper() {
+			document.querySelectorAll('#content .elementor-location-single.product.type-product.ast-article-single .elementor-widget-uael-woo-add-to-cart form.cart .quantity input[type="number"][name="quantity"]').forEach((el) => {
+				var minus = document.createElement('div');var plus = document.createElement('div');
+				minus.classList.add('cc_item_quantity_update', 'cc_item_quantity_minus');
+				plus.classList.add('cc_item_quantity_update', 'cc_item_quantity_plus');
+				minus.innerHTML = '-';plus.innerHTML = '+';
+				plus.addEventListener('click', () => {
+					let currentValue = parseFloat(el.value);
+					const step = (el?.step)?parseFloat(el.step):1;
+					const max = (el?.max)?parseFloat(el.max):Number.MAX_SAFE_INTEGER;
+					if(!isNaN(currentValue) && (isNaN(max) || currentValue < max)) {
+						currentValue += step;el.value = currentValue;
+					}
+				});
+				minus.addEventListener('click', () => {
+					let currentValue = parseFloat(el.value);
+					const step = (el?.step)?parseFloat(el.step):1;
+					const min = (el?.min)?parseFloat(el.min):1;
+					if(!isNaN(currentValue) && (isNaN(min) || currentValue > min)) {
+						currentValue -= step;el.value = currentValue;
+					}
+				});
+				
+				el.classList.add('cc_item_quantity');
+				el.parentElement.classList.add('cc_item_quantity_wrap');
+				el.parentElement.style.display = 'flex';
+				
+				el.parentElement.insertBefore(minus, el);el.parentElement.appendChild(plus);
+			});
+		}
 		
 		clearAllFromCart() {
 			document.querySelectorAll('.woocommerce-page #content table.cart td.product-remove a').forEach((el)=>{el.click();});
@@ -586,6 +673,9 @@ import KeenSlider from 'keen-slider';
 			return text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 		}
 
+		remove_my_account_points_tab() {
+			document.querySelectorAll('body.myac-points:not(.is-role-member) .woocommerce-MyAccount-content').forEach((el) => {el.remove();});
+		}
 		
 	}
 	new FutureWordPress_Frontend();
