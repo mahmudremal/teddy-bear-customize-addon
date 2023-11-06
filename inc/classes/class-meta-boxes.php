@@ -51,7 +51,10 @@ class Meta_Boxes {
 		?>
 		<div class="fwp-tabs__container">
 			<button class="fwp-button fwppopspopup-open" type="button" <?php echo esc_attr(
-				apply_filters('teddybear/project/system/isactive', 'standard-forceglobal')?'disabled':''
+				(
+					apply_filters('teddybear/project/system/isactive', 'standard-forceglobal') && 
+					apply_filters('teddybear/project/system/getoption', 'standard-global', 0) != get_the_ID()
+				)?'disabled':''
 			); ?>><?php esc_html_e('Customize', 'teddybearsprompts'); ?></button>
 		</div>
 		<?php
@@ -95,20 +98,28 @@ class Meta_Boxes {
 					'type'					=> 'text',
 					'default'				=> apply_filters('teddybear/project/system/getoption', 'default-accessoriesUrl', '')
 				],
-				[
-					'id' 					=> 'isFeatured',
-					'label'					=> __('Featured', 'teddybearsprompts'),
-					'description'			=> __('Mark to make it featured product. This won\'t effect search query.', 'teddybearsprompts'),
-					'type'					=> 'checkbox',
-					'default'				=> false
-				],
-				[
-					'id' 					=> 'isBestSeller',
-					'label'					=> __('Best Seller', 'teddybearsprompts'),
-					'description'			=> __('Mark to make it Best Seller product. This won\'t effect search query.', 'teddybearsprompts'),
-					'type'					=> 'checkbox',
-					'default'				=> false
-				],
+				...$this->get_available_badges()
+				// [
+				// 	'id' 					=> 'isFeatured',
+				// 	'label'					=> __('Featured', 'teddybearsprompts'),
+				// 	'description'			=> __('Mark to make it featured product. This won\'t effect search query.', 'teddybearsprompts'),
+				// 	'type'					=> 'checkbox',
+				// 	'default'				=> false
+				// ],
+				// [
+				// 	'id' 					=> 'isBestSeller',
+				// 	'label'					=> __('Best Seller', 'teddybearsprompts'),
+				// 	'description'			=> __('Mark to make it Best Seller product. This won\'t effect search query.', 'teddybearsprompts'),
+				// 	'type'					=> 'checkbox',
+				// 	'default'				=> false
+				// ],
+				// [
+				// 	'id' 					=> 'onSale',
+				// 	'label'					=> __('On Sale', 'teddybearsprompts'),
+				// 	'description'			=> __('Give here a discount badge text. Leave it blank to not to apear badge. You must set product price as well from woocommerce meta box. Such as "Sale 30%"', 'teddybearsprompts'),
+				// 	'type'					=> 'text',
+				// 	'default'				=> ''
+				// ],
 			]
 		];
 		?>
@@ -225,5 +236,30 @@ class Meta_Boxes {
 			$html .= $attr . '="' . $value . '" ';
 		}
 		return $html;
+	}
+	public function get_available_badges() {
+		$args = [];$filteredData = [];$filteredRow = [];
+		foreach((array) TEDDY_BEAR_CUSTOMIZE_ADDON_OPTIONS as $key => $value) {
+			if(strpos($key, 'teddy-badge-') !== false) {
+				$filteredData[$key] = $value;
+			}
+		}
+		foreach($filteredData as $key => $value) {
+			$key = substr($key, 12);$split = explode('-', $key);
+			$filteredRow[$split[1]] = isset($filteredRow[$split[1]])?$filteredRow[$split[1]]:[];
+			$filteredRow[$split[1]][$split[0]] = $value;
+		}
+		foreach($filteredRow as $i => $badge) {
+			if(!isset($badge['enable']) || empty($badge['enable']) || ! $badge['enable']) {return;}
+			$args[] = [
+				'id' 					=> 'badge-' . $i,
+				'label'					=> sprintf(__('Enable "%s"', 'teddybearsprompts'), $badge['label']),
+				'description'			=> sprintf(__('Mark to make this (%s) badge visible to the product card.', 'teddybearsprompts'), '<b>' . $badge['label'] . '</b>'),
+				'type'					=> 'checkbox',
+				'value'					=> (isset($this->options['badge-' . $i]) && $this->options['badge-' . $i]),
+				'default'				=> false // $badge['enable']
+			];
+		}
+		return $args;
 	}
 }

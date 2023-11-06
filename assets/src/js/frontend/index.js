@@ -12,12 +12,13 @@ import voiceRecord from "./voicerecord";
 import popupCart from "./popupcart";
 import flatpickr from "flatpickr";
 import KeenSlider from 'keen-slider';
+import tippy from 'tippy.js';
 
 ( function ( $ ) {
 	class FutureWordPress_Frontend {
 		constructor() {
 			this.ajaxUrl = fwpSiteConfig?.ajaxUrl??'';
-			this.ajaxNonce = fwpSiteConfig?.ajax_nonce??'';
+			this.ajaxNonce = fwpSiteConfig?.ajax_nonce??'';this.tippy = tippy;
 			this.lastAjax = false;this.profile = fwpSiteConfig?.profile??false;
 			var i18n = fwpSiteConfig?.i18n??{};this.noToast = true;
 			this.config = fwpSiteConfig;this.KeenSlider = KeenSlider;
@@ -130,13 +131,19 @@ import KeenSlider from 'keen-slider';
 				thisClass.popupCart.additionalPrices = [];
 				thisClass.popupCart.basePrice = parseFloat(thisClass.prompts.lastJson.product.price);
 				thisClass.popupCart.priceSign = thisClass.prompts.lastJson.product.currency;
+				var custom_fields = PROMPTS.get_data(thisClass, true);
+				if(custom_fields.sitting?.length <= 0 || custom_fields.standing?.length <= 0) {
+					PROMPTS.currentGroups = (custom_fields.sitting?.length >= 1)?'sitting':'standing';
+					PROMPTS.groupSelected = true;
+				}
 				template = await thisClass.prompts.get_template(thisClass);
 				html = document.createElement('div');html.appendChild(template);
 				// && json.header.product_photo
+				var current_groups = PROMPTS.get_data(thisClass);
 				if(thisClass.Swal && thisClass.Swal.isVisible()) {
 					// thisClass.prompts.progressSteps = [...new Set(thisClass.prompts.lastJson.product.custom_fields.map((row, i)=>(row.steptitle=='')?(i+1):row.steptitle))];
 					thisClass.prompts.progressSteps = [...new Set(
-						thisClass.prompts.lastJson.product.custom_fields.map((row, i)=>(row.steptitle=='')?(i+1):(
+						current_groups.map((row, i)=>(row.steptitle=='')?(i+1):(
 							`${(row?.stepicon)?`<div class="swal2-progress-step__icon">${row.stepicon}</div>`:``}
 							<span>${row.steptitle}</span>`
 						))
@@ -173,7 +180,12 @@ import KeenSlider from 'keen-slider';
 							voiceRecord.duration = parseFloat((voice.duration == '')?'20':voice.duration);
 							// popupCart.addAdditionalPrice(voice.steptitle, parseFloat(voice.cost));
 						}
-						thisClass.prompts.init_events(thisClass);
+						if(PROMPTS.groupSelected) {
+							thisClass.prompts.init_events(thisClass);
+						} else {
+							thisClass.prompts.init_group_select_events(thisClass);
+						}
+						
 					}, 300);
 				}
 			});
@@ -182,12 +194,13 @@ import KeenSlider from 'keen-slider';
 				if(submit) {submit.removeAttribute('disabled');}
 				// if(thisClass.lastJson.redirectedTo) {location.href = thisClass.lastJson.redirectedTo;}
 				if((thisClass.lastJson?.confirmation??false)) {
+					thisClass.confirmation = thisClass.lastJson.confirmation;
 					const popupNode = thisClass.Swal.getHtmlContainer();
 					thisClass.popupNode = document.createElement('div');
 					thisClass.popupNode.appendChild(popupNode.childNodes[0]);
-					thisClass.cartItemKey = thisClass.lastJson.confirmation?.cartItemKey??'';
+					thisClass.cartItemKey = thisClass.confirmation?.cartItemKey??'';
 					thisClass.Swal.fire({
-						title: thisClass.lastJson.confirmation?.title??'',
+						title: thisClass.confirmation?.title??'',
 						// buttons: true,
 						// width: 600,
 						// padding: '3em',
@@ -220,9 +233,16 @@ import KeenSlider from 'keen-slider';
 							const addition = document.createElement('div');
 							addition.innerHTML = `
 							<div class="swal2-footer__wraping">
-								<label class="">
-									<input type="checkbox" name="add_wraping" value="true" onchange="this.nextElementSibling?.click();"/>${(thisClass.lastJson?.wrapping)?.title??(thisClass.i18n?.addwrapping??'Add wrapping paper')} (${((thisClass.lastJson?.wrapping)?.price??0).toFixed(2)})
-									<button class="btn btn-primary button" data-mode="add">
+								<label class="swal2-footer__wraping__tooltip">
+									<input type="checkbox" name="add_wraping" value="true" onchange="document.querySelector('#addwrapping_checkbox')?.click();"/>
+									${
+										(((thisClass.lastJson?.wrapping)?.thumbnail??'').trim() != '')?`
+										<img class="swal2-footer__wraping__thumbnail" src="${(thisClass.lastJson?.wrapping)?.thumbnail??''}" alt="Packaging" />
+										`:''
+									}
+									${(thisClass.lastJson?.wrapping)?.title??(thisClass.i18n?.addwrapping??'Add wrapping paper')} (${thisClass.config?.currencySign??''} ${((thisClass.lastJson?.wrapping)?.price??0).toFixed(2)})
+
+									<button class="btn btn-primary button" id="addwrapping_checkbox" data-mode="add">
 										<span>${thisClass.i18n?.addwrapping??'Add wrapping'}</span>
 										<div class="spinner-circular-tube"></div>
 									</button>
@@ -230,8 +250,8 @@ import KeenSlider from 'keen-slider';
 							</div>
 							<div class="swal2-footer__footer">
 								<h3 class="swal2-footer__footer__title">${thisClass.i18n?.youmayalsolike??'You may also like'}</h3>
-								<div class="keen-slider">
-									${thisClass.lastJson.confirmation.suggestion.map((product, i)=>`
+								<div class="keen-slider keen-slider__extras">
+									${thisClass.confirmation.suggestion.map((product, i)=>`
 									<div class="keen-slider__slide ${i}" title="${thisClass.esc_attr(product.title)}" data-cost="${product.price}" data-product="${product.ID}">
 										${product.thumbnail} ${product.priceHtml}
 									</div>
@@ -244,6 +264,14 @@ import KeenSlider from 'keen-slider';
 							});
 							
 							setTimeout(() => {
+								document.querySelectorAll('.swal2-footer__wraping__tooltip:not([data-tooltip-handled])').forEach((el) => {
+									el.dataset.tooltipHandled = true;
+									thisClass.tippy(el, {
+										content: thisClass.i18n?.obtainplushieswraps??`Obtain plushies that come in wrapped packaging.`,
+										animation: 'perspective-extreme',
+										theme: 'site-theme'
+									});
+								});
 								const slider = new thisClass.KeenSlider('.keen-slider', {
 									loop: true, mode: "free",
 									slides: {perView: 5, spacing: 5},
@@ -261,6 +289,9 @@ import KeenSlider from 'keen-slider';
 										});
 									});
 									document.querySelectorAll('.swal2-footer__wraping .btn').forEach((el)=>{
+										if(!(thisClass?.addWrappingBtn)) {
+											thisClass.addWrappingBtn = el;
+										}
 										el.addEventListener('click', (event) => {
 											event.preventDefault();el.disabled = true;
 											// thisClass.addWrappingBtn = el;
@@ -280,9 +311,9 @@ import KeenSlider from 'keen-slider';
 						allowOutsideClick: () => !Swal.isLoading(),
 					}).then((res) => {
 						if(res.isConfirmed) {
-							location.href = thisClass.lastJson.confirmation?.checkoutUrl??false;
+							location.href = thisClass.confirmation?.checkoutUrl??false;
 						} else if(res.isDenied) {
-							location.href = thisClass.lastJson.confirmation?.accessoriesUrl??false;
+							location.href = thisClass.confirmation?.accessoriesUrl??false;
 						} else if(res.isDismissed) {} else {}
 					});
 				}
@@ -484,17 +515,18 @@ import KeenSlider from 'keen-slider';
 				
 				el.addEventListener('click', (event) => {
 					event.preventDefault();
+					PROMPTS.groupSelected = false;
+					PROMPTS.currentGroups = 'standing';
 					html = PROMPTS.get_template(thisClass);
 					Swal.fire({
-						title: false,
-						width: 600,
+						title: false, width: 600,
 						showConfirmButton: false,
 						showCancelButton: false,
 						showCloseButton: false,
 						allowOutsideClick: false,
 						allowEscapeKey: true,
 						customClass: {popup: 'fwp-swal2-popup'},
-						backdrop: `rgb(255 255 255 / 90%)`,
+						// backdrop: `rgb(255 255 255 / 90%)`,
 						showLoaderOnConfirm: true,
 						allowOutsideClick: false, // () => !Swal.isLoading(),
 						
@@ -609,10 +641,18 @@ import KeenSlider from 'keen-slider';
 						btn.innerHTML = '';
 						btn.appendChild(store.querySelector('i'));
 					}
+					tippy(el, {
+						content: (btn)?btn.dataset.title:(
+							thisClass?.add2wishlist??'Add to wishlist'
+						)
+					});
 				});
 			}, 1500);
 		}
 		init_wrapping_on_checkout() {
+			/**
+			 * Add wraping widget for all product on checkout page
+			 */
 			const thisClass = this;
 			const wrapping = document.querySelector('.wc_add_wrapping');
 			if(wrapping) {
@@ -620,7 +660,6 @@ import KeenSlider from 'keen-slider';
 				button?.addEventListener('click', (event) => {
 					event.preventDefault();
 					button.disabled = true;button.querySelector('i.fa')?.classList.add('fa-circle-o-notch', 'fa-spin');
-					thisClass.addWrappingBtn = button;
 					var formdata = new FormData();
 					formdata.append('action', 'futurewordpress/project/ajax/add/wrapping');
 					formdata.append('_nonce', thisClass.ajaxNonce);
@@ -675,6 +714,12 @@ import KeenSlider from 'keen-slider';
 
 		remove_my_account_points_tab() {
 			document.querySelectorAll('body.myac-points:not(.is-role-member) .woocommerce-MyAccount-content').forEach((el) => {el.remove();});
+			/** Move scroll top btn from right to left */
+			document.querySelector('#ast-scroll-top.ast-scroll-to-top-right')?.classList.toggle('ast-scroll-to-top-right', 'ast-scroll-to-top-left');
+		}
+
+		init_checkout_metadata() {
+			const thisClass = this;
 		}
 		
 	}

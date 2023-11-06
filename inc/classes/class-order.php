@@ -186,44 +186,44 @@ class Order {
 	public function woocommerce_order_item_meta_end($item_id, $item, $order, $plain_text) {
 		// if(!isset($order->is_order_confirmation) || $order->is_order_confirmation !== true) {return;}
 		if($this->confirmMailTrack !== true) {return;}global $teddyProduct;
-		
+		$order_item = $item;
 		$order_id  = $order->get_id();
 		$product_id = $item->get_product_id();
-		$custom_popup = $teddyProduct->get_post_meta($product_id, '_product_custom_popup', true);
+		$custom_popup = $teddyProduct->get_order_pops_meta($order, $order_item, $product_id);
 		if(!$custom_popup || empty($custom_popup)) {return;}
 		
-		
-		
 		$item_metas = $item->get_meta_data();
-		foreach($custom_popup as $row) {
-			if($row['type'] == 'voice') {
-				$voiceShouldExists = $voiceFileExists = false;
-				foreach($item_metas as $meta) {
-					if($meta->key == $row['steptitle']) {
-						$voiceShouldExists = $row['steptitle'];
-					}
-				}
-				if($voiceShouldExists) {
-					$meta_data = $item->get_meta('custom_teddey_bear_data', true);
-					if(isset($meta_data['field'])) {
-						if( ! is_array($meta_data['field'])) {
-							$meta_data = (array) $meta_data;
+		foreach($custom_popup as $posI => $posRow) {
+			foreach($posRow as $row) {
+				if($row['type'] == 'voice') {
+					$voiceShouldExists = $voiceFileExists = false;
+					foreach($item_metas as $meta) {
+						if($meta->key == $row['steptitle']) {
+							$voiceShouldExists = $row['steptitle'];
 						}
-						foreach($meta_data['field'] as $field) {
-							foreach($field as $i => $row) {
-								if($row['title'] == $voiceShouldExists) {
-									$voiceFileExists = true;
+					}
+					if($voiceShouldExists) {
+						$meta_data = $item->get_meta('custom_teddey_bear_data', true);
+						if(isset($meta_data['field'])) {
+							if( ! is_array($meta_data['field'])) {
+								$meta_data = (array) $meta_data;
+							}
+							foreach($meta_data['field'] as $field) {
+								foreach($field as $i => $row) {
+									if($row['title'] == $voiceShouldExists) {
+										$voiceFileExists = true;
+									}
 								}
 							}
 						}
 					}
-				}
-				if($voiceShouldExists && ! $voiceFileExists) {
-					// $uploadVoiceURL = site_url('upload-voice/'.$order_id.'/'.$item_id.'/');
-					$uploadVoiceURL = 'mailto:'.get_option('admin_email').'?subject='.esc_attr(__('Voice Record', 'teddybearsprompts')).'&body='.esc_attr(sprintf(__('Order #%d, Cart Item: #%d, Item Subtotal: %s %s Product: %s', 'teddybearsprompts'), $order_id, $item_id, $item->get_subtotal(), '%0D%0A', get_the_title($product_id)));
-					?>
-					<a href="<?php echo esc_attr($uploadVoiceURL); ?>" target="_blank" style="color: #fff;font-weight:normal;text-decoration:underline;background: #7f54b3;padding: 10px 15px;border-radius: 5px;line-height: 40px;text-decoration: none;"><?php esc_html_e('Send Recorded voice', 'teddybearsprompts'); ?></a>
-					<?php
+					if($voiceShouldExists && ! $voiceFileExists) {
+						// $uploadVoiceURL = site_url('upload-voice/'.$order_id.'/'.$item_id.'/');
+						$uploadVoiceURL = 'mailto:'.get_option('admin_email').'?subject='.esc_attr(__('Voice Record', 'teddybearsprompts')).'&body='.esc_attr(sprintf(__('Order #%d, Cart Item: #%d, Item Subtotal: %s %s Product: %s', 'teddybearsprompts'), $order_id, $item_id, $item->get_subtotal(), '%0D%0A', get_the_title($product_id)));
+						?>
+						<a href="<?php echo esc_attr($uploadVoiceURL); ?>" target="_blank" style="color: #fff;font-weight:normal;text-decoration:underline;background: #7f54b3;padding: 10px 15px;border-radius: 5px;line-height: 40px;text-decoration: none;"><?php esc_html_e('Send Recorded voice', 'teddybearsprompts'); ?></a>
+						<?php
+					}
 				}
 			}
 		}
@@ -312,46 +312,48 @@ class Order {
 			// $item_name = $order_item->get_name();
 			$product_id = $order_item->get_product_id();
 			// $product = $order_item->get_product();
-			// $quantity = $order_item->get_quantity();.
-			$popup_meta = $teddyProduct->get_post_meta($product_id, '_product_custom_popup', true);
+			// $quantity = $order_item->get_quantity();
+			$popup_meta = $teddyProduct->get_order_pops_meta($order, $order_item, $product_id);
 			if(!$popup_meta || !is_array($popup_meta) || count($popup_meta) <= 0) {continue;}
 			
-			foreach($popup_meta as $i => $field) {
-				if($field['type'] == 'info') {
-					$item_meta_data = $order_item->get_meta('custom_teddey_bear_data', true);
-					if(!$item_meta_data) {continue;}
-					foreach($item_meta_data['field'] as $i => $iRow) {
-						foreach($iRow as $j => $jRow) {
-							// if($jRow['title'] == 'Voice') {}
-							if($field['steptitle'] == $jRow['title'] && $j == 0) {
-								$custom_data = wp_parse_args((array) get_post_meta($product_id, '_teddy_custom_data', true), [
-									'eye'				=> '',
-									'brow'				=> '',
-									'weight'			=> '',
-									'height'			=> '',
-								]);
-								$args = [
-									'eye'			=> $custom_data['eye'],
-									'brow'			=> $custom_data['brow'],
+			foreach($popup_meta as $posI => $posRow) {
+				foreach($posRow as $i => $field) {
+					if($field['type'] == 'info') {
+						$item_meta_data = $order_item->get_meta('custom_teddey_bear_data', true);
+						if(!$item_meta_data) {continue;}
+						foreach($item_meta_data['field'] as $i => $iRow) {
+							foreach($iRow as $j => $jRow) {
+								// if($jRow['title'] == 'Voice') {}
+								if($field['steptitle'] == $jRow['title'] && $j == 0) {
+									$custom_data = wp_parse_args((array) get_post_meta($product_id, '_teddy_custom_data', true), [
+										'eye'				=> '',
+										'brow'				=> '',
+										'weight'			=> '',
+										'height'			=> '',
+									]);
+									$args = [
+										'eye'			=> $custom_data['eye'],
+										'brow'			=> $custom_data['brow'],
 
-									'id_num'		=> $order_id,
-									// bin2hex($order_id), // strtolower(base_convert($order_id, 10, 36) . base_convert($item_id, 10, 36) . '-' . rand(1, 9999)),
+										'id_num'		=> $order_id,
+										// bin2hex($order_id), // strtolower(base_convert($order_id, 10, 36) . base_convert($item_id, 10, 36) . '-' . rand(1, 9999)),
 
-									'teddyname'		=> $iRow[0]['value'],
-									'birth'			=> $iRow[1]['value'],
-									'belongto'		=> $iRow[2]['value'],
-									'gift_by'		=> $iRow[3]['value'],
+										'teddyname'		=> $iRow[0]['value'],
+										'birth'			=> $iRow[1]['value'],
+										'belongto'		=> $iRow[2]['value'],
+										'gift_by'		=> $iRow[3]['value'],
 
-									'weight'		=> $custom_data['weight'],
-									'height'		=> $custom_data['height'],
+										'weight'		=> $custom_data['weight'],
+										'height'		=> $custom_data['height'],
 
-									'preview'		=> (bool) $preview,
-									// 'single'		=> ($preview)?$preview:false,
-									
-									'pdf'			=> 'certificate-'.$item_id.'-'.$order_id.'.pdf'
-								];
-								// print_r([$args]);wp_die($item_id);
-								$certificates[] = apply_filters('teddybearpopupaddon_generate_certificate', false, $args);
+										'preview'		=> (bool) $preview,
+										// 'single'		=> ($preview)?$preview:false,
+										
+										'pdf'			=> 'certificate-'.$item_id.'-'.$order_id.'.pdf'
+									];
+									// print_r([$args]);wp_die($item_id);
+									$certificates[] = apply_filters('teddybearpopupaddon_generate_certificate', false, $args);
+								}
 							}
 						}
 					}
@@ -383,16 +385,20 @@ class Order {
 	}
 	public function is_name_required($order, $order_item) {
 		global $teddyProduct;
+		$order_id = $order->get_id();
+		$item_id = $order_item->get_id();
 		$product_id = $order_item->get_product_id();
-		$popup_meta = $teddyProduct->get_post_meta($product_id, '_product_custom_popup', true);
-		foreach($popup_meta as $i => $field) {
-			if($field['type'] == 'info') {
-				$item_meta_data = $order_item->get_meta('custom_teddey_bear_data', true);
-				if(!$item_meta_data) {continue;}
-				foreach($item_meta_data['field'] as $i => $iRow) {
-					foreach($iRow as $j => $jRow) {
-						if($field['steptitle'] == $jRow['title'] && $j == 0) {
-							return (isset($iRow[0]) && isset($iRow[0]['value']) && trim($iRow[0]['value']) == '');
+		$popup_meta = $teddyProduct->get_order_pops_meta($order, $order_item, $product_id);
+		foreach($popup_meta as $posI => $posRow) {
+			foreach($posRow as $i => $field) {
+				if($field['type'] == 'info') {
+					$item_meta_data = $order_item->get_meta('custom_teddey_bear_data', true);
+					if(!$item_meta_data) {continue;}
+					foreach($item_meta_data['field'] as $i => $iRow) {
+						foreach($iRow as $j => $jRow) {
+							if($field['steptitle'] == $jRow['title'] && $j == 0) {
+								return (isset($iRow[0]) && isset($iRow[0]['value']) && trim($iRow[0]['value']) == '');
+							}
 						}
 					}
 				}

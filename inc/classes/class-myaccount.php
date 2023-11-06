@@ -19,6 +19,12 @@ class Myaccount {
 		
 		add_filter('body_class', [$this, 'invisible_my_account_points'], 10, 1);
 		add_shortcode('members-club-link', [$this, 'members_club_link']);
+
+		// add_action('init', function() {
+		// 	$user_meta = get_userdata(get_current_user_id());
+		// 	$user_roles = $user_meta->roles;
+		// 	print_r([$user_roles]);wp_die();
+		// }, 10, 0);
 	}
 	public function woocommerce_account_menu_items($items, $endpoints) {
 		if(isset($items['points']) && ! $this->check_user_role()) {
@@ -39,8 +45,9 @@ class Myaccount {
 	}
 	public function check_user_role() {
 		if(! is_user_logged_in()) {return false;}
-		$user_is_subscriber = $this->user_has_role(get_current_user_id(), 'member');
-		return $user_is_subscriber;
+		$is_roled = $this->user_has_role(get_current_user_id(), 'member');
+		// if(! $is_roled) {$is_roled = $this->user_has_role(get_current_user_id(), 'administrator');}
+		return $is_roled;
 	}
 	public function invisible_my_account_points($classes) {
 		
@@ -77,7 +84,8 @@ class Myaccount {
 		return false;
 	}
 	public function members_club_link($args) {
-		$redirect = site_url('/my-account');
+		$redirect = site_url('/membership');
+		// $redirect = site_url('/my-account');
 		// if(function_exists('WC')) {
 		// 	$redirect = get_permalink(wc_get_page_id('myaccount'));
 		// }

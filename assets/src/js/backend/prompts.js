@@ -39,24 +39,45 @@ const PROMPTS = {
         var json, get_fields, fields, html, data, field, formGroup;
         json = PROMPTS.lastJson;html = '';
         // html = PROMPTS.generate_fields(thisClass);
-        get_fields = PROMPTS.get_fields(thisClass);
-        formGroup = html = document.createElement('div');
+        get_fields = PROMPTS.get_fields(thisClass);var formGroup = {};
         fields = (PROMPTS.lastJson?.product??false)?PROMPTS.lastJson.product:[];
-        fields.forEach((data)=>{
-            field = PROMPTS.do_field(PROMPTS.doto_field(data?.type??(data?.fieldtype??'text')), data);
-            // formGroup = document.querySelector('.element-type-select > .form-wrap > .form-group');
-            // if(formGroup) {formGroup.parentElement.insertBefore(field, formGroup);}
-            formGroup.appendChild(field);
+        if(!(fields?.standing)) {fields = {standing: fields, sitting: []};}
+        Object.values(fields).forEach((row, i) => {
+            var id = Object.keys(fields)[i];
+            formGroup[id] = html = document.createElement('div');
+            row.forEach((data) => {
+                field = PROMPTS.do_field(PROMPTS.doto_field(data?.type??(data?.fieldtype??'text')), data);
+                // formGroup = document.querySelector('.element-type-select > .form-wrap > .form-group');
+                // if(formGroup) {formGroup.parentElement.insertBefore(field, formGroup);}
+                formGroup[id].appendChild(field);
+            });
         });
         setTimeout(()=>{PROMPTS.init_intervalevent(thisClass);},300);
-        if(fields.length>=1) {
+        var tabs = PROMPTS.plushiesPositionTab(thisClass);
+        if(fields.standing.length>=1) {
             html = document.createElement('div');html.classList.add('element-type-select');
-            formGroup.classList.add('form-wrap');html.appendChild(formGroup);
+            // html.appendChild(formGroup);
+            html.appendChild(tabs);
+            setTimeout(() => {
+                ['standing', 'sitting'].forEach((id) => {
+                    var area = document.querySelector('#tab__content_' + id);
+                    formGroup[id].classList.add('form-wrap');
+                    if(area) {area.appendChild(formGroup[id])}
+                });
+            }, 500);
             return html;
         } else {
             html = document.createElement('div');
             html.classList.add('firststep-promptsdev');
             html.innerHTML = `<div>${PROMPTS.i18n?.addnewfield??'Add new field'}</div>`;
+            // html.appendChild(tabs);
+            setTimeout(() => {
+                ['standing', 'sitting'].forEach((id) => {
+                    var area = document.querySelector('#tab__content_' + id);
+                    formGroup[id].classList.add('form-wrap');
+                    if(area) {area.appendChild(formGroup[id])}
+                });
+            }, 500);
             return html;
         }
     },
@@ -134,8 +155,14 @@ const PROMPTS = {
                     data = thisClass.transformObjectKeys(Object.fromEntries(new FormData(document.querySelector('form[name="'+node.name+'"]'))));
                     // thisClass.toastify({text: "Procced clicked",className: "info",style: {background: "linear-gradient(to right, #00b09b, #96c93d)"}}).showToast();
                     field = PROMPTS.do_field(PROMPTS.doto_field(data?.fieldtype??'text'), {});
-                    formGroup = document.querySelector('.element-type-select > .form-wrap > .form-group');
-                    if(formGroup) {formGroup.parentElement.insertBefore(field, formGroup);}
+                    // formGroup = document.querySelector('.element-type-select > .form-wrap > .form-group');
+                    if(document.querySelector('input[name="plushies_condition"]:checked')?.id == 'tab1') {
+                        formGroup = document.querySelector('#tab__content_standing .form-wrap');
+                    } else {
+                        formGroup = document.querySelector('#tab__content_sitting .form-wrap');
+                    }
+                    if(formGroup) {formGroup.appendChild(field);}
+                    // if(formGroup) {formGroup.parentElement.insertBefore(field, formGroup);}
                     setTimeout(()=>{PROMPTS.init_intervalevent(thisClass);},300);
                 });
             }
@@ -147,43 +174,49 @@ const PROMPTS = {
                     document.querySelectorAll('.popup_step__body:not([style*="display: none"])').forEach((el)=>{jQuery(el).slideUp();});
                 });
             }
-            button = document.querySelector('.element-type-select > .form-wrap');
-            if(button) {
-                PROMPTS.sortable = new thisClass.Sortable(button, {
+            document.querySelectorAll('#tab__content_standing > .form-wrap, #tab__content_sitting > .form-wrap').forEach((button) => {
+                // PROMPTS.sortable = 
+                var sort = new thisClass.Sortable(button, {
                     animation: 150,
                     dragoverBubble: false,
                     handle: '.popup_step__header',
                     easing: "cubic-bezier(1, 0, 0, 1)"
                 });
-            }
+            });
             button = document.querySelector('.save-this-popup');
             if(button) {
                 button.addEventListener('click', (event)=>{
                     event.preventDefault();
                     button.setAttribute('disabled', true);
-                    form = document.querySelector('[name="add-new-element-type-select"]');
-                    if(!PROMPTS.do_order(form)) {return;}
-                    data = [];
-                    document.querySelectorAll('.element-type-select .form-wrap .popup_step').forEach((form)=>{
-                        data.push(
-                            thisClass.transformObjectKeys(Object.fromEntries(new FormData(form)))
-                        );
+                    var popsData = {};
+                    ['standing', 'sitting'].forEach((id) => {
+                        // form = document.querySelector('[name="add-new-element-type-select"]');
+                        form = document.querySelector('#tab__content_' + id);
+                        if(!PROMPTS.do_order(form)) {return;}data = [];
+                        form.querySelectorAll('.form-wrap .popup_step').forEach((form)=>{
+                            data.push(
+                                thisClass.transformObjectKeys(Object.fromEntries(new FormData(form)))
+                            );
+                        });
+                        data = data.map((row)=>{
+                            row.fieldID = parseInt(row.fieldID);
+                            if((row?.options??false)) {
+                                row.options = Object.values(row.options);
+                                row.options = row.options.map((opt)=>{
+                                    opt.next = (opt.next!='')?parseInt(opt.next):false;
+                                    return opt;
+                                });
+                            }
+                            return row;
+                        });
+                        popsData[id] = data;
                     });
-                    data = data.map((row)=>{
-                        row.fieldID = parseInt(row.fieldID);
-                        if((row?.options??false)) {
-                            row.options = Object.values(row.options);
-                            row.options = row.options.map((opt)=>{
-                                opt.next = (opt.next!='')?parseInt(opt.next):false;
-                                return opt;
-                            });
-                        }
-                        return row;
-                    });
+                    // console.log(popsData);return;
+
                     var formdata = new FormData();
                     formdata.append('action', 'futurewordpress/project/ajax/save/product');
                     formdata.append('product_id', thisClass.config?.product_id??'');
-                    formdata.append('dataset', JSON.stringify(data));
+                    formdata.append('dataset', JSON.stringify(popsData));
                     formdata.append('_nonce', thisClass.ajaxNonce);
                     thisClass.sendToServer(formdata);
                     setTimeout(() => {button.removeAttribute('disabled');}, 20000);
@@ -882,7 +915,7 @@ const PROMPTS = {
             event.preventDefault();
             document.querySelector('.swal2-html-container')?.classList.add('loading-exim');
             setTimeout(() => {
-                var json_export = thisClass.prompts.lastJson.product;
+                var json_export = {imports: thisClass.prompts.lastJson.product, importable: true};
                 var prod_title = thisClass.prompts.lastJson.info.prod_title;
                 var dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(json_export));
                 var dlAnchorElem = document.createElement('a');
@@ -901,6 +934,7 @@ const PROMPTS = {
         file.accept = '.json';file.style.display = 'none';
         a = document.createElement('a');a.href = '#';a.innerHTML = thisClass.i18n?.import??'Import';
         file.addEventListener('change', (event) => {
+            console.log('Identified');
             if(event.target.files[0]) {
                 const selectedFile = event.target.files[0];
                 document.querySelector('.swal2-html-container')?.classList.add('loading-exim');
@@ -912,20 +946,23 @@ const PROMPTS = {
                         const fileContents = event.target.result;
                         try {
                             const parsedData = JSON.parse(fileContents);
-                            // console.log('Parsed JSON data:', parsedData);
-                            // Now you can work with the parsed JSON data
-
-                            thisClass.isImporting = true;
-                            var formdata = new FormData();
-                            formdata.append('action', 'futurewordpress/project/ajax/save/product');
-                            formdata.append('product_id', thisClass.config?.product_id??'');
-                            formdata.append('dataset', JSON.stringify(parsedData));
-                            formdata.append('_nonce', thisClass.ajaxNonce);
-                            thisClass.sendToServer(formdata);
-
-                            setTimeout(() => {
+                            if(parsedData?.importable && parsedData?.imports) {
+                                parsedData = parsedData.imports;
+                                thisClass.isImporting = true;
+                                var formdata = new FormData();
+                                formdata.append('action', 'futurewordpress/project/ajax/save/product');
+                                formdata.append('product_id', thisClass.config?.product_id??'');
+                                formdata.append('dataset', JSON.stringify(parsedData));
+                                formdata.append('_nonce', thisClass.ajaxNonce);
+                                thisClass.sendToServer(formdata);
+                                setTimeout(() => {
+                                    document.querySelector('.swal2-html-container')?.classList.remove('loading-exim');
+                                }, 20000);
+                            } else {
                                 document.querySelector('.swal2-html-container')?.classList.remove('loading-exim');
-                            }, 20000);
+                                var message = thisClass.i18n?.untrustable??'We can\'t find trustable imports contents.';
+                                thisClass.toastify({text: message ,className: "error", duration: 3000, stopOnFocus: true, style: {background: "linear-gradient(to right, #ffb8b8, #ff7575)"}}).showToast();
+                            }
                         } catch (error) {
                             // console.error('Error parsing JSON:', error);
                             var message = thisClass.i18n?.errorparsingjson??'Error parsing JSON:';
@@ -962,6 +999,29 @@ const PROMPTS = {
         contextMenu.addEventListener("contextmenu", function(event) {
             event.preventDefault();
         });
+    },
+
+    plushiesPositionTab: (thisClass) => {
+        var tabs = document.createElement('div');
+        tabs.innerHTML = `
+        <div class="tab__container">
+            <div class="tab-wrap">
+                <input type="radio" id="tab1" name="plushies_condition" class="tab" checked>
+                <label for="tab1">Standing</label>
+                <input type="radio" id="tab2" name="plushies_condition" class="tab">
+                <label for="tab2">Sitting</label>
+                <div class="tab__content">
+                    <h3 class="tab__content__header">${thisClass.i18n?.standingplushies??'Standing Plushies'}</h3>
+                    <div class="tab__content__standing" id="tab__content_standing"></div>
+                </div>
+                <div class="tab__content">
+                    <h3 class="tab__content__header">${thisClass.i18n?.sittingplushies??'Sitting Plushies'}</h3>
+                    <div class="tab__content__sitting" id="tab__content_sitting"></div>
+                </div>
+            </div>
+        </div>
+        `;
+        return tabs;
     }
 };
 export default PROMPTS;

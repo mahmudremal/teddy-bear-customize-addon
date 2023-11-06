@@ -47,10 +47,11 @@ const popupCart = {
         return (popupCart.basePrice + additionalPriceTotal);
     },
     updateTotalPrice: () => {
-        const priceAlt = document.querySelector('.calculated-prices .price_amount');
-        if(priceAlt) {
+        document.querySelectorAll('.calculated-prices .price_amount').forEach((priceAlt) => {
+            priceAlt.classList.add('animate__shakeX', 'animate__animated');
             priceAlt.innerHTML = popupCart.priceSign +''+ parseFloat(popupCart.getTotalPrice()).toFixed(2) + popupCart.cartIcon;
-        }
+            setTimeout(() => {priceAlt.classList.remove('animate__shakeX', 'animate__animated');}, 1000);
+        });
     }
 };
 export default popupCart;

@@ -23,6 +23,8 @@ class Project {
 		Option::get_instance();
 		Install::get_instance();
 		Product::get_instance();
+		Checkout::get_instance();
+		Plushies::get_instance();
 		Myaccount::get_instance();
 		Meta_Boxes::get_instance();
 		Certificate::get_instance();

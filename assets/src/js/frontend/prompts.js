@@ -1,6 +1,7 @@
 import icons from "./icons";
 const PROMPTS = {
-    i18n: {},voices: {}, names: [],
+    i18n: {},voices: {}, names: [], currentGroups: 'standing',
+    groupSelected: false, outfitSliders: [],
     get_template: (thisClass) => {
         var json, html;PROMPTS.global_cartBtn = false;
         html = document.createElement('div');html.classList.add('dynamic_popup');
@@ -49,7 +50,7 @@ const PROMPTS = {
                 }
             });
         });
-        document.querySelectorAll('hgf.form-fields__group__outfit fieldset > .form-wrap__image:not([data-handled])').forEach((el) => {
+        document.querySelectorAll('asas.form-fields__group__outfit fieldset > .form-wrap__image:not([data-handled])').forEach((el) => {
             const random = 'abcdefghijklmnopqrstuvwxyz';
             const size = 8;let code = '';
             for(let i = 1; i < size; i++) {code += random[Math.abs(Math.floor(Math.random() * random.length))];}
@@ -61,7 +62,7 @@ const PROMPTS = {
             });
             document.querySelectorAll(code).forEach((id) => {id.dataset.handled = true;});
         });
-        document.querySelectorAll('.form-control[name="field.9000"]:not([data-handled])').forEach((input)=>{
+        document.querySelectorAll('.form-control[name="field.9000"]:not([data-handled])').forEach((input) => {
             input.dataset.handled = true;
             let awesomplete = new Awesomplete(input, {
                 minChars: 3,
@@ -84,9 +85,9 @@ const PROMPTS = {
                   });
             });
         });
-        document.querySelectorAll('.popup_close:not([data-handled])').forEach((el)=>{
+        document.querySelectorAll('.popup_close:not([data-handled])').forEach((el) => {
             el.dataset.handled = true;
-            el.addEventListener('click', (event)=>{
+            el.addEventListener('click', (event) => {
                 event.preventDefault();
                 if(confirm(PROMPTS.i18n?.rusure2clspopup??'Are you sure you want to close this popup?')) {
                     thisClass.Swal.close();
@@ -94,7 +95,7 @@ const PROMPTS = {
             });
         });
 
-        document.querySelectorAll('.dynamic_popup').forEach((popup)=>{
+        document.querySelectorAll('.dynamic_popup').forEach((popup) => {
             if(popup) {
                 var fields = document.querySelector('.tc-extra-product-options.tm-extra-product-options');
                 if(!fields) {return;}
@@ -106,11 +107,11 @@ const PROMPTS = {
                 popup.innerHTML = '';popup.appendChild(fields);// jQuery(fields).clone().appendTo(popup);
                 
                 setTimeout(() => {
-                    popup.querySelectorAll('[id]').forEach((el)=>{el.id = el.id+'_popup';});
-                    popup.querySelectorAll('label[for]').forEach((el)=>{el.setAttribute('for', el.getAttribute('for')+'_popup');});
+                    popup.querySelectorAll('[id]').forEach((el) => {el.id = el.id+'_popup';});
+                    popup.querySelectorAll('label[for]').forEach((el) => {el.setAttribute('for', el.getAttribute('for')+'_popup');});
                 }, 200);
 
-                document.querySelectorAll('.dynamic_popup .tm-collapse').forEach((el)=>{
+                document.querySelectorAll('.dynamic_popup .tm-collapse').forEach((el) => {
                     var head = el.firstChild;var body = el.querySelector('.tm-collapse-wrap');
                     head.classList.remove('toggle-header-closed');head.classList.add('toggle-header-open');
                     head.querySelector('.tcfa.tm-arrow').classList.add('tcfa-angle-up');
@@ -119,8 +120,8 @@ const PROMPTS = {
                 });
             }
         });
-        document.querySelectorAll('.dynamic_popup input[type="checkbox"], .dynamic_popup input[type="radio"]').forEach((el)=>{
-            el.addEventListener('change', (event)=>{
+        document.querySelectorAll('.dynamic_popup input[type="checkbox"], .dynamic_popup input[type="radio"]').forEach((el) => {
+            el.addEventListener('change', (event) => {
                 if(el.parentElement) {
                     if(el.parentElement.classList.contains('form-control-checkbox__image')) {
                         if(el.checked) {
@@ -129,7 +130,7 @@ const PROMPTS = {
                             el.parentElement.classList.remove('checked_currently');
                         }
                     } else if(el.parentElement.classList.contains('form-control-radio__image')) {
-                        document.querySelectorAll('input[name="'+el.name+'"]').forEach((radio)=>{
+                        document.querySelectorAll('input[name="'+el.name+'"]').forEach((radio) => {
                             radio.parentElement.classList.remove('checked_currently');
                         });
                         if(el.checked) {
@@ -142,16 +143,22 @@ const PROMPTS = {
         /**
          * .form-fields__group__outfit instead of .popup_body
          */
-        document.querySelectorAll('.dynamic_popup .popup_body input[type=checkbox][data-cost], .dynamic_popup .popup_body input[type=radio][data-cost]').forEach((el)=>{
-            el.addEventListener('change', (event)=>{
+        document.querySelectorAll('.dynamic_popup .popup_body input[type=checkbox][data-cost], .dynamic_popup .popup_body input[type=radio]').forEach((el) => {
+            el.addEventListener('change', (event) => {
+                // [data-cost]
                 var img, frame, title, identity, frameHeight, frameWidth;
                 frameHeight = 400;frameWidth = 350;
                 frame = document.querySelector('.dynamic_popup .header_image');
                 if(!frame) {return;} // I can also give here a toast that frame element not found.
                 identity = el.name.replaceAll('.', '')+'-'+el.id;
 
-                var isPayableCheckbox = (((el?.previousElementSibling)?.firstChild)?.dataset)?.outfit;
-                if(!isPayableCheckbox) {isPayableCheckbox = ((el?.previousElementSibling)?.firstChild)?.src;}
+                var isPayableCheckbox = false;
+                if(el?.previousElementSibling) {
+                    isPayableCheckbox = (((el?.previousElementSibling)?.firstChild)?.dataset)?.outfit;
+                    if(!isPayableCheckbox) {isPayableCheckbox = ((el?.previousElementSibling)?.firstChild)?.src;}
+                } else {
+                    isPayableCheckbox = ((el.dataset?.cost) || (el.dataset?.skip));
+                }
 
                 if(el.checked && isPayableCheckbox) {
                     img = document.createElement('img');img.src = ((el?.previousElementSibling)?.firstChild)?.src;
@@ -161,13 +168,14 @@ const PROMPTS = {
                     if((el.dataset?.layer??false) && el.dataset.layer != '') {img.style.zIndex = parseInt(el.dataset.layer);}
                     
                     if(el.type == 'radio') {
-                        frame.querySelectorAll('img[data-name="'+el.name+'"').forEach((images)=>{images.remove();});
+                        frame.querySelectorAll('img[data-name="'+el.name+'"').forEach((images) => {images.remove();});
                     }
                     if((el.dataset?.preview??'false') == 'true') {frame.appendChild(img);}
+                    
                     if(el.dataset?.cost??false) {
                         switch(el.type) {
                             case 'radio':
-                                document.querySelectorAll('.dynamic_popup input[type="radio"][name="'+el.name+'"][data-cost]').forEach((radio)=>{
+                                document.querySelectorAll('.dynamic_popup input[type="radio"][name="'+el.name+'"][data-cost]').forEach((radio) => {
                                     if(radio.dataset?.calculated??false) {
                                         thisClass.popupCart.removeAdditionalPrice(radio.value, parseFloat(radio.dataset.cost));// radio.checked = false;
                                         radio.removeAttribute('data-calculated');
@@ -190,18 +198,42 @@ const PROMPTS = {
                             default:
                                 break;
                         }
+                    } else {
+                        if(el.dataset?.skip??false) {
+                            switch(el.type) {
+                                case 'radio':
+                                    document.querySelectorAll('.dynamic_popup input[type="radio"][name="'+el.name+'"][data-cost]').forEach((radio) => {
+                                        if(radio.dataset?.calculated??false) {
+                                            thisClass.popupCart.removeAdditionalPrice(radio.value, parseFloat(radio.dataset.cost));// radio.checked = false;
+                                            radio.removeAttribute('data-calculated');
+                                        }
+                                        if(radio.checked) {
+                                            thisClass.popupCart.removeAdditionalPrice(radio.value, parseFloat(radio.dataset.cost));
+                                            radio.removeAttribute('data-calculated');
+                                            frame.querySelectorAll('img[data-name="'+radio.name+'"]').forEach((el)=>el.remove());
+                                            // if(radio.parentElement.classList.contains('checked_currently')) {}
+                                        }
+                                    });
+                                    break;
+                                case 'checkbox':
+                                    thisClass.popupCart.removeAdditionalPrice(el.value, parseFloat(el.dataset.cost));
+                                    break;
+                                default:
+                                    break;
+                            }
+                        }
                     }
                 } else {
-                    frame.querySelectorAll('#'+identity.replaceAll('.', '')).forEach((images)=>{images.remove();});
+                    frame.querySelectorAll('#'+identity.replaceAll('.', '')).forEach((images) => {images.remove();});
                     thisClass.popupCart.removeAdditionalPrice(el.value, parseFloat(el.dataset.cost));
                 }
             });
         });
-        document.querySelectorAll('.dynamic_popup input[type="date"]').forEach((el)=>{
+        document.querySelectorAll('.dynamic_popup input[type="date"]').forEach((el) => {
             el.type = 'text';thisClass.flatpickr(el, {enableTime: false, dateFormat: "d M, Y"});
         });
 
-        document.querySelectorAll('.dynamic_popup button[data-type="done"]:not([data-handled])').forEach((done)=>{
+        document.querySelectorAll('.dynamic_popup button[data-type="done"]:not([data-handled])').forEach((done) => {
             done.dataset.handled = true;
             done.addEventListener('click', (event) => {
                 done.parentElement.classList.add('d-none');
@@ -223,7 +255,7 @@ const PROMPTS = {
         });
         const fieldInfos = '.popup_step__info .form-fields__group__info > div:nth-child';
         thisClass.config.lastTeddyName = '';
-        document.querySelectorAll(fieldInfos+'(-n+2) input').forEach((field)=>{
+        document.querySelectorAll(fieldInfos+'(-n+2) input').forEach((field) => {
             field.addEventListener('change', (event) => {
                 switch(field.type) {
                     case 'text':
@@ -251,14 +283,14 @@ const PROMPTS = {
                 field.removeAttribute('name');// field.checked = true;
             }
         });
-        document.querySelectorAll('.popup_body .popup_step__info .form-fields__group__info input[type="button"]').forEach((btn)=>{
+        document.querySelectorAll('.popup_body .popup_step__info .form-fields__group__info input[type="button"]').forEach((btn) => {
             var nthStep = 1;
             btn.addEventListener('click', (event) => {
                 var wrap = ((btn?.parentElement)?.parentElement)?.parentElement;
                 if(btn.dataset.actLike == 'next') {
                     if(wrap) {
                         if(nthStep >= 3) {
-                            btn.value = thisClass.i18n?.done??'Done';
+                            btn.value = thisClass.i18n?.next??'Next';
                         }
                         if(nthStep >= 4) {
                             (((wrap?.parentElement)?.parentElement)?.firstChild)?.click();
@@ -278,12 +310,84 @@ const PROMPTS = {
                 document.querySelector('.popup_foot .button[data-react="continue"]')?.click();
             });
         });
+        // document.querySelectorAll('.form-control-radio__imgwrap:not([data-handled-tippy]), .form-control-checkbox__imgwrap:not([data-handled-tippy])').forEach((el) => {
+        //     el.dataset.handledTippy = true;
+        //     var image = el.querySelector('img[data-outfit]');
+        //     if(image) {thisClass.tippy(el, {content: `${image?.alt??''}`});}
+        // });
+        document.querySelectorAll('.form-fields__group__outfit > div:not([data-handled-slide])').forEach((el) => {
+            el.dataset.handledSlide = true;
+            var wrap = el.querySelector('.form-wrap__image');
+            if(wrap) {
+                wrap.classList.add('keen-slider');
+                wrap.querySelectorAll('.form-control-label').forEach((elem, i) => {
+                    elem.classList.add('keen-slider__slide', 'number-slide' + i);
+                });
+                var arrows = document.createElement('div');arrows.classList.add('keen-slider__arrows');
+                arrows.innerHTML = icons.left;
+                arrows.innerHTML += icons.right;
+                wrap.parentElement.appendChild(arrows);
+                setTimeout(() => {
+                    const slider = new thisClass.KeenSlider(wrap, {
+                        drag: false, // loop: true, mode: "free",
+                        slides: {perView: 5, spacing: 5},
+                    }, [
+                        slider => {
+                          slider.on('created', () => {
+                            setTimeout(() => {
+                                console.log('Slider created');
+                                const event = new Event('resize');
+                                window.dispatchEvent(event);
+                            }, 2000);
+                          })
+                        },
+                    ]);
+                    // PROMPTS.outfitSliders.push(slider);
+                    
+                    arrows.querySelectorAll('.arrow').forEach((elem) => {
+                        elem.addEventListener('click', (event) => {
+                            switch(elem.dataset?.arrow) {
+                                case 'left':
+                                    slider.prev();
+                                    break;
+                                default:
+                                    slider.next();
+                                    break;
+                            }
+                        });
+                    });
+                    
+                }, 500);
+            }
+        });
+        
         
         PROMPTS.currentStep=0;PROMPTS.do_pagination(true, thisClass);
+    },
+    init_group_select_events: (thisClass) => {
+        document.querySelectorAll('.teddy_position__single:not([data-handled])').forEach((el) => {
+            el.dataset.handled = true;
+            el.addEventListener('click', (event) => {
+                if(el.dataset?.type) {
+                    PROMPTS.currentGroups = el.dataset.type;PROMPTS.groupSelected = true;
+                    var popsBody = document.querySelector('.dynamic_popup');
+                    if(popsBody) {
+                        popsBody.classList.add('dynamic_popup__preload');
+                        popsBody.innerHTML = `<div class="spinner-material"></div><h3>${PROMPTS.i18n?.pls_wait??'Please wait...'}</h3>`
+                        setTimeout(() => {
+                            document.body.dispatchEvent(new Event('gotproductpopupresult'));
+                        }, 1000);
+                    }
+                }
+            });
+        });
     },
     generate_template: (thisClass) => {
         var json, html;
         json = PROMPTS.lastJson;
+        var custom_fields = PROMPTS.get_data(thisClass, true);
+        var positions = PROMPTS.lastJson.product?.positions??{};
+        positions = (typeof positions !== 'object')?{}:positions;
         html = '';
         html += (json.header)?`
             ${(json.header.product_photo)?`
@@ -291,18 +395,40 @@ const PROMPTS = {
                 <div class="popup_close fa fa-times"></div>
                 <span class="back2previous_step d-none" data-icon="dashicons-before dashicons-arrow-left-alt" type="button" data-react="back">Back</span>
                 <img class="dynamic_popup__header__image" src="${thisClass.config?.siteLogo??''}" alt="">
+                
                 <div class="popup-prices">
                     <button class="btn btn-primary button">
                         <span>${PROMPTS.i18n?.add_to_cart??'Add To Cart'}</span><div class="spinner-circular-tube"></div>
                     </button>
-                    <button class="calculated-prices">
+                    <button class="calculated-prices" ${(PROMPTS.groupSelected)?'':`style="opacity: 0;"`}>
                         <span>${PROMPTS.i18n?.total??'Total'}</span><div class="price_amount">${(PROMPTS.lastJson.product && PROMPTS.lastJson.product.priceHtml)?PROMPTS.lastJson.product.priceHtml:(thisClass.config?.currencySign??'$')+'0.00'}</div>
                     </button>
                 </div>
+                
             </div>
-            <div class="header_image" ${(json.header.product_photo != 'empty')?`style="background-image: url('${json.header.product_photo}');"`:``}></div>`:''}
+
+            ${(! PROMPTS.groupSelected)?`
+            <div class="teddy_position">
+                <div class="teddy_position__wrap">
+                    <div class="teddy_position__row">
+                        ${['standing', 'sitting'].map(type => `
+                        <div class="teddy_position__single" data-type="${type}">
+                            <img src="${(positions[type] && positions[type] != '')?positions[type]:''}" alt="${type}" />
+                            <span class="teddy_position__single__caption">${type.toUpperCase()}</span>
+                        </div>
+                        `).join('')}
+                    </div>
+                </div>
+            </div>
+            `:''}
+            ${(PROMPTS.groupSelected)?`
+            <div class="header_image" ${(json.header.product_photo != 'empty')?`style="background-image: url('${json.header.product_photo}');"`:``}></div>
+            `:''}
+            `:''}
         `:'';
-        html += PROMPTS.generate_fields(thisClass);
+        if(PROMPTS.groupSelected) {
+            html += PROMPTS.generate_fields(thisClass);
+        }
         return html;
     },
     generate_fields: (thisClass) => {
@@ -312,11 +438,14 @@ const PROMPTS = {
         }
         div = document.createElement('div');node = document.createElement('form');
         node.action=thisClass.ajaxUrl;node.type='post';node.classList.add('popup_body');
-        fields.forEach((field, i) => {
-            step = PROMPTS.do_field(field);i++;
-            step.dataset.step = field.fieldID;
-            node.appendChild(step);
-            PROMPTS.totalSteps=(i+1);
+        if(!(fields?.standing)) {fields = {standing: fields, sitting: []};}
+        Object.values(fields).forEach((group, i) => {
+            group.forEach((field, i) => {
+                step = PROMPTS.do_field(field);i++;
+                step.dataset.step = field.fieldID;
+                node.appendChild(step);
+                PROMPTS.totalSteps=(i+1);
+            });
         });
         foot = document.createElement('div');foot.classList.add('popup_foot');
         footwrap = document.createElement('div');footwrap.classList.add('popup_foot__wrap');
@@ -355,11 +484,18 @@ const PROMPTS = {
         });
         return str;
     },
-    get_data: (thisClass) => {
+    get_data: (thisClass, both = false) => {
         var fields = PROMPTS.lastJson.product.custom_fields;
-        if(!fields || fields=='') {return false;}
-        fields.forEach((row, i) => {row.orderAt = (i+1);});
-        return fields;
+        if(!fields || fields == '') {return false;}
+        if(!(fields?.standing)) {fields = {standing: fields, sitting: []};}
+        
+        // console.log(fields);
+        
+        Object.values(fields).forEach((group) => {
+            group.forEach((row, i) => {row.orderAt = (i+1);}); 
+        });
+        return (both)?fields:fields[PROMPTS.currentGroups];
+        // return fields;
     },
     do_field: (field, child = false) => {
         var fields, form, group, fieldset, input, level, span, option, head, image, others, body, div, info, title, done, imgwrap, i = 0;
@@ -367,7 +503,7 @@ const PROMPTS = {
         
         if(!child) {
             done = document.createElement('button');done.type = 'button';done.dataset.type = 'done';
-            done.innerHTML = PROMPTS.i18n?.done??'Done';div.appendChild(done);
+            done.innerHTML = PROMPTS.i18n?.next??'Next';div.appendChild(done);
         }
         if((field?.heading??'').trim() != '') {
             head = document.createElement('h2');
@@ -453,7 +589,7 @@ const PROMPTS = {
                             }
                             imgwrap.appendChild(image);level.appendChild(imgwrap);
                         }
-                        if(!opt.input) {
+                        if(!(opt?.input)) {
                             opt.cost = ((opt?.cost) && opt.cost !== NaN)?opt.cost:0;
                             span.innerHTML = `<span title="${thisClass.esc_attr(opt.label)}">${opt.label}</span>`+(
                                 (opt?.cost??false)?(
@@ -471,7 +607,9 @@ const PROMPTS = {
                         option.dataset.index = optI;option.dataset.fieldId = field.fieldID;
                         option.id=`field_${field?.fieldID??i}_${optI}`;option.type=field.type;
                         if(field?.layer??false) {option.dataset.layer=field.layer;}
-                        if((opt?.cost??'') == '') {opt.cost = '0';}option.dataset.cost=opt.cost;
+                        // if((opt?.cost??'') == '') {opt.cost = '0';}
+                        if(opt?.cost) {option.dataset.cost=opt.cost;}
+                        if(opt?.skip) {option.dataset.skip = true;}
                         if(child) {option.dataset.preview=child;}
                         level.appendChild(option);level.appendChild(span);input.appendChild(level);
                         fieldset.appendChild(input);div.appendChild(fieldset);
@@ -509,6 +647,13 @@ const PROMPTS = {
                 fields = document.createElement('div');fields.classList.add('form-fields', 'form-fields__group', 'form-fields__group__'+(field.type).replaceAll(' ', ''));
                 (field?.groups??[]).forEach((group, groupI)=> {
                     group.fieldID = (field?.fieldID??0)+'.'+(group?.fieldID??groupI);
+                    if(group?.options) {
+                        group.options?.push({
+                            label: PROMPTS.i18n?.skip??'Skip',
+                            next: '', image: '',// cost: '0',
+                            thumb: '', thumbUrl: '', skip: true
+                        });
+                    }
                     fields.appendChild(PROMPTS.do_field(group, true));
                 });
                 fieldset.appendChild(fields);div.appendChild(fieldset);
@@ -550,7 +695,7 @@ const PROMPTS = {
                         dataset: {title: PROMPTS.i18n?.sendersname??'Created with love by'}
                     }
                 };
-                Object.keys(inputs).forEach((type, typeI)=>{
+                Object.keys(inputs).forEach((type, typeI) => {
                     inputsArgs = {
                         fieldID: (field?.fieldID??0)+'.'+(type?.fieldID??typeI),
                         ...inputs[type]
@@ -586,7 +731,7 @@ const PROMPTS = {
         }
         i++;
         if((field?.extra_fields??false)) {
-            field.extra_fields.forEach((extra)=>{
+            field.extra_fields.forEach((extra) => {
                 div.appendChild(PROMPTS.do_field(extra, true));
             });
         }
@@ -632,7 +777,7 @@ const PROMPTS = {
                 }
             }
             
-            field = PROMPTS.lastJson.product.custom_fields.find((row)=>row.orderAt==PROMPTS.currentStep);
+            field = PROMPTS.get_data(thisClass).find((row)=>row.orderAt==PROMPTS.currentStep);
             if(plus && field && field.type == 'confirm' && ! await PROMPTS.do_search(field, thisClass)) {
                 return false;
             }
@@ -665,12 +810,12 @@ const PROMPTS = {
                 // if(PROMPTS.validateField(step, data, thisClass)) {
                 // } else {console.log('Didn\'t Submit');}
             } else {
-                document.querySelectorAll('.popup_foot .button[data-react="back"], .back2previous_step[data-react="back"]').forEach((back)=>{
+                document.querySelectorAll('.popup_foot .button[data-react="back"], .back2previous_step[data-react="back"]').forEach((back) => {
                     if(!plus && PROMPTS.currentStep<=1) {back.classList.add('invisible');}
                     else {back.classList.remove('invisible');}
                 });
                 
-                field = PROMPTS.lastJson.product.custom_fields.find((row)=>row.orderAt==PROMPTS.currentStep);
+                field = PROMPTS.get_data(thisClass).find((row)=>row.orderAt==PROMPTS.currentStep);
                 header = document.querySelector('.header_image');
                 if(header) {
                     if(field && field.headerbgurl!='') {
@@ -678,12 +823,12 @@ const PROMPTS = {
                         // header.innerHTML = '';
                     }
                 }
-                document.querySelectorAll(root+'.step_visible').forEach((el)=>{el.classList.add('d-none');el.classList.remove('step_visible');});
+                document.querySelectorAll(root+'.step_visible').forEach((el) => {el.classList.add('d-none');el.classList.remove('step_visible');});
                 step = document.querySelector(root+'[data-step="'+(field?.fieldID??PROMPTS.currentStep)+'"]');
                 if(step) {
                     if(!plus) {step.classList.add('popup2left');}
-                    step.classList.remove('d-none');setTimeout(()=>{step.classList.add('step_visible');},300);
-                    if(!plus) {setTimeout(()=>{step.classList.remove('popup2left');},1500);}
+                    step.classList.remove('d-none');setTimeout(() => {step.classList.add('step_visible');},300);
+                    if(!plus) {setTimeout(() => {step.classList.remove('popup2left');},1500);}
                 }
 
                 // Change swal step current one.
@@ -692,7 +837,7 @@ const PROMPTS = {
                 thisClass.frozenNode = document.createElement('div');
                 thisClass.frozenNode.appendChild(popup);
 
-                var find = PROMPTS.lastJson.product.custom_fields.find((row)=>row.orderAt == PROMPTS.currentStep);
+                var find = PROMPTS.get_data(thisClass).find((row)=>row.orderAt == PROMPTS.currentStep);
                 var found = PROMPTS.progressSteps.indexOf(find?.steptitle??false);
                 thisClass.Swal.update({
                     currentProgressStep: ((found)?found:(PROMPTS.currentStep-1)),
@@ -713,7 +858,7 @@ const PROMPTS = {
     beforeSwitch: async (thisClass, plus) => {
         var field, back, next, elem, last;last = elem = false;
         if(plus) {
-            field = PROMPTS.lastJson.product.custom_fields.find((row)=>row.orderAt==PROMPTS.currentStep);
+            field = PROMPTS.get_data(thisClass).find((row)=>row.orderAt==PROMPTS.currentStep);
             elem = document.querySelector('.popup_body .popup_step[data-step="'+(field?.fieldID??PROMPTS.currentStep)+'"]');
             elem = (elem && elem.nextElementSibling)?parseInt(elem.nextElementSibling.dataset?.step??0):0;
             // if(!elem || typeof elem.nextElementSibling === 'undefined') {return false;}
@@ -733,11 +878,11 @@ const PROMPTS = {
             if(!step) {return (PROMPTS.currentStep<=0);}
             if(!PROMPTS.validateField(step, data, thisClass)) {return false;}
 
-            step.querySelectorAll('input, select').forEach((el,ei)=>{
+            step.querySelectorAll('input, select').forEach((el,ei) => {
                 // el is the element input
                 if(!prev.includes(el.name) && data[el.name] && data[el.name]==el.value) {
                     // item is the fieldset
-                    var item = PROMPTS.lastJson.product.custom_fields.find((row, i)=>row.fieldID==el.dataset.fieldId);
+                    var item = PROMPTS.get_data(thisClass).find((row, i)=>row.fieldID==el.dataset.fieldId);
                     if(item) {
                         // opt is the options
                         var opt = (item?.options??[]).find((opt,i)=>i==el.dataset.index);
@@ -753,7 +898,7 @@ const PROMPTS = {
                         if(opt) {
                             prev.push(el.dataset.index);
                             if(!item.is_conditional && opt.next && opt.next!='') {
-                                next = PROMPTS.lastJson.product.custom_fields.find((row)=>row.fieldID==parseInt(opt.next));
+                                next = PROMPTS.get_data(thisClass).find((row)=>row.fieldID==parseInt(opt.next));
                                 // console.log(next);
                                 if(next) {
                                     next.returnStep = item.orderAt;
@@ -771,9 +916,9 @@ const PROMPTS = {
             });
         }
         if(!plus) {
-            var current = PROMPTS.lastJson.product.custom_fields.find((row)=>row.orderAt==PROMPTS.currentStep);
+            var current = PROMPTS.get_data(thisClass).find((row)=>row.orderAt==PROMPTS.currentStep);
             var returnStep = current?.returnStep??false;
-            var next = PROMPTS.lastJson.product.custom_fields.find((row)=>row.orderAt==returnStep);
+            var next = PROMPTS.get_data(thisClass).find((row)=>row.orderAt==returnStep);
             if(returnStep && next) {
                 PROMPTS.currentStep = (parseInt(returnStep)+1);
                 current.returnStep=false;
@@ -783,13 +928,13 @@ const PROMPTS = {
         
         return true;
         // return (!plus || PROMPTS.currentStep < PROMPTS.totalSteps);
-        // setTimeout(()=>{return true;},100);
+        // setTimeout(() => {return true;},100);
     },
     validateField: (step, data, thisClass) => {
         // data = thisClass.generate_formdata(document.querySelector('.popup_body'));
         var fieldValue, field;fieldValue = step.querySelector('input, select');
         fieldValue = (fieldValue)?fieldValue?.name??false:false;
-        field = PROMPTS.lastJson.product.custom_fields.find((row)=>row.fieldID==step.dataset.step);
+        field = PROMPTS.get_data(thisClass).find((row)=>row.fieldID==step.dataset.step);
         if(!field) {return false;}
 
         thisClass.Swal.resetValidationMessage();
@@ -838,15 +983,16 @@ const PROMPTS = {
         var popup = document.querySelector('.dynamic_popup .tc-extra-product-options.tm-extra-product-options');
         var parent = document.querySelector('.tc-extra-product-options-parent');
         if(parent && popup) {parent.innerHTML = '';parent.appendChild(popup);}
+        PROMPTS.groupSelected = false;PROMPTS.currentGroups = 'standing';
         return true;
     },
     get_formdata: async (thisClass, formdata = false) => {
         var form = thisClass.generate_formdata(document.querySelector('.popup_body'));
-        Object.keys(form).forEach((name)=>{
+        Object.keys(form).forEach((name) => {
             var elem = document.querySelector('[name="'+name+'"]');
             if(elem.value.trim().toLocaleLowerCase() == form[name].trim().toLocaleLowerCase()) {
                 var split = name.split('.');split[1] = parseInt(split[1]);
-                var field = PROMPTS.lastJson.product.custom_fields.find((row)=>row.fieldID==split[1]);
+                var field = PROMPTS.get_data(thisClass).find((row)=>row.fieldID==split[1]);
                 var img = elem.previousElementSibling;
                 var match = (field?.options??[]).find((row)=>row.label && row.label.toLocaleLowerCase()==form[name].toLocaleLowerCase());
                 form[name] = {
@@ -859,7 +1005,7 @@ const PROMPTS = {
                 };
             } else {
                 var split = name.split('.');split[1] = parseInt(split[1]);
-                var field = PROMPTS.lastJson.product.custom_fields.find((row)=>row.fieldID==split[1]);
+                var field = PROMPTS.get_data(thisClass).find((row)=>row.fieldID==split[1]);
                 var img = elem.previousElementSibling;var split = name.split('.');split[1] = parseInt(split[1]);
                 switch(field.type) {
                     case 'outfit':
@@ -901,7 +1047,7 @@ const PROMPTS = {
                 }
             }
         });
-        const hasVoice = PROMPTS.lastJson.product.custom_fields.find((row)=>(row.type=='voice'));
+        const hasVoice = PROMPTS.get_data(thisClass).find((row)=>(row.type=='voice'));
         if(hasVoice) {
             // if((thisClass.voiceRecord.audioPreview?.src??'') != '') {
             if(thisClass.voiceRecord.recordedBlob !== null) {
@@ -923,7 +1069,7 @@ const PROMPTS = {
             }
         }
         form = thisClass.transformObjectKeys(form);
-        // PROMPTS.lastJson.product.custom_fields.map((row)=>(row.type=='voice')?row:false);
+        // PROMPTS.get_data(thisClass).map((row)=>(row.type=='voice')?row:false);
 
         return form;
     },
@@ -953,7 +1099,7 @@ const PROMPTS = {
                             el.classList.add('step_visible');el.classList.remove('d-none');
                             document.querySelector('.popup_body')?.classList.add('visible_card');
                             if(el.dataset?.step) {
-                                var presentStep = thisClass.prompts.lastJson.product.custom_fields.find((row)=>row.orderAt == el.dataset.step);
+                                var presentStep = PROMPTS.get_data(thisClass).find((row)=>row.orderAt == el.dataset.step);
                                 if(presentStep) {
                                     document.querySelector('.popup_body').dataset.stepType = presentStep.type;
                                 }
@@ -962,7 +1108,7 @@ const PROMPTS = {
                             PROMPTS.global_cartBtn = true;
 
                             PROMPTS.currentStep = el.dataset.step;
-                            var field = PROMPTS.lastJson.product.custom_fields.find((row)=>row.orderAt==PROMPTS.currentStep);
+                            var field = PROMPTS.get_data(thisClass).find((row)=>row.orderAt==PROMPTS.currentStep);
                             var header = document.querySelector('.header_image');
                             if(header) {
                                 if(field && field.headerbgurl != '') {

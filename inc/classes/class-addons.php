@@ -88,14 +88,17 @@ class Addons {
 
 							// Optionally, you can also update the cart totals
 							$cart->calculate_totals();
+							
+							$json['hooks'] = ['wrapping_adding_success'];
+							$json['message'] = __('Wrapping added successfully!', 'teddybearsprompts');
 						} else {
 							wp_send_json_error($json);
 						}
 					} else {
 						WC()->session->set('added_wrapping', 'yes');
+						$json['hooks'] = ['wrapping_adding_success'];
+						$json['message'] = __('Wrapping added successfully!', 'teddybearsprompts');
 					}
-					$json['message'] = __('Wrapping added successfully!', 'teddybearsprompts');
-					$json['hooks'] = ['wrapping_adding_success'];
 					wp_send_json_success($json);
 					break;
 				case 'del':

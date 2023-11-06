@@ -299,7 +299,7 @@ const voiceRecord = {
     // voiceRecord.releaseButton.innerHTML = icons.tick + voiceRecord.releaseButton.innerHTML;
     voiceRecord.skipButton.classList.remove('do_recorder__skipped');
     voiceRecord.releaseButton.classList.add('do_recorder__released');
-    const audiolater_instuction = voiceRecord.i18n?.audiolater_instuction??`1. Receive instructions & button in order email.\n2. Upload audio file anytime later.\n3. Send audio when ready.`;
+    const audiolater_instuction = voiceRecord.i18n?.audiolater_instuction??`1. Receive instructions & button in order email.\n2. Upload audio file anytime later.\n3. we will ship when your audio file is received.`;
     voiceRecord.audioInstructPreview.innerHTML = audiolater_instuction.replace(/(\r\n|\n\r|\r|\n)/g, '<br>' + '$1');
     voiceRecord.audioInstructPreview.classList.remove('d-none');
     voiceRecord.rootElement.classList.remove('visible_audio');

@@ -126,6 +126,14 @@ class Menus {
 					'default'				=> false
 				],
 				[
+					'id' 					=> 'standard-category',
+					'label'					=> __('Cross-sale category', 'teddybearsprompts'),
+					'description'			=> __('Select a cross sale category to suggest on added to cart confirmation popup. Each product under your selected category will be displayed to confirmation popup.', 'teddybearsprompts'),
+					'type'					=> 'select',
+					'options'				=> $this->get_query(['post_type' => 'product', 'type' => 'option', 'limit' => 500, 'queryType' => 'term']),
+					'default'				=> false
+				],
+				[
 					'id' 					=> 'standard-sitelogo',
 					'label'					=> __('Header logo', 'teddybearsprompts'),
 					'description'			=> __('Full url of your site popup logo for popup header. This could be any kind of image formate and optimized resulation.', 'teddybearsprompts'),
@@ -133,11 +141,17 @@ class Menus {
 					'default'				=> false
 				],
 				[
-					'id' 					=> 'standard-category',
-					'label'					=> __('Cross-sale category', 'teddybearsprompts'),
-					'description'			=> __('Select a cross sale category to suggest on added to cart confirmation popup. Each product under your selected category will be displayed to confirmation popup.', 'teddybearsprompts'),
-					'type'					=> 'select',
-					'options'				=> $this->get_query(['post_type' => 'product', 'type' => 'option', 'limit' => 500, 'queryType' => 'term']),
+					'id' 					=> 'standard-standingdoll',
+					'label'					=> __('Standing teddy image', 'teddybearsprompts'),
+					'description'			=> __('Full url of a standing teddy bear image for first step selecting. This could be any kind of image formate and optimized resulation.', 'teddybearsprompts'),
+					'type'					=> 'url',
+					'default'				=> false
+				],
+				[
+					'id' 					=> 'standard-sittingdoll',
+					'label'					=> __('Sitting teddy image', 'teddybearsprompts'),
+					'description'			=> __('Full url of a sitting teddy bear image for first step selecting. This could be any kind of image formate and optimized resulation.', 'teddybearsprompts'),
+					'type'					=> 'url',
 					'default'				=> false
 				],
 			]
@@ -189,7 +203,7 @@ class Menus {
 			'fields'						=> [
 				...$this->optionaize_teddy_names(),
 				[
-					'id' 					=> 'do_repeater',
+					'id' 					=> 'do_repeater_name',
 					'label'					=> '',
 					'description'			=> false,
 					'type'					=> 'button',
@@ -262,7 +276,7 @@ class Menus {
 		$args['badges']		= [
 			'title'							=> __('Badges', 'teddybearsprompts'),
 			'description'					=> __('Products shop grid featured & Best Seller badges', 'teddybearsprompts'),
-			'fields'						=> [
+			'fields__'						=> [
 				[
 					'id' 						=> 'badges-enable',
 					'label'					=> __('Enable', 'teddybearsprompts'),
@@ -312,6 +326,44 @@ class Menus {
 					'type'					=> 'color',
 					'default'				=> '#333'
 				],
+				[
+					'id' 						=> 'badges-bestseller',
+					'label'					=> __('Enable Best Seller', 'teddybearsprompts'),
+					'description'			=> __('Mark to enable individual best seller badge.', 'teddybearsprompts'),
+					'type'					=> 'checkbox',
+					'default'				=> false
+				],
+				[
+					'id' 						=> 'badges-onsale',
+					'label'					=> __('Enable On-Sale', 'teddybearsprompts'),
+					'description'			=> __('Mark to enable offer/On Sale badge.', 'teddybearsprompts'),
+					'type'					=> 'checkbox',
+					'default'				=> false
+				],
+				[
+					'id' 						=> 'badges-onsale-bgcolor',
+					'label'					=> __('On-sale BG color', 'teddybearsprompts'),
+					'description'			=> __('Define a color as background color for onsale badge.', 'teddybearsprompts'),
+					'type'					=> 'color',
+					'default'				=> '#FFCF02'
+				],
+				[
+					'id' 						=> 'badges-onsale-color',
+					'label'					=> __('On-sale Text color', 'teddybearsprompts'),
+					'description'			=> __('Define a color as text color for onsale badge.', 'teddybearsprompts'),
+					'type'					=> 'color',
+					'default'				=> '#333'
+				],
+			],
+			'fields'						=> [
+				...$this->optionaize_teddy_badges(),
+				[
+					'id' 					=> 'do_repeater_badge',
+					'label'					=> '',
+					'description'			=> false,
+					'type'					=> 'button',
+					'default'				=> __('Add another', 'teddybearsprompts')
+				],
 			]
 		];
 		return $args;
@@ -351,7 +403,6 @@ class Menus {
 				$filteredData[] = $value;
 			}
 		}
-		
 		foreach($filteredData as $i => $name) {
 			$args[] = [
 				'id' 					=> 'teddy-name-' . $i,
@@ -359,6 +410,54 @@ class Menus {
 				'description'			=> false,
 				'type'					=> 'text',
 				'default'				=> $name
+			];
+		}
+		return $args;
+	}
+	public function optionaize_teddy_badges() {
+		$args = [];$filteredData = [];$filteredRow = [];
+		foreach((array) TEDDY_BEAR_CUSTOMIZE_ADDON_OPTIONS as $key => $value) {
+			if(strpos($key, 'teddy-badge-') !== false) {
+				$filteredData[$key] = $value;
+			}
+		}
+		// try {
+			foreach($filteredData as $key => $value) {
+				$key = substr($key, 12);$split = explode('-', $key);
+				$filteredRow[$split[1]] = isset($filteredRow[$split[1]])?$filteredRow[$split[1]]:[];
+				$filteredRow[$split[1]][$split[0]] = $value;
+			}
+		// } catch (\Exception $th) {
+		// 	echo 'Message: ' . $e->getMessage();
+		// }
+		foreach($filteredRow as $i => $badge) {
+			$args[] = [
+				'id' 					=> 'teddy-badge-enable-' . $i,
+				'label'					=> sprintf('#%s %s', number_format_i18n($i, 0), __('Enable', 'teddybearsprompts')),
+				'description'			=> __('Mark to enable this badge everyehere', 'teddybearsprompts'),
+				'type'					=> 'checkbox',
+				'default'				=> isset($badge['enable'])?$badge['enable']:false
+			];
+			$args[] = [
+				'id' 					=> 'teddy-badge-label-' . $i,
+				'label'					=> sprintf('#%s %s', number_format_i18n($i, 0), __('Label text', 'teddybearsprompts')),
+				'description'			=> __('Label name will be displayed on the badge on product card.', 'teddybearsprompts'),
+				'type'					=> 'text',
+				'default'				=> isset($badge['label'])?$badge['label']:false
+			];
+			$args[] = [
+				'id' 					=> 'teddy-badge-backgound-' . $i,
+				'label'					=> sprintf('#%s %s', number_format_i18n($i, 0), __('Backgound Color', 'teddybearsprompts')),
+				'description'			=> __('Backgound color of this badge.', 'teddybearsprompts'),
+				'type'					=> 'color',
+				'default'				=> isset($badge['backgound'])?$badge['backgound']:false
+			];
+			$args[] = [
+				'id' 					=> 'teddy-badge-textcolor-' . $i,
+				'label'					=> sprintf('#%s %s', number_format_i18n($i, 0), __('Text color', 'teddybearsprompts')),
+				'description'			=> __('Text color of this badge.', 'teddybearsprompts'),
+				'type'					=> 'color',
+				'default'				=> isset($badge['textcolor'])?$badge['textcolor']:false
 			];
 		}
 		return $args;
