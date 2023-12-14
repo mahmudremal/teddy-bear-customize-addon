@@ -34,6 +34,12 @@ class Update {
         $this->set_repository('teddy-bear-customize-addon');
         $this->authorize(false);
         $this->initialize();
+
+        /**
+         * To check immediate update removing transition delay.
+         */
+        // add_action('admin_init', function() {delete_site_transient('update_plugins');wp_update_plugins();});
+        
 	}
     public function set_username($username) {
 		$this->username = $username;

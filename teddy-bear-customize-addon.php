@@ -6,7 +6,7 @@
  * Plugin Name:       Teddy Bear Customization
  * Plugin URI:        https://github.com/mahmudremal/teddy-bear-customize-addon/
  * Description:       Customize teddy bear's apearence before making order.
- * Version:           1.0.4
+ * Version:           1.0.5
  * Requires at least: 5.2
  * Requires PHP:      7.2
  * Author:            Remal Mahmud
@@ -19,7 +19,7 @@
  * @package QuizAndFilterSearch
  * @author  Remal Mahmud (https://github.com/mahmudremal)
  * @version 1.0.2
- * @link https://github.com/mahmudremal/teddy-bear-customize-addon
+ * @link https://github.com/mahmudremal/teddy-bear-customize-addon/
  * @category	WooComerce Plugin
  * @copyright	Copyright (c) 2023-25
  * 
