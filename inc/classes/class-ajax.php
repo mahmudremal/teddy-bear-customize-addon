@@ -61,7 +61,7 @@ class Ajax {
 		wp_send_json_success( $res, 200 );
 	}
 	public function search_product() {
-		global $wpdb;global  $woocommerce;global $teddyProduct;
+		global $wpdb;global  $woocommerce;global $teddyProduct;global $Plushies;
 		// check_ajax_referer('futurewordpress/project/teddybearpopupaddon/verify/nonce', '_nonce', true);
 		$dataset = $request = json_decode(preg_replace('/[\x00-\x1F\x80-\xFF]/', '', stripslashes(html_entity_decode(isset($_POST['dataset'])?$_POST['dataset']:'{}'))), true);
 		
@@ -77,12 +77,11 @@ class Ajax {
 			'currency'	=> get_woocommerce_currency_symbol(),
 			'priceHtml'	=> $_product->get_price_html()
 		]:[];
-		// print_r([$productData]);
 
 		$json = [
-			'hooks' => [ 'gotproductpopupresult' ],
+			'hooks' => ['gotproductpopupresult'],
 			'header' => [
-				'product_photo' => 'empty', // 'https://eu-bark-media.s3.eu-west-1.amazonaws.com/category_header_photos/74-1530804797752.jpg'
+				'product_photo' => 'empty',
 			],
 			'user' => [
 				'sellerLoggedIn' => is_user_logged_in(),
@@ -107,47 +106,10 @@ class Ajax {
 				'is_parent' => false,
 				'toast'		=> false, // '<strong>' . count($requested) . '</strong> people requested this service in the last 10 minutes!',
 				'thumbnail'	=> ['1x' => '', '2x' => ''],
-				'custom_fields' => $teddyProduct->get_post_meta($dataset['product_id'], '_product_custom_popup', true)
+				'custom_fields' => $teddyProduct->get_frontend_product_json($dataset['product_id'])
 			],
 		];
 
-
-		$json['product']['custom_fields'] = ($json['product']['custom_fields'] && !empty($json['product']['custom_fields']))?(array)$json['product']['custom_fields']:[];
-		foreach($json['product']['custom_fields'] as $_posI => $_pos) {
-			foreach($json['product']['custom_fields'][$_posI] as $i => $_prod) {
-
-				if(!empty(trim($_prod['headerbg']))) {
-					$json['product']['custom_fields'][$_posI][$i]['headerbgurl'] = wp_get_attachment_url($_prod['headerbg']);
-				}
-				
-				if(isset($_prod['options'])) {
-					$_prod['options'] = (!empty($_prod['options']))?(array)$_prod['options']:[];
-					foreach($_prod['options'] as $j => $option) {
-						if(isset($option['image']) && !empty($option['image'])) {
-							$json['product']['custom_fields'][$_posI][$i]['options'][$j]['imageUrl'] = wp_get_attachment_url($option['image']);
-						}
-						if(isset($option['thumb']) && !empty($option['thumb'])) {
-							// $json['product']['custom_fields'][$_posI][$i]['groups'][$k]['options'][$l]['thumbUrl'] = wp_get_attachment_url($option['thumb']);
-							$json['product']['custom_fields'][$_posI][$i]['options'][$j]['thumbUrl'] = wp_get_attachment_url($option['thumb']);
-						}
-					}
-				}
-				if(isset($_prod['groups'])) {
-					foreach($_prod['groups'] as $k => $group) {
-						if(isset($group['options'])) {
-							foreach($group['options'] as $l => $option) {
-								if(isset($option['image']) && !empty($option['image'])) {
-									$json['product']['custom_fields'][$_posI][$i]['groups'][$k]['options'][$l]['imageUrl'] = wp_get_attachment_url($option['image']);
-								}
-								if(isset($option['thumb']) && !empty($option['thumb'])) {
-									$json['product']['custom_fields'][$_posI][$i]['groups'][$k]['options'][$l]['thumbUrl'] = wp_get_attachment_url($option['thumb']);
-								}
-							}
-						}
-					}
-				}
-			}
-		}
 		wp_send_json_success( $json, 200 );
 	}
 	public function submit_popup() {
@@ -212,16 +174,25 @@ class Ajax {
 		wp_send_json_success($result, 200);
 	}
 	public function edit_product() {
-		global $teddyProduct;$json = [];
-		$json['product'] = $teddyProduct->get_post_meta($_POST['product_id'],'_product_custom_popup',true);
+		global $teddyProduct;$json = [];global $Plushies;// $teddyProduct->
+		$json['product'] = (array) get_post_meta($_POST['product_id'], '_product_custom_popup', true);
 		$json['hooks'] = ['gotproductpopupresult'];
 		$json['product'] = ($json['product'] && !empty($json['product']))?(array)$json['product']:[];
 		foreach($json['product'] as $_posi => $_position) {
 			foreach($json['product'][$_posi] as $i => $_prod) {
-				if(isset($_prod['headerbg']) && trim($_prod['headerbg']) == '') {
+				if(isset($_prod['headerbg']) && !empty(trim($_prod['headerbg']))) {
 					$json['product'][$_posi][$i]['headerbgurl'] = wp_get_attachment_url($_prod['headerbg']);
 				}
-				
+				if(isset($_prod['product']) && !empty(trim($_prod['product']))) {
+					$_product = wc_get_product($_prod['product']);
+					if($_product && !is_wp_error($_product)) {
+						$json['product'][$_posi][$i]['product_title'] = $_product->get_name();
+						// isset($_prod['cost']) && !$_prod['cost'] || empty($_prod['cost'])
+						if(true) {
+							$json['product'][$_posi][$i]['cost'] = $_product->get_price();
+						}
+					}
+				}
 				if(isset($_prod['options'])) {
 					$_prod['options'] = (!empty($_prod['options']))?(array)$_prod['options']:[];
 					foreach($_prod['options'] as $j => $option) {
@@ -249,6 +220,30 @@ class Ajax {
 		$json['info'] = [
 			'prod_title' => get_the_title($_POST['product_id'])
 		];
+		$args = [
+			'post_type'			=> 'product',
+			'post_status'		=> 'publish',
+			'posts_per_page'	=> -1,
+			'meta_query' => [
+				'relation'		=> 'OR'
+			]
+		];
+		foreach($Plushies->get_accessories_terms() as $_key => $_text) {
+			$args['meta_query'][] = [
+				'key' => $_key,
+				'value' => 'on',
+				'compare' => '='
+			];
+		}
+		$json['accessories'] = [];
+		$_posts = get_posts($args);
+		foreach($_posts as $_post) {
+			$json['accessories'][] = [
+				'title'		=> get_the_title($_post),
+				'ID'		=> $_post->ID,
+				'thumbnail'	=> get_the_post_thumbnail_url($_post)
+			];
+		}
 		wp_send_json_success($json, 200);
 	}
 	public function merge_customfields($fields) {

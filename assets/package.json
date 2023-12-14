@@ -67,11 +67,13 @@
 		"defaults"
 	],
 	"dependencies": {
+		"@splidejs/splide": "^4.1.4",
 		"@sweetalert2/theme-wordpress-admin": "^5.0.15",
 		"awesomplete": "^1.1.5",
 		"bootstrap": "^5.3.0",
 		"dompurify": "^3.0.3",
 		"flatpickr": "^4.6.13",
+		"he": "^1.2.0",
 		"keen-slider": "^6.8.6",
 		"openai": "^3.2.1",
 		"recordrtc": "^5.6.2",

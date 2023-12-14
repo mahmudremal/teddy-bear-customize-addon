@@ -1,0 +1,147 @@
+<?php
+/**
+ * LoadmorePosts
+ *
+ * @package TeddyBearCustomizeAddon
+ */
+namespace TEDDYBEAR_CUSTOMIZE_ADDON\inc;
+use TEDDYBEAR_CUSTOMIZE_ADDON\inc\Traits\Singleton;
+use \WP_Query;
+class Export {
+	use Singleton;
+	protected function __construct() {
+		// load class.
+		$this->setup_hooks();
+	}
+	protected function setup_hooks() {
+		add_action('wp_ajax_futurewordpress/project/ajax/export/product', [$this, 'export_product'], 10, 0);
+		add_action('wp_ajax_nopriv_futurewordpress/project/ajax/export/product', [$this, 'export_product'], 10, 0);
+		add_action('wp_ajax_futurewordpress/project/ajax/export/content', [$this, 'export_content'], 10, 0);
+		add_action('wp_ajax_nopriv_futurewordpress/project/ajax/export/content', [$this, 'export_content'], 10, 0);
+	}
+	public function export_product() {
+		$json = ['hooks' => ['export_product_response'], 'message' => __('Export Failed', 'teddybearsprompts')];
+		// Set up arguments for the WooCommerce product query
+		$args = [
+			'post_type' => 'product',
+			'posts_per_page' => -1,
+		];
+		// Get products using the query arguments
+		$products = new WP_Query($args);
+		// Create an array to store the exported data
+		$export_data = [];
+		// Loop through each product
+		if ($products->have_posts()) {
+			while ($products->have_posts()) {
+				$products->the_post();
+	
+				// Get the product ID
+				$product_id = get_the_ID();
+	
+				// Get the product metadata
+				$product_meta = get_post_meta($product_id);
+	
+				// Get the product taxonomy terms
+				$product_terms = wp_get_post_terms($product_id, 'product_cat');
+	
+				// Get the product comments
+				$product_comments = get_comments(array(
+					'post_id' => $product_id,
+					'status' => 'approve',
+				));
+	
+				// Create an array to store the product data
+				$product_data = array(
+					'ID' => $product_id,
+					'Title' => get_the_title(),
+					'Metadata' => $product_meta,
+					'Terms' => $product_terms,
+					'Comments' => $product_comments,
+				);
+	
+				// Add the product data to the export array
+				$export_data[] = $product_data;
+			}
+		}
+	
+		// Restore the global post data
+		wp_reset_postdata();
+	
+		// Convert the export data to a JSON string
+		// $export_json = json_encode($export_data);
+	
+		// Set the export headers
+		// header('Content-Type: application/json');
+		// header('Content-Disposition: attachment; filename="woocommerce_export.json"');
+	
+		$json['exports'] = $export_data;
+		
+		// Output the export data
+		wp_send_json_success($json);
+	
+		// Prevent any further output
+		// exit;
+	}
+	public function export_content() {
+		$json = ['hooks' => ['export_content_response'], 'message' => __('Export Failed', 'teddybearsprompts')];
+		// Set up arguments for the WooCommerce product query
+		$attachment_ids = isset($_POST['attachment_ids'])?explode(',', $_POST['attachment_ids']):false;
+		if(true) {
+			$args = [
+				'post_type'      => 'attachment',
+				'post_status'    => 'inherit',
+				// 'post__in'       => $attachment_ids,
+				'posts_per_page' => -1,
+			];
+			if($attachment_ids) {$args['post__in'] = $attachment_ids;}
+			// Get products using the query arguments
+			$attachments = new WP_Query($args);
+			// Create an array to store the exported data
+			$export_data = [];
+			// Loop through each attachment
+			if ($attachments->have_posts()) {
+				while ($attachments->have_posts()) {
+					$attachments->the_post();
+		
+					// Get the attachment ID
+					$attachment_id = get_the_ID();
+		
+					// Get the attachment metadata
+					$attachment_meta = get_post_meta($attachment_id);
+		
+					// Get the attachment taxonomy terms
+					$attachment_terms = wp_get_post_terms($attachment_id, 'attachment_cat');
+		
+					// Get the attachment comments
+					$attachment_comments = get_comments(array(
+						'post_id' => $attachment_id,
+						'status' => 'approve',
+					));
+		
+					// Create an array to store the attachment data
+					$attachment_data = array(
+						'ID' => $attachment_id,
+						'Title' => get_the_title(),
+						'Metadata' => $attachment_meta,
+						'Terms' => $attachment_terms,
+						'Comments' => $attachment_comments,
+					);
+		
+					// Add the attachment data to the export array
+					$export_data[] = $attachment_data;
+				}
+		
+				// Restore the global post data
+				wp_reset_postdata();
+	
+				// Added to the output query
+				$json['exports'] = $export_data;
+				
+				// Output the export data
+				wp_send_json_success($json);
+			}
+		}
+		wp_send_json_error($json);
+	}
+	
+}

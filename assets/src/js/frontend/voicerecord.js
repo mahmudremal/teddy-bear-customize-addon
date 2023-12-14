@@ -5,7 +5,7 @@ import icons from './icons';
 
 
 const voiceRecord = {
-  meta_tag: 'voice', recordedBlob: null, duration: 20, rootElement: false,
+  meta_tag: 'Voice', recordedBlob: null, duration: 20, rootElement: false, product_id: false,
   init_recorder: (thisClass) => {
     var form, html, config, json;
     voiceRecord.config = thisClass.config;
@@ -95,7 +95,7 @@ const voiceRecord = {
       voiceRecord.rootElement.classList.remove('visible_audio');
       voiceRecord.skipButton.classList.add('do_recorder__skipped');
       voiceRecord.releaseButton.classList.remove('do_recorder__released');
-      voiceRecord.popupCart.removeAdditionalPrice(voiceRecord.meta_tag, parseFloat(voiceRecord.recordButton.dataset.cost));
+      voiceRecord.popupCart.removeAdditionalPrice(voiceRecord.meta_tag, parseFloat(voiceRecord.recordButton.dataset.cost), false, voiceRecord.product_id);
       voiceRecord.audioInstructPreview.classList.add('d-none');
     });
     rootElement.appendChild(voiceRecord.skipButton);
@@ -156,12 +156,13 @@ const voiceRecord = {
       }
       if(voiceRecord.record.isRecording()) {
         voiceRecord.record.stopRecording();
+        voiceRecord.playButtonAction('show');
         recButton.innerHTML = icons.misc + voiceRecord.i18n?.record??'Record';
         voiceRecord.playButton.disabled = false;
         voiceRecord.recordButton.dataset.cost = (
           voiceRecord.recordButton.dataset.cost == ''
         )?'0':voiceRecord.recordButton.dataset.cost;
-        voiceRecord.popupCart.addAdditionalPrice(voiceRecord.meta_tag, parseFloat(voiceRecord.recordButton.dataset.cost));
+        voiceRecord.popupCart.addAdditionalPrice(voiceRecord.meta_tag, parseFloat(voiceRecord.recordButton.dataset.cost), false, voiceRecord.product_id);
         setTimeout(async () => {
           voiceRecord.recordedBlob = await fetch(voiceRecord.record.getRecordedUrl()).then(r => r.blob());
         }, 800);
@@ -172,7 +173,7 @@ const voiceRecord = {
       
       voiceRecord.record.startRecording().then(() => {
         recButton.innerHTML = icons.stop + voiceRecord.i18n?.stop??'Stop';
-        recButton.disabled = false;
+        recButton.disabled = false;voiceRecord.playButtonAction('hide');
         voiceRecord.skipButton.classList.remove('do_recorder__skipped');
         voiceRecord.releaseButton.classList.remove('do_recorder__released');
         const audiorecord_instuction = voiceRecord.i18n?.audiorecord_instuction??`Please record your voice upto 20 seconds.`;
@@ -294,7 +295,7 @@ const voiceRecord = {
       // voiceRecord.wavesurfer.destroy()
     }
     voiceRecord.recordedBlob = null;voiceRecord.audioPreview.src = '';
-    voiceRecord.popupCart.addAdditionalPrice(voiceRecord.meta_tag, parseFloat(voiceRecord.recordButton.dataset.cost));
+    voiceRecord.popupCart.addAdditionalPrice(voiceRecord.meta_tag, parseFloat(voiceRecord.recordButton.dataset.cost), false, voiceRecord.product_id);
     // voiceRecord.popupCart.removeAdditionalPrice(voiceRecord.i18n?.voice??'Voice');
     // voiceRecord.releaseButton.innerHTML = icons.tick + voiceRecord.releaseButton.innerHTML;
     voiceRecord.skipButton.classList.remove('do_recorder__skipped');
@@ -352,6 +353,18 @@ const voiceRecord = {
       }
     }
   },
+  playButtonAction: (type) => {
+    switch(type) {
+      case 'hide':
+        voiceRecord.playButton.style.display = 'none';
+        break;
+      case 'show':
+        voiceRecord.playButton.style.display = 'flex';
+        break;
+      default:
+        break;
+    }
+  }
 
 };
 

@@ -1,7 +1,7 @@
 import icons from "./icons";
 const PROMPTS = {
     i18n: {},voices: {}, names: [], currentGroups: 'standing',
-    groupSelected: false, outfitSliders: [],
+    groupSelected: false, outfitSliders: [], groupExists: false,
     get_template: (thisClass) => {
         var json, html;PROMPTS.global_cartBtn = false;
         html = document.createElement('div');html.classList.add('dynamic_popup');
@@ -49,18 +49,6 @@ const PROMPTS = {
                         break;
                 }
             });
-        });
-        document.querySelectorAll('asas.form-fields__group__outfit fieldset > .form-wrap__image:not([data-handled])').forEach((el) => {
-            const random = 'abcdefghijklmnopqrstuvwxyz';
-            const size = 8;let code = '';
-            for(let i = 1; i < size; i++) {code += random[Math.abs(Math.floor(Math.random() * random.length))];}
-            code = code.toLowerCase() + Date.now().toString();
-            el.classList.add('keen-slider');el.id = code;code = '#' + code;
-            el?.childNodes.forEach((item) => {item.classList.add('keen-slider__slide');});
-            const slider = new thisClass.KeenSlider(code, {
-                loop: false, mode: "free", slides: {perView: 5, spacing: 5},
-            });
-            document.querySelectorAll(code).forEach((id) => {id.dataset.handled = true;});
         });
         document.querySelectorAll('.form-control[name="field.9000"]:not([data-handled])').forEach((input) => {
             input.dataset.handled = true;
@@ -177,15 +165,15 @@ const PROMPTS = {
                             case 'radio':
                                 document.querySelectorAll('.dynamic_popup input[type="radio"][name="'+el.name+'"][data-cost]').forEach((radio) => {
                                     if(radio.dataset?.calculated??false) {
-                                        thisClass.popupCart.removeAdditionalPrice(radio.value, parseFloat(radio.dataset.cost));// radio.checked = false;
+                                        thisClass.popupCart.removeAdditionalPrice(radio.value, parseFloat(radio.dataset.cost), radio.dataset?.product);// radio.checked = false;
                                         radio.removeAttribute('data-calculated');
                                     }
                                     if(radio.checked) {
                                         if(radio.parentElement.classList.contains('checked_currently')) {
-                                            thisClass.popupCart.addAdditionalPrice(radio.value, parseFloat(radio.dataset.cost), false);
+                                            thisClass.popupCart.addAdditionalPrice(radio.value, parseFloat(radio.dataset.cost), false, radio.dataset?.product);
                                             radio.dataset.calculated = true;
                                         } else {
-                                            thisClass.popupCart.removeAdditionalPrice(radio.value, parseFloat(radio.dataset.cost));
+                                            thisClass.popupCart.removeAdditionalPrice(radio.value, parseFloat(radio.dataset.cost), radio.dataset?.product);
                                             radio.removeAttribute('data-calculated');
                                             frame.querySelectorAll('img[data-name="'+radio.name+'"]').forEach((el)=>el.remove());
                                         }
@@ -193,12 +181,13 @@ const PROMPTS = {
                                 });
                                 break;
                             case 'checkbox':
-                                thisClass.popupCart.addAdditionalPrice(el.value, parseFloat(el.dataset.cost), false);
+                                thisClass.popupCart.addAdditionalPrice(el.value, parseFloat(el.dataset.cost), false, el.dataset?.product);
                                 break;
                             default:
                                 break;
                         }
                     } else {
+                        console.log('hi');
                         if(el.dataset?.skip??false) {
                             switch(el.type) {
                                 case 'radio':
@@ -206,12 +195,13 @@ const PROMPTS = {
                                         if(radio.dataset?.calculated??false) {
                                             thisClass.popupCart.removeAdditionalPrice(radio.value, parseFloat(radio.dataset.cost));// radio.checked = false;
                                             radio.removeAttribute('data-calculated');
+                                            radio.parentElement.classList.remove('checked_currently');
                                         }
                                         if(radio.checked) {
                                             thisClass.popupCart.removeAdditionalPrice(radio.value, parseFloat(radio.dataset.cost));
                                             radio.removeAttribute('data-calculated');
                                             frame.querySelectorAll('img[data-name="'+radio.name+'"]').forEach((el)=>el.remove());
-                                            // if(radio.parentElement.classList.contains('checked_currently')) {}
+                                            radio.parentElement.classList.remove('checked_currently');
                                         }
                                     });
                                     break;
@@ -239,6 +229,7 @@ const PROMPTS = {
                 done.parentElement.classList.add('d-none');
                 done.parentElement.classList.remove('step_visible');
                 done.parentElement.parentElement.classList.remove('visible_card');
+                done.parentElement.parentElement.parentElement.classList.remove('visible_pops');
 
                 var submitBtn = document.querySelector('.popup_foot .button[data-react=continue]');
                 if(submitBtn) {submitBtn.style.display = 'flex';}
@@ -316,48 +307,127 @@ const PROMPTS = {
         //     if(image) {thisClass.tippy(el, {content: `${image?.alt??''}`});}
         // });
         document.querySelectorAll('.form-fields__group__outfit > div:not([data-handled-slide])').forEach((el) => {
-            el.dataset.handledSlide = true;
-            var wrap = el.querySelector('.form-wrap__image');
+            el.dataset.handledSlide = true;var wrap, wrapEL;
+            wrap = wrapEL = el.querySelector('.form-wrap__image');
+            var splide = wrap.parentElement;
             if(wrap) {
-                wrap.classList.add('keen-slider');
+                
                 wrap.querySelectorAll('.form-control-label').forEach((elem, i) => {
-                    elem.classList.add('keen-slider__slide', 'number-slide' + i);
+                    elem.classList.add('keen-slider__slide', 'number-slide' + (i + 1), 'splide__slide');
                 });
-                var arrows = document.createElement('div');arrows.classList.add('keen-slider__arrows');
-                arrows.innerHTML = icons.left;
-                arrows.innerHTML += icons.right;
-                wrap.parentElement.appendChild(arrows);
-                setTimeout(() => {
-                    const slider = new thisClass.KeenSlider(wrap, {
-                        drag: false, // loop: true, mode: "free",
-                        slides: {perView: 5, spacing: 5},
-                    }, [
-                        slider => {
-                          slider.on('created', () => {
-                            setTimeout(() => {
-                                console.log('Slider created');
-                                const event = new Event('resize');
-                                window.dispatchEvent(event);
-                            }, 2000);
-                          })
-                        },
-                    ]);
-                    // PROMPTS.outfitSliders.push(slider);
-                    
-                    arrows.querySelectorAll('.arrow').forEach((elem) => {
-                        elem.addEventListener('click', (event) => {
-                            switch(elem.dataset?.arrow) {
-                                case 'left':
-                                    slider.prev();
-                                    break;
-                                default:
-                                    slider.next();
-                                    break;
-                            }
-                        });
+                if(false) {
+                    splide.parentElement.classList.add('splide');
+                    splide.classList.add('splide__track');
+
+                    var track = document.createElement('div');
+                    track.className = splide.className;
+                    splide.childNodes.forEach((fieldset) => {
+                        track.appendChild(fieldset);
                     });
+                    splide.parentElement.insertBefore(track, splide);
                     
-                }, 500);
+                    
+                    wrap.classList.add('keen-slider', 'splide__list');
+                    /**
+                     * Convert <fieldset> to <ul>
+                     */
+                    var oldNode = wrap, newNode = document.createElement('ul'), node, nextNode;
+                    newNode.className = wrap.className;node = oldNode.firstChild;
+                    while (node) {
+                        nextNode = node.nextSibling;
+
+                        var oldItem = node, newItem = document.createElement('li'), item, nextItem;
+                        newItem.className = node.className;item = oldItem.firstChild;
+                        while (item) {
+                            nextItem = item.nextSibling;newItem.appendChild(item);item = nextItem;
+                        }
+
+                        console.log(newItem);
+                        
+                        newNode.appendChild(newItem);
+                        node.remove();node = nextNode;
+                    }
+                    wrap = newNode;
+
+                    const slider = new thisClass.Splide(splide.parentElement, {
+                        type   : 'slide', // fade | loop
+                        // padding: '5rem',
+                        perPage: 5,
+                        rewind : true,
+                        perMove: 1,
+                        omitEnd: true,
+                        focus  : 'center', // 0 | 1 | 2
+                        drag   : 'free', // 'free',
+                        // snap   : true,
+                        // direction: 'ttb', // rtl
+                        // height   : '10rem',
+                        // wheel    : true,
+                        // autoWidth: true,
+                        // autoplay: true,
+                        pagination  : true,
+                        gap    : '5px',
+                        breakpoints: {
+                            500: {perPage: 5, drag: 'free'},
+                        },
+
+                    });
+                    wrapEL.parentElement.appendChild(wrap);wrapEL.remove();
+                    slider.mount();
+                } else {
+                    var arrows = document.createElement('div');arrows.classList.add('keen-slider__arrows');
+                    arrows.innerHTML = icons.left;
+                    arrows.innerHTML += icons.right;
+                    wrap.parentElement.appendChild(arrows);
+                    setTimeout(() => {
+                        wrap.style.maxWidth = '80%';
+                        
+                        const slider = new thisClass.KeenSlider(wrap, {
+                            drag: false, // loop: true, mode: "free",
+                            slides: {perView: 5, spacing: 5},
+                            breakpoints: {
+                                "(max-width: 500px)": {
+                                    mode: "free", drag: true,
+                                    // slides: {perView: 5, spacing: 5},
+                                },
+                            }
+                        }, [
+                            slider => {
+                              slider.on('created', () => {
+                                setTimeout(() => {
+                                    wrap.style.maxWidth = 'unset';
+                                    // console.log('Slider created');
+                                    var theIntvalI = 0, theIntval = setInterval(() => {
+                                        theIntvalI++;
+                                        if(theIntvalI <= 20) {
+                                            const event = new Event('resize');window.dispatchEvent(event);
+                                        } else {
+                                            clearInterval(theIntval);
+                                        }
+                                    }, 1500);
+                                    
+                                }, 2000);
+                              })
+                            },
+                        ]);
+                        PROMPTS.outfitSliders.push(slider);
+                        
+                        arrows.querySelectorAll('.svg_icon').forEach((elem) => {
+                            elem.addEventListener('click', (event) => {
+                                var arrow_mode = ((elem?.querySelector('svg'))?.dataset)?.arrow;
+                                switch(arrow_mode) {
+                                    case 'left':
+                                        slider.prev();
+                                        break;
+                                    case 'right':
+                                        slider.next();
+                                        break;
+                                    default:
+                                        break;
+                                }
+                            });
+                        });
+                    }, 500);
+                }
             }
         });
         
@@ -385,9 +455,16 @@ const PROMPTS = {
     generate_template: (thisClass) => {
         var json, html;
         json = PROMPTS.lastJson;
-        var custom_fields = PROMPTS.get_data(thisClass, true);
+        var custom_fields = PROMPTS.lastJson.product.custom_fields;
+        PROMPTS.groupExists = (
+            custom_fields.sitting && custom_fields.sitting.length >= 1 &&
+            custom_fields.standing && custom_fields.standing.length >= 1
+        );
+        custom_fields = PROMPTS.get_data(thisClass, true);
         var positions = PROMPTS.lastJson.product?.positions??{};
         positions = (typeof positions !== 'object')?{}:positions;
+
+        
         html = '';
         html += (json.header)?`
             ${(json.header.product_photo)?`
@@ -407,7 +484,7 @@ const PROMPTS = {
                 
             </div>
 
-            ${(! PROMPTS.groupSelected)?`
+            ${(! PROMPTS.groupSelected && PROMPTS.groupExists)?`
             <div class="teddy_position">
                 <div class="teddy_position__wrap">
                     <div class="teddy_position__row">
@@ -488,11 +565,11 @@ const PROMPTS = {
         var fields = PROMPTS.lastJson.product.custom_fields;
         if(!fields || fields == '') {return false;}
         if(!(fields?.standing)) {fields = {standing: fields, sitting: []};}
-        
+        // if(fields?.product) {fields = [...fields.product];}
         // console.log(fields);
         
-        Object.values(fields).forEach((group) => {
-            group.forEach((row, i) => {row.orderAt = (i+1);}); 
+        Object.keys(fields).forEach((key) => {
+            if(key != 'product' && fields[key]) {fields[key].forEach((row, i) => {row.orderAt = (i+1);});}
         });
         return (both)?fields:fields[PROMPTS.currentGroups];
         // return fields;
@@ -590,11 +667,11 @@ const PROMPTS = {
                             imgwrap.appendChild(image);level.appendChild(imgwrap);
                         }
                         if(!(opt?.input)) {
-                            opt.cost = ((opt?.cost) && opt.cost !== NaN)?opt.cost:0;
+                            opt.cost = (opt?.cost)?opt.cost:false;
                             span.innerHTML = `<span title="${thisClass.esc_attr(opt.label)}">${opt.label}</span>`+(
-                                (opt?.cost??false)?(
-                                ' <strong>'+(thisClass.config?.currencySign??'$')+''+ parseFloat(opt.cost).toFixed(2)+'</strong>'
-                               ):''
+                                (opt.cost && opt.cost !== '' && parseFloat(opt.cost) !== 'NaN')?(
+                                    ` <strong>${thisClass.config?.currencySign??'$'} ${parseFloat(opt.cost).toFixed(2)}</strong>`
+                                ):` <strong class="hiddenable zero_amount">${thisClass.config?.currencySign??'$'} 0.00</strong>`
                            );
                         } else {
                             others = document.createElement('input');others.type='text';
@@ -607,10 +684,13 @@ const PROMPTS = {
                         option.dataset.index = optI;option.dataset.fieldId = field.fieldID;
                         option.id=`field_${field?.fieldID??i}_${optI}`;option.type=field.type;
                         if(field?.layer??false) {option.dataset.layer=field.layer;}
-                        // if((opt?.cost??'') == '') {opt.cost = '0';}
+                        if((opt?.cost??'') == '') {opt.cost = '0';}
                         if(opt?.cost) {option.dataset.cost=opt.cost;}
                         if(opt?.skip) {option.dataset.skip = true;}
                         if(child) {option.dataset.preview=child;}
+                        if((opt?.product) && opt.product != '') {
+                            option.dataset.product = opt.product;
+                        }
                         level.appendChild(option);level.appendChild(span);input.appendChild(level);
                         fieldset.appendChild(input);div.appendChild(fieldset);
                     }
@@ -798,7 +878,8 @@ const PROMPTS = {
                     formdata.append('_nonce', thisClass.ajaxNonce);
                     const generated = await PROMPTS.get_formdata(thisClass, formdata);
                     
-                    formdata.append('charges', JSON.stringify(thisClass.popupCart.additionalPrices));
+                    var charges = PROMPTS.sortout_unnecessery_data(thisClass.popupCart.additionalPrices);
+                    formdata.append('charges', JSON.stringify(charges));
                     formdata.append('dataset', JSON.stringify(generated));
                     formdata.append('product_id', PROMPTS.lastJson.product.id);
                     formdata.append('quantity', 1);
@@ -1070,7 +1151,13 @@ const PROMPTS = {
         }
         form = thisClass.transformObjectKeys(form);
         // PROMPTS.get_data(thisClass).map((row)=>(row.type=='voice')?row:false);
-
+        return form;
+    },
+    sortout_unnecessery_data: (form) => {
+        console.log(form);
+        form?.forEach((row, i) => {
+            if(row.item == 'tochoose') {delete form[i];}
+        });
         return form;
     },
 
@@ -1098,6 +1185,7 @@ const PROMPTS = {
                         if(step.dataset.index == el.dataset.step) {
                             el.classList.add('step_visible');el.classList.remove('d-none');
                             document.querySelector('.popup_body')?.classList.add('visible_card');
+                            document.querySelector('.popup_body')?.parentElement.classList.add('visible_pops');
                             if(el.dataset?.step) {
                                 var presentStep = PROMPTS.get_data(thisClass).find((row)=>row.orderAt == el.dataset.step);
                                 if(presentStep) {

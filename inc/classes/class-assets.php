@@ -80,7 +80,7 @@ class Assets {
 	}
 	public function admin_enqueue_scripts($curr_page) {
 		global $post;
-		if(!in_array($curr_page, ['post-new.php', 'post.php', 'settings_page_teddybearsprompts'])) {return;}
+		if(!in_array($curr_page, ['post-new.php', 'post.php', 'edit.php', 'settings_page_teddybearsprompts'])) {return;}
 		wp_register_style('teddybearaddon-admin', TEDDY_BEAR_CUSTOMIZE_ADDON_BUILD_CSS_URI . '/admin.css', [], $this->filemtime(TEDDY_BEAR_CUSTOMIZE_ADDON_BUILD_CSS_DIR_PATH . '/admin.css'), 'all');
 		wp_register_script('teddybearaddon-admin', TEDDY_BEAR_CUSTOMIZE_ADDON_BUILD_JS_URI . '/admin.js', ['jquery'], $this->filemtime( TEDDY_BEAR_CUSTOMIZE_ADDON_BUILD_JS_DIR_PATH . '/admin.js' ), true);
 		

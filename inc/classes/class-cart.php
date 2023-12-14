@@ -12,10 +12,16 @@ use TEDDYBEAR_CUSTOMIZE_ADDON\inc\Traits\Singleton;
 class Cart {
 	use Singleton;
 	private $base;
+	private $charges;
+	private $dataset;
 	private $showedAlready;
 	private $calculatedAlready;
 	protected function __construct() {
+		global $teddyCart;
+		$teddyCart = $this;
 		$this->base = [];
+		$this->charges = [];
+		$this->dataset = [];
 		$this->showedAlready = [];
 		$this->calculatedAlready = [];
 		$this->setup_hooks();
@@ -65,20 +71,33 @@ class Cart {
 			if(isset($_FILES['voice'])) {
 				$is_uploaded = $this->custom_upload_audio_video($_FILES['voice']);
 			}
+			$this->charges = [];$this->dataset = [];
+			foreach($charges as $i => $row) {
+				if(isset($row['product']) && !empty(trim($row['product'])) && is_numeric($row['product'])) {
+					$row['product'] = $row['product'];
+					$row['cart_item_key'] = WC()->cart->add_to_cart((int) $row['product'], $quantity);
+
+					$charges[$i] = $row;
+				}
+			}
+			$this->charges = $charges;$this->dataset = $dataset;
 			$cart_item_key = WC()->cart->add_to_cart($product_id, $quantity);
 			$json['hooks'] = ['popup_submitting_done'];
 			// $json['redirectedTo'] = wc_get_checkout_url();
 			// $json['message'] = __('Product added to cart successfully. Please hold on until you\'re redirected to checkout page.', 'teddybearsprompts');
-			$json['wrapping'] = [
-				'title' => apply_filters('teddybear/project/system/getoption', 'addons-feetitle', 'Wrapping box'),
-				'price' => floatval(apply_filters('teddybear/project/system/getoption', 'addons-feeamount', 0)),
-				'thumbnail' => apply_filters('teddybear/project/system/getoption', 'addons-thumbnail', '')
-			];
+			if(apply_filters('teddybear/project/system/isactive', 'addons-enable')) {
+				$json['wrapping'] = [
+					'title' => apply_filters('teddybear/project/system/getoption', 'addons-feetitle', 'Wrapping box'),
+					'price' => floatval(apply_filters('teddybear/project/system/getoption', 'addons-feeamount', 0)),
+					'thumbnail' => apply_filters('teddybear/project/system/getoption', 'addons-thumbnail', '')
+				];
+			}
+			
 			$json['message'] = false;
 			$custom_data = (array) get_post_meta($product_id, '_teddy_custom_data', true);
 			$json['confirmation'] = [
 				'title'				=> sprintf(__('Added successfully %s', 'teddybearsprompts'), get_the_title($product_id)),
-				'accessoriesUrl'	=> isset($custom_data['accessoriesUrl'])?esc_url($custom_data['accessoriesUrl']):false,
+				'accessoriesUrl'	=> get_the_permalink(2115), // (isset($custom_data['accessoriesUrl']) && !empty($custom_data['accessoriesUrl']))?esc_url($custom_data['accessoriesUrl']):get_the_permalink(2115),
 				'checkoutUrl'		=> wc_get_checkout_url(),
 				'suggestion'		=> $this->get_products_by_category_id(),
 				'cartItemKey'		=> $cart_item_key
@@ -120,13 +139,10 @@ class Cart {
 		wp_send_json_error($json);
 	}
 	public function woocommerce_add_cart_item_data($cart_item_data, $product_id, $variation_id, $quantity) {
-		if(!isset($_POST['dataset']) || !isset($_POST['dataset'])) {return $cart_item_data;}
-		$dataset = json_decode(preg_replace('/[\x00-\x1F\x80-\xFF]/', '', stripslashes(html_entity_decode($_POST['dataset']))), true);
-		$charges = json_decode(preg_replace('/[\x00-\x1F\x80-\xFF]/', '', stripslashes(html_entity_decode($_POST['charges']))), true);
-
+		if(count($this->charges) <= 0 || count($this->dataset) <= 0) {return $cart_item_data;}
 		global $teddyProduct;
-		$cart_item_data['custom_teddey_bear_makeup'] = $charges;
-		$cart_item_data['custom_teddey_bear_data'] = $dataset;
+		$cart_item_data['custom_teddey_bear_makeup'] = $this->charges;
+		$cart_item_data['custom_teddey_bear_data'] = $this->dataset;
 		$cart_item_data['custom_pops_data'] = $teddyProduct->get_post_meta($product_id, '_product_custom_popup', true);
 		
 		return $cart_item_data;
@@ -164,6 +180,7 @@ class Cart {
 	}
 	public function woocommerce_order_item_name($item_name, $order_item, $order) {
 		$meta_data = $order_item->get_meta_data();
+		
 		if($meta_data && !empty($meta_data)) {
             $item_name .= '<br><small class="additional-charges">';
             foreach ($meta_data as $meta) {
@@ -181,9 +198,9 @@ class Cart {
 		// if(isset($cart_item['_additional_charges_applied'])) {return $item_name;}
 		if(isset($cart_item['custom_teddey_bear_makeup']) && !in_array($cart_item_key, $this->showedAlready)) {
 			foreach($cart_item['custom_teddey_bear_makeup'] as $fee) {
-				if(!empty($fee['price']) && is_numeric($fee['price'])) {
+				// if(!empty($fee['price']) && is_numeric($fee['price'])) {
 					$item_name .= '<br><small class="additional-charges">'.esc_html($fee['item']).': '.wc_price($fee['price']).' x '.esc_html(number_format_i18n($cart_item['quantity'], 0)).'</small>';
-				}
+				// }
 			}
 			// $cart_item['_additional_charges_applied'] = true;
 			$this->showedAlready[] = $cart_item_key;
@@ -191,11 +208,11 @@ class Cart {
 		return $item_name;
 	}
 	public function woocommerce_cart_item_subtotal($subtotal, $cart_item, $cart_item_key) {
-		$subtotal = $this->calculate_prices($cart_item, $cart_item_key, true);
+		$subtotal = $this->calculate_cart_item_subtotal($cart_item, $cart_item_key, true);
 		return wc_price($subtotal);
 	}
 	public function woocommerce_cart_item_price($price_html, $cart_item, $cart_item_key) {
-		// $this->calculate_prices($cart_item, $cart_item_key);
+		// $this->calculate_cart_item_subtotal($cart_item, $cart_item_key);
 		return $price_html;
 	}
 	public function woocommerce_calculate_totals($cart) {
@@ -205,50 +222,61 @@ class Cart {
 		// if(did_action('woocommerce_before_calculate_totals') >= 2) {return;}
 
 		foreach ($cart->get_cart() as $cart_item_key => $cart_item) {
-			$this->calculate_prices($cart_item, $cart_item_key);
+			$this->calculate_cart_item_subtotal($cart_item, $cart_item_key);
 		}
 	}
-	public function calculate_prices($cart_item, $cart_item_key, $return = false, $withoutQty = false) {
+	public function calculate_cart_item_subtotal($cart_item, $cart_item_key, $return = false, $accessoriesOnly = false) {
 		if(array_key_exists('custom_teddey_bear_makeup', $cart_item) && !in_array($cart_item_key, $this->calculatedAlready)) {
 			$additional_cost = 0;
 			foreach($cart_item['custom_teddey_bear_makeup'] as $fee) {
-				try {
-					$fee['price'] = floatval($fee['price']);
-				} catch (\Error $th) {}
-				if(!empty($fee['price']) && is_numeric($fee['price'])) {
-					// $additional_cost += ($fee['price'] * $cart_item['quantity']);
-					$additional_cost += $fee['price'];
+				if($fee && is_array($fee)) {
+					try {
+						$fee['price'] = floatval($fee['price']);
+					} catch (\Error $th) {}
+					if(!empty($fee['price']) && is_numeric($fee['price'])) {
+						
+						if(!isset($fee['product']) || !$fee['product']) {
+							// $additional_cost += ($fee['price'] * $cart_item['quantity']);
+							$additional_cost += $fee['price'];
+						}
+					}
 				}
 			}
 
-			$orginalPrice = $cart_item['data']->get_price();
-			$calculatedPrice = (($orginalPrice + $additional_cost) * $cart_item['quantity']);
+			if($accessoriesOnly) {
+				$calculatedPrice = ($additional_cost * $cart_item['quantity']);
+			} else {
+				$orginalPrice = $cart_item['data']->get_price();
+				$calculatedPrice = (($orginalPrice + $additional_cost) * $cart_item['quantity']);
+			}
 			
-			if($additional_cost > 0) {
-				if($withoutQty) {
-					$calculatedPrice -= ($orginalPrice * $cart_item['quantity']);
-				}
+			if($additional_cost > 0 && ! $accessoriesOnly) {
+				// if($accessoriesOnly) {
+				// 	$calculatedPrice -= ($orginalPrice * $cart_item['quantity']);
+				// }
 				$cart_item['data']->price = $calculatedPrice;
 				$cart_item['data']->set_price($calculatedPrice);
 			}
 			// $this->calculatedAlready[] = $cart_item_key;
 			if($return) {return $calculatedPrice;}
 		}
-		if($return) {return $cart_item['data']->get_price();}
+		if($return) {
+			return ($accessoriesOnly)?0:($cart_item['data']->get_price() * $cart_item['quantity']);
+		}
 	}
 	public function woocommerce_cart_subtotal($cart_subtotal, $compound, $cart) {		
 		$newSubtotal = 0;
 		foreach($cart->get_cart() as $cart_item_key => $cart_item) {
-			$newSubtotal += $this->calculate_prices($cart_item, $cart_item_key, true);
+			$newSubtotal += $this->calculate_cart_item_subtotal($cart_item, $cart_item_key, true);
 		}
 		return wc_price($newSubtotal);
 	}
 	public function woocommerce_calculated_total($total, $cart) {		
-		$newSubtotal = 0;
+		$accessoriesCost = 0;
 		foreach($cart->get_cart() as $cart_item_key => $cart_item) {
-			$newSubtotal += $this->calculate_prices($cart_item, $cart_item_key, true, true);
+			$accessoriesCost += $this->calculate_cart_item_subtotal($cart_item, $cart_item_key, true, true);
 		}
-		return ($total + $newSubtotal);
+		return ($total + $accessoriesCost);
 	}
 	public function custom_upload_audio_video($file) {
 		$upload_dir = wp_upload_dir();$custom_dir = 'custom_popup';

@@ -48,87 +48,159 @@ class Meta_Boxes {
 	 * @return void
 	 */
 	public function custom_meta_box_html($post) {
+		global $Plushies;
+		$this->options = (array) get_post_meta($post->ID, '_teddy_custom_data', true);
 		?>
 		<div class="fwp-tabs__container">
-			<button class="fwp-button fwppopspopup-open" type="button" <?php echo esc_attr(
-				(
-					apply_filters('teddybear/project/system/isactive', 'standard-forceglobal') && 
-					apply_filters('teddybear/project/system/getoption', 'standard-global', 0) != get_the_ID()
-				)?'disabled':''
-			); ?>><?php esc_html_e('Customize', 'teddybearsprompts'); ?></button>
-		</div>
-		<?php
-		$this->options = (array) get_post_meta($post->ID, '_teddy_custom_data', true);
-		$fields = [
-			'title'						=> __('General', 'teddybearsprompts'),
-			'description'				=> __('Generel fields comst commonly used to changed.', 'teddybearsprompts'),
-			'fields'					=> [
-				[
-					'id' 					=> 'eye',
-					'label'					=> __('Eye color', 'teddybearsprompts'),
-					'description'			=> __('Teddy\'s eye color', 'teddybearsprompts'),
-					'type'					=> 'text',
-					'default'				=> apply_filters('teddybear/project/system/getoption', 'default-eye', '')
-				],
-				[
-					'id' 					=> 'brow',
-					'label'					=> __('Fur color', 'teddybearsprompts'),
-					'description'			=> __('Teddy\'s Fur color.', 'teddybearsprompts'),
-					'type'					=> 'text',
-					'default'				=> apply_filters('teddybear/project/system/getoption', 'default-brow', '')
-				],
-				[
-					'id' 					=> 'weight',
-					'label'					=> __('Weight', 'teddybearsprompts'),
-					'description'			=> __('Product Weight. This will only effect on certificate', 'teddybearsprompts'),
-					'type'					=> 'text',
-					'default'				=> apply_filters('teddybear/project/system/getoption', 'default-weight', '')
-				],
-				[
-					'id' 					=> 'height',
-					'label'					=> __('Height', 'teddybearsprompts'),
-					'description'			=> __('Product Height with unit. This will only effect on certificate.', 'teddybearsprompts'),
-					'type'					=> 'text',
-					'default'				=> apply_filters('teddybear/project/system/getoption', 'default-height', '')
-				],
-				[
-					'id' 					=> 'accessoriesUrl',
-					'label'					=> __('Accessories Url', 'teddybearsprompts'),
-					'description'			=> __('Accessories url that will be displayed after product is added to the cart.', 'teddybearsprompts'),
-					'type'					=> 'text',
-					'default'				=> apply_filters('teddybear/project/system/getoption', 'default-accessoriesUrl', '')
-				],
-				...$this->get_available_badges()
-				// [
-				// 	'id' 					=> 'isFeatured',
-				// 	'label'					=> __('Featured', 'teddybearsprompts'),
-				// 	'description'			=> __('Mark to make it featured product. This won\'t effect search query.', 'teddybearsprompts'),
-				// 	'type'					=> 'checkbox',
-				// 	'default'				=> false
-				// ],
-				// [
-				// 	'id' 					=> 'isBestSeller',
-				// 	'label'					=> __('Best Seller', 'teddybearsprompts'),
-				// 	'description'			=> __('Mark to make it Best Seller product. This won\'t effect search query.', 'teddybearsprompts'),
-				// 	'type'					=> 'checkbox',
-				// 	'default'				=> false
-				// ],
-				// [
-				// 	'id' 					=> 'onSale',
-				// 	'label'					=> __('On Sale', 'teddybearsprompts'),
-				// 	'description'			=> __('Give here a discount badge text. Leave it blank to not to apear badge. You must set product price as well from woocommerce meta box. Such as "Sale 30%"', 'teddybearsprompts'),
-				// 	'type'					=> 'text',
-				// 	'default'				=> ''
-				// ],
-			]
-		];
-		?>
-		<div class="fwp-form">
-			<?php
-			foreach($fields['fields'] as $field) {
-				$this->display_field(['field' => $field]);
-			}
-			?>
+			<div class="fwp-tabs__wrap">
+				<div class="fwp-tabs__navs">
+					<div class="fwp-tabs__nav-item active" data-target="#the-accessories"><?php esc_html_e( 'Accessories', 'teddybearsprompts' ); ?></div>
+					<div class="fwp-tabs__nav-item" data-target="#the-custompops"><?php esc_html_e( 'Customization', 'teddybearsprompts' ); ?></div>
+				</div>
+				<div class="fwp-tabs__tabs-field">
+					<div class="fwp-tabs__content active" id="the-accessories">
+						<div class="fwp-form-wraper">
+							<div class="fwp-form-wrap">
+								<?php
+								$fields = [
+									'title'						=> __('General', 'teddybearsprompts'),
+									'description'				=> __('Generel fields comst commonly used to changed.', 'teddybearsprompts'),
+									'fields'					=> []
+								];
+								?>
+								<?php
+								foreach($Plushies->get_accessories_terms() as $_key => $_term) {
+									$fields['fields'][] = [
+										'id' 					=> $_key,
+										'label'					=> $_term['title'],
+										'description'			=> $_term['title'],
+										'type'					=> 'checkbox',
+										'default'				=> false
+									];
+									$fields['fields'][] = [
+										'id' 					=> $_key . '_thumb',
+										'label'					=> $_term['title'],
+										'description'			=> $_term['title'],
+										'type'					=> 'button',
+										'text'					=> __('Select Image', 'teddybearsprompts'),
+										'default'				=> '',
+										'conditions'			=> [
+											[
+												'field'			=> $_key,
+												'value'			=> 'on',
+												'compare'		=> '=='
+											]
+										],
+										'attr'					=> [
+											'data-image-select'		=> true,
+											'data-selected-image'	=> get_post_meta($post_id, $_key . '_thumb', true)
+										]
+									];
+								} ?>
+								<div class="fwp-form">
+									<?php
+									foreach($fields['fields'] as $field) {
+										$this->display_field(['field' => $field], true);
+									}
+									?>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="fwp-tabs__content" id="the-custompops">
+						<?php
+							$post_meta = get_post_meta($post_id, '_teddy_custom_data', true);
+							$global_key = (isset($post_meta['product_type']) && $post_meta['product_type'] == 'sitting')?'sitting-global':'standing-global';
+							$global_post_id = apply_filters('teddybear/project/system/getoption', $global_key, 0);
+						?>
+						<button class="fwp-button fwppopspopup-open" type="button" <?php echo esc_attr(
+							(
+								apply_filters('teddybear/project/system/isactive', 'standard-forceglobal') && 
+								$global_post_id != get_the_ID()
+							)?'disabled':''
+						); ?>><?php esc_html_e('Customize', 'teddybearsprompts'); ?></button>
+						<?php
+						$fields = [
+							'title'						=> __('General', 'teddybearsprompts'),
+							'description'				=> __('Generel fields comst commonly used to changed.', 'teddybearsprompts'),
+							'fields'					=> [
+								[
+									'id' 					=> 'product_type',
+									'label'					=> __('Select product type', 'teddybearsprompts'),
+									'description'			=> __('Mark if this is a Standing / Sitting product.', 'teddybearsprompts'),
+									'type'					=> 'radio',
+									'default'				=> false,
+									'options'				=> [
+										'sitting'	=> __('Sitting product', 'teddybearsprompts'),
+										'standing'	=> __('Standing product', 'teddybearsprompts')
+									]
+								],
+								[
+									'id' 					=> 'eye',
+									'label'					=> __('Eye color', 'teddybearsprompts'),
+									'description'			=> __('Teddy\'s eye color', 'teddybearsprompts'),
+									'type'					=> 'text',
+									'default'				=> apply_filters('teddybear/project/system/getoption', 'default-eye', '')
+								],
+								[
+									'id' 					=> 'brow',
+									'label'					=> __('Fur color', 'teddybearsprompts'),
+									'description'			=> __('Teddy\'s Fur color.', 'teddybearsprompts'),
+									'type'					=> 'text',
+									'default'				=> apply_filters('teddybear/project/system/getoption', 'default-brow', '')
+								],
+								[
+									'id' 					=> 'weight',
+									'label'					=> __('Weight', 'teddybearsprompts'),
+									'description'			=> __('Product Weight. This will only effect on certificate', 'teddybearsprompts'),
+									'type'					=> 'text',
+									'default'				=> apply_filters('teddybear/project/system/getoption', 'default-weight', '')
+								],
+								[
+									'id' 					=> 'height',
+									'label'					=> __('Height', 'teddybearsprompts'),
+									'description'			=> __('Product Height with unit. This will only effect on certificate.', 'teddybearsprompts'),
+									'type'					=> 'text',
+									'default'				=> apply_filters('teddybear/project/system/getoption', 'default-height', '')
+								],
+								[
+									'id' 					=> 'accessoriesUrl',
+									'label'					=> __('Accessories Url', 'teddybearsprompts'),
+									'description'			=> __('Accessories url that will be displayed after product is added to the cart.', 'teddybearsprompts'),
+									'type'					=> 'text',
+									'default'				=> apply_filters('teddybear/project/system/getoption', 'default-accessoriesUrl', '')
+								],
+								...$this->get_available_badges(),
+								// [
+								// 	'id' 					=> 'isFeatured',
+								// 	'label'					=> __('Featured', 'teddybearsprompts'),
+								// 	'description'			=> __('Mark to make it featured product. This won\'t effect search query.', 'teddybearsprompts'),
+								// 	'type'					=> 'checkbox',
+								// 	'default'				=> false
+								// ],
+								// [
+								// 	'id' 					=> 'isBestSeller',
+								// 	'label'					=> __('Best Seller', 'teddybearsprompts'),
+								// 	'description'			=> __('Mark to make it Best Seller product. This won\'t effect search query.', 'teddybearsprompts'),
+								// 	'type'					=> 'checkbox',
+								// 	'default'				=> false
+								// ],
+								// [
+								// 	'id' 					=> 'onSale',
+								// 	'label'					=> __('On Sale', 'teddybearsprompts'),
+								// 	'description'			=> __('Give here a discount badge text. Leave it blank to not to apear badge. You must set product price as well from woocommerce meta box. Such as "Sale 30%"', 'teddybearsprompts'),
+								// 	'type'					=> 'text',
+								// 	'default'				=> ''
+								// ],
+							]
+						];
+						?>
+						<div class="fwp-form">
+							<?php foreach($fields['fields'] as $field) {$this->display_field(['field' => $field]);} ?>
+						</div>
+					</div>
+				</div>
+			</div>
 		</div>
 		<?php
 	}
@@ -141,6 +213,7 @@ class Meta_Boxes {
 	 * @return void
 	 */
 	public function save_post_meta_data($post_id) {
+		global $Plushies;
 		/**
 		 * When the post is saved or updated we get $_POST available
 		 * Check if the current user is authorized
@@ -149,19 +222,39 @@ class Meta_Boxes {
 			return;
 		}
 		$_key = '_teddy_custom_data';
-		if (array_key_exists($_key, $_POST)) {
+		if(array_key_exists($_key, $_POST)) {
 			update_post_meta($post_id, $_key, $_POST[$_key]);
+		}
+		foreach($Plushies->get_accessories_terms() as $_key => $_text) {
+			if(array_key_exists($_key, $_POST)) {
+				update_post_meta($post_id, $_key, $_POST[$_key]);
+				if(isset($_POST[$_key . '_thumb'])) {
+					update_post_meta($post_id, $_key . '_thumb', $_POST[$_key . '_thumb']);
+				}
+			} else {
+				delete_post_meta($post_id, $_key, $_POST[$_key]);
+				if(isset($_POST[$_key . '_thumb'])) {
+					delete_post_meta($post_id, $_key . '_thumb', $_POST[$_key . '_thumb']);
+				}
+				
+			}
 		}
 	}
 	
-	public function display_field($args) {
+	public function display_field($args, $isParent = false) {
 		$field = wp_parse_args($args['field'], [
 			'placeholder'	=> ''
 		]);
 		$html = '';
-		$option_name = "_teddy_custom_data[". $field['id']. "]";
-		$field['default'] = isset($field['default']) ? $field['default'] : '';
-		$data = (isset($this->options[$field['id']]))?$this->options[$field['id']]:$field['default'];
+		$option_name = ($isParent)?$field['id']:"_teddy_custom_data[" . $field['id'] . "]";
+		$field['default'] = isset($field['default'])?$field['default']:'';
+		if($isParent) {
+			$data = get_post_meta(get_the_ID(), $field['id'], true);
+			$data = ($data && !is_wp_error($data))?$data:$field['default'];
+		} else {
+			$data = (isset($this->options[$field['id']]))?$this->options[$field['id']]:$field['default'];
+		}
+		
 		switch($field['type']) {
 			case 'text':case 'email':case 'password':case 'number':case 'date':case 'time':case 'color':case 'url':
 				$html .= '<input id="' . esc_attr($field['id']) . '" type="' . $field['type'] . '" name="' . esc_attr($option_name) . '" placeholder="' . esc_attr($field['placeholder']) . '" value="' . esc_attr($data) . '"' . $this->attributes($field) . '/>' . "\n";
@@ -189,6 +282,7 @@ class Meta_Boxes {
 				}
 			break;
 			case 'radio':
+				$html .= ($field['label'] && !empty($field['label']))?'<span style="display: block;">' . $field['label'] . '</span>':'';
 				foreach($field['options'] as $k => $v) {
 					$checked = false;
 					if($k == $data) {$checked = true;}
@@ -216,6 +310,11 @@ class Meta_Boxes {
 				}
 				$html .= '</select> ';
 			break;
+			case 'button':
+				$html .= '<button id="' . esc_attr($field['id']) . '" type="button" data-name="' . esc_attr($option_name) . '" data-value="' . esc_attr($data) . '"' . $this->attributes($field) . '>' . $field['text'] . '</button>' . "\n";
+			break;
+			default:
+			break;
 		}
 		switch($field['type']) {
 			case 'checkbox_multi':
@@ -223,11 +322,24 @@ class Meta_Boxes {
 			case 'select_multi':
 				$html .= '<br/><span class="description">' . $field['description'] . '</span>';
 			break;
+			case 'button':
+				$thumbUrl = wp_get_attachment_image_url($data);
+				$html .= '<label for="' . esc_attr($field['id']) . '">
+					<span class="description">' . $field['description'] . '</span>
+					<div class="imgpreview">
+						<input type="hidden" value="' . esc_attr($data) . '" name="' . esc_attr($option_name) . '" />
+						<img src="' . esc_url($thumbUrl) . '" alt="" />
+						<div class="dashicons-before dashicons-dismiss" title="Remove"></div>
+					</div>
+				</label>';
+			break;
 			default:
 				$html .= '<label for="' . esc_attr($field['id']) . '"><span class="description">' . $field['description'] . '</span></label>';
 			break;
 		}
-		echo '<div class="fwp-form__field fwp-form__field__' . esc_attr($field['type']) . '">'.$html.'</div>';
+		echo '<div class="fwp-form__field fwp-form__field__' . esc_attr($field['type']) . '" data-condition="' . esc_attr(
+			json_encode(isset($field['conditions'])?$field['conditions']:[])
+		) . '">'.$html.'</div>';
 	}
 	public function attributes($field) {
 		if(! isset($field[ 'attr' ]) || ! is_array($field[ 'attr' ]) || count($field[ 'attr' ]) < 1) {return '';}

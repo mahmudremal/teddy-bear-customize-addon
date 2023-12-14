@@ -45,6 +45,12 @@ class Order {
 		add_action('woocommerce_checkout_create_order_line_item', [$this, 'woocommerce_checkout_create_order_line_item'], 10, 4);
 		add_action('woocommerce_new_order_item', [$this, 'woocommerce_new_order_item'], 10, 3);
 		// add_action('woocommerce_order_item_get_internal_meta_keys', [$this, 'woocommerce_order_item_get_internal_meta_keys'], 10, 1);
+
+		add_filter('woocommerce_order_get_subtotal', [$this, 'woocommerce_order_get_subtotal'], 10, 2);
+		// add_filter('woocommerce_order_get_total', [$this, 'woocommerce_order_get_total'], 10, 2);
+		// add_filter('woocommerce_order_amount_item_subtotal', [$this, 'woocommerce_order_amount_item_subtotal'], 10, 5);
+		add_filter('woocommerce_order_amount_line_subtotal', [$this, 'woocommerce_order_amount_line_subtotal'], 10, 5);
+		// add_filter('woocommerce_get_order_item_totals', [$this, 'woocommerce_get_order_item_totals'], 10, 3);
 	}
 	public function add_custom_meta_box() {
 		$screens = ['shop_order'];
@@ -59,6 +65,7 @@ class Order {
 		}
 	}
 	public function custom_meta_box_html($post) {
+		global $teddy_Certificate;global $teddy_Voices;
 		$order_id = $post->ID;
 		$order = wc_get_order($order_id);
 		$target_dir = TEDDY_BEAR_CUSTOMIZE_ADDON_UPLOAD_DIR;
@@ -86,28 +93,24 @@ class Order {
 						<span class="fwp-outfit__product"><?php echo esc_html(sprintf('Item: %s', $item_name)); ?></span>
 						<ul class="fwp-outfit__list">
 						<?php
+						// Getting Icons.
+						$custom_data = (array) $this->get_order_item_meta($order_item->get_id(), 'custom_teddey_bear_data');
+						
 						foreach($item_meta_data as $meta) {
 
 							if(is_array($meta->value)) {continue;}
 							$thumbnailImage = $voiceFileExists = $voiceFileArgs = false;
 							
-							// Getting Icons.
-							$custom_data = (array) $this->get_order_item_meta($order_item->get_id(), 'custom_teddey_bear_data');
+							
 							if($custom_data && isset($custom_data['field'])) {
 								foreach((array) $custom_data['field'] as $i => $iRow) {
 									if(is_array($iRow)) {
 										foreach($iRow as $j => $jRow) {
-
-											if(isset($jRow['voice']) && !empty($jRow['voice'])) {
-												// $voiceFileExists = $target_dir.$jRow['voice'];
-												$voiceFileArgs = ['url' => $target_dir.$jRow['voice'], 'key' => $jRow['title'], 'name' => $jRow['voice']];
-												// print_r($voiceFileExists);
-											}
 											$jRow = (object) $jRow;
 											if(
 												isset($jRow->value) && isset($jRow->price) && isset($jRow->image) && 
-												!empty($jRow->image) && 
-												$jRow->value == $meta->key // && $jRow->price == $meta->value
+												!empty($jRow->image) && strtolower($jRow->value) == strtolower($meta->key)
+												// && $jRow->price == $meta->value
 											) {
 												$thumbnailImage = $jRow->image;
 												$attachment_id = attachment_url_to_postid($thumbnailImage);
@@ -121,9 +124,6 @@ class Order {
 									}
 								}
 							}
-							
-							// $target_file = (file_exists($target_dir.$meta->value) && !is_dir($target_dir.$meta->value))?$target_dir.$meta->value:false;
-							$target_file = ($voiceFileExists && file_exists($voiceFileExists) && !is_dir($voiceFileExists))?$voiceFileExists:false;
 							?>
 							<li class="fwp-outfit__items">
 								<?php if($thumbnailImage): ?><img src="<?php echo esc_url($thumbnailImage); ?>" alt="<?php echo esc_attr($meta->value); ?>" class="fwp-outfit__image" data-product="<?php echo esc_attr($item_name); ?>" data-item="<?php echo esc_attr($meta->key); ?>" data-price="<?php echo esc_attr($meta->value); ?>"><?php endif; ?>
@@ -131,18 +131,32 @@ class Order {
 								<span class="fwp-outfit__price"><?php echo wp_kses_post($meta->value); ?></span>
 							</li>
 							<?php
-							if(isset($voiceFileArgs['url']) && isset($voiceFileArgs['key']) && !empty($voiceFileArgs['key']) && $meta->key == $voiceFileArgs['key']) {
+						}
+						if($teddy_Voices->should_exists_voices($order, $order_item)) {
+							if($teddy_Voices->has_single_voices($order, $order_item)) {
+								foreach($teddy_Voices->get_single_voices($order, $order_item) as $voiceURL) {
+									?>
+									<li class="fwp-outfit__items fwp-outfit__audio">
+										<div class="fwp-outfit__player" data-audio="<?php echo esc_url(site_url(str_replace([ABSPATH], [''], $voiceURL))); ?>" title="<?php esc_attr_e('Voice', 'teddybearsprompts'); ?>"></div>
+									</li>
+									<?php
+								}
+							} else {
 								?>
-								<li class="fwp-outfit__items fwp-outfit__audio">
-									<div class="fwp-outfit__player" data-audio="<?php echo esc_url(site_url(str_replace([ABSPATH], [''], $voiceFileArgs['url']))); ?>" title="<?php echo esc_attr($meta->value); ?>"></div>
+								<li class="fwp-outfit__items fwp-outfit__emailvoice">
+									<?php esc_html_e('User have to send their voices.', 'teddybearsprompts'); ?>
 								</li>
 								<?php
 							}
 						}
 						?>
 						<?php if($custom_data): ?>
-							<li class="fwp-outfit__items <?php echo esc_attr(($target_file)?'fwp-outfit__certificate':''); ?>">
+							<li class="fwp-outfit__items <?php echo esc_attr((true)?'fwp-outfit__certificate':''); ?>">
 								<a href="<?php echo esc_url(home_url('?certificate_preview='. $order_id .'-'.$order_item_id)); ?>" class="btn button link" target="_blank"><?php esc_html_e('Certificate', 'teddybearsprompts'); ?></a>
+							</li>
+						<?php else: ?>
+							<li class="fwp-outfit__items <?php echo esc_attr((true)?'fwp-outfit__certificate':''); ?>">
+								<a href="<?php echo esc_url(home_url('?certificate_preview='. $order_id .'-'.$order_item_id)); ?>" class="link" target="_blank"><?php esc_html_e('Necessery information missing on this item.', 'teddybearsprompts'); ?></a>
 							</li>
 						<?php endif; ?>
 						</ul>
@@ -183,49 +197,15 @@ class Order {
 		}
 		return $email_classes;
 	}
-	public function woocommerce_order_item_meta_end($item_id, $item, $order, $plain_text) {
+	public function woocommerce_order_item_meta_end($item_id, $order_item, $order, $plain_text) {
+		global $teddyProduct;global $teddy_Voices;global $teddyBear__Order;
 		// if(!isset($order->is_order_confirmation) || $order->is_order_confirmation !== true) {return;}
-		if($this->confirmMailTrack !== true) {return;}global $teddyProduct;
-		$order_item = $item;
-		$order_id  = $order->get_id();
-		$product_id = $item->get_product_id();
-		$custom_popup = $teddyProduct->get_order_pops_meta($order, $order_item, $product_id);
-		if(!$custom_popup || empty($custom_popup)) {return;}
-		
-		$item_metas = $item->get_meta_data();
-		foreach($custom_popup as $posI => $posRow) {
-			foreach($posRow as $row) {
-				if($row['type'] == 'voice') {
-					$voiceShouldExists = $voiceFileExists = false;
-					foreach($item_metas as $meta) {
-						if($meta->key == $row['steptitle']) {
-							$voiceShouldExists = $row['steptitle'];
-						}
-					}
-					if($voiceShouldExists) {
-						$meta_data = $item->get_meta('custom_teddey_bear_data', true);
-						if(isset($meta_data['field'])) {
-							if( ! is_array($meta_data['field'])) {
-								$meta_data = (array) $meta_data;
-							}
-							foreach($meta_data['field'] as $field) {
-								foreach($field as $i => $row) {
-									if($row['title'] == $voiceShouldExists) {
-										$voiceFileExists = true;
-									}
-								}
-							}
-						}
-					}
-					if($voiceShouldExists && ! $voiceFileExists) {
-						// $uploadVoiceURL = site_url('upload-voice/'.$order_id.'/'.$item_id.'/');
-						$uploadVoiceURL = 'mailto:'.get_option('admin_email').'?subject='.esc_attr(__('Voice Record', 'teddybearsprompts')).'&body='.esc_attr(sprintf(__('Order #%d, Cart Item: #%d, Item Subtotal: %s %s Product: %s', 'teddybearsprompts'), $order_id, $item_id, $item->get_subtotal(), '%0D%0A', get_the_title($product_id)));
-						?>
-						<a href="<?php echo esc_attr($uploadVoiceURL); ?>" target="_blank" style="color: #fff;font-weight:normal;text-decoration:underline;background: #7f54b3;padding: 10px 15px;border-radius: 5px;line-height: 40px;text-decoration: none;"><?php esc_html_e('Send Recorded voice', 'teddybearsprompts'); ?></a>
-						<?php
-					}
-				}
-			}
+		// if($this->confirmMailTrack !== true) {return;}
+		if(in_array($order->get_status(), ['completed'])) {return;}
+		if(!$teddy_Voices->should_exists_voices($order, $order_item)) {return;}
+		if(!$teddy_Voices->has_single_voices($order, $order_item)) {
+			$uploadVoiceURL = 'mailto:'.get_option('admin_email').'?subject='.esc_attr(__('Voice Record', 'teddybearsprompts')).'&body='.esc_attr(sprintf(__('Order #%d, Cart Item: #%d, Item Subtotal: %s %s Product: %s', 'teddybearsprompts'), $order->get_id(), $order_item->get_id(), $teddyBear__Order->get_order_item_subtotal($order_item, $order->get_id()), '%0D%0A', get_the_title($order_item->get_product_id())));
+			echo '<a href="' . esc_attr($uploadVoiceURL) . '" target="_blank" style="color: #fff;font-weight:normal;text-decoration:underline;background: #7f54b3;padding: 10px 15px;border-radius: 5px;line-height: 40px;text-decoration: none;">' . esc_html('Send Recorded voice', 'teddybearsprompts') . '</a>';
 		}
 	}
 	public function woocommerce_order_item_add_certificate_link($item_id, $item, $order, $plain_text) {
@@ -302,64 +282,11 @@ class Order {
     	return $actions;
 	}
 	public function woocommerce_order_action_send_birth_certificates($order, $preview = false) {
-		$certificates = [];global $teddyProduct;
+		global $teddyProduct;global $teddy_Certificate;
 		$order_id = $order->get_id();
 		// $order->get_status();
 		
-		foreach($order->get_items() as $order_item_id => $order_item) {
-			if($preview && $preview != $order_item_id) {continue;}
-			$item_id = $order_item->get_id();
-			// $item_name = $order_item->get_name();
-			$product_id = $order_item->get_product_id();
-			// $product = $order_item->get_product();
-			// $quantity = $order_item->get_quantity();
-			$popup_meta = $teddyProduct->get_order_pops_meta($order, $order_item, $product_id);
-			if(!$popup_meta || !is_array($popup_meta) || count($popup_meta) <= 0) {continue;}
-			
-			foreach($popup_meta as $posI => $posRow) {
-				foreach($posRow as $i => $field) {
-					if($field['type'] == 'info') {
-						$item_meta_data = $order_item->get_meta('custom_teddey_bear_data', true);
-						if(!$item_meta_data) {continue;}
-						foreach($item_meta_data['field'] as $i => $iRow) {
-							foreach($iRow as $j => $jRow) {
-								// if($jRow['title'] == 'Voice') {}
-								if($field['steptitle'] == $jRow['title'] && $j == 0) {
-									$custom_data = wp_parse_args((array) get_post_meta($product_id, '_teddy_custom_data', true), [
-										'eye'				=> '',
-										'brow'				=> '',
-										'weight'			=> '',
-										'height'			=> '',
-									]);
-									$args = [
-										'eye'			=> $custom_data['eye'],
-										'brow'			=> $custom_data['brow'],
-
-										'id_num'		=> $order_id,
-										// bin2hex($order_id), // strtolower(base_convert($order_id, 10, 36) . base_convert($item_id, 10, 36) . '-' . rand(1, 9999)),
-
-										'teddyname'		=> $iRow[0]['value'],
-										'birth'			=> $iRow[1]['value'],
-										'belongto'		=> $iRow[2]['value'],
-										'gift_by'		=> $iRow[3]['value'],
-
-										'weight'		=> $custom_data['weight'],
-										'height'		=> $custom_data['height'],
-
-										'preview'		=> (bool) $preview,
-										// 'single'		=> ($preview)?$preview:false,
-										
-										'pdf'			=> 'certificate-'.$item_id.'-'.$order_id.'.pdf'
-									];
-									// print_r([$args]);wp_die($item_id);
-									$certificates[] = apply_filters('teddybearpopupaddon_generate_certificate', false, $args);
-								}
-							}
-						}
-					}
-				}
-			}
-		}
+		$certificates = $teddy_Certificate->get_all_certificates($order, $preview);
 		
 		try {
 			if(count($certificates) >= 1) {
@@ -404,5 +331,56 @@ class Order {
 				}
 			}
 		}
+	}
+	public function get_order_item_subtotal($item, $order_id, $additionalOnly = false) {
+		$meta_data = $item->get_meta('custom_teddey_bear_data', true);
+		if(!is_array($meta_data) || !isset($meta_data['field'])) {
+			$meta_data = (array) $meta_data;
+			$meta_data['field'] = [];
+		}
+		$additionalAmount = 0;
+		foreach($meta_data['field'] as $group) {
+			foreach($group as $row) {
+				if(isset($row['price']) && is_numeric($row['price'])) {
+					$row['price'] = (float) $row['price'];
+					$additionalAmount += $row['price'];
+				}
+			}
+			
+		}
+		// print_r([$meta_data]);wp_die();
+
+		return (
+			(
+				($additionalOnly)?$additionalAmount:($item->get_subtotal() + $additionalAmount)
+			) * $item->get_quantity()
+		);
+	}
+	public function woocommerce_order_get_subtotal($subTotal, $order) {
+		$newSubTotal = 0;$order_id = $order->get_id();
+		foreach($order->get_items() as $item_id => $item) {
+			$newSubTotal += $this->get_order_item_subtotal($item, $order_id, true);
+		}
+		return ($subTotal + $newSubTotal);
+	}
+	public function woocommerce_order_get_total($total, $order) {
+		return $total;
+	}
+	/**
+	 * Subtotal for individual product without sonsidering quantity
+	 */
+	public function woocommerce_order_amount_item_subtotal($subtotal, $order, $item, $inc_tax, $round) {
+		return $subtotal;
+	}
+	/**
+	 * Subtotal with considering quantity.
+	 */
+	public function woocommerce_order_amount_line_subtotal($subtotal, $order, $item, $inc_tax, $round) {
+		// print_r([$subtotal]);$subtotal += 20;
+		return $subtotal;
+	}
+	public function woocommerce_get_order_item_totals($total_rows, $order, $tax_display) {
+		// print_r([$total_rows]);
+		return $total_rows;
 	}
 }

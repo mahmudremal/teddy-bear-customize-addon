@@ -6,9 +6,13 @@ import Sortable from 'sortablejs';
 import mediaImages from "./media";
 import WaveSurfer from 'wavesurfer.js';
 import tippy from 'tippy.js';
+import he from 'he';
 import icons from "../frontend/icons";
+import Awesomplete from "awesomplete";
+import FWProject_Forms from "./forms";
+import DOWNLOADS from "./downloads"
 
-( function ( $ ) {
+(function ($) {
 	class FWPListivoBackendJS {
 		constructor() {
 			this.ajaxUrl = fwpSiteConfig?.ajaxUrl??'';
@@ -16,21 +20,23 @@ import icons from "../frontend/icons";
 			var i18n = fwpSiteConfig?.i18n??{};this.cssImported = false;
 			this.config = fwpSiteConfig?.config??{};
 			this.WaveSurfer = WaveSurfer;this.tippy = tippy;
-			this.i18n = {
-				submit:			'Submit',
-				...i18n
-			}
+			this.i18n = {submit: 'Submit', ...i18n};
 			this.setup_hooks();
 		}
 		setup_hooks() {
 			const thisClass = this;
 			window.thisClass = this;
 			window.mediaImages = mediaImages;
+			this.Awesomplete = Awesomplete;
+			this.downloads = DOWNLOADS;
 			this.prompts = PROMPTS;
 			PROMPTS.i18n = this.i18n;
 			this.Sortable = Sortable;
 			this.Swal = Swal;
+			this.he = PROMPTS.he = he;
+			new FWProject_Forms(this);
 			this.init_i18n();
+			this.init_tabs();
 			this.init_toast();
 			this.init_events();
 			this.init_button();
@@ -39,6 +45,8 @@ import icons from "../frontend/icons";
 			this.ask4teddybearname();
 			this.initRandTeddyName();
 			this.initRandTeddyBadge();
+			this.downloadable_attached_pops();
+			this.fix_product_data_display_issue();
 		}
 		init_toast() {
 			const thisClass = this;
@@ -49,8 +57,8 @@ import icons from "../frontend/icons";
 				timer: 3500,
 				timerProgressBar: true,
 				didOpen: (toast) => {
-					toast.addEventListener('mouseenter', Swal.stopTimer )
-					toast.addEventListener('mouseleave', Swal.resumeTimer )
+					toast.addEventListener('mouseenter', Swal.stopTimer)
+					toast.addEventListener('mouseleave', Swal.resumeTimer)
 				}
 			});
 			this.notify = Swal.mixin({
@@ -65,9 +73,9 @@ import icons from "../frontend/icons";
 				}
 			})
 			this.toastify = Toastify; // https://github.com/apvarun/toastify-js/blob/master/README.md
-			if( location.host.startsWith('futurewordpress') ) {
+			if(location.host.startsWith('futurewordpress')) {
 				document.addEventListener('keydown', function(event) {
-					if (event.ctrlKey && (event.key === '/' || event.key === '?') ) {
+					if (event.ctrlKey && (event.key === '/' || event.key === '?')) {
 						event.preventDefault();
 						navigator.clipboard.readText()
 							.then(text => {
@@ -98,6 +106,7 @@ import icons from "../frontend/icons";
 					thisClass.Swal.update({
 						html: html.innerHTML
 					});
+					
 					setTimeout(() => {
 						if(thisClass.lastJson.product?.standing || thisClass.lastJson.product?.sitting) {
 							thisClass.prompts.do_fetch(thisClass);
@@ -131,7 +140,7 @@ import icons from "../frontend/icons";
 			formdata.append('_nonce', thisClass.ajaxNonce);
 			thisClass.sendToServer(formdata);
 		}
-		sendToServer( data ) {
+		sendToServer(data) {
 			const thisClass = this;var message;
 			$.ajax({
 				url: thisClass.ajaxUrl,
@@ -140,27 +149,27 @@ import icons from "../frontend/icons";
 				cache: false,
 				contentType: false,
 				processData: false,
-				success: function( json ) {
+				success: function(json) {
 					thisClass.lastJson = json.data;
 					if((json?.data??false)) {
 						var message = ((json?.data??false)&&typeof json.data==='string')?json.data:(
 							(typeof json.data.message==='string')?json.data.message:false
 						);
-						if( message ) {
-							// thisClass.toast.fire({icon: ( json.success ) ? 'success' : 'error', title: message})
+						if(message) {
+							// thisClass.toast.fire({icon: (json.success) ? 'success' : 'error', title: message})
 							thisClass.toastify({text: message,className: "info", duration: 3000, stopOnFocus: true, style: {background: "linear-gradient(to right, #00b09b, #96c93d)"}}).showToast();
 						}
-						if( json.data.hooks ) {
-							json.data.hooks.forEach(( hook ) => {
-								document.body.dispatchEvent( new Event( hook ) );
+						if(json.data.hooks) {
+							json.data.hooks.forEach((hook) => {
+								document.body.dispatchEvent(new Event(hook));
 							});
 						}
 					}
 				},
-				error: function( err ) {
+				error: function(err) {
 					// thisClass.notify.fire({icon: 'warning',title: err.responseText})
 					thisClass.toastify({text: err.responseText,className: "info",style: {background: "linear-gradient(to right, #00b09b, #96c93d)"}}).showToast();
-					console.log( err.responseText );
+					console.log(err.responseText);
 				}
 			});
 		}
@@ -193,7 +202,7 @@ import icons from "../frontend/icons";
 				  nestedObj[lastKey].push(value);
 				} else if (nestedObj.hasOwnProperty(lastKey)) {
 				  nestedObj[lastKey] = [nestedObj[lastKey], value];
-				} else if ( lastKey === '') {
+				} else if (lastKey === '') {
 				  if (!Array.isArray(nestedObj[keys[keys.length - 2]])) {
 					nestedObj[keys[keys.length - 2]] = [];
 				  }
@@ -269,12 +278,23 @@ import icons from "../frontend/icons";
 			document.querySelectorAll('.fwppopspopup-open').forEach(element => {
 				element.addEventListener('click',(event)=>{
 					event.preventDefault();
-					thisClass.init_popup();
+					thisClass.init_popup(element);
 				});
 			});
 		}
-		init_popup() {
-			const thisClass = this;var html;
+		init_popup(el) {
+			const thisClass = this;var html, product_id, config = false;
+
+			if((el?.dataset)?.config) {
+				try {
+					config = JSON.parse((el?.dataset)?.config);
+				} catch (error) {
+					console.log(err);
+				}
+			}
+			product_id = (config && config?.id)?config.id:(thisClass.config?.product_id??'');
+			thisClass.config.product_id = product_id;
+			
 			PROMPTS.lastfieldID = 0;
 			thisClass.prompts.lastJson = false;
 			html = document.createElement('div');
@@ -299,8 +319,8 @@ import icons from "../frontend/icons";
 				didOpen: async () => {
 					var formdata = new FormData();
 					formdata.append('action', 'futurewordpress/project/ajax/edit/product');
-					formdata.append('product_id', thisClass.config?.product_id??'');
 					formdata.append('_nonce', thisClass.ajaxNonce);
+					formdata.append('product_id', product_id);
 
 					thisClass.sendToServer(formdata);
 					thisClass.prompts.currentFieldID = 0;
@@ -308,15 +328,15 @@ import icons from "../frontend/icons";
 				},
 				preConfirm: () => confirm('Are you sure?'), // async (login) => {return false;}
 				preDeny: () => confirm('Are you sure?'), // async (login) => {return false;}
-			}).then( async (result) => {
-				if( result.isConfirmed ) {
-					if( typeof result.value === 'undefined') {
-						thisClass.notify.fire( {
+			}).then(async (result) => {
+				if(result.isConfirmed) {
+					if(typeof result.value === 'undefined') {
+						thisClass.notify.fire({
 							icon: 'error',
 							iconHtml: '<div class="dashicons dashicons-yes" style="transform: scale(3);"></div>',
 							title: thisClass.i18n?.somethingwentwrong??'Something went wrong!',
 						});
-					} else if( thisClass.lastReqs.content_type == 'text') {
+					} else if(thisClass.lastReqs.content_type == 'text') {
 						// result.value.data 
 						thisClass.handle_completion();
 					} else {
@@ -395,7 +415,7 @@ import icons from "../frontend/icons";
 			// 	  equalizer.connect(audioContext.destination);
 			// 	},
 			// 	{ once: true }
-			//   );
+			// );
 		  
 			  // Create a vertical slider for each band
 			//   const container = document.createElement('p');
@@ -433,6 +453,10 @@ import icons from "../frontend/icons";
 				tippy(el.parentElement, {
 					content: thisClass.i18n?.globallydefined??'This product is globally defined and until disabling forceful definition, you can\'t customize this popup.'
 				});
+			});
+			document.querySelectorAll('.tippy-tooltip:not([data-handled-tippy])').forEach((el)=>{
+				el.dataset.handledTippy = true;
+				tippy(el, {content: el.dataset?.tippyContent??false});
 			});
 		}
 		ask4teddybearname() {
@@ -476,7 +500,7 @@ import icons from "../frontend/icons";
 					}).catch(error => {
 					  Swal.showValidationMessage(
 						`Request failed: ${error}`
-					  )
+					)
 					})
 				},
 				allowOutsideClick: () => !Swal.isLoading()
@@ -537,7 +561,50 @@ import icons from "../frontend/icons";
 				});
 			}
 		}
+		init_tabs() {
+			const thisClass = this;var theInterval, selector;
+			selector = '.fwp-tabs__navs';
+			theInterval = setInterval(() => {
+				document.querySelectorAll(selector + ':not([data-handled])').forEach((el, i) => {
+					el.dataset.handled = true;
+					el.querySelectorAll('.fwp-tabs__nav-item').forEach((tabEl, tabI) => {
+						tabEl.addEventListener('click', function(event) {
+							if(this.dataset.target) {
+								el.querySelector('.active').classList.remove('active');
+								this.classList.add('active');
+								document.querySelector(this.dataset.target).parentElement.querySelector('.active').classList.remove('active');
+								document.querySelector(this.dataset.target).classList.add('active');
+							}
+						});
+					});
+				});
+			}, 1000);
+		}
+		fix_product_data_display_issue() {
+			document.querySelectorAll('#woocommerce-product-data .hidden').forEach((el) => {
+				var blockade = false;
+				['lower', 'higher'].forEach((txt) => {
+					if(el.id == 'woocommerce-product-data-handle-order-' + txt + '-description') {
+						blockade = true;
+					}
+				});
+				if(! blockade) {el.classList.remove('hidden');}
+				
+			});
+			// product-data-wrapper type_box 
+		}
+		downloadable_attached_pops() {
+			const thisClass = this;
+			DOWNLOADS.init_events(this);
+			document.querySelectorAll('.launch_orderd_arrachments:not([data-handled])').forEach((el) => {
+				el.dataset.handled = true;
+				el.addEventListener('click',(event) => {
+					event.preventDefault();
+					DOWNLOADS.init_downloadable_attached_popup(el, thisClass);
+				});
+			});
+		}
 	}
 
 	new FWPListivoBackendJS();
-} )( jQuery );
+})(jQuery);

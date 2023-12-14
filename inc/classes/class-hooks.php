@@ -16,7 +16,7 @@ class Hooks {
 	}
 	protected function setup_hooks() {
     add_action('woocommerce_after_add_to_cart_button', [$this, 'woocommerce_after_add_to_cart_button'], 10, 0);
-    add_action('woocommerce_loop_add_to_cart_link', [$this, 'woocommerce_loop_add_to_cart_link'], 10, 3);
+    // add_action('woocommerce_loop_add_to_cart_link', [$this, 'woocommerce_loop_add_to_cart_link'], 10, 3);
   }
   /**
    * woocommerce_before_add_to_cart_button | 
@@ -27,8 +27,9 @@ class Hooks {
    * woocommerce_after_add_to_cart_form
    */
   public function woocommerce_after_add_to_cart_button() {
-    global $product;
-    if(!apply_filters('teddybear/project/system/isactive', 'standard-enable')) {return;}
+    global $product;global $Plushies;
+    if(! apply_filters('teddybear/project/system/isactive', 'standard-enable')) {return;}
+    if($Plushies->is_accessory($product->get_id())) {return;}
     $config = ['id' => $product->get_id()];
     ?>
     <button type="button" class="init_cusomizeaddtocartbtn" data-config="<?php echo esc_attr(json_encode($config)); ?>"><?php esc_html_e('Customize', 'teddybearsprompts'); ?></button>

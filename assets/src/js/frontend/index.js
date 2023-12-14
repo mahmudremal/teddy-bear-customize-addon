@@ -13,6 +13,12 @@ import popupCart from "./popupcart";
 import flatpickr from "flatpickr";
 import KeenSlider from 'keen-slider';
 import tippy from 'tippy.js';
+import Splide from '@splidejs/splide';
+import icons from "./icons";
+import { keenSliderNavigation } from "./slider";
+import Exim from "./exim"
+import Tidio_Chat from "./tidio";
+
 
 ( function ( $ ) {
 	class FutureWordPress_Frontend {
@@ -22,10 +28,8 @@ import tippy from 'tippy.js';
 			this.lastAjax = false;this.profile = fwpSiteConfig?.profile??false;
 			var i18n = fwpSiteConfig?.i18n??{};this.noToast = true;
 			this.config = fwpSiteConfig;this.KeenSlider = KeenSlider;
-			this.i18n = {
-				confirming								: 'Confirming',
-				...i18n
-			}
+			this.i18n = {confirming: 'Confirming', ...i18n};
+			this.Exim = Exim;this.Splide = Splide;
 			this.setup_hooks();
 		}
 		setup_hooks() {
@@ -44,6 +48,7 @@ import tippy from 'tippy.js';
 			PROMPTS.i18n = this.i18n;
 			voiceRecord.init_recorder(this);
 			this.voiceRecord = voiceRecord;
+			new Tidio_Chat();
 
 			// this.move_lang_switcher();
 
@@ -173,10 +178,12 @@ import tippy from 'tippy.js';
 					}
 					setTimeout(() => {
 						var fields = thisClass.prompts.get_data(thisClass);
-						var voice = fields.find((row)=>row.type=='voice');
+						var voice = fields.find((row)=>row.type == 'voice');
 						if(voice) {
-							voice.cost = (voice.cost == '')?0:voice.cost;
-							voiceRecord.meta_tag = voice.steptitle;
+							voice.cost = (!(voice?.cost) || voice.cost == '')?0:voice.cost;
+							// voiceRecord.meta_tag = voice.steptitle;
+							voiceRecord.product_id = (voice?.product && parseInt(voice.product) !== NaN)?parseInt(voice.product):false;
+							
 							voiceRecord.duration = parseFloat((voice.duration == '')?'20':voice.duration);
 							// popupCart.addAdditionalPrice(voice.steptitle, parseFloat(voice.cost));
 						}
@@ -232,38 +239,40 @@ import tippy from 'tippy.js';
 							);
 							const addition = document.createElement('div');
 							addition.innerHTML = `
-							<div class="swal2-footer__wraping">
-								<label class="swal2-footer__wraping__tooltip">
-									<input type="checkbox" name="add_wraping" value="true" onchange="document.querySelector('#addwrapping_checkbox')?.click();"/>
-									${
-										(((thisClass.lastJson?.wrapping)?.thumbnail??'').trim() != '')?`
-										<img class="swal2-footer__wraping__thumbnail" src="${(thisClass.lastJson?.wrapping)?.thumbnail??''}" alt="Packaging" />
-										`:''
-									}
-									${(thisClass.lastJson?.wrapping)?.title??(thisClass.i18n?.addwrapping??'Add wrapping paper')} (${thisClass.config?.currencySign??''} ${((thisClass.lastJson?.wrapping)?.price??0).toFixed(2)})
+							${(thisClass.lastJson?.wrapping)?`
+								<div class="swal2-footer__wraping">
+									<label class="swal2-footer__wraping__tooltip">
+										<input type="checkbox" name="add_wraping" value="true" onchange="document.querySelector('#addwrapping_checkbox')?.click();"/>
+										${
+											(((thisClass.lastJson?.wrapping)?.thumbnail??'').trim() != '')?`
+											<img class="swal2-footer__wraping__thumbnail" src="${(thisClass.lastJson?.wrapping)?.thumbnail??''}" alt="Packaging" />
+											`:''
+										}
+										${(thisClass.lastJson?.wrapping)?.title??(thisClass.i18n?.addwrapping??'Add wrapping paper')} (${thisClass.config?.currencySign??''} ${((thisClass.lastJson?.wrapping)?.price??0).toFixed(2)})
 
-									<button class="btn btn-primary button" id="addwrapping_checkbox" data-mode="add">
-										<span>${thisClass.i18n?.addwrapping??'Add wrapping'}</span>
-										<div class="spinner-circular-tube"></div>
-									</button>
-								</label>
-							</div>
+										<button class="btn btn-primary button" id="addwrapping_checkbox" data-mode="add">
+											<span>${thisClass.i18n?.addwrapping??'Add wrapping'}</span>
+											<div class="spinner-circular-tube"></div>
+										</button>
+									</label>
+								</div>
+							`:''}
 							<div class="swal2-footer__footer">
 								<h3 class="swal2-footer__footer__title">${thisClass.i18n?.youmayalsolike??'You may also like'}</h3>
 								<div class="keen-slider keen-slider__extras">
 									${thisClass.confirmation.suggestion.map((product, i)=>`
-									<div class="keen-slider__slide ${i}" title="${thisClass.esc_attr(product.title)}" data-cost="${product.price}" data-product="${product.ID}">
+									<div class="keen-slider__slide number-slide${(i + 1)}" title="${thisClass.esc_attr(product.title)}" data-cost="${product.price}" data-product="${product.ID}">
 										${product.thumbnail} ${product.priceHtml}
 									</div>
 									`).join('')}
 								</div>
 							</div>
 							`;
-							Object.values(addition.children).forEach((child) => {
-								document.querySelector('.dynamic_popup')?.appendChild(child);
-							});
 							
 							setTimeout(() => {
+								Object.values(addition.children).forEach((child) => {
+									document.querySelector('.dynamic_popup')?.appendChild(child);
+								});
 								document.querySelectorAll('.swal2-footer__wraping__tooltip:not([data-tooltip-handled])').forEach((el) => {
 									el.dataset.tooltipHandled = true;
 									thisClass.tippy(el, {
@@ -272,12 +281,18 @@ import tippy from 'tippy.js';
 										theme: 'site-theme'
 									});
 								});
-								const slider = new thisClass.KeenSlider('.keen-slider', {
+								const slider = new thisClass.KeenSlider('.keen-slider__extras:not([data-slides-handled])', {
 									loop: true, mode: "free",
 									slides: {perView: 5, spacing: 5},
-								});
+								}, [
+									slider => {
+										slider.on('created', () => {
+											slider.container.dataset.slidesHandled = true;
+										})
+									}
+								]);
 								setTimeout(() => {
-									document.querySelectorAll('.keen-slider .keen-slider__slide').forEach((el)=>{
+									document.querySelectorAll('.keen-slider .keen-slider__slide').forEach((el) => {
 										el.addEventListener('click', (e) => {
 											if(el.classList.contains('active')) {
 												el.classList.remove('active');
@@ -288,7 +303,7 @@ import tippy from 'tippy.js';
 											}
 										});
 									});
-									document.querySelectorAll('.swal2-footer__wraping .btn').forEach((el)=>{
+									document.querySelectorAll('.swal2-footer__wraping .btn').forEach((el) => {
 										if(!(thisClass?.addWrappingBtn)) {
 											thisClass.addWrappingBtn = el;
 										}
@@ -310,11 +325,28 @@ import tippy from 'tippy.js';
 						},
 						allowOutsideClick: () => !Swal.isLoading(),
 					}).then((res) => {
+
+						console.log(res.isConfirmed, res.isDenied, res.isDismissed);
+						
 						if(res.isConfirmed) {
-							location.href = thisClass.confirmation?.checkoutUrl??false;
+							/**
+							 * Confirm is Checkout
+							 */
+							if(thisClass.confirmation?.checkoutUrl) {
+								location.href = thisClass.confirmation?.checkoutUrl??false;
+							}
 						} else if(res.isDenied) {
-							location.href = thisClass.confirmation?.accessoriesUrl??false;
-						} else if(res.isDismissed) {} else {}
+							/**
+							 * Denied is accessories
+							 */
+							if(thisClass.confirmation?.accessoriesUrl) {
+								location.href = thisClass.confirmation?.accessoriesUrl??false;
+							}
+						} else if(res.isDismissed) {
+							/**
+							 * Dismiss is Buy more plushies
+							 */
+						} else {}
 					});
 				}
 			});
@@ -504,11 +536,100 @@ import tippy from 'tippy.js';
 			return transformedObj;
 		}
 		init_search_form() {
-			const thisClass = this;var form, html, config, json, card, node;
-			document.querySelectorAll('.init_cusomizeaddtocartbtn:not([data-handled])').forEach((el)=>{
+			const thisClass = this;var form, html, config, json, card, node, image;
+			document.querySelectorAll('.fwp_custom_actions[data-gallery]:not([data-gallery="[]"]):not([data-handled-gallery])').forEach((el) => {
+				el.dataset.handledGallery = true;
+				var container = el.parentElement.parentElement?.querySelector('.uael-woo-products-thumbnail-wrap .woocommerce-loop-product__link');
+				if(container) {
+					var preview = [...container.childNodes].find((el) => el.nodeName.toLowerCase() == 'img');
+					if(preview) {
+						preview.removeAttribute('srcset');container.classList.add('keen-slider');
+						container.classList.add('uael-gallery', 'navigation-wrapper');
+						
+						// container.parentElement.classList.add('');
+						// var node = document.createElement('div');
+						container.classList.add('uael-gallery__row');
+						var gallery = JSON.parse(el.dataset.gallery);
+
+						var isExists = gallery.find((row) => row.image_url[0] == preview.src);
+						if(!isExists) {
+							gallery = [
+								{
+									id			: 0,
+									thumb_title : preview.src.split('/').pop(),
+									image_url	: [preview.src, 300, 300, true],
+									thumb_url	: [preview.src, 300, 300, true],
+								},
+								...gallery
+							];
+							// console.log();
+						}
+						
+						gallery.forEach((row, i) => {
+							var card = document.createElement('div');
+							card.classList.add('uael-gallery__item', 'keen-slider__slide', 'number-slide'+ (i + 1));
+							image = document.createElement('img');image.className = preview.className;
+							image.classList.add('uael-gallery__image');image.src = row.image_url[0];
+							card.dataset.imageFull = row.image_url[0];
+							image.alt = row.thumb_title;image.title = row.thumb_title;
+							image.width = row.image_url[1];image.height = row.image_url[2];
+							card.appendChild(image);container.appendChild(card);
+							// card.addEventListener('click', (event) => {
+							// 	event.stopPropagation();event.preventDefault();
+							// 	if(preview && preview.src != card.dataset.imageFull) {
+							// 		preview.src = card.dataset.imageFull;
+							// 		console.log(preview.src);
+							// 	}
+							// });
+						});
+						/**
+						 * Remove preview Items
+						 */
+						preview.remove();
+
+						/**
+						 * Init Keen Slider
+						 */
+						const slider = new thisClass.KeenSlider(container, {}, [keenSliderNavigation]);
+						// slider => {
+						// 	// slider.on('slideChanged', () => {
+						// 	// 	console.log('slide changed', slider);
+						// 	// })
+						// }
+						// container.appendChild(node);
+
+						/**
+						 * Adding Arrows on Slider
+						 */
+						// var arrows = document.createElement('div');arrows.classList.add('keen-slider__arrows');
+						// arrows.innerHTML = icons.left;
+						// arrows.innerHTML += icons.right;
+						// container.parentElement.insertBefore(arrows, container);
+                        // arrows.querySelectorAll('.svg_icon').forEach((elem) => {
+                        //     elem.addEventListener('click', (event) => {
+                        //         var arrow_mode = ((elem?.querySelector('svg'))?.dataset)?.arrow;
+                        //         switch(arrow_mode) {
+                        //             case 'left':
+                        //                 slider.prev();
+                        //                 break;
+                        //             case 'right':
+                        //                 slider.next();
+                        //                 break;
+                        //             default:
+                        //                 break;
+                        //         }
+                        //     });
+                        // });
+
+					}
+				}
+
+			});
+			document.querySelectorAll('.init_cusomizeaddtocartbtn:not([data-handled])').forEach((el) => {
 				el.dataset.handled = true;
 				thisClass.resizeCartButtons(el);
 				// Mode add to cart & action button on a div to fix justify spaces.
+
 				// card = el.parentElement;node = document.createElement('div');
 				// node.classList.add('fwp_custom_actions');node.appendChild(el.previousElementSibling);
 				// node.appendChild(el);card.appendChild(node);
@@ -562,13 +683,13 @@ import tippy from 'tippy.js';
 				});
 			});
 			window.addEventListener("resize", () => {
-				document.querySelectorAll('.init_cusomizeaddtocartbtn').forEach((el)=>{
+				document.querySelectorAll('.init_cusomizeaddtocartbtn').forEach((el) => {
 					thisClass.resizeCartButtons(el);
 				});
 			});
 		}
 		resizeCartButtons(el) {
-			// [el, el.previousElementSibling].forEach((btn)=>{
+			// [el, el.previousElementSibling].forEach((btn) => {
 			// 	// btn.setAttribute('style',((window?.innerWidth??(screen?.width??0)) <= 500)?'width: 48% !important;padding: 10px 10px !important;font-size: 10px !important;display: unset !important;':'padding: 10px 5px !important;font-size: 15px !important;');
 			// });
 			el.previousElementSibling.classList.remove('button');
@@ -632,7 +753,7 @@ import tippy from 'tippy.js';
 		show_add_to_wishlist() {
 			const store = document.createElement('div');
 			setInterval(() => {
-				document.querySelectorAll('.teddy.bears .yith-wcwl-add-to-wishlist:not([data-handled])').forEach((el)=>{
+				document.querySelectorAll('.uael-woo-product-wrapper .yith-wcwl-add-to-wishlist:not([data-handled])').forEach((el) => {
 					el.dataset.handled = true;
 					var btn = el.querySelector('.yith-wcwl-add-button a');
 					var icon = btn?.querySelector('i');
@@ -706,7 +827,7 @@ import tippy from 'tippy.js';
 		}
 		
 		clearAllFromCart() {
-			document.querySelectorAll('.woocommerce-page #content table.cart td.product-remove a').forEach((el)=>{el.click();});
+			document.querySelectorAll('.woocommerce-page #content table.cart td.product-remove a').forEach((el) => {el.click();});
 		}
 		esc_attr(text) {
 			return text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');

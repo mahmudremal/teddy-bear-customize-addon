@@ -11,23 +11,28 @@ class Project {
 	use Singleton;
 	protected function __construct() {
 		// Load class.
-		I18n::get_instance();
-		Cart::get_instance();
-		Ajax::get_instance();
-		Order::get_instance();
-		Hooks::get_instance();
-		Media::get_instance();
-		Menus::get_instance();
-		Addons::get_instance();
-		Assets::get_instance();
-		Option::get_instance();
-		Install::get_instance();
-		Product::get_instance();
-		Checkout::get_instance();
-		Plushies::get_instance();
-		Myaccount::get_instance();
-		Meta_Boxes::get_instance();
-		Certificate::get_instance();
+		global $teddy_I18n;$teddy_I18n = I18n::get_instance();
+		global $teddy_Cart;$teddy_Cart = Cart::get_instance();
+		global $teddy_Ajax;$teddy_Ajax = Ajax::get_instance();
+		global $teddy_Order;$teddy_Order = Order::get_instance();
+		global $teddy_Hooks;$teddy_Hooks = Hooks::get_instance();
+		global $teddy_Media;$teddy_Media = Media::get_instance();
+		global $teddy_Menus;$teddy_Menus = Menus::get_instance();
+		global $teddy_Update;$teddy_Update = Update::get_instance();
+		global $teddy_Filter;$teddy_Filter = Filter::get_instance();
+		global $teddy_Voices;$teddy_Voices = Voices::get_instance();
+		global $teddy_Addons;$teddy_Addons = Addons::get_instance();
+		global $teddy_Assets;$teddy_Assets = Assets::get_instance();
+		global $teddy_Option;$teddy_Option = Option::get_instance();
+		global $teddy_Export;$teddy_Export = Export::get_instance();
+		global $teddy_Columns;$teddy_Columns = Columns::get_instance();
+		global $teddy_Install;$teddy_Install = Install::get_instance();
+		global $teddy_Product;$teddy_Product = Product::get_instance();
+		global $teddy_Checkout;$teddy_Checkout = Checkout::get_instance();
+		global $teddy_Plushies;$teddy_Plushies = Plushies::get_instance();
+		global $teddy_Myaccount;$teddy_Myaccount = Myaccount::get_instance();
+		global $teddy_Meta_Boxes;$teddy_Meta_Boxes = Meta_Boxes::get_instance();
+		global $teddy_Certificate;$teddy_Certificate = Certificate::get_instance();
 
 		$this->setup_hooks();
 	}

@@ -11,13 +11,16 @@ use TEDDYBEAR_CUSTOMIZE_ADDON\inc\Traits\Singleton;
 class Certificate {
 	use Singleton;
 	protected function __construct() {
+		global $teddy_Certificate;
+		$teddy_Certificate = $this;
 		$this->setup_hooks();
 	}
 	public function setup_hooks() {
 		add_filter('teddybearpopupaddon_generate_certificate', [$this, 'teddybearpopupaddon_generate_certificate'], 1, 2);
 		add_action('teddybearpopupaddon_mail_certificates', [$this, 'teddybearpopupaddon_mail_certificates'], 1, 2);
 		add_action('init', [$this, 'teddybearpopupaddon_preview_certificate'], 10, 0);
-		
+		add_action('woocommerce_order_status_completed', [$this, 'woocommerce_order_status_completed'], 10, 2);
+		add_filter('woocommerce_email_attachments', [$this, 'woocommerce_email_attachments'], 10, 3);
 	}
 	public function do_certificate__blank($args) {
 		require_once(TEDDY_BEAR_CUSTOMIZE_ADDON_DIR_PATH . '/inc/tcpdf/examples/tcpdf_include.php');
@@ -206,10 +209,17 @@ class Certificate {
 			'pdf'			=> false,
 			'preview'		=> false,
 			// 'single'		=> false,
+			'debuggOn'		=> true
 									
 		]);
-		if(empty($args->teddyname)) {wp_die(__('Ensure teddy\'s name before making certificate. Because once certificate generated, you can\'t change it anymore.', 'teddybearsprompts'));return false;}
-		return $this->do_certificate($args);
+		if(empty($args->teddyname)) {
+			if($args->debuggOn) {
+				wp_die(__('Ensure teddy\'s name before making certificate. Because once certificate generated, you can\'t change it anymore.', 'teddybearsprompts'));return false;
+			}
+		} else {
+			return $this->do_certificate($args);
+		}
+		return false;
 	}
 	public function teddybearpopupaddon_mail_certificates($PDFs, $args) {
 		$args = wp_parse_args($args, [
@@ -407,6 +417,88 @@ class Certificate {
 			$pdf_url = str_replace(ABSPATH, home_url('/'), $pdf_path);
 			wp_redirect($pdf_url);exit;
 		}
+	}
+	public function woocommerce_order_status_completed($order_id, $order) {
+		// if(!in_array($order->get_status(), ['completed'])) {return;}
+
+	}
+	public function woocommerce_email_attachments($attachments , $email_id, $order) {
+		// if(!in_array($order->get_status(), ['completed'])) {return;}
+		$certificates = $this->get_all_certificates($order);
+		// print_r($certificates);wp_die();
+		foreach($certificates as $certificate) {
+			if($certificate && !empty($certificate) && file_exists($certificate) && !is_dir($certificate)) {
+				$attachments[] = $certificate;
+			}
+		}
+
+		return $attachments;
+	}
+	public function get_all_certificates($order, $preview = false) {
+		$certificates = [];
+		foreach($order->get_items() as $order_item_id => $order_item) {
+			if($preview && $preview != $order_item_id) {continue;}
+			$singles = $this->get_single_certificates($order, $order_item, $preview);
+			foreach($singles as $single) {$certificates[] = $single;}
+		}
+		return $certificates;
+	}
+	public function get_single_certificates($order, $order_item, $preview = false) {
+		global $teddyProduct;$certificates = [];
+		$order_id = $order->get_id();
+		$item_id = $order_item->get_id();
+		// $item_name = $order_item->get_name();
+		// $product = $order_item->get_product();
+		// $quantity = $order_item->get_quantity();
+		$product_id = $order_item->get_product_id();
+		$popup_meta = $teddyProduct->get_order_pops_meta($order, $order_item, $product_id);
+		if(!$popup_meta || !is_array($popup_meta) || count($popup_meta) <= 0) {return $certificates;}
+		
+		foreach($popup_meta as $posI => $posRow) {
+			foreach($posRow as $i => $field) {
+				if($field['type'] == 'info') {
+					$item_meta_data = $order_item->get_meta('custom_teddey_bear_data', true);
+					if(!$item_meta_data) {continue;}
+					foreach($item_meta_data['field'] as $i => $iRow) {
+						foreach($iRow as $j => $jRow) {
+							// if($jRow['title'] == 'Voice') {}
+							if($field['steptitle'] == $jRow['title'] && $j == 0) {
+								$custom_data = wp_parse_args((array) get_post_meta($product_id, '_teddy_custom_data', true), [
+									'eye'				=> '',
+									'brow'				=> '',
+									'weight'			=> '',
+									'height'			=> '',
+								]);
+								$args = [
+									'eye'			=> $custom_data['eye'],
+									'brow'			=> $custom_data['brow'],
+
+									'id_num'		=> $order_id,
+									// bin2hex($order_id), // strtolower(base_convert($order_id, 10, 36) . base_convert($item_id, 10, 36) . '-' . rand(1, 9999)),
+
+									'teddyname'		=> $iRow[0]['value'],
+									'birth'			=> $iRow[1]['value'],
+									'belongto'		=> $iRow[2]['value'],
+									'gift_by'		=> $iRow[3]['value'],
+
+									'weight'		=> $custom_data['weight'],
+									'height'		=> $custom_data['height'],
+
+									'preview'		=> (bool) $preview,
+									// 'single'		=> $preview,
+									
+									'pdf'			=> 'certificate-'.$item_id.'-'.$order_id.'.pdf',
+									'debuggOn'		=> $preview,
+								];
+								// print_r([$args]);wp_die($item_id);true; // 
+								$certificates[] = apply_filters('teddybearpopupaddon_generate_certificate', false, $args);
+							}
+						}
+					}
+				}
+			}
+		}
+		return $certificates;
 	}
 	
 }

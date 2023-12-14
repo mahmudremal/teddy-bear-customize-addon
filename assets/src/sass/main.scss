@@ -24,11 +24,13 @@
 @import "3-utilities/form-wizard";
 
 
-// Components
-@import "8-frontend/frontend";
-
 // @import "../library/css/icons.css";
-@import 'tippy.js/dist/tippy.css';
+@import "@splidejs/splide/src/css/core";
+@import "tippy.js/dist/tippy.css";
 @import "toastify-js/src/toastify.css";
 @import "flatpickr/dist/flatpickr.min.css";
 @import "keen-slider/keen-slider.min.css";
+
+
+// Components
+@import "8-frontend/frontend";

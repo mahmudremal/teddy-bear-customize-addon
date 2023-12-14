@@ -52,7 +52,7 @@ const PROMPTS = {
                 formGroup[id].appendChild(field);
             });
         });
-        setTimeout(()=>{PROMPTS.init_intervalevent(thisClass);},300);
+        setTimeout(() => {PROMPTS.init_intervalevent(thisClass);},300);
         var tabs = PROMPTS.plushiesPositionTab(thisClass);
         if(fields.standing.length>=1) {
             html = document.createElement('div');html.classList.add('element-type-select');
@@ -118,7 +118,7 @@ const PROMPTS = {
         h2 = document.createElement('h4');h2.classList.add('h4');
         h2.innerHTML = PROMPTS.i18n?.selectatype??'Select a type';
         node.appendChild(h2);
-        fields.forEach((field, i)=>{
+        fields.forEach((field, i) => {
             div = document.createElement('div');div.classList.add('inputGroup');
             input = document.createElement('input');input.name ='fieldtype';
             input.type = 'radio';input.value = field;input.id = 'eltype-field-'+i;
@@ -149,7 +149,7 @@ const PROMPTS = {
         setTimeout(() => {
             button = document.querySelector('.procced_types');
             if(button) {
-                button.addEventListener('click', (event)=>{
+                button.addEventListener('click', (event) => {
                     jQuery('.add-new-field, .procced_types').slideUp();
                     jQuery('.add-new-types').slideDown();
                     data = thisClass.transformObjectKeys(Object.fromEntries(new FormData(document.querySelector('form[name="'+node.name+'"]'))));
@@ -163,15 +163,15 @@ const PROMPTS = {
                     }
                     if(formGroup) {formGroup.appendChild(field);}
                     // if(formGroup) {formGroup.parentElement.insertBefore(field, formGroup);}
-                    setTimeout(()=>{PROMPTS.init_intervalevent(thisClass);},300);
+                    setTimeout(() => {PROMPTS.init_intervalevent(thisClass);},300);
                 });
             }
             button = document.querySelector('.add-new-types');
             if(button) {
-                button.addEventListener('click', (event)=>{
+                button.addEventListener('click', (event) => {
                     jQuery('.add-new-field, .procced_types').slideDown();
                     jQuery('.add-new-types').slideUp();
-                    document.querySelectorAll('.popup_step__body:not([style*="display: none"])').forEach((el)=>{jQuery(el).slideUp();});
+                    document.querySelectorAll('.popup_step__body:not([style*="display: none"])').forEach((el) => {jQuery(el).slideUp();});
                 });
             }
             document.querySelectorAll('#tab__content_standing > .form-wrap, #tab__content_sitting > .form-wrap').forEach((button) => {
@@ -185,7 +185,7 @@ const PROMPTS = {
             });
             button = document.querySelector('.save-this-popup');
             if(button) {
-                button.addEventListener('click', (event)=>{
+                button.addEventListener('click', (event) => {
                     event.preventDefault();
                     button.setAttribute('disabled', true);
                     var popsData = {};
@@ -193,16 +193,16 @@ const PROMPTS = {
                         // form = document.querySelector('[name="add-new-element-type-select"]');
                         form = document.querySelector('#tab__content_' + id);
                         if(!PROMPTS.do_order(form)) {return;}data = [];
-                        form.querySelectorAll('.form-wrap .popup_step').forEach((form)=>{
+                        form.querySelectorAll('.form-wrap .popup_step').forEach((form) => {
                             data.push(
                                 thisClass.transformObjectKeys(Object.fromEntries(new FormData(form)))
                             );
                         });
-                        data = data.map((row)=>{
+                        data = data.map((row) => {
                             row.fieldID = parseInt(row.fieldID);
                             if((row?.options??false)) {
                                 row.options = Object.values(row.options);
-                                row.options = row.options.map((opt)=>{
+                                row.options = row.options.map((opt) => {
                                     opt.next = (opt.next!='')?parseInt(opt.next):false;
                                     return opt;
                                 });
@@ -414,14 +414,29 @@ const PROMPTS = {
                 div.appendChild(fieldset);
                 break;
             case 'voice':
-                fieldset = document.createElement('div');fieldset.classList.add('form-group');
+                fieldset = document.createElement('div');fieldset.classList.add('form-group', 'single-repeater-option');
+                /**
+                    input = document.createElement('input');input.classList.add('form-control', 'form-control-'+field.type);input.type = data?.type??field.type;
+                    input.id = 'thefield'+PROMPTS.lastfieldID;input.type = 'number';
+                    input.setAttribute('value', data?.cost??'');input.name = 'cost';
+                    label = document.createElement('label');label.classList.add('form-label');
+                    label.setAttribute('for', input.id);
+                    label.innerHTML = PROMPTS.i18n?.placeholder_ordefault??'Additional cost';
+                    fieldset.appendChild(label);fieldset.appendChild(input);
+                 */
                 input = document.createElement('input');input.classList.add('form-control', 'form-control-'+field.type);input.type = data?.type??field.type;
-                input.id = 'thefield'+PROMPTS.lastfieldID;input.type = 'number';
-                input.setAttribute('value', data?.cost??'');input.name = 'cost';
+                input.id = 'thefield'+PROMPTS.lastfieldID;input.type = 'text';
+                input.setAttribute('value', data?.product??'');input.name = 'product';
                 label = document.createElement('label');label.classList.add('form-label');
                 label.setAttribute('for', input.id);
-                label.innerHTML = PROMPTS.i18n?.placeholder_ordefault??'Additional cost';
+                label.innerHTML = PROMPTS.i18n?.productvoice??'Product Voice';
                 fieldset.appendChild(label);fieldset.appendChild(input);
+
+                /**
+                 * Voice Recoed product for inventory.
+                 */
+
+                
                 
                 PROMPTS.lastfieldID++;
                 input = document.createElement('input');input.classList.add('form-control', 'form-control-'+field.type);input.type = data?.type??field.type;
@@ -549,12 +564,12 @@ const PROMPTS = {
             ):(
                 (PROMPTS.currentStep > 0)?(PROMPTS.currentStep-1):PROMPTS.currentStep
             );
-            document.querySelectorAll(root+'.step_visible').forEach((el)=>{el.classList.add('d-none');el.classList.remove('step_visible');});
+            document.querySelectorAll(root+'.step_visible').forEach((el) => {el.classList.add('d-none');el.classList.remove('step_visible');});
             step = document.querySelector(root+'[data-step="'+PROMPTS.currentStep+'"]');
             if(step) {
                 if(!plus) {step.classList.add('popup2left');}
-                step.classList.remove('d-none');setTimeout(()=>{step.classList.add('step_visible');},300);
-                if(!plus) {setTimeout(()=>{step.classList.remove('popup2left');},1500);}
+                step.classList.remove('d-none');setTimeout(() => {step.classList.add('step_visible');},300);
+                if(!plus) {setTimeout(() => {step.classList.remove('popup2left');},1500);}
             }
         } else {
             console.log('Proceed failed');
@@ -574,7 +589,7 @@ const PROMPTS = {
             var data = thisClass.generate_formdata( document.querySelector('.popup_body') );
             var step = document.querySelector('.popup_step.step_visible'), prev = [];
             if(!step) {return (PROMPTS.currentStep<=0);}
-            step.querySelectorAll('input, select').forEach((el,ei)=>{
+            step.querySelectorAll('input, select').forEach((el,ei) => {
                 // el is the element input
                 if(!prev.includes(el.name) && data[el.name] && data[el.name]==el.value) {
                     // item is the fieldset
@@ -611,7 +626,7 @@ const PROMPTS = {
             }
         }
         return true;
-        // setTimeout(()=>{return true;},100);
+        // setTimeout(() => {return true;},100);
     },
     get_fields: () => {
         var fields;
@@ -621,7 +636,7 @@ const PROMPTS = {
         return fields;
     },
     init_intervalevent: (thisClass) => {
-        document.querySelectorAll('.imglibrary:not([data-handled])').forEach((el, ei)=>{
+        document.querySelectorAll('.imglibrary:not([data-handled])').forEach((el, ei) => {
             el.dataset.handled = true;
             el.addEventListener('click', (event) => {
                 event.preventDefault();
@@ -662,7 +677,7 @@ const PROMPTS = {
                 }
             });
         });
-        document.querySelectorAll('.popup_step__header:not([data-handled])').forEach((el, ei)=>{
+        document.querySelectorAll('.popup_step__header:not([data-handled])').forEach((el, ei) => {
             el.dataset.handled = true;
             el.addEventListener('click', (event) => {
                 event.preventDefault();
@@ -680,7 +695,7 @@ const PROMPTS = {
                 }
             });
         });
-        document.querySelectorAll('.popup_step__header__remove:not([data-handled])').forEach((el, ei)=>{
+        document.querySelectorAll('.popup_step__header__remove:not([data-handled])').forEach((el, ei) => {
             el.dataset.handled = true;
             el.addEventListener('click', (event) => {
                 event.preventDefault();
@@ -693,32 +708,71 @@ const PROMPTS = {
                 }
             });
         });
-        document.querySelectorAll('.do_repeater_field:not([data-handled])').forEach((el, ei)=>{
+        document.querySelectorAll('.do_repeater_field:not([data-handled])').forEach((el, ei) => {
             el.dataset.handled = true;
             el.addEventListener('click', (event) => {
                 event.preventDefault();
                 PROMPTS.do_repeater(el, {}, (el.dataset?.isGroup??false));
             });
         });
-        document.querySelectorAll('.do_repeater_group:not([data-handled])').forEach((el, ei)=>{
+        document.querySelectorAll('.do_repeater_group:not([data-handled])').forEach((el, ei) => {
             el.dataset.handled = true;
             el.addEventListener('click', (event) => {
                 event.preventDefault();
                 PROMPTS.do_group_repeater(el, []);
             });
         });
-        document.querySelectorAll('.single-repeater-option .input-group-append:not([data-handled])').forEach((trash)=>{
+        document.querySelectorAll('.single-repeater-option .input-group-append:not([data-handled])').forEach((trash) => {
             trash.dataset.handled = true;
-            trash.addEventListener('click', (event)=>{
+            trash.addEventListener('click', (event) => {
                 if(trash.parentElement && confirm(PROMPTS.i18n?.rusure??'Are you sure?')) {
                     jQuery(trash.parentElement.parentElement).slideUp();
                     setTimeout(() => {trash.parentElement.parentElement.remove();}, 1500);
                 }
             });
         });
-        document.querySelectorAll('.single-repeater-option .input-group-prepend:not([data-handled])').forEach((condition)=>{
+        // .form-control-outfit + .single-repeater-group, .form-control-radio + .single-repeater-group, .form-control-checkbox + .single-repeater-group
+        // document.querySelectorAll('.single-repeater-group').forEach((group) => {
+            document.querySelectorAll('.single-repeater-option .form-control[type=text]:not([data-autocomplete-handled])').forEach((input) => {
+                input.dataset.autocompleteHandled = true;
+                input.dataset.name = input.name;
+                const hidden = document.createElement('input');hidden.type = 'hidden';
+                hidden.value = input.value;hidden.name = input.name;input.name = '';
+                input.parentElement.insertBefore(hidden, input);
+                if(!isNaN(input.value)) {
+                    var row = PROMPTS.lastJson.accessories.find((row) => row.ID == input.value);
+                    if(row?.title) {input.value = PROMPTS.he.decode(row.title);}
+                }
+                const autocomplete = new thisClass.Awesomplete(input, {
+                    list: PROMPTS.lastJson.accessories.map((row) => {
+                        return {label: row.title, value: row.ID, thumbnail: row.thumbnail};
+                    }),
+                    item: function(text, input) {
+                        var listItem = thisClass.Awesomplete.ITEM(text, input.match(/[^,]*$/)[0]);
+                        if(!listItem.querySelector('img')) {
+                            var row = PROMPTS.lastJson.accessories.find((row) => row.ID == text?.value);
+                            if(row?.thumbnail) {
+                                var img = document.createElement("img");
+                                img.src = row.thumbnail;
+                                listItem.appendChild(img);
+                            }
+                        }
+                        return listItem;
+                    },
+                    replace: function(suggestion) {
+                        this.input.value = suggestion.label;
+                        hidden.value = suggestion.value;
+                    }
+                });
+                input.addEventListener('input', function(event) {
+                    hidden.value = input.value;
+                });
+                // console.log(autocomplete);
+            });
+        // });
+        document.querySelectorAll('.single-repeater-option .input-group-prepend:not([data-handled])').forEach((condition) => {
             condition.dataset.handled = true;
-            condition.addEventListener('click', (event)=>{
+            condition.addEventListener('click', (event) => {
                 if(condition.parentElement && condition.parentElement.parentElement) {
                     condition.parentElement.parentElement.classList.toggle('show-configs');
                 }
@@ -727,7 +781,7 @@ const PROMPTS = {
                 // if(input) {input.type = 'number';}
             });
         });
-        document.querySelectorAll('.imgpreview .dashicons-dismiss:not([data-handled])').forEach((cross)=>{
+        document.querySelectorAll('.imgpreview .dashicons-dismiss:not([data-handled])').forEach((cross) => {
             cross.dataset.handled = true;
             cross.addEventListener('click', (event) => {
                 event.preventDefault();
@@ -745,7 +799,7 @@ const PROMPTS = {
     },
     do_order: (form) => {
         var obj={}, sort;
-        form.querySelectorAll('[name*="[]"], [data-input-name*="[]"]').forEach((el,ei)=>{
+        form.querySelectorAll('[name*="[]"], [data-input-name*="[]"]').forEach((el,ei) => {
             if(!el.dataset.inputName) {el.dataset.inputName=el.name;}
             sort = el.dataset.inputName.replaceAll('[]','');
             if(!obj[sort]) {obj[sort]=[];}
@@ -854,6 +908,7 @@ const PROMPTS = {
         label.setAttribute('for', 'group-layer-'+order);body.appendChild(label);
         input = document.createElement('input');input.classList.add('form-control');
         input.name='groups.'+groupAt+'.layer';input.id = 'group-layer-'+groupAt;
+        input.setAttribute('value', group?.layer??'');
         input.type = 'number';body.appendChild(input);
 
         label = document.createElement('label');label.classList.add('form-label');
@@ -861,6 +916,7 @@ const PROMPTS = {
         label.setAttribute('for', 'group-title-'+order);body.appendChild(label);
         input = document.createElement('input');input.classList.add('form-control');
         input.name='groups.'+groupAt+'.title';input.id = 'group-title-'+groupAt;
+        input.setAttribute('value', group?.title??'');
         input.type = 'text';body.appendChild(input);
 
 
@@ -877,7 +933,7 @@ const PROMPTS = {
         // wrap.appendChild(group);wrap.appendChild(config);
         el.parentElement.insertBefore(wrap, el);
         
-        setTimeout(()=>{PROMPTS.init_intervalevent(window.thisClass);},300);
+        setTimeout(() => {PROMPTS.init_intervalevent(window.thisClass);},300);
     
     },
     imagePreview: (src, thisClass) => {

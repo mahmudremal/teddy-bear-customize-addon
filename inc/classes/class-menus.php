@@ -110,10 +110,26 @@ class Menus {
 					'type'					=> 'checkbox',
 					'default'				=> false
 				],
+				// [
+				// 	'id' 					=> 'standard-global',
+				// 	'label'					=> __('Global product', 'teddybearsprompts'),
+				// 	'description'			=> __('Select a global product that will be replaced if requsted product doesn\'t have any customization popup set.', 'teddybearsprompts'),
+				// 	'type'					=> 'select',
+				// 	'default'				=> '',
+				// 	'options'				=> $this->get_query(['post_type' => 'product', 'type' => 'option', 'limit' => 500])
+				// ],
 				[
-					'id' 					=> 'standard-global',
-					'label'					=> __('Global product', 'teddybearsprompts'),
-					'description'			=> __('Select a global product that will be replaced if requsted product doesn\'t have any customization popup set.', 'teddybearsprompts'),
+					'id' 					=> 'standing-global',
+					'label'					=> __('Global standing product', 'teddybearsprompts'),
+					'description'			=> __('Select a global standing product that will be replaced if requsted product doesn\'t have any customization popup set.', 'teddybearsprompts'),
+					'type'					=> 'select',
+					'default'				=> '',
+					'options'				=> $this->get_query(['post_type' => 'product', 'type' => 'option', 'limit' => 500])
+				],
+				[
+					'id' 					=> 'sitting-global',
+					'label'					=> __('Global sitting product', 'teddybearsprompts'),
+					'description'			=> __('Select a global sitting product that will be replaced if requsted product doesn\'t have any customization popup set.', 'teddybearsprompts'),
 					'type'					=> 'select',
 					'default'				=> '',
 					'options'				=> $this->get_query(['post_type' => 'product', 'type' => 'option', 'limit' => 500])

@@ -6,10 +6,11 @@ const popupCart = {
     setBasePrice: (price) => {
         popupCart.basePrice = price;
     },
-    addAdditionalPrice: (item, price, unique = true) => {
-        const existingIndex = popupCart.additionalPrices.findIndex(p => p.item === item);
+    addAdditionalPrice: (item, price, unique = true, product = false) => {
+        if(['tochoose'].includes(item)) {return;}
+        const existingIndex = popupCart.additionalPrices.findIndex(p => (product && product !== '')?(p.product === product):(p.item === item));
         if(!unique || existingIndex === -1) {
-            popupCart.additionalPrices.push({ item, price });
+            popupCart.additionalPrices.push({ item, price, product });
         } else {
             // Item already exists, update the price
             popupCart.additionalPrices[existingIndex].price = price;
@@ -31,7 +32,7 @@ const popupCart = {
     wc_removeAdditionalPrice: (el, thisClass) => {
         popupCart.wc_addAdditionalPrice(el, thisClass, true);
     },
-    removeAdditionalPrice: (itemName, itemPrice = false) => {
+    removeAdditionalPrice: (itemName, itemPrice = false, product = false) => {
         const index = popupCart.additionalPrices.findIndex(item => item.item === itemName);
         if (index !== -1) {
             if(itemPrice !== false && ((popupCart.additionalPrices[index]?.price??0) - itemPrice) > 0) {
