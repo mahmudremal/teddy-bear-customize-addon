@@ -6,9 +6,9 @@
  * Plugin Name:       Teddy Bear Customization
  * Plugin URI:        https://github.com/mahmudremal/teddy-bear-customize-addon/
  * Description:       Customize teddy bear's apearence before making order.
- * Version:           1.0.5
- * Requires at least: 5.2
- * Requires PHP:      7.2
+ * Version:           1.0.4
+ * Requires at least: 6.2
+ * Requires PHP:      7.4
  * Author:            Remal Mahmud
  * Author URI:        https://github.com/mahmudremal/
  * License:           GPL v2 or later

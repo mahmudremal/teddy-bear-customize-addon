@@ -728,6 +728,11 @@ const PROMPTS = {
                 (field?.groups??[]).forEach((group, groupI)=> {
                     group.fieldID = (field?.fieldID??0)+'.'+(group?.fieldID??groupI);
                     if(group?.options) {
+                        /**
+                         * Filterout all items those are not in stock
+                         */
+                        // stock_status
+                        group.options = group.options.filter(opt => !(opt?.stock_status) || ['instock'].includes(opt?.stock_status));
                         group.options?.push({
                             label: PROMPTS.i18n?.skip??'Skip',
                             next: '', image: '',// cost: '0',

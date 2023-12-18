@@ -24,7 +24,7 @@ class Update {
 	}
     private function setup_hooks() {
         $this->file = TEDDY_BEAR_CUSTOMIZE_ADDON__FILE__;
-        add_action('admin_init', array($this, 'set_plugin_properties'));
+        add_action('admin_init', [$this, 'set_plugin_properties'], 1, 0);
     }
     public function set_plugin_properties() {
 		$this->plugin	= get_plugin_data($this->file);
@@ -38,7 +38,8 @@ class Update {
         /**
          * To check immediate update removing transition delay.
          */
-        // add_action('admin_init', function() {delete_site_transient('update_plugins');wp_update_plugins();});
+        // add_action('admin_init', function() {delete_site_transient('update_plugins');wp_update_plugins();}, 10, 0);
+        // print_r([get_site_transient( 'update_plugins' )]);
         
 	}
     public function set_username($username) {
@@ -75,26 +76,34 @@ class Update {
         // Add Authorization Token to download_package
         add_filter('upgrader_pre_download',
             function() {
-                add_filter('http_request_args', [ $this, 'download_package' ], 15, 2);
+                add_filter('http_request_args', [$this, 'download_package'], 15, 2);
                 return false; // upgrader_pre_download filter default return value.
             }
         );
 	}
     public function modify_transient($transient) {
-        if (property_exists($transient, 'checked')) {
+        if ($transient && property_exists($transient, 'checked')) {
             if ($checked = $transient->checked) {
                 $this->get_repository_info();
-                $out_of_date = version_compare($this->github_response['tag_name'], $checked[ $this->basename ], 'gt');
-                if ($out_of_date) {
-                    $new_files = $this->github_response['zipball_url'];
-                    $slug = current(explode('/', $this->basename));
-                    $plugin = array(
-                        'url' => $this->plugin["PluginURI"],
-                        'slug' => $slug,
-                        'package' => $new_files,
-                        'new_version' => $this->github_response['tag_name']
-                  );
-                    $transient->response[$this->basename] = (object) $plugin;
+                $version_tag = (isset($checked[$this->basename]) && !empty($checked[$this->basename]))?'v' . $checked[$this->basename]:false;
+                
+
+                if ($version_tag) {
+                    $out_of_date = version_compare($this->github_response['tag_name'], $version_tag, 'gt');
+
+                    // print_r(['out_of_date', $out_of_date]);
+                    
+                    if ($out_of_date) {
+                        $new_files = $this->github_response['zipball_url'];
+                        $slug = current(explode('/', $this->basename));
+                        $plugin = [
+                            'slug' => $slug,
+                            'package' => $new_files,
+                            'url' => $this->plugin["PluginURI"],
+                            'new_version' => $this->github_response['tag_name']
+                        ];
+                        $transient->response[$this->basename] = (object) $plugin;
+                    }
                 }
             }
         }
@@ -137,7 +146,7 @@ class Update {
 				$args = array_merge($args, array("headers" => array("Authorization" => "token {$this->authorize_token}")));
 			}
 		}
-		remove_filter('http_request_args', [ $this, 'download_package' ]);
+		remove_filter('http_request_args', [$this, 'download_package']);
         return $args;
 	}
     public function after_install($response, $hook_extra, $result) {

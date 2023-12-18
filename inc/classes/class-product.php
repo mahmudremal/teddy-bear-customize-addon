@@ -111,6 +111,10 @@ class Product {
 				if(isset($_prod['product']) && !empty(trim($_prod['product']))) {
 					$_product = wc_get_product((int) $_prod['product']);
 					if($_product && !is_wp_error($_product)) {
+						/**
+						 * Check product stock status. If stock out happen then remove Item.
+						 */
+						$option['stock_status'] = $_product->get_stock_status();
 						$json[$_posI][$i]['product_title'] = $_product->get_name();
 						// isset($_prod['cost']) && !$_prod['cost'] || empty($_prod['cost'])
 						if(true) {
@@ -135,6 +139,11 @@ class Product {
 						if(isset($option['product']) && !empty(trim($option['product']))) {
 							$_product = wc_get_product((int) $option['product']);
 							if($_product && !is_wp_error($_product)) {
+								/**
+								 * Check product stock status. If stock out happen then remove Item.
+								 */
+								$option['stock_status'] = $_product->get_stock_status();
+
 								$option['product_title'] = $_product->get_name();
 								/**
 								 * Check whether if custom prices exists or product prices will be applied here.
@@ -175,7 +184,11 @@ class Product {
 								
 								if(!empty($option['label']) && is_numeric($option['label'])) {
 									$_prod_accessory = wc_get_product((int) $option['label']);
-									if($_prod_accessory) {
+									if($_prod_accessory && !is_wp_error($_prod_accessory)) {
+										/**
+										 * Check product stock status.
+										 */
+										$option['stock_status'] = $_prod_accessory->get_stock_status();
 										$option = [
 											...$option,
 											'product'		=> (int) $option['label'],
@@ -201,6 +214,10 @@ class Product {
 									$json[$_posI][$i]['groups'][$k]['options'][$l] = $option;
 								}
 							}
+							/**
+							 * Resort them with serialize
+							 */
+							// $group['options'] = array_values($group['options']);
 						}
 					}
 				}
