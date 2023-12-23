@@ -732,6 +732,7 @@ const PROMPTS = {
                          * Filterout all items those are not in stock
                          */
                         // stock_status
+                        group.options = Object.values(group.options);
                         group.options = group.options.filter(opt => !(opt?.stock_status) || ['instock'].includes(opt?.stock_status));
                         group.options?.push({
                             label: PROMPTS.i18n?.skip??'Skip',
@@ -871,7 +872,6 @@ const PROMPTS = {
                 step = document.querySelector('.popup_step.step_visible');data = [];
                 data = thisClass.transformObjectKeys(thisClass.generate_formdata(document.querySelector('.popup_body')));
                 
-                console.log('Submitting...');
                 submit = document.querySelector('.popup_foot .button[data-react="continue"]');
                 if(submit && submit.classList) {
                     submit.setAttribute('disabled', true);

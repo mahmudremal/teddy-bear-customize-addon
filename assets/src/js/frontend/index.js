@@ -29,7 +29,7 @@ import Tidio_Chat from "./tidio";
 			var i18n = fwpSiteConfig?.i18n??{};this.noToast = true;
 			this.config = fwpSiteConfig;this.KeenSlider = KeenSlider;
 			this.i18n = {confirming: 'Confirming', ...i18n};
-			this.Exim = Exim;this.Splide = Splide;
+			this.Exim = new Exim(this);this.Splide = Splide;
 			this.setup_hooks();
 		}
 		setup_hooks() {
@@ -282,7 +282,7 @@ import Tidio_Chat from "./tidio";
 									});
 								});
 								const slider = new thisClass.KeenSlider('.keen-slider__extras:not([data-slides-handled])', {
-									loop: true, mode: "free",
+									loop: false, mode: "free",
 									slides: {perView: 5, spacing: 5},
 								}, [
 									slider => {

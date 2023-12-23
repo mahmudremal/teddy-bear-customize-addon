@@ -1000,3 +1000,31 @@
 #woocommerce-product-data .woocommerce_options_panel.hidden[style^="display: block"] {
   display: block !important;
 }
+
+
+// Ask teddy infor on Order details page.
+.askteddyinfo {
+  &:not(:first-child) {
+    margin-top: 10px;
+  }
+  // &__popup {}
+  &__body {
+    width: 100%;
+    padding: 10px;
+    text-align: left;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+    box-shadow: 1px 1px 5px #ddd;
+    & > div {
+      width: 100%;
+      margin: auto;
+      label {
+        width: 100%;
+        .form-control {
+          margin-top: 5px;
+          width: 100%;
+        }
+      }
+    }
+  }
+}

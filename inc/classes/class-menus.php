@@ -170,6 +170,14 @@ class Menus {
 					'type'					=> 'url',
 					'default'				=> false
 				],
+				[
+					'id' 					=> 'standard-accessory',
+					'label'					=> __('Default accessory', 'teddybearsprompts'),
+					'description'			=> __('Select a default accessoty that will be effective on customization confirmation.', 'teddybearsprompts'),
+					'type'					=> 'select',
+					'options'				=> $this->get_query(['post_type' => 'page', 'type' => 'option', 'limit' => 500]),
+					'default'				=> false
+				],
 			]
 		];
 		$args['default']		= [

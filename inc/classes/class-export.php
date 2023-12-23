@@ -18,13 +18,24 @@ class Export {
 		add_action('wp_ajax_nopriv_futurewordpress/project/ajax/export/product', [$this, 'export_product'], 10, 0);
 		add_action('wp_ajax_futurewordpress/project/ajax/export/content', [$this, 'export_content'], 10, 0);
 		add_action('wp_ajax_nopriv_futurewordpress/project/ajax/export/content', [$this, 'export_content'], 10, 0);
+
+		// add_filter('query_vars', [$this, 'query_vars'], 10, 1);
+	}
+	public function query_vars($queries) {
+		$queries[] = 'paged';
+		return $queries;
 	}
 	public function export_product() {
-		$json = ['hooks' => ['export_product_response'], 'message' => __('Export Failed', 'teddybearsprompts')];
+		$json = ['hooks' => ['export_product_response'], 'message' => __('Operation Failed', 'teddybearsprompts')];
+		// Get Requested page number
+		$paged = $_POST['paged']??1;
 		// Set up arguments for the WooCommerce product query
 		$args = [
-			'post_type' => 'product',
-			'posts_per_page' => -1,
+			'posts_per_page'	=> 24,
+			'orderby'			=> 'ID',
+			'order'				=> 'DESC',
+			'paged'				=> $paged,
+			'post_type'			=> 'product',
 		];
 		// Get products using the query arguments
 		$products = new WP_Query($args);
@@ -63,7 +74,6 @@ class Export {
 				$export_data[] = $product_data;
 			}
 		}
-	
 		// Restore the global post data
 		wp_reset_postdata();
 	
@@ -76,6 +86,12 @@ class Export {
 	
 		$json['exports'] = $export_data;
 		
+		$json['pagination'] = [
+			'current'		=> $paged,
+			'totalposts'	=> $products->found_posts,
+			'total'			=> $products->max_num_pages,
+		];
+
 		// Output the export data
 		wp_send_json_success($json);
 	
@@ -83,15 +99,21 @@ class Export {
 		// exit;
 	}
 	public function export_content() {
-		$json = ['hooks' => ['export_content_response'], 'message' => __('Export Failed', 'teddybearsprompts')];
+		$json = ['hooks' => ['export_content_response'], 'message' => __('Operation Failed', 'teddybearsprompts')];
 		// Set up arguments for the WooCommerce product query
 		$attachment_ids = isset($_POST['attachment_ids'])?explode(',', $_POST['attachment_ids']):false;
 		if(true) {
+			// Get Requested page number
+			$paged = $_POST['paged']??1;
+			// Set up arguments for the WooCommerce product query
 			$args = [
-				'post_type'      => 'attachment',
-				'post_status'    => 'inherit',
+				'posts_per_page'	=> 24,
+				'orderby'			=> 'ID',
+				'order'				=> 'DESC',
+				'paged'				=> $paged,
+				'post_status'		=> 'inherit',
+				'post_type'			=> 'attachment',
 				// 'post__in'       => $attachment_ids,
-				'posts_per_page' => -1,
 			];
 			if($attachment_ids) {$args['post__in'] = $attachment_ids;}
 			// Get products using the query arguments
@@ -136,6 +158,12 @@ class Export {
 	
 				// Added to the output query
 				$json['exports'] = $export_data;
+
+				$json['pagination'] = [
+					'current'		=> $paged,
+					'totalposts'	=> $attachments->found_posts,
+					'total'			=> $attachments->max_num_pages,
+				];
 				
 				// Output the export data
 				wp_send_json_success($json);

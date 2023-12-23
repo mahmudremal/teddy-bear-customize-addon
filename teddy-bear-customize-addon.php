@@ -16,7 +16,7 @@
  * Text Domain:       teddybearsprompts
  * Domain Path:       /languages
  * 
- * @package QuizAndFilterSearch
+ * @package TeddyBearAddon
  * @author  Remal Mahmud (https://github.com/mahmudremal)
  * @version 1.0.2
  * @link https://github.com/mahmudremal/teddy-bear-customize-addon/

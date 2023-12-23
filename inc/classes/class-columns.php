@@ -55,10 +55,10 @@ class Columns {
 		}
 	}
 	public function post_row_actions($actions, $post) {
-		global $Plushies;
+		global $teddy_Plushies;
 		if($post->post_type =="product"){
 
-			if($Plushies->is_accessory($post->ID)) {return $actions;}
+			if($teddy_Plushies->is_accessory($post->ID)) {return $actions;}
 			
 			$post_meta = (array) get_post_meta($post->ID, '_teddy_custom_data', true);
 			$global_key = (isset($post_meta['product_type']) && $post_meta['product_type'] == 'sitting')?'sitting-global':'standing-global';

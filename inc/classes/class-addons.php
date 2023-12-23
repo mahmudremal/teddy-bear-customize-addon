@@ -72,13 +72,13 @@ class Addons {
 						if(isset($cart_contents[$cart_item_key])) {
 							// Add additional data to the cart item
 							$cart_item = $cart_contents[$cart_item_key];
-							$cart_item['custom_teddey_bear_makeup'] = isset($cart_item['custom_teddey_bear_makeup'])?(array) $cart_item['custom_teddey_bear_makeup']:[];
-							foreach($cart_contents[$cart_item_key]['custom_teddey_bear_makeup'] as $i => $row) {
+							$cart_item['custom_makeup'] = isset($cart_item['custom_makeup'])?(array) $cart_item['custom_makeup']:[];
+							foreach($cart_contents[$cart_item_key]['custom_makeup'] as $i => $row) {
 								if($row['item'] == apply_filters('teddybear/project/system/getoption', 'addons-feetitle', 'Wrapping box')) {
-									unset($cart_contents[$cart_item_key]['custom_teddey_bear_makeup'][$i]);
+									unset($cart_contents[$cart_item_key]['custom_makeup'][$i]);
 								}
 							}
-							$cart_contents[$cart_item_key]['custom_teddey_bear_makeup'][] = [
+							$cart_contents[$cart_item_key]['custom_makeup'][] = [
 								'item' => apply_filters('teddybear/project/system/getoption', 'addons-feetitle', 'Wrapping box'),
 								'price' => apply_filters('teddybear/project/system/getoption', 'addons-feeamount', 0.00)
 							];
@@ -108,10 +108,10 @@ class Addons {
 						if(isset($cart_contents[$cart_item_key])) {
 							// Add additional data to the cart item
 							$cart_item = $cart_contents[$cart_item_key];
-							$cart_item['custom_teddey_bear_makeup'] = isset($cart_item['custom_teddey_bear_makeup'])?(array) $cart_item['custom_teddey_bear_makeup']:[];
-							foreach($cart_item['custom_teddey_bear_makeup'] as $i => $fee) {
+							$cart_item['custom_makeup'] = isset($cart_item['custom_makeup'])?(array) $cart_item['custom_makeup']:[];
+							foreach($cart_item['custom_makeup'] as $i => $fee) {
 								if(isset($fee['item']) && $fee['item'] == apply_filters('teddybear/project/system/getoption', 'addons-feetitle', 'Wrapping box')) {
-									unset($cart_item['custom_teddey_bear_makeup'][$i]);
+									unset($cart_item['custom_makeup'][$i]);
 									$cart_contents[$cart_item_key] = $cart_item;
 									// Update the cart with the modified item
 									$cart->set_cart_contents($cart_contents);

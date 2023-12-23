@@ -14,16 +14,16 @@ class Cart {
 	private $base;
 	private $charges;
 	private $dataset;
+	private $prod2AdAccessory;
 	private $showedAlready;
 	private $calculatedAlready;
 	protected function __construct() {
-		global $teddyCart;
-		$teddyCart = $this;
 		$this->base = [];
 		$this->charges = [];
 		$this->dataset = [];
 		$this->showedAlready = [];
 		$this->calculatedAlready = [];
+		$this->prod2AdAccessory = false;
 		$this->setup_hooks();
 	}
 	protected function setup_hooks() {
@@ -46,7 +46,6 @@ class Cart {
 		add_filter('woocommerce_calculated_total', [$this, 'woocommerce_calculated_total'], 10, 2);
 
 		add_filter('woocommerce_add_cart_item_data', [$this, 'woocommerce_add_cart_item_data'], 10, 4);
-		// add_filter('woocommerce_get_item_data', [$this, 'woocommerce_get_item_data'], 10, 4);
 		
 	}
 
@@ -81,7 +80,9 @@ class Cart {
 				}
 			}
 			$this->charges = $charges;$this->dataset = $dataset;
+			$this->prod2AdAccessory = $product_id;
 			$cart_item_key = WC()->cart->add_to_cart($product_id, $quantity);
+			$this->prod2AdAccessory = false;
 			$json['hooks'] = ['popup_submitting_done'];
 			// $json['redirectedTo'] = wc_get_checkout_url();
 			// $json['message'] = __('Product added to cart successfully. Please hold on until you\'re redirected to checkout page.', 'teddybearsprompts');
@@ -94,10 +95,10 @@ class Cart {
 			}
 			
 			$json['message'] = false;
-			$custom_data = (array) get_post_meta($product_id, '_teddy_custom_data', true);
+			// $custom_data = (array) get_post_meta($product_id, '_teddy_custom_data', true);
 			$json['confirmation'] = [
 				'title'				=> sprintf(__('Added successfully %s', 'teddybearsprompts'), get_the_title($product_id)),
-				'accessoriesUrl'	=> get_the_permalink(2115), // (isset($custom_data['accessoriesUrl']) && !empty($custom_data['accessoriesUrl']))?esc_url($custom_data['accessoriesUrl']):get_the_permalink(2115),
+				'accessoriesUrl'	=> get_the_permalink(apply_filters('teddybear/project/system/getoption', 'standard-accessory', 2115)), // (isset($custom_data['accessoriesUrl']) && !empty($custom_data['accessoriesUrl']))?esc_url($custom_data['accessoriesUrl']):get_the_permalink(2115),
 				'checkoutUrl'		=> wc_get_checkout_url(),
 				'suggestion'		=> $this->get_products_by_category_id(),
 				'cartItemKey'		=> $cart_item_key
@@ -139,38 +140,25 @@ class Cart {
 		wp_send_json_error($json);
 	}
 	public function woocommerce_add_cart_item_data($cart_item_data, $product_id, $variation_id, $quantity) {
+		global $teddy_Product;global $teddy_Plushies;
+		if($this->prod2AdAccessory && $this->prod2AdAccessory != $product_id) {return $cart_item_data;}
 		if(count($this->charges) <= 0 || count($this->dataset) <= 0) {return $cart_item_data;}
-		global $teddyProduct;
-		$cart_item_data['custom_teddey_bear_makeup'] = $this->charges;
-		$cart_item_data['custom_teddey_bear_data'] = $this->dataset;
-		$cart_item_data['custom_pops_data'] = $teddyProduct->get_post_meta($product_id, '_product_custom_popup', true);
+		if($teddy_Plushies->is_accessory($product_id)) {return $cart_item_data;}
+		$cart_item_data['custom_makeup'] = $this->charges;
+		$cart_item_data['custom_dataset'] = $this->dataset;
+		$cart_item_data['custom_popset'] = $teddy_Product->get_post_meta($product_id, '_product_custom_popup', true);
 		
 		return $cart_item_data;
-	}
-	public function woocommerce_get_item_data($item_data, $cart_item) {
-		if(isset($cart_item['custom_teddey_bear_makeup'])) {
-			$item_data[] = [
-				'key' => 'Custom Makeup Charges',
-				'value' => $cart_item['custom_teddey_bear_makeup']
-			];
-		}
-		if(isset($cart_item['custom_teddey_bear_data'])) {
-			$item_data[] = [
-				'key' => 'Custom Teddy Bear Data',
-				'value' => $cart_item['custom_teddey_bear_data']
-			];
-		}
-		return $item_data;
 	}
 	public function woocommerce_cart_calculate_fees() {
 		if (is_admin() && !defined('DOING_AJAX')) {return;}
 		$cart = WC()->cart;
 		
 		foreach($cart->get_cart() as $cart_item_key => $cart_item) {
-			if(array_key_exists('custom_teddey_bear_makeup', $cart_item)) {
+			if(array_key_exists('custom_makeup', $cart_item)) {
 				// $additional_cost = 0;
 				// print_r($cart->get_cart());
-				foreach($cart_item['custom_teddey_bear_makeup'] as $fee) {
+				foreach($cart_item['custom_makeup'] as $fee) {
 					$cart->add_fee($fee['item'], ($fee['price'] * $cart_item['quantity']), true, 'standard');
 					// $additional_cost += ($fee['price'] * $cart_item['quantity']);
 				}
@@ -196,8 +184,8 @@ class Cart {
 	}
 	public function display_additional_charges($item_name, $cart_item, $cart_item_key) {
 		// if(isset($cart_item['_additional_charges_applied'])) {return $item_name;}
-		if(isset($cart_item['custom_teddey_bear_makeup']) && !in_array($cart_item_key, $this->showedAlready)) {
-			foreach($cart_item['custom_teddey_bear_makeup'] as $fee) {
+		if(isset($cart_item['custom_makeup']) && !in_array($cart_item_key, $this->showedAlready)) {
+			foreach($cart_item['custom_makeup'] as $fee) {
 				// if(!empty($fee['price']) && is_numeric($fee['price'])) {
 					$item_name .= '<br><small class="additional-charges">'.esc_html($fee['item']).': '.wc_price($fee['price']).' x '.esc_html(number_format_i18n($cart_item['quantity'], 0)).'</small>';
 				// }
@@ -226,9 +214,9 @@ class Cart {
 		}
 	}
 	public function calculate_cart_item_subtotal($cart_item, $cart_item_key, $return = false, $accessoriesOnly = false) {
-		if(array_key_exists('custom_teddey_bear_makeup', $cart_item) && !in_array($cart_item_key, $this->calculatedAlready)) {
+		if(array_key_exists('custom_makeup', $cart_item) && !in_array($cart_item_key, $this->calculatedAlready)) {
 			$additional_cost = 0;
-			foreach($cart_item['custom_teddey_bear_makeup'] as $fee) {
+			foreach($cart_item['custom_makeup'] as $fee) {
 				if($fee && is_array($fee)) {
 					try {
 						$fee['price'] = floatval($fee['price']);
@@ -298,11 +286,11 @@ class Cart {
 		return true;
 	}
 	public function get_products_by_category_id() {
-		$product_term_ids = [16,10,4,7];
+		$product_term_ids = [...explode(',', apply_filters('teddybear/project/system/getoption', 'standard-category', '16,10,4,7'))];
 		$product_term_args = [
-			'taxonomy' => 'product_cat',
-			'include' => $product_term_ids,
-			'orderby'  => 'include'
+			'taxonomy'	=> 'product_cat',
+			'include'	=> $product_term_ids,
+			'orderby'	=> 'include'
 		];
 		$product_terms = get_terms($product_term_args);
 		$product_term_slugs = [];$results = [];

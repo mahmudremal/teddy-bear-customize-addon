@@ -11,8 +11,6 @@ use TEDDYBEAR_CUSTOMIZE_ADDON\inc\Traits\Singleton;
 class Certificate {
 	use Singleton;
 	protected function __construct() {
-		global $teddy_Certificate;
-		$teddy_Certificate = $this;
 		$this->setup_hooks();
 	}
 	public function setup_hooks() {
@@ -20,7 +18,7 @@ class Certificate {
 		add_action('teddybearpopupaddon_mail_certificates', [$this, 'teddybearpopupaddon_mail_certificates'], 1, 2);
 		add_action('init', [$this, 'teddybearpopupaddon_preview_certificate'], 10, 0);
 		add_action('woocommerce_order_status_completed', [$this, 'woocommerce_order_status_completed'], 10, 2);
-		add_filter('woocommerce_email_attachments', [$this, 'woocommerce_email_attachments'], 10, 3);
+		// add_filter('woocommerce_email_attachments', [$this, 'woocommerce_email_attachments'], 10, 3);
 	}
 	public function do_certificate__blank($args) {
 		require_once(TEDDY_BEAR_CUSTOMIZE_ADDON_DIR_PATH . '/inc/tcpdf/examples/tcpdf_include.php');
@@ -260,7 +258,7 @@ class Certificate {
 		}
 	}
 	public function teddybearpopupaddon_preview_certificate() {
-		global $teddyBear__Order;
+		global $teddy_Order;
 		if(isset($_GET['certificate_preview']) && !empty($_GET['certificate_preview'])) {
 			$parts = explode('-', $_GET['certificate_preview']);
 			// $parts = explode('', $parts[0]);
@@ -274,7 +272,7 @@ class Certificate {
 			if(!$order || is_wp_error($order)) {
 				wp_die(__('Certificate not found!', 'teddybearsprompts'));
 			}
-			$teddyBear__Order->woocommerce_order_action_send_birth_certificates($order, $item_id);
+			$teddy_Order->woocommerce_order_action_send_birth_certificates($order, $item_id);
 		}
 	}
 	
@@ -419,8 +417,8 @@ class Certificate {
 		}
 	}
 	public function woocommerce_order_status_completed($order_id, $order) {
-		// if(!in_array($order->get_status(), ['completed'])) {return;}
-
+		if(!in_array($order->get_status(), ['completed'])) {return;}
+		do_action('woocommerce_order_action_send_birth_certificates', $order);
 	}
 	public function woocommerce_email_attachments($attachments , $email_id, $order) {
 		// if(!in_array($order->get_status(), ['completed'])) {return;}
@@ -444,21 +442,21 @@ class Certificate {
 		return $certificates;
 	}
 	public function get_single_certificates($order, $order_item, $preview = false) {
-		global $teddyProduct;$certificates = [];
+		global $teddy_Product;global $teddy_Meta;$certificates = [];
 		$order_id = $order->get_id();
 		$item_id = $order_item->get_id();
 		// $item_name = $order_item->get_name();
 		// $product = $order_item->get_product();
 		// $quantity = $order_item->get_quantity();
 		$product_id = $order_item->get_product_id();
-		$popup_meta = $teddyProduct->get_order_pops_meta($order, $order_item, $product_id);
+		$popup_meta = $teddy_Product->get_order_pops_meta($order, $order_item, $product_id);
 		if(!$popup_meta || !is_array($popup_meta) || count($popup_meta) <= 0) {return $certificates;}
 		
 		foreach($popup_meta as $posI => $posRow) {
 			foreach($posRow as $i => $field) {
 				if($field['type'] == 'info') {
-					$item_meta_data = $order_item->get_meta('custom_teddey_bear_data', true);
-					if(!$item_meta_data) {continue;}
+					$item_meta_data = $teddy_Meta->get_order_item_dataset($order_item, $order);
+					if(!$item_meta_data || !isset($item_meta_data['field'])) {continue;}
 					foreach($item_meta_data['field'] as $i => $iRow) {
 						foreach($iRow as $j => $jRow) {
 							// if($jRow['title'] == 'Voice') {}

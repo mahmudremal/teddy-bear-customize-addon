@@ -11,6 +11,7 @@ import icons from "../frontend/icons";
 import Awesomplete from "awesomplete";
 import FWProject_Forms from "./forms";
 import DOWNLOADS from "./downloads"
+import Ask from "./ask";
 
 (function ($) {
 	class FWPListivoBackendJS {
@@ -33,6 +34,7 @@ import DOWNLOADS from "./downloads"
 			PROMPTS.i18n = this.i18n;
 			this.Sortable = Sortable;
 			this.Swal = Swal;
+			this.Ask = new Ask(this);
 			this.he = PROMPTS.he = he;
 			new FWProject_Forms(this);
 			this.init_i18n();
@@ -42,7 +44,6 @@ import DOWNLOADS from "./downloads"
 			this.init_button();
 			this.init_tooltips();
 			this.init_wavesurfer();
-			this.ask4teddybearname();
 			this.initRandTeddyName();
 			this.initRandTeddyBadge();
 			this.downloadable_attached_pops();
@@ -458,55 +459,6 @@ import DOWNLOADS from "./downloads"
 				el.dataset.handledTippy = true;
 				tippy(el, {content: el.dataset?.tippyContent??false});
 			});
-		}
-		ask4teddybearname() {
-			const thisClass = this;
-			if(window?.teddyNameRequired) {
-				document.querySelector('#actions select[name="wc_order_action"]')?.addEventListener('change', (event) => {
-					if(event.target.value == 'send_birth_certificates') {
-						window.teddyNameRequired.forEach((item) => {
-							thisClass.ask4thisTeddyName(item);
-						});
-					}
-				});
-			}
-		}
-		ask4thisTeddyName(item) {
-			const thisClass = this;
-			const updateBtn = document.querySelector('#poststuff #woocommerce-order-actions .inside button[type="submit"]');
-			if(updateBtn) {updateBtn.classList.add('disabled');updateBtn.disabled = true;}
-			const action = 'futurewordpress/project/ajax/update/orderitem';
-			Swal.fire({
-				title: item.prod_name,
-				text: 'Teddy name',
-				input: 'text',
-				inputAttributes: {
-				  autocapitalize: 'off'
-				},
-				showCancelButton: true,
-				confirmButtonText: 'Confirm Name',
-				showLoaderOnConfirm: true,
-				preConfirm: (login) => {
-				  return fetch(`${thisClass.ajaxUrl}?action=${action}&_nonce=${thisClass.ajaxNonce}&order_id=${item.order_id}&item_id=${item.item_id}&teddyname=${login}`)
-					.then(response => {
-					  if(!response.ok) {
-						throw new Error(response.statusText)
-					  }
-					  return response.json()
-					}).then(json => {
-						console.log(json);
-						if(json?.success) {}
-						if(updateBtn) {updateBtn.classList.remove('disabled');updateBtn.removeAttribute('disabled')}
-					}).catch(error => {
-					  Swal.showValidationMessage(
-						`Request failed: ${error}`
-					)
-					})
-				},
-				allowOutsideClick: () => !Swal.isLoading()
-			}).then((result) => {
-				// if (result.isConfirmed) {}
-			})
 		}
 		initRandTeddyName() {
 			const thisClass = this;

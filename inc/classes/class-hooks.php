@@ -27,9 +27,9 @@ class Hooks {
    * woocommerce_after_add_to_cart_form
    */
   public function woocommerce_after_add_to_cart_button() {
-    global $product;global $Plushies;
+    global $product;global $teddy_Plushies;
     if(! apply_filters('teddybear/project/system/isactive', 'standard-enable')) {return;}
-    if($Plushies->is_accessory($product->get_id())) {return;}
+    if($teddy_Plushies->is_accessory($product->get_id())) {return;}
     $config = ['id' => $product->get_id()];
     ?>
     <button type="button" class="init_cusomizeaddtocartbtn" data-config="<?php echo esc_attr(json_encode($config)); ?>"><?php esc_html_e('Customize', 'teddybearsprompts'); ?></button>

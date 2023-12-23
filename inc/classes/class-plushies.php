@@ -12,8 +12,6 @@ use TEDDYBEAR_CUSTOMIZE_ADDON\inc\Traits\Singleton;
 class Plushies {
 	use Singleton;
 	protected function __construct() {
-		global $Plushies;
-		$Plushies = $this;
 		$this->setup_hooks();
 	}
 	protected function setup_hooks() {

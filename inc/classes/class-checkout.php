@@ -30,15 +30,15 @@ class Checkout {
 		if(strpos($content, 'var checkout_data') !== false) {
 			$cart = WC()->cart;$json = [];
 			// foreach ($cart->get_cart() as $cart_item_key => $cart_item) {
-			// 	$cart_item['custom_teddey_bear_makeup'] = isset($cart_item['custom_teddey_bear_makeup'])?$cart_item['custom_teddey_bear_makeup']:[];
-			// 	foreach($cart_item['custom_teddey_bear_makeup'] as $key => $meta) {
-			// 		$cart_item['custom_teddey_bear_makeup'][$key] = [
+			// 	$cart_item['custom_makeup'] = isset($cart_item['custom_makeup'])?$cart_item['custom_makeup']:[];
+			// 	foreach($cart_item['custom_makeup'] as $key => $meta) {
+			// 		$cart_item['custom_makeup'][$key] = [
 			// 			...$meta,
 			// 			'item'	=> $meta['item'],
 			// 			'price'	=> wc_price($meta['price'])
 			// 		];
 			// 	}
-			// 	$json[$cart_item_key] = $cart_item['custom_teddey_bear_makeup'];
+			// 	$json[$cart_item_key] = $cart_item['custom_makeup'];
 			// }
 			$content .= '<script>var checkout_metadata=' . json_encode($json) . ';</script>';
 			ob_start();
@@ -158,7 +158,7 @@ class Checkout {
 								});
 								el.appendChild(span);
 								if(el?.nextElementSibling && el.nextElementSibling.querySelector('.pp-recalculate-blur')) {
-									el.nextElementSibling.querySelector('.pp-recalculate-blur').innerHTML = subTotal;
+									el.nextElementSibling.querySelector('.pp-recalculate-blur').innerHTML = subTotal.toFixed(2);
 								}
 							}, 300);
 						}
@@ -216,9 +216,9 @@ class Checkout {
 			$cart = $data['cart_calculation_response']['data']['cart_calculation_record'][0]['cart'];
 			foreach($cart as $i => $cart_row) {
 				$cart_item = WC()->cart->get_cart_item($cart_row['item_key']);
-				if($cart_item && !is_wp_error($cart_item) && isset($cart_item['custom_teddey_bear_makeup'])) {
+				if($cart_item && !is_wp_error($cart_item) && isset($cart_item['custom_makeup'])) {
 					$subTotal = 0;
-					foreach($cart_item['custom_teddey_bear_makeup'] as $row) {
+					foreach($cart_item['custom_makeup'] as $row) {
 						if($row && is_array($row)) {
 							$data['cart_calculation_response']['data']['cart_calculation_record'][0]['cart'][$i]['meta_data'][] = [
 								...$row,
@@ -246,9 +246,9 @@ class Checkout {
 
 				// print_r(["cart_item \n", is_wp_error($cart_item)]);
 
-				if($cart_item && !is_wp_error($cart_item) && isset($cart_item['custom_teddey_bear_makeup'])) {
+				if($cart_item && !is_wp_error($cart_item) && isset($cart_item['custom_makeup'])) {
 					$subTotal = 0;
-					foreach($cart_item['custom_teddey_bear_makeup'] as $row) {
+					foreach($cart_item['custom_makeup'] as $row) {
 						// $subTotal += ($row['price'] * $cart_row['quantity']);
 						if($row && is_array($row)) {
 							if(!isset($row['product']) || !$row['product']) {
@@ -300,13 +300,13 @@ class Checkout {
 		}
 		if(isset($_GET['meta_item_cart_key']) && !empty($_GET['meta_item_cart_key'])) {
 			$cart_item = WC()->cart->get_cart_item($_GET['meta_item_cart_key']);
-			if($cart_item && !is_wp_error($cart_item) && isset($cart_item['custom_teddey_bear_makeup'])) {
+			if($cart_item && !is_wp_error($cart_item) && isset($cart_item['custom_makeup'])) {
 				$is_updated = false;
 				$_GET['key'] = str_replace(['\\'], [''], $_GET['key']);
 				$_GET['item'] = str_replace(['\\'], [''], $_GET['item']);
-				foreach($cart_item['custom_teddey_bear_makeup'] as $i => $row) {
+				foreach($cart_item['custom_makeup'] as $i => $row) {
 					if(isset($row['item']) && in_array($row['item'], [$_GET['item'], $_GET['key']])) {
-						unset($cart_item['custom_teddey_bear_makeup'][$i]);$is_updated = true;
+						unset($cart_item['custom_makeup'][$i]);$is_updated = true;
 					}
 				}
 				if($is_updated) {

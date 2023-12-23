@@ -11,15 +11,17 @@ use TEDDYBEAR_CUSTOMIZE_ADDON\inc\Traits\Singleton;
  */
 class Order {
 	use Singleton;
-	private $lastCustomData;
+	private $lastOrderItemPopSet;
+	private $lastOrderItemMakeup;
+	private $lastOrderItemDataSet;
 	protected $confirmMailTrack = false;
 	/**
 	 * Construct method.
 	 */
 	protected function __construct() {
-		global $teddyBear__Order;
-		$teddyBear__Order = $this;
-		$this->lastCustomData = false;
+		$this->lastOrderItemPopSet = [];
+		$this->lastOrderItemMakeup = [];
+		$this->lastOrderItemDataSet = [];
 		$this->setup_hooks();
 	}
 	/**
@@ -41,10 +43,10 @@ class Order {
 
 		add_filter('woocommerce_order_actions', [$this, 'woocommerce_order_actions'], 10, 1);
 		add_action('woocommerce_order_action_send_birth_certificates', [$this, 'woocommerce_order_action_send_birth_certificates'], 10, 1);
+		// add_filter('woocommerce_order_status_changed', [$this, 'woocommerce_order_status_changed'], 10, 3);
 
 		add_action('woocommerce_checkout_create_order_line_item', [$this, 'woocommerce_checkout_create_order_line_item'], 10, 4);
 		add_action('woocommerce_new_order_item', [$this, 'woocommerce_new_order_item'], 10, 3);
-		// add_action('woocommerce_order_item_get_internal_meta_keys', [$this, 'woocommerce_order_item_get_internal_meta_keys'], 10, 1);
 
 		add_filter('woocommerce_order_get_subtotal', [$this, 'woocommerce_order_get_subtotal'], 10, 2);
 		// add_filter('woocommerce_order_get_total', [$this, 'woocommerce_order_get_total'], 10, 2);
@@ -65,7 +67,7 @@ class Order {
 		}
 	}
 	public function custom_meta_box_html($post) {
-		global $teddy_Certificate;global $teddy_Voices;
+		global $teddy_Certificate;global $teddy_Voices;global $teddy_Meta;global $teddy_Plushies;
 		$order_id = $post->ID;
 		$order = wc_get_order($order_id);
 		$target_dir = TEDDY_BEAR_CUSTOMIZE_ADDON_UPLOAD_DIR;
@@ -86,6 +88,7 @@ class Order {
 							'prod_name'			=> $item_name,
 							'order_id'			=> $order_id,
 							'item_id'			=> $order_item_id,
+							'info'				=> $name_required
 						];
 					}
 					if(!empty($item_meta_data)) {
@@ -94,16 +97,19 @@ class Order {
 						<ul class="fwp-outfit__list">
 						<?php
 						// Getting Icons.
-						$custom_data = (array) $this->get_order_item_meta($order_item->get_id(), 'custom_teddey_bear_data');
+						$custom_dataset = $teddy_Meta->get_order_item_dataset($order_item, $order);
+						$custom_charges = $teddy_Meta->get_order_item_charges($order_item, $order);
+						$custom_popset = $teddy_Meta->get_order_item_popset($order_item, $order);
 						
 						foreach($item_meta_data as $meta) {
+							if(!$this->is_allowed_meta_tag($meta->key, $meta, $item_meta_data)) {continue;}
 
 							if(is_array($meta->value)) {continue;}
 							$thumbnailImage = $voiceFileExists = $voiceFileArgs = false;
 							
 							
-							if($custom_data && isset($custom_data['field'])) {
-								foreach((array) $custom_data['field'] as $i => $iRow) {
+							if($custom_dataset && isset($custom_dataset['field'])) {
+								foreach((array) $custom_dataset['field'] as $i => $iRow) {
 									if(is_array($iRow)) {
 										foreach($iRow as $j => $jRow) {
 											$jRow = (object) $jRow;
@@ -150,10 +156,14 @@ class Order {
 							}
 						}
 						?>
-						<?php if($custom_data): ?>
-							<li class="fwp-outfit__items <?php echo esc_attr((true)?'fwp-outfit__certificate':''); ?>">
-								<a href="<?php echo esc_url(home_url('?certificate_preview='. $order_id .'-'.$order_item_id)); ?>" class="btn button link" target="_blank"><?php esc_html_e('Certificate', 'teddybearsprompts'); ?></a>
-							</li>
+						<?php if($custom_dataset): ?>
+							<?php
+								$order_item_product = $order_item->get_product();
+								if(!$teddy_Plushies->is_accessory($order_item_product->get_id())): ?>
+									<li class="fwp-outfit__items <?php echo esc_attr((true)?'fwp-outfit__certificate':''); ?>">
+										<a href="<?php echo esc_url(home_url('?certificate_preview='. $order_id .'-'.$order_item_id)); ?>" class="btn button link" target="_blank"><?php esc_html_e('Certificate', 'teddybearsprompts'); ?></a>
+									</li>
+							<?php endif; ?>
 						<?php else: ?>
 							<li class="fwp-outfit__items <?php echo esc_attr((true)?'fwp-outfit__certificate':''); ?>">
 								<a href="<?php echo esc_url(home_url('?certificate_preview='. $order_id .'-'.$order_item_id)); ?>" class="link" target="_blank"><?php esc_html_e('Necessery information missing on this item.', 'teddybearsprompts'); ?></a>
@@ -198,13 +208,13 @@ class Order {
 		return $email_classes;
 	}
 	public function woocommerce_order_item_meta_end($item_id, $order_item, $order, $plain_text) {
-		global $teddyProduct;global $teddy_Voices;global $teddyBear__Order;
+		global $teddy_Product;global $teddy_Voices;global $teddy_Order;
 		// if(!isset($order->is_order_confirmation) || $order->is_order_confirmation !== true) {return;}
 		// if($this->confirmMailTrack !== true) {return;}
 		if(in_array($order->get_status(), ['completed'])) {return;}
 		if(!$teddy_Voices->should_exists_voices($order, $order_item)) {return;}
 		if(!$teddy_Voices->has_single_voices($order, $order_item)) {
-			$uploadVoiceURL = 'mailto:'.get_option('admin_email').'?subject='.esc_attr(__('Voice Record', 'teddybearsprompts')).'&body='.esc_attr(sprintf(__('Order #%d, Cart Item: #%d, Item Subtotal: %s %s Product: %s', 'teddybearsprompts'), $order->get_id(), $order_item->get_id(), $teddyBear__Order->get_order_item_subtotal($order_item, $order->get_id()), '%0D%0A', get_the_title($order_item->get_product_id())));
+			$uploadVoiceURL = 'mailto:'.get_option('admin_email').'?subject='.esc_attr(__('Voice Record', 'teddybearsprompts')).'&body='.esc_attr(sprintf(__('Order #%d, Cart Item: #%d, Item Subtotal: %s %s Product: %s', 'teddybearsprompts'), $order->get_id(), $order_item->get_id(), $teddy_Order->get_order_item_subtotal($order_item, $order->get_id()), '%0D%0A', get_the_title($order_item->get_product_id())));
 			echo '<a href="' . esc_attr($uploadVoiceURL) . '" target="_blank" style="color: #fff;font-weight:normal;text-decoration:underline;background: #7f54b3;padding: 10px 15px;border-radius: 5px;line-height: 40px;text-decoration: none;">' . esc_html('Send Recorded voice', 'teddybearsprompts') . '</a>';
 		}
 	}
@@ -217,58 +227,71 @@ class Order {
 		<?php
 	}
 	
+	/**
+	 * Add seperate meta data after order item name or product name.
+	 */
 	public function woocommerce_checkout_create_order_line_item($item, $cart_item_key, $cart_item, $order) {
-		if(isset($cart_item['custom_teddey_bear_makeup'])) {
-			foreach($cart_item['custom_teddey_bear_makeup'] as $meta) {
+		/**
+		 * Here are the problem. Instead of handling Main product, it catched first product.
+		 */
+		$makeup = $cart_item['custom_makeup']??[];
+		if($makeup && count($makeup) >= 1) {
+			foreach($makeup as $meta) {
 				if(!empty($meta['item']) && !empty($meta['price']) && is_numeric($meta['price'])) {
 					$item->add_meta_data(esc_html($meta['item']), wc_price($meta['price']), true);
 				}
 			}
-		}
-		if(isset($cart_item['custom_teddey_bear_data'])) {
-			$this->lastCustomData = $cart_item['custom_teddey_bear_data'];
+			$this->lastOrderItemMakeup[$cart_item_key] = $cart_item['custom_makeup']??[];
+			$this->lastOrderItemDataSet[$cart_item_key] = $cart_item['custom_dataset']??[];
+			$this->lastOrderItemPopSet[$cart_item_key] = $cart_item['custom_popset']??[];
 		}
 	}
-	public function woocommerce_order_item_get_internal_meta_keys($keys) {
-		// $keys[] = '';
-		return $keys;
-	}
-	public function woocommerce_new_order_item($item_id, $item, $order_id) {
-		global $wpdb;$meta_key = 'custom_teddey_bear_data';
-		if($this->lastCustomData) {
-			$meta_value = maybe_serialize($this->lastCustomData);
-			$this->lastCustomData = false;
-			// Check if the meta key already exists for the order item
-			$existing_meta = $wpdb->get_var(
-				$wpdb->prepare(
-					"SELECT meta_id FROM {$wpdb->prefix}woocommerce_order_itemmeta WHERE order_item_id = %d AND meta_key = %s",
-					$item_id, $meta_key
-				)
-			);
-			if(!$existing_meta || empty($existing_meta)) {
-				// Insert the new meta data
-				$wpdb->insert(
-					$wpdb->prefix . 'woocommerce_order_itemmeta',
-					[
-						'order_item_id' => $item_id,
-						'meta_key'      => $meta_key,
-						'meta_value'    => $meta_value
-					],
-					[
-						'%d',
-						'%s',
-						'%s'
-					]
+	public function woocommerce_new_order_item($item_id, $order_item, $order_id) {
+		global $wpdb;
+		$order_item_key = $order_item->legacy_cart_item_key??false;
+		if($order_item_key && isset($this->lastOrderItemDataSet[$order_item_key])) {
+			// print_r([$order_item_key, array_keys($this->lastOrderItemPopSet)]);
+			$sets = [
+				'custom_popset'		=> maybe_serialize($this->lastOrderItemPopSet[$order_item_key]??[]),
+				'custom_makeup'		=> maybe_serialize($this->lastOrderItemMakeup[$order_item_key]??[]),
+				'custom_dataset'	=> maybe_serialize($this->lastOrderItemDataSet[$order_item_key]??[]),
+			];
+			if(isset($this->lastOrderItemPopSet[$order_item_key])) {unset($this->lastOrderItemPopSet[$order_item_key]);}
+			if(isset($this->lastOrderItemDataSet[$order_item_key])) {unset($this->lastOrderItemDataSet[$order_item_key]);}
+			if(isset($this->lastOrderItemMakeup[$order_item_key])) {unset($this->lastOrderItemMakeup[$order_item_key]);}
+			foreach($sets as $meta_key => $meta_value) {
+				// Check if the meta key already exists for the order item
+				$existing_meta = $wpdb->get_var(
+					$wpdb->prepare(
+						"SELECT meta_id FROM {$wpdb->prefix}woocommerce_order_itemmeta WHERE order_item_id = %d AND meta_key = %s",
+						$item_id, $meta_key
+					)
 				);
-			} else {
-				// Update the existing meta data
-				$wpdb->update(
-					$wpdb->prefix . 'woocommerce_order_itemmeta',
-					['meta_value' => $meta_value],
-					['order_item_id' => $item_id, 'meta_key' => $meta_key],
-					['%s'],
-					['%d', '%s']
-				);
+				if(!$existing_meta || empty($existing_meta)) {
+					// Insert the new meta data
+					$wpdb->insert(
+						$wpdb->prefix . 'woocommerce_order_itemmeta',
+						[
+							'order_item_id' => $item_id,
+							'meta_key'      => $meta_key,
+							'meta_value'    => $meta_value
+						],
+						[
+							'%d',
+							'%s',
+							'%s'
+						]
+					);
+				} else {
+					// Update the existing meta data
+					$wpdb->update(
+						$wpdb->prefix . 'woocommerce_order_itemmeta',
+						['meta_value' => $meta_value],
+						['order_item_id' => $item_id, 'meta_key' => $meta_key],
+						['%s'],
+						['%d', '%s']
+					);
+				}
 			}
 		}
 	}
@@ -282,7 +305,7 @@ class Order {
     	return $actions;
 	}
 	public function woocommerce_order_action_send_birth_certificates($order, $preview = false) {
-		global $teddyProduct;global $teddy_Certificate;
+		global $teddy_Product;global $teddy_Certificate;
 		$order_id = $order->get_id();
 		// $order->get_status();
 		
@@ -300,6 +323,13 @@ class Order {
 			wp_die($e->getMessage(), __('Error happens', 'teddybearsprompts'));
 		}
 	}
+	public function woocommerce_order_status_changed($order_id, $old_status, $new_status) {
+		// $old_status === 'wc_on_hold' && 
+		if ($new_status === 'wc_completed') {
+			$order = wc_get_order($order_id);
+			$this->woocommerce_order_action_send_birth_certificates($order);
+		}
+	}
 	public function get_order_item_meta($order_item_id, $meta_key) {
 		global $wpdb;
 		$existing_meta = $wpdb->get_var(
@@ -311,29 +341,41 @@ class Order {
 		return maybe_unserialize($existing_meta);
 	}
 	public function is_name_required($order, $order_item) {
-		global $teddyProduct;
+		global $teddy_Product;global $teddy_Meta;
 		$order_id = $order->get_id();
 		$item_id = $order_item->get_id();
 		$product_id = $order_item->get_product_id();
-		$popup_meta = $teddyProduct->get_order_pops_meta($order, $order_item, $product_id);
+		$popup_meta = $teddy_Product->get_order_pops_meta($order, $order_item, $product_id);
 		foreach($popup_meta as $posI => $posRow) {
 			foreach($posRow as $i => $field) {
 				if($field['type'] == 'info') {
-					$item_meta_data = $order_item->get_meta('custom_teddey_bear_data', true);
-					if(!$item_meta_data) {continue;}
+					$item_meta_data = $teddy_Meta->get_order_item_dataset($order_item, $order);
+					if(!$item_meta_data || !isset($item_meta_data['field'])) {continue;}
 					foreach($item_meta_data['field'] as $i => $iRow) {
 						foreach($iRow as $j => $jRow) {
 							if($field['steptitle'] == $jRow['title'] && $j == 0) {
-								return (isset($iRow[0]) && isset($iRow[0]['value']) && trim($iRow[0]['value']) == '');
+								return (
+									(isset($iRow[0]) && isset($iRow[0]['value']) && empty(trim($iRow[0]['value']))) || 
+									(isset($iRow[1]) && isset($iRow[1]['value']) && empty(trim($iRow[1]['value']))) || 
+									(isset($iRow[2]) && isset($iRow[2]['value']) && empty(trim($iRow[2]['value']))) || 
+									(isset($iRow[3]) && isset($iRow[3]['value']) && empty(trim($iRow[3]['value'])))
+								)?[
+									'teddyname'		=> ($iRow[0]??[])['value']??'',
+									'teddybirth'	=> ($iRow[1]??[])['value']??'',
+									'recievername'	=> ($iRow[2]??[])['value']??'',
+									'createdby'		=> ($iRow[3]??[])['value']??'',
+								]:false;
 							}
 						}
 					}
 				}
 			}
 		}
+		return false;
 	}
-	public function get_order_item_subtotal($item, $order_id, $additionalOnly = false) {
-		$meta_data = $item->get_meta('custom_teddey_bear_data', true);
+	public function get_order_item_subtotal($order_item, $order_id, $additionalOnly = false) {
+		global $teddy_Meta;$order = wc_get_order($order_id);
+		$meta_data = $teddy_Meta->get_order_item_dataset($order_item, $order);
 		if(!is_array($meta_data) || !isset($meta_data['field'])) {
 			$meta_data = (array) $meta_data;
 			$meta_data['field'] = [];
@@ -352,8 +394,8 @@ class Order {
 
 		return (
 			(
-				($additionalOnly)?$additionalAmount:($item->get_subtotal() + $additionalAmount)
-			) * $item->get_quantity()
+				($additionalOnly)?$additionalAmount:($order_item->get_subtotal() + $additionalAmount)
+			) * $order_item->get_quantity()
 		);
 	}
 	public function woocommerce_order_get_subtotal($subTotal, $order) {
@@ -382,5 +424,13 @@ class Order {
 	public function woocommerce_get_order_item_totals($total_rows, $order, $tax_display) {
 		// print_r([$total_rows]);
 		return $total_rows;
+	}
+	/**
+	 * Check whether if meta tag is not allowed.
+	 */
+	public function is_allowed_meta_tag($meta_key, $meta, $custom_data) {
+		// print_r([$custom_data]);
+		$except = ['_reduced_stock'];
+		return (!in_array($meta_key, $except));
 	}
 }

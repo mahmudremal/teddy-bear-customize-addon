@@ -14,8 +14,6 @@ class Product {
 	use Singleton;
 	protected function __construct() {
 		$this->setup_hooks();
-		global $teddyProduct;
-		$teddyProduct = $this;
 	}
 	public function setup_hooks() {
 		add_action('uael_woo_products_add_to_cart_before', [$this, 'uael_woo_products_add_to_cart_before'], 10, 2);
@@ -74,7 +72,7 @@ class Product {
 	
 	public function get_order_pops_meta($order_id, $order_item, $post_id) {
 		// $item_meta = get_option('pops_order' . $order_id . '_item_' . $item_id, false);
-		$item_meta = $order_item->get_meta('custom_pops_data', true);
+		$item_meta = $order_item->get_meta('custom_popset', true);
 		if($item_meta && ! is_wp_error($item_meta) && !empty($item_meta)) {return $item_meta;}
 		return $this->get_post_meta($post_id, '_product_custom_popup', true);
 	}
@@ -172,7 +170,7 @@ class Product {
 							$option['imageUrl'] = wp_get_attachment_url((int) $option['image']);
 						}
 						if(isset($option['thumb']) && !empty($option['thumb']) && is_numeric($option['thumb'])) {
-							$option['thumbUrl'] = wp_get_attachment_url((int) $option['thumb']);
+							$option['thumbUrl'] = wp_get_attachment_image_url((int) $option['thumb'], 'thumbnail');
 						}
 						$json[$_posI][$i]['options'][$j] = $option;
 					}
@@ -209,7 +207,7 @@ class Product {
 										$option['imageUrl'] = wp_get_attachment_url((int) $option['image']);
 									}
 									if(isset($option['thumb']) && is_numeric($option['thumb']) && $option['thumb']) {
-										$option['thumbUrl'] = wp_get_attachment_url((int) $option['thumb']);
+										$option['thumbUrl'] = wp_get_attachment_image_url((int) $option['thumb'], 'thumbnail');
 									}
 									$json[$_posI][$i]['groups'][$k]['options'][$l] = $option;
 								}
@@ -230,14 +228,16 @@ class Product {
 	 */
 	public function hook_canvas_image_on_global_customization($global, $private) {
 		// foreach($private as $pos)
-		foreach($private as $posI => $posRow) {
-			foreach($posRow as $i => $field) {
-				if(
-					isset($field['headerbg']) && !empty($field['headerbg'])
-					&&
-					isset($global[$posI][$i]['headerbg'])
-				) {
-					$global[$posI][$i]['headerbg'] = $field['headerbg'];
+		if(is_array($private) || is_object($private)) {
+			foreach($private as $posI => $posRow) {
+				foreach($posRow as $i => $field) {
+					if(
+						isset($field['headerbg']) && !empty($field['headerbg'])
+						&&
+						isset($global[$posI][$i]['headerbg'])
+					) {
+						$global[$posI][$i]['headerbg'] = $field['headerbg'];
+					}
 				}
 			}
 		}

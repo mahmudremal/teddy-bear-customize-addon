@@ -61,7 +61,7 @@ class Ajax {
 		wp_send_json_success( $res, 200 );
 	}
 	public function search_product() {
-		global $wpdb;global  $woocommerce;global $teddyProduct;global $Plushies;
+		global $wpdb;global  $woocommerce;global $teddy_Product;global $teddy_Plushies;
 		// check_ajax_referer('futurewordpress/project/teddybearpopupaddon/verify/nonce', '_nonce', true);
 		$dataset = $request = json_decode(preg_replace('/[\x00-\x1F\x80-\xFF]/', '', stripslashes(html_entity_decode(isset($_POST['dataset'])?$_POST['dataset']:'{}'))), true);
 		
@@ -92,13 +92,13 @@ class Ajax {
 			'country' => false,
 			'product' => [
 				'id'		=> $productData['id'],
-				'price'		=> $productData['price'],
-				'currency'	=> $productData['currency'],
-				'priceHtml'	=> $productData['priceHtml'],
 				'name'		=> $productData['name'],
 				'link'		=> $productData['link'],
 				'slug'		=> $productData['slug'],
 				'type'		=> $productData['type'],
+				'price'		=> $productData['price'],
+				'currency'	=> $productData['currency'],
+				'priceHtml'	=> $productData['priceHtml'],
 				'positions' => [
 					'standing' => apply_filters('teddybear/project/system/getoption', 'standard-standingdoll', ''),
 					'sitting' => apply_filters('teddybear/project/system/getoption', 'standard-sittingdoll', ''),
@@ -106,7 +106,7 @@ class Ajax {
 				'is_parent' => false,
 				'toast'		=> false, // '<strong>' . count($requested) . '</strong> people requested this service in the last 10 minutes!',
 				'thumbnail'	=> ['1x' => '', '2x' => ''],
-				'custom_fields' => $teddyProduct->get_frontend_product_json($dataset['product_id'])
+				'custom_fields' => $teddy_Product->get_frontend_product_json($dataset['product_id'])
 			],
 		];
 
@@ -174,7 +174,7 @@ class Ajax {
 		wp_send_json_success($result, 200);
 	}
 	public function edit_product() {
-		global $teddyProduct;$json = [];global $Plushies;// $teddyProduct->
+		global $teddy_Product;$json = [];global $teddy_Plushies;// $teddy_Product->
 		$json['product'] = (array) get_post_meta($_POST['product_id'], '_product_custom_popup', true);
 		$json['hooks'] = ['gotproductpopupresult'];
 		$json['product'] = ($json['product'] && !empty($json['product']))?(array)$json['product']:[];
@@ -228,7 +228,7 @@ class Ajax {
 				'relation'		=> 'OR'
 			]
 		];
-		foreach($Plushies->get_accessories_terms() as $_key => $_text) {
+		foreach($teddy_Plushies->get_accessories_terms() as $_key => $_text) {
 			$args['meta_query'][] = [
 				'key' => $_key,
 				'value' => 'on',
@@ -239,8 +239,8 @@ class Ajax {
 		$_posts = get_posts($args);
 		foreach($_posts as $_post) {
 			$json['accessories'][] = [
-				'title'		=> get_the_title($_post),
 				'ID'		=> $_post->ID,
+				'title'		=> get_the_title($_post),
 				'thumbnail'	=> get_the_post_thumbnail_url($_post)
 			];
 		}
@@ -335,23 +335,25 @@ class Ajax {
 	}
 
 	public function update_orderitem() {
-		global $teddyProduct;
+		global $teddy_Product;global $teddy_Meta;
 		$json = ['hooks' => ['order_item_update_failed'], 'message' => __('Something went wrong. Please review your request again.', 'teddybearsprompts')];
-		if(!isset($_GET['order_id']) || empty($_GET['order_id']) || !isset($_GET['item_id']) || empty($_GET['item_id']) || !isset($_GET['teddyname']) || empty($_GET['teddyname'])) {
-			wp_send_json_error($json);
-		}
+		// if(!isset($_POST['order_id']) || empty($_POST['order_id']) || !isset($_POST['item_id']) || empty($_POST['item_id']) || !isset($_POST['teddyname']) || empty($_POST['teddyname'])) {
+		// 	wp_send_json_error($json);
+		// }
 
-		$order_id = $_GET['order_id'];
-		$order_item_id = $_GET['item_id'];
+		$order_id = $_POST['order_id']??false;
+		$order_item_id = $_POST['item_id']??false;
+		$askedteddyinfo = explode(',', $_POST['askedteddyinfo']??'');
+		$failed = true; // $json['post'] = $_POST;
 		$order = wc_get_order($order_id);
 		foreach($order->get_items() as $item_id => $order_item) {
-			if($order_item_id != $item_id) {continue;}
+			if(!in_array($item_id, $askedteddyinfo)) {continue;}
 			$product_id = $order_item->get_product_id();
-			$custom_popup = $teddyProduct->get_order_pops_meta($order, $order_item, $product_id);
+			$custom_popup = $teddy_Product->get_order_pops_meta($order, $order_item, $product_id);
 			foreach($custom_popup as $posI => $posRow) {
 				foreach($posRow as $i => $field) {
 					if($field['type'] == 'info') {
-						$item_meta_data = $order_item->get_meta('custom_teddey_bear_data', true);
+						$item_meta_data = $teddy_Meta->get_order_item_dataset($order_item, $order);
 						if(!$item_meta_data) {continue;}
 						foreach($item_meta_data['field'] as $i => $iRow) {
 							foreach($iRow as $j => $jRow) {
@@ -362,7 +364,14 @@ class Ajax {
 										// && isset($item_meta_data['field'][$i][2]['value'])
 										// && isset($item_meta_data['field'][$i][3]['value'])
 									) {
-										$item_meta_data['field'][$i][0]['value'] = $_GET['teddyname'];
+										foreach(['teddyname', 'teddybirth', 'recievername', 'createdby'] as $fI => $fIText) {
+											$reqsField = $_POST['item-' . $item_id]??[];
+											if(isset($item_meta_data['field'][$i][$fI]) && isset($reqsField[$fIText])) {
+												$item_meta_data['field'][$i][$fI]['value'] = $reqsField[$fIText];
+											}
+											
+										}
+										
 										global $wpdb;
 										$wpdb->update(
 											"{$wpdb->prefix}woocommerce_order_itemmeta",
@@ -370,15 +379,15 @@ class Ajax {
 												'meta_value'		=> maybe_serialize($item_meta_data)
 											],
 											[
-												'meta_key'		=> 'custom_teddey_bear_data',
+												'meta_key'		=> 'custom_dataset',
 												'order_item_id'	=> $item_id
 											],
 											['%s'],
 											['%s', '%d']
 										);
 										$json['message'] = __('Successfully Updated your teddy bear name.', 'teddybearsprompts');
-										$json['message'] = ['order_item_update_success'];
-										wp_send_json_success($json, 200);
+										$json['hooks'] = ['order_item_update_success'];
+										$failed = false;
 									}
 								}
 							}
@@ -387,7 +396,11 @@ class Ajax {
 				}
 			}
 		}
-		wp_send_json_error($json);
+		if(!$failed) {
+			wp_send_json_success($json, 200);
+		} else {
+			wp_send_json_error($json);
+		}
 	}
 	public function suggested_names() {
 		$args = ['names' => [], 'hooks' => ['namesuggestionloaded']];

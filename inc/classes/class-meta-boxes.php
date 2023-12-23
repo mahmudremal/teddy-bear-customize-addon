@@ -48,7 +48,7 @@ class Meta_Boxes {
 	 * @return void
 	 */
 	public function custom_meta_box_html($post) {
-		global $Plushies;
+		global $teddy_Plushies;
 		$this->options = (array) get_post_meta($post->ID, '_teddy_custom_data', true);
 		?>
 		<div class="fwp-tabs__container">
@@ -69,7 +69,8 @@ class Meta_Boxes {
 								];
 								?>
 								<?php
-								foreach($Plushies->get_accessories_terms() as $_key => $_term) {
+								$post_id = get_the_ID();
+								foreach($teddy_Plushies->get_accessories_terms() as $_key => $_term) {
 									$fields['fields'][] = [
 										'id' 					=> $_key,
 										'label'					=> $_term['title'],
@@ -213,7 +214,7 @@ class Meta_Boxes {
 	 * @return void
 	 */
 	public function save_post_meta_data($post_id) {
-		global $Plushies;
+		global $teddy_Plushies;
 		/**
 		 * When the post is saved or updated we get $_POST available
 		 * Check if the current user is authorized
@@ -225,18 +226,17 @@ class Meta_Boxes {
 		if(array_key_exists($_key, $_POST)) {
 			update_post_meta($post_id, $_key, $_POST[$_key]);
 		}
-		foreach($Plushies->get_accessories_terms() as $_key => $_text) {
-			if(array_key_exists($_key, $_POST)) {
+		foreach($teddy_Plushies->get_accessories_terms() as $_key => $_text) {
+			if(isset($_POST[$_key])) {
 				update_post_meta($post_id, $_key, $_POST[$_key]);
 				if(isset($_POST[$_key . '_thumb'])) {
 					update_post_meta($post_id, $_key . '_thumb', $_POST[$_key . '_thumb']);
 				}
 			} else {
-				delete_post_meta($post_id, $_key, $_POST[$_key]);
-				if(isset($_POST[$_key . '_thumb'])) {
-					delete_post_meta($post_id, $_key . '_thumb', $_POST[$_key . '_thumb']);
-				}
-				
+				delete_post_meta($post_id, $_key);
+				// if(!isset($_POST[$_key . '_thumb'])) {
+				// 	delete_post_meta($post_id, $_key . '_thumb', $_POST[$_key . '_thumb']);
+				// }
 			}
 		}
 	}
@@ -250,7 +250,11 @@ class Meta_Boxes {
 		$field['default'] = isset($field['default'])?$field['default']:'';
 		if($isParent) {
 			$data = get_post_meta(get_the_ID(), $field['id'], true);
-			$data = ($data && !is_wp_error($data))?$data:$field['default'];
+			// $data = ($data && !is_wp_error($data))?$data:$field['default'];
+			// $data = ($data && !is_wp_error($data))?$data:$field['default'];
+
+			$data = ($data && !empty($data))?$data:$field['default'];
+			
 		} else {
 			$data = (isset($this->options[$field['id']]))?$this->options[$field['id']]:$field['default'];
 		}
