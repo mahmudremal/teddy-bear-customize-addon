@@ -45,22 +45,24 @@ class Plushies {
 		return false;
 	}
 	public function get_accessory_canvas_image($accessory_id, $option, $custom_fields, $product_type = 'standing', $product_id = false) {
-		foreach(['outfit', 'footwear'] as $_i => $_key) {
+
+		foreach(['outfit', 'footwear'] as $_key) {
 			$_thumb = get_post_meta($accessory_id, $product_type . '-' . $_key . '_thumb', true);
-			$meta = get_post_meta($accessory_id, $product_type . '-' . $_key, true);
+			$_meta = get_post_meta($accessory_id, $product_type . '-' . $_key, true);
+
 			if(
-				$meta && !is_wp_error($meta) && !empty($meta)
+				$_meta && !is_wp_error($_meta) && !empty($_meta)
 				&&
 				$_thumb && !is_wp_error($_thumb) && !empty($_thumb)
 			) {
 				return (int) $_thumb;
 			}
 		}
-		foreach(['not-accessories'] as $_i => $_key) {
+		foreach(['not-accessories'] as $_key) {
 			$_thumb = get_post_meta($accessory_id, $_key . '_thumb', true);
-			$meta = get_post_meta($accessory_id, $_key, true);
+			$_meta = get_post_meta($accessory_id, $_key, true);
 			if(
-				$meta && !is_wp_error($meta) && !empty($meta)
+				$_meta && !is_wp_error($_meta) && !empty($_meta)
 				&&
 				$_thumb && !is_wp_error($_thumb) && !empty($_thumb)
 			) {

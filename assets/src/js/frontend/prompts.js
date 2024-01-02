@@ -73,15 +73,6 @@ const PROMPTS = {
                   });
             });
         });
-        document.querySelectorAll('.popup_close:not([data-handled])').forEach((el) => {
-            el.dataset.handled = true;
-            el.addEventListener('click', (event) => {
-                event.preventDefault();
-                if(confirm(PROMPTS.i18n?.rusure2clspopup??'Are you sure you want to close this popup?')) {
-                    thisClass.Swal.close();
-                }
-            });
-        });
 
         document.querySelectorAll('.dynamic_popup').forEach((popup) => {
             if(popup) {
@@ -149,8 +140,9 @@ const PROMPTS = {
                 }
 
                 if(el.checked && isPayableCheckbox) {
+                    var image_src = ((el?.previousElementSibling)?.firstChild)?.dataset.outfit;
                     img = document.createElement('img');img.src = ((el?.previousElementSibling)?.firstChild)?.src;
-                    if((((el?.previousElementSibling)?.firstChild)?.dataset)?.outfit??false) {img.src = ((el?.previousElementSibling)?.firstChild)?.dataset.outfit;}
+                    if((((el?.previousElementSibling)?.firstChild)?.dataset)?.outfit??false) {img.src = image_src;}
                     img.height = frameHeight;img.width = frameWidth;img.id = identity;
                     img.alt = ((el?.previousElementSibling)?.firstChild)?.alt;img.dataset.name = el.name;
                     if((el.dataset?.layer??false) && el.dataset.layer != '') {img.style.zIndex = parseInt(el.dataset.layer);}
@@ -158,7 +150,14 @@ const PROMPTS = {
                     if(el.type == 'radio') {
                         frame.querySelectorAll('img[data-name="'+el.name+'"').forEach((images) => {images.remove();});
                     }
-                    if((el.dataset?.preview??'false') == 'true') {frame.appendChild(img);}
+                    if((el.dataset?.preview??false) == 'true' && image_src) {
+                        frame.appendChild(img);
+                    } else {
+                        /**
+                         * Escape other images rather then outfits.
+                         */
+                        // console.log(156, img);
+                    }
                     
                     if(el.dataset?.cost??false) {
                         switch(el.type) {
@@ -187,7 +186,6 @@ const PROMPTS = {
                                 break;
                         }
                     } else {
-                        console.log('hi');
                         if(el.dataset?.skip??false) {
                             switch(el.type) {
                                 case 'radio':
@@ -904,9 +902,8 @@ const PROMPTS = {
                 field = PROMPTS.get_data(thisClass).find((row)=>row.orderAt==PROMPTS.currentStep);
                 header = document.querySelector('.header_image');
                 if(header) {
-                    if(field && field.headerbgurl!='') {
+                    if(field && field?.headerbgurl && field.headerbgurl != '') {
                         jQuery(header).css('background-image', 'url('+field.headerbgurl+')');
-                        // header.innerHTML = '';
                     }
                 }
                 document.querySelectorAll(root+'.step_visible').forEach((el) => {el.classList.add('d-none');el.classList.remove('step_visible');});
@@ -1206,7 +1203,6 @@ const PROMPTS = {
                             if(header) {
                                 if(field && field.headerbgurl != '') {
                                     jQuery(header).css('background-image', 'url('+field.headerbgurl+')');
-                                    // header.innerHTML = '';
                                 }
                             }
                             document.querySelector('.popup_foot__wrap')?.classList.add('d-none');

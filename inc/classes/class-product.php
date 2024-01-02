@@ -49,7 +49,8 @@ class Product {
 	}
 
 	public function uael_woo_products_add_to_cart_before($product_id, $settings) {
-		$_product = wc_get_product($product_id);$gallery = [];
+		global $teddy_Plushies;$gallery = [];
+		$_product = wc_get_product($product_id);
 		$_product_ids = $_product->get_gallery_image_ids();
 		foreach($_product_ids as $i => $attachment_id) {
 			$Original_image_url = wp_get_attachment_url($attachment_id);
@@ -61,8 +62,12 @@ class Product {
 				'thumb_title'	=> get_the_title($attachment_id),
 			];
 		}
+		$class = ['fwp_custom_actions'];
+		if($teddy_Plushies->is_accessory($product_id)) {
+			$class[] = 'is-accessory';
+		}
 		?>
-		<div class="fwp_custom_actions" data-gallery="<?php echo esc_attr(json_encode($gallery)); ?>">
+		<div class="<?php echo esc_attr(implode(' ', $class)); ?>" data-gallery="<?php echo esc_attr(json_encode($gallery)); ?>">
 		<?php
 	}
 	public function uael_woo_products_add_to_cart_after($product_id, $settings) {
@@ -170,7 +175,15 @@ class Product {
 							$option['imageUrl'] = wp_get_attachment_url((int) $option['image']);
 						}
 						if(isset($option['thumb']) && !empty($option['thumb']) && is_numeric($option['thumb'])) {
-							$option['thumbUrl'] = wp_get_attachment_image_url((int) $option['thumb'], 'thumbnail');
+							/**
+							 * Check whether is it GIF file or not.
+							 * If it is a Gif file then return thumbnail full image
+							 * Otherwise it will return 150x150 thumbnail.
+							 */
+							$isGif = wp_attachment_is('gif', (int) $option['thumb']);
+							$option['thumbUrl'] = wp_get_attachment_image_url((int) $option['thumb'], 
+								$isGif?'full':'thumbnail'
+							);
 						}
 						$json[$_posI][$i]['options'][$j] = $option;
 					}

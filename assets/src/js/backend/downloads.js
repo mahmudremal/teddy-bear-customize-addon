@@ -88,7 +88,7 @@ const DOWNLOADS = {
         thisClass.Swal.fire({
             showConfirmButton: false, showCancelButton: false, showCloseButton: true,
             cancelButtonText: 'Close', confirmButtonColor: '#3085d6', cancelButtonColor: '#d33',
-            customClass: {popup: 'fwp-swal2-popup'}, backdrop: `rgba(0,0,123,0.4)`,
+            customClass: {popup: 'fwp-swal2-popup'}, backdrop: 'rgba(0,0,123,0.4)',
             showLoaderOnConfirm: true, allowOutsideClick: false, html: html.innerHTML,
             title: false, // width: 600,
             didOpen: async () => {

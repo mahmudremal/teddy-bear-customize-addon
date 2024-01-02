@@ -312,7 +312,7 @@ import Ask from "./ask";
 				customClass: {
 					popup: 'fwp-swal2-popup'
 				},
-				backdrop: `rgba(0,0,123,0.4)`,
+				backdrop: 'rgba(0,0,123,0.4)',
 
 				showLoaderOnConfirm: true,
 				allowOutsideClick: false,
@@ -442,12 +442,12 @@ import Ask from "./ask";
 				el.dataset.handledTippy = true;
 				tippy(el, {
 					allowHTML: true,
-					content: `
-					<div class="fwp-image__tippy">
-						<img src="${el.src}" alt="" class="fwp-image__tippy__image">
-						<strong class="fwp-image__tippy__price">${el.dataset.item} (${el.dataset.price})</strong>
-						<span class="fwp-image__tippy__title">${el.dataset.product}</span>
-					</div>`
+					content: '\
+					<div class="fwp-image__tippy">\
+						<img src="'+el.src+'" alt="" class="fwp-image__tippy__image">\
+						<strong class="fwp-image__tippy__price">'+el.dataset.item+' ('+el.dataset.price+')</strong>\
+						<span class="fwp-image__tippy__title">'+el.dataset.product+'</span>\
+					</div>'
 				});
 			});
 			document.querySelectorAll('.fwppopspopup-open:disabled').forEach((el)=>{
@@ -468,7 +468,7 @@ import Ask from "./ask";
 					event.preventDefault();
 					var i = do_repeater.parentElement.parentElement.parentElement.childElementCount;
 					var template = document.createElement('tr');
-					template.innerHTML = `<th scope="row">#${i}</th><td><input id="teddy-name-${i}" type="text" name="teddybearsprompts[teddy-name-${i}]" placeholder="" value=""><label for="teddy-name-${i}"></label></td>`;
+					template.innerHTML = '<th scope="row">#'+i+'</th><td><input id="teddy-name-'+i+'" type="text" name="teddybearsprompts[teddy-name-'+i+']" placeholder="" value=""><label for="teddy-name-'+i+'"></label></td>';
 					do_repeater.parentElement.parentElement.parentElement.insertBefore(template, do_repeater.parentElement.parentElement);
 				});
 				document.querySelectorAll('[id^="teddy-name-"]').forEach((el) => {

@@ -99,6 +99,7 @@ class Menus {
 		return $args;
 	}
 	public function menus($args) {
+		// apply_filters('teddybear/project/system/isactive', 'standard-enable')
 		$args['standard']		= [
 			'title'							=> __('General', 'teddybearsprompts'),
 			'description'					=> __('General settings for teddy-bear customization popup.', 'teddybearsprompts'),
@@ -124,7 +125,7 @@ class Menus {
 					'description'			=> __('Select a global standing product that will be replaced if requsted product doesn\'t have any customization popup set.', 'teddybearsprompts'),
 					'type'					=> 'select',
 					'default'				=> '',
-					'options'				=> $this->get_query(['post_type' => 'product', 'type' => 'option', 'limit' => 500])
+					'options'				=> $this->get_query(['post_type' => 'product', 'type' => 'option', 'limit' => 500, 'noaccessory' => true])
 				],
 				[
 					'id' 					=> 'sitting-global',
@@ -132,7 +133,7 @@ class Menus {
 					'description'			=> __('Select a global sitting product that will be replaced if requsted product doesn\'t have any customization popup set.', 'teddybearsprompts'),
 					'type'					=> 'select',
 					'default'				=> '',
-					'options'				=> $this->get_query(['post_type' => 'product', 'type' => 'option', 'limit' => 500])
+					'options'				=> $this->get_query(['post_type' => 'product', 'type' => 'option', 'limit' => 500, 'noaccessory' => true])
 				],
 				[
 					'id' 					=> 'standard-forceglobal',
@@ -390,16 +391,94 @@ class Menus {
 				],
 			]
 		];
+		$args['email']		= [
+			'title'							=> __('Email', 'teddybearsprompts'),
+			'description'					=> __('Email template & necessey informations.', 'teddybearsprompts'),
+			'fields'						=> [
+				[
+					'id' 					=> 'email-enable_shipped',
+					'label'					=> __('Enable shipped email', 'teddybearsprompts'),
+					'description'			=> __('Mark to enable shipped event email confirmation.', 'teddybearsprompts'),
+					'type'					=> 'checkbox',
+					'default'				=> false
+				],
+				[
+					'id' 					=> 'email-shipped_cc',
+					'label'					=> __('Shipped email CC', 'teddybearsprompts'),
+					'description'			=> __('Give here an email address if you wish to send a carbon copy.', 'teddybearsprompts'),
+					'type'					=> 'text',
+					'default'				=> __('Your Order shipped successfully', 'domain')
+				],
+				[
+					'id' 					=> 'email-shipped_subject',
+					'label'					=> __('Enable shipped email', 'teddybearsprompts'),
+					'description'			=> __('Mark to enable shipped event email confirmation.', 'teddybearsprompts'),
+					'type'					=> 'text',
+					'default'				=> __('Your Order shipped successfully', 'domain')
+				],
+				[
+					'id' 					=> 'email-shipped_template',
+					'label'					=> __('Shipped template', 'teddybearsprompts'),
+					'description'			=> __('Give here shipping text or html email template with inlined css & no js.', 'teddybearsprompts'),
+					'type'					=> 'textarea',
+					'default'				=> sprintf(
+						__("Hey {{customer}},\nWe're glad to say that your order has been shipped successfully.\nBest Wishes", 'domain'),
+						// 
+					)
+				],
+				[
+					'id' 					=> 'email-shipped_htmlmode',
+					'label'					=> __('Shipped email formate', 'teddybearsprompts'),
+					'description'			=> __('Select html if you give html contents on the above field.', 'teddybearsprompts'),
+					'type'					=> 'radio',
+					'default'				=> 'text',
+					'options'				=> [
+						'text'				=> 'Text mode',
+						'html'				=> 'HTML mode'
+					]
+				],
+			]
+		];
+		$args['order']		= [
+			'title'							=> __('Order', 'teddybearsprompts'),
+			'description'					=> __('Order information an necessery data.', 'teddybearsprompts'),
+			'fields'						=> [
+				[
+					'id' 					=> 'order-attach_status',
+					'label'					=> __('Attach certificates', 'teddybearsprompts'),
+					'description'			=> __('Give here all WC Order status slug, on that status changed event, certificates will be attached with confirmation.', 'teddybearsprompts'),
+					'type'					=> 'text',
+					'default'				=> 'shipped, completed'
+				],
+				[
+					'id' 					=> 'order-certificate_email',
+					'label'					=> __('Certificates email', 'teddybearsprompts'),
+					'description'			=> __('Give here order status slug so that when order thatus changed to this slug, it will send a seperate certificate email template with certificates attached.', 'teddybearsprompts'),
+					'type'					=> 'text',
+					'default'				=> 'completed'
+				],
+				[
+					'id' 					=> 'order-avoid_askvoice',
+					'label'					=> __('Avoid voice button', 'teddybearsprompts'),
+					'description'			=> __('Give here those order status slug that will act like when order status changed to that slug and send a confirmation email, it won\'t put an Send voice file button.', 'teddybearsprompts'),
+					'type'					=> 'text',
+					'default'				=> 'shipped, completed'
+				],
+			]
+		];
+
+		unset($args['email']);
 		return $args;
 	}
 	public function get_query($args) {
-		$args = wp_parse_args($args, [
-			'post_type'	=> 'product',
-			'type'		=> 'option',
-			'limit'		=> 500,
-			'queryType'	=> 'post',
+		global $teddy_Plushies;
+		$args = (object) wp_parse_args($args, [
+			'post_type'		=> 'product',
+			'type'			=> 'option',
+			'limit'			=> 500,
+			'queryType'		=> 'post',
+			'noaccessory'	=> false
 		]);
-		$args = (object) $args;
 		$options = [];
 		if($args->queryType == 'post') {
 			$query = get_posts([
@@ -408,9 +487,22 @@ class Menus {
 				'order'				=> 'DESC',
 				'orderby'			=> 'date',
 				'post_status'		=> 'publish',
+				
 			]);
 			foreach($query as $_post) {
+				if($args->noaccessory && $teddy_Plushies->is_accessory($_post->ID)) {continue;}
 				$options[$_post->ID] = get_the_title($_post->ID);
+
+				// Function to remove popup customization meta.
+				// _product_custom_popup || _teddy_custom_data
+				// $meta = get_post_meta($_post->ID, '_product_custom_popup', true);
+				// $exists = get_post_meta($_post->ID, '_product_custom_popup_stagged', true);
+				// if(! $meta && $exists) {
+				// 	update_post_meta($_post->ID, '_product_custom_popup', $exists);
+				// 	$updated = delete_post_meta($_post->ID, '_product_custom_popup_stagged');
+				// 	if(!$updated) {echo 'post meta failed to removed';}
+				// }
+				
 			}
 		} else if($args->queryType == 'term') {
 			$query = get_categories('taxonomy=product_cat&post_type=product');

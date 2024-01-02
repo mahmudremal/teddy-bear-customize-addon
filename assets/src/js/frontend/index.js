@@ -10,15 +10,17 @@ import PROMPTS from "./prompts";
 import Toastify from 'toastify-js';
 import voiceRecord from "./voicerecord";
 import popupCart from "./popupcart";
+
 import flatpickr from "flatpickr";
 import KeenSlider from 'keen-slider';
 import tippy from 'tippy.js';
-import Splide from '@splidejs/splide';
-import icons from "./icons";
+// import Splide from '@splidejs/splide';
+
+// import icons from "./icons";
 import { keenSliderNavigation } from "./slider";
 import Exim from "./exim"
 import Tidio_Chat from "./tidio";
-
+// import Twig from 'twig';
 
 ( function ( $ ) {
 	class FutureWordPress_Frontend {
@@ -29,7 +31,7 @@ import Tidio_Chat from "./tidio";
 			var i18n = fwpSiteConfig?.i18n??{};this.noToast = true;
 			this.config = fwpSiteConfig;this.KeenSlider = KeenSlider;
 			this.i18n = {confirming: 'Confirming', ...i18n};
-			this.Exim = new Exim(this);this.Splide = Splide;
+			this.Exim = new Exim(this);// this.Splide = Splide;
 			this.setup_hooks();
 		}
 		setup_hooks() {
@@ -37,6 +39,7 @@ import Tidio_Chat from "./tidio";
 			window.thisClass = this;
 			this.prompts = PROMPTS;
 			this.Swal = Swal;
+			// this.Twig = Twig;
 			this.flatpickr = flatpickr;
 			popupCart.priceSign = this.config?.currencySign??'$';
 			this.popupCart = popupCart;
@@ -145,23 +148,17 @@ import Tidio_Chat from "./tidio";
 				html = document.createElement('div');html.appendChild(template);
 				// && json.header.product_photo
 				var current_groups = PROMPTS.get_data(thisClass);
-				if(thisClass.Swal && thisClass.Swal.isVisible()) {
+				if (thisClass.Swal && thisClass.Swal.isVisible()) {
+					var steps = (current_groups)?current_groups.map((row, i)=>(row.steptitle=='')?(i+1):(
+						`${(row?.stepicon)?`<div class="swal2-progress-step__icon">${row.stepicon}</div>`:``}
+						<span>${row.steptitle}</span>`
+					)):[];
 					// thisClass.prompts.progressSteps = [...new Set(thisClass.prompts.lastJson.product.custom_fields.map((row, i)=>(row.steptitle=='')?(i+1):row.steptitle))];
-					thisClass.prompts.progressSteps = [...new Set(
-						current_groups.map((row, i)=>(row.steptitle=='')?(i+1):(
-							`${(row?.stepicon)?`<div class="swal2-progress-step__icon">${row.stepicon}</div>`:``}
-							<span>${row.steptitle}</span>`
-						))
-					)];
+					thisClass.prompts.progressSteps = [...new Set(steps)];
 					thisClass.Swal.update({
-						progressSteps: thisClass.prompts.progressSteps,
+						html: html.innerHTML,
 						currentProgressStep: 0,
-						// progressStepsDistance: '10px',
-
-						// showCloseButton: true,
-						// allowOutsideClick: true,
-						// allowEscapeKey: true,
-						html: html.innerHTML
+						progressSteps: thisClass.prompts.progressSteps
 					});
 					thisClass.prompts.lastJson = thisClass.lastJson;
 					if(thisClass.lastJson.product && thisClass.lastJson.product.toast) {
@@ -169,8 +166,8 @@ import Tidio_Chat from "./tidio";
 							text: thisClass.lastJson.product.toast.replace(/(<([^>]+)>)/gi, ""),
 							duration: 45000,
 							close: true,
-							gravity: "top", // `top` or `bottom`
-							position: "left", // `left`, `center` or `right`
+							gravity: "top", // 'top' or 'bottom'
+							position: "left", // 'left', 'center' or 'right'
 							stopOnFocus: true, // Prevents dismissing of toast on hover
 							style: {background: 'linear-gradient(to right, #4b44bc, #8181be)'},
 							onClick: function(){} // Callback after click
@@ -178,21 +175,47 @@ import Tidio_Chat from "./tidio";
 					}
 					setTimeout(() => {
 						var fields = thisClass.prompts.get_data(thisClass);
-						var voice = fields.find((row)=>row.type == 'voice');
-						if(voice) {
-							voice.cost = (!(voice?.cost) || voice.cost == '')?0:voice.cost;
-							// voiceRecord.meta_tag = voice.steptitle;
-							voiceRecord.product_id = (voice?.product && parseInt(voice.product) !== NaN)?parseInt(voice.product):false;
-							
-							voiceRecord.duration = parseFloat((voice.duration == '')?'20':voice.duration);
-							// popupCart.addAdditionalPrice(voice.steptitle, parseFloat(voice.cost));
-						}
-						if(PROMPTS.groupSelected) {
-							thisClass.prompts.init_events(thisClass);
+						if(fields) {
+							var voice = fields.find((row)=>row.type == 'voice');
+							if(voice) {
+								voice.cost = (!(voice?.cost) || voice.cost == '')?0:voice.cost;
+								// voiceRecord.meta_tag = voice.steptitle;
+								voiceRecord.product_id = (voice?.product && parseInt(voice.product) !== NaN)?parseInt(voice.product):false;
+								
+								voiceRecord.duration = parseFloat((voice.duration == '')?'20':voice.duration);
+								// popupCart.addAdditionalPrice(voice.steptitle, parseFloat(voice.cost));
+							}
+							if(PROMPTS.groupSelected) {
+								thisClass.prompts.init_events(thisClass);
+							} else {
+								thisClass.prompts.init_group_select_events(thisClass);
+							}
 						} else {
-							thisClass.prompts.init_group_select_events(thisClass);
+							var imageUrl = thisClass.lastJson.product?.empty_image;
+							if(imageUrl) {
+								var popup = document.querySelector('.dynamic_popup');
+								popup.querySelectorAll('.dynamic_popup__error').forEach(el => el.remove());
+								var template = document.createElement('div');
+								var image = document.createElement('img');
+								image.src = imageUrl;image.alt = 'Error happens';
+								image.style.width = '100%';image.style.padding = '10px';
+								template.classList.add('dynamic_popup__error');
+								template.appendChild(image);popup.appendChild(template);
+							}
+							
 						}
-						
+						/**
+						 * Enabling close button event.
+						 */
+						document.querySelectorAll('.popup_close:not([data-handled])').forEach((el) => {
+							el.dataset.handled = true;
+							el.addEventListener('click', (event) => {
+								event.preventDefault();
+								if(confirm(PROMPTS.i18n?.rusure2clspopup??'Are you sure you want to close this popup?')) {
+									thisClass.Swal.close();
+								}
+							});
+						});
 					}, 300);
 				}
 			});
@@ -224,13 +247,12 @@ import Tidio_Chat from "./tidio";
 						cancelButtonText: thisClass.i18n?.buymoreplushies??'Buy more plushies',
 						confirmButtonColor: '#ffc52f',
 						cancelButtonColor: '#de424b',
-						dismissButtonColor: '#de424b',
 						customClass: {popup: 'fwp-confirmed_popup', confirmButton: 'text-dark'},
 						// focusConfirm: true,
 						// reverseButtons: true,
-						// backdrop: `rgba(0,0,123,0.4) url("https://sweetalert2.github.io/images/nyan-cat.gif") left top no-repeat`,
-						backdrop: `rgb(137 137 137 / 74%)`,
-						html: `<div class="dynamic_popup"></div>`,
+						// dismissButtonColor: '#de424b',
+						backdrop: 'rgb(137 137 137 / 74%)',
+						html: '<div class="dynamic_popup"></div>',
 						showLoaderOnConfirm: true,
 						footer: false,
 						didOpen: async () => {
@@ -276,7 +298,7 @@ import Tidio_Chat from "./tidio";
 								document.querySelectorAll('.swal2-footer__wraping__tooltip:not([data-tooltip-handled])').forEach((el) => {
 									el.dataset.tooltipHandled = true;
 									thisClass.tippy(el, {
-										content: thisClass.i18n?.obtainplushieswraps??`Obtain plushies that come in wrapped packaging.`,
+										content: thisClass.i18n?.obtainplushieswraps??'Obtain plushies that come in wrapped packaging.',
 										animation: 'perspective-extreme',
 										theme: 'site-theme'
 									});
@@ -647,7 +669,7 @@ import Tidio_Chat from "./tidio";
 						allowOutsideClick: false,
 						allowEscapeKey: true,
 						customClass: {popup: 'fwp-swal2-popup'},
-						// backdrop: `rgb(255 255 255 / 90%)`,
+						// backdrop: 'rgb(255 255 255 / 90%)',
 						showLoaderOnConfirm: true,
 						allowOutsideClick: false, // () => !Swal.isLoading(),
 						

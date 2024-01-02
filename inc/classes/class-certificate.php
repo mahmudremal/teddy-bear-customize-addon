@@ -18,7 +18,7 @@ class Certificate {
 		add_action('teddybearpopupaddon_mail_certificates', [$this, 'teddybearpopupaddon_mail_certificates'], 1, 2);
 		add_action('init', [$this, 'teddybearpopupaddon_preview_certificate'], 10, 0);
 		add_action('woocommerce_order_status_completed', [$this, 'woocommerce_order_status_completed'], 10, 2);
-		// add_filter('woocommerce_email_attachments', [$this, 'woocommerce_email_attachments'], 10, 3);
+		add_filter('woocommerce_email_attachments', [$this, 'woocommerce_email_attachments'], 10, 3);
 	}
 	public function do_certificate__blank($args) {
 		require_once(TEDDY_BEAR_CUSTOMIZE_ADDON_DIR_PATH . '/inc/tcpdf/examples/tcpdf_include.php');
@@ -417,11 +417,11 @@ class Certificate {
 		}
 	}
 	public function woocommerce_order_status_completed($order_id, $order) {
-		if(!in_array($order->get_status(), ['completed'])) {return;}
+		if(!in_array($order->get_status(), explode(',', str_replace([' '], [''], apply_filters('teddybear/project/system/getoption', 'order-certificate_email', 'completed'))))) {return;}
 		do_action('woocommerce_order_action_send_birth_certificates', $order);
 	}
 	public function woocommerce_email_attachments($attachments , $email_id, $order) {
-		// if(!in_array($order->get_status(), ['completed'])) {return;}
+		if(!in_array($order->get_status(), explode(',', str_replace([' '], [''], apply_filters('teddybear/project/system/getoption', 'order-attach_status', 'shipped'))))) {return;}
 		$certificates = $this->get_all_certificates($order);
 		// print_r($certificates);wp_die();
 		foreach($certificates as $certificate) {

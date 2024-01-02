@@ -16,7 +16,14 @@ class Ask {
 			document.querySelectorAll('#order_status[name="order_status"]').forEach((select) => {
 				select.classList.remove('select2-hidden-accessible');
 				jQuery(select).on('select2:select', (event) => {
-					if(event.target.value == 'wc-completed') {askClass.askForTeddyInfo(window.teddyNameRequired, thisClass);}
+					if(['wc-completed', 'wc-shipped'].includes(event.target.value)) {askClass.askForTeddyInfo(window.teddyNameRequired, thisClass);}
+				});
+			});
+			document.querySelectorAll('.fwp-outfit__certificate .btn[data-certificate]').forEach((button) => {
+				button.addEventListener('click', (event) => {
+					if (window.teddyNameRequired.find(row => row.item_id == button.dataset.certificate)) {
+						askClass.askForTeddyInfo(window.teddyNameRequired, thisClass);
+					}
 				});
 			});
 			
@@ -49,7 +56,7 @@ class Ask {
 					formdata.append('_nonce', thisClass.ajaxNonce);
 					thisClass.sendToServer(formdata);
 				}
-				// return fetch(`${thisClass.ajaxUrl}?action=${action}&_nonce=${thisClass.ajaxNonce}&order_id=${item.order_id}&item_id=${item.item_id}&teddyname=${input}`)
+				// return fetch('${thisClass.ajaxUrl}?action=${action}&_nonce=${thisClass.ajaxNonce}&order_id=${item.order_id}&item_id=${item.item_id}&teddyname=${input}')
 				// .then(response => {
 				//   if(!response.ok) {
 				// 	throw new Error(response.statusText)
@@ -61,7 +68,7 @@ class Ask {
 				// 	if(updateBtn) {updateBtn.classList.remove('disabled');updateBtn.removeAttribute('disabled')}
 				// }).catch(error => {
 				//   Swal.showValidationMessage(
-				// 	`Request failed: ${error}`
+				// 	'Request failed: ' + error
 				// )
 				// })
 			},

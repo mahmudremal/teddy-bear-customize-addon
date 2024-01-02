@@ -990,7 +990,6 @@ const PROMPTS = {
         file.accept = '.json';file.style.display = 'none';
         a = document.createElement('a');a.href = '#';a.innerHTML = thisClass.i18n?.import??'Import';
         file.addEventListener('change', (event) => {
-            console.log('Identified');
             if(event.target.files[0]) {
                 const selectedFile = event.target.files[0];
                 document.querySelector('.swal2-html-container')?.classList.add('loading-exim');
@@ -1002,13 +1001,13 @@ const PROMPTS = {
                         const fileContents = event.target.result;
                         try {
                             const parsedData = JSON.parse(fileContents);
+                            console.log('Identified', parsedData);
                             if(parsedData?.importable && parsedData?.imports) {
-                                parsedData = parsedData.imports;
                                 thisClass.isImporting = true;
                                 var formdata = new FormData();
                                 formdata.append('action', 'futurewordpress/project/ajax/save/product');
                                 formdata.append('product_id', thisClass.config?.product_id??'');
-                                formdata.append('dataset', JSON.stringify(parsedData));
+                                formdata.append('dataset', JSON.stringify(parsedData.imports));
                                 formdata.append('_nonce', thisClass.ajaxNonce);
                                 thisClass.sendToServer(formdata);
                                 setTimeout(() => {

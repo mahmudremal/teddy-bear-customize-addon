@@ -71,7 +71,7 @@ const voiceRecord = {
     });
     voiceRecord.uploadInput.addEventListener('change', voiceRecord.uploadAudio);
     voiceRecord.uploadInput.addEventListener('click', (event) => {
-        const audioupload_instuction = voiceRecord.i18n?.audioupload_instuction??`Please upload file upto 20 seconds.`;
+        const audioupload_instuction = voiceRecord.i18n?.audioupload_instuction??'Please upload file upto 20 seconds.';
         voiceRecord.audioInstructPreview.innerHTML = audioupload_instuction.replace(/(\r\n|\n\r|\r|\n)/g, '<br>' + '$1');
         voiceRecord.audioInstructPreview.classList.remove('d-none');
     });
@@ -92,6 +92,7 @@ const voiceRecord = {
     voiceRecord.skipButton.type = 'button';
     voiceRecord.skipButton.classList.add('do_recorder__skip');
     voiceRecord.skipButton.addEventListener('click', (event) => {
+      voiceRecord.playButtonAction('hide');
       voiceRecord.rootElement.classList.remove('visible_audio');
       voiceRecord.skipButton.classList.add('do_recorder__skipped');
       voiceRecord.releaseButton.classList.remove('do_recorder__released');
@@ -126,7 +127,6 @@ const voiceRecord = {
     voiceRecord.waveAudioPreview.appendChild(voiceRecord.wavePreview);voiceRecord.waveAudioPreview.appendChild(timer);rootElement.appendChild(voiceRecord.waveAudioPreview);
 
     voiceRecord.audioPreview = audioPreview;
-    voiceRecord.recorder = null;
     voiceRecord.recordedBlob = null;
 
 
@@ -176,7 +176,7 @@ const voiceRecord = {
         recButton.disabled = false;voiceRecord.playButtonAction('hide');
         voiceRecord.skipButton.classList.remove('do_recorder__skipped');
         voiceRecord.releaseButton.classList.remove('do_recorder__released');
-        const audiorecord_instuction = voiceRecord.i18n?.audiorecord_instuction??`Please record your voice upto 20 seconds.`;
+        const audiorecord_instuction = voiceRecord.i18n?.audiorecord_instuction??'Please record your voice upto 20 seconds.';
         voiceRecord.audioInstructPreview.innerHTML = audiorecord_instuction.replace(/(\r\n|\n\r|\r|\n)/g, '<br>' + '$1');
         voiceRecord.audioInstructPreview.classList.remove('d-none');
         /** **here** */
@@ -225,82 +225,31 @@ const voiceRecord = {
     // voiceRecord.record.on('record-start', () => {});
     // voiceRecord.record.on('record-end', () => {});
   },
-  playRecording: () => {
-    voiceRecord.wavesurfer.playPause();
-  },
-  startRecording: () => {
-    navigator.mediaDevices.getUserMedia({ audio: true })
-      .then((stream) => {
-        // console.log('recording 2nd way...');
-        voiceRecord.recorder = new RecordRTC(stream, { type: 'audio' });
-        voiceRecord.recorder.startRecording();
-        setTimeout(() => {voiceRecord.stopRecording();}, (voiceRecord.duration * 1000));
-      })
-      .catch((error) => {
-        console.error(voiceRecord.i18n?.erraccessmic??'Error accessing the microphone:', error);
-      });
-  },
-  stopRecording: function () {
-    if (voiceRecord.recorder) {
-      voiceRecord.recorder.stopRecording(function () {
-        voiceRecord.recordedBlob = voiceRecord.recorder.getBlob();
-
-        voiceRecord.audioPreview.src = URL.createObjectURL(voiceRecord.recordedBlob);
-  
-        // Stop and destroy the wavesurfer instance
-        if(voiceRecord.wavesurfer) {
-          voiceRecord.wavesurfer.stop();
-          // voiceRecord.wavesurfer.destroy();
-        }
-  
-        // Create a new wavesurfer instance
-        voiceRecord.wavesurfer = WaveSurfer.create({
-          container: '#audio-preview',
-          waveColor: '#6a4447',
-          progressColor: '#e63f51',
-          barWidth: 10,
-          // barHeight: 1,
-          barRadius: 10,
-          responsive: true,
-          barGap: 2,
-          height: 20,
-        });
-  
-        // Load the recorded audio blob into the wavesurfer
-        voiceRecord.wavesurfer.load(voiceRecord.audioPreview.src);
-
-        
-        voiceRecord.isPlaying = false;
-        voiceRecord.wavesurfer.once('finish', () => {
-          voiceRecord.isPlaying = false;
-        });
-        voiceRecord.wavesurfer.once('interaction', () => {
-          if(voiceRecord.isPlaying) {
-            voiceRecord.wavesurfer.pause();
-            voiceRecord.isPlaying = false;
-          } else {
-            voiceRecord.wavesurfer.play();
-            voiceRecord.isPlaying = true;
-          }
-        });
-      });
+  playRecording: (type = false) => {
+    switch (type) {
+      case 'stop':
+        voiceRecord.wavesurfer.stop();
+        break;
+      case 'play':
+        voiceRecord.wavesurfer.play();
+        break;
+      default:
+        voiceRecord.wavesurfer.playPause();
+        break;
     }
   },
   releaseRecording: () => {
-    if(voiceRecord.recorder) {
-      voiceRecord.recorder.destroy();
-      voiceRecord.recorder = null;
-    }
     if(voiceRecord.wavesurfer) {
       // voiceRecord.wavesurfer.destroy()
     }
+    voiceRecord.playButtonAction('hide');voiceRecord.playRecording('stop');
     voiceRecord.recordedBlob = null;voiceRecord.audioPreview.src = '';
     voiceRecord.popupCart.addAdditionalPrice(voiceRecord.meta_tag, parseFloat(voiceRecord.recordButton.dataset.cost), false, voiceRecord.product_id);
     // voiceRecord.popupCart.removeAdditionalPrice(voiceRecord.i18n?.voice??'Voice');
     // voiceRecord.releaseButton.innerHTML = icons.tick + voiceRecord.releaseButton.innerHTML;
     voiceRecord.skipButton.classList.remove('do_recorder__skipped');
     voiceRecord.releaseButton.classList.add('do_recorder__released');
-    const audiolater_instuction = voiceRecord.i18n?.audiolater_instuction??`1. Receive instructions & button in order email.\n2. Upload audio file anytime later.\n3. we will ship when your audio file is received.`;
+    const audiolater_instuction = voiceRecord.i18n?.audiolater_instuction??'1. Receive instructions & button in order email.\n2. Upload audio file anytime later.\n3. we will ship when your audio file is received.';
     voiceRecord.audioInstructPreview.innerHTML = audiolater_instuction.replace(/(\r\n|\n\r|\r|\n)/g, '<br>' + '$1');
     voiceRecord.audioInstructPreview.classList.remove('d-none');
     voiceRecord.rootElement.classList.remove('visible_audio');
@@ -340,8 +289,17 @@ const voiceRecord = {
         await voiceRecord.wavesurfer.load(fileURL);
         voiceRecord.rootElement.classList.add('visible_audio');
         var second = voiceRecord?.waveAudioPreview.querySelector('[data-timer-type="s"]');
-        if(second) {second.innerHTML = (voiceRecord.wavesurfer?.duration??0.00)?.toFixed(2).replace('.', ':')??'0:00';}
+        /**
+         * Reset Input value.
+         */
+        voiceRecord.uploadInput.value = '';
+        
+        if(second) {
+          voiceRecord.playButtonAction('show');
+          second.innerHTML = (voiceRecord.wavesurfer?.duration??0.00)?.toFixed(2).replace('.', ':')??'0:00';
+        }
         if((voiceRecord.wavesurfer?.duration??0) > voiceRecord.duration) {
+          voiceRecord.playButtonAction('hide');voiceRecord.playRecording('stop');
           var text = voiceRecord.i18n?.audioexcedduration??'Your selected audio file exceed maximum duration of 20sec.';
           voiceRecord.toastify({text: text,duration: 45000,close: true,gravity: "top",position: "right",stopOnFocus: true,style: {background: 'linear-gradient(to right, rgb(255 180 117), rgb(251, 122, 72))'}}).showToast();
 
@@ -349,6 +307,11 @@ const voiceRecord = {
           voiceRecord.recordedBlob = null;
           // voiceRecord.wavesurfer.destroy();
           voiceRecord.rootElement.classList.remove('visible_audio');
+        } else {
+          /**
+           * Add prices on upload voice
+           */
+          voiceRecord.popupCart.addAdditionalPrice(voiceRecord.meta_tag, parseFloat(voiceRecord.recordButton.dataset.cost), false, voiceRecord.product_id);
         }
       }
     }

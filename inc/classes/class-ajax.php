@@ -110,6 +110,10 @@ class Ajax {
 			],
 		];
 
+		if (!$json['product']['custom_fields'] || count($json['product']['custom_fields']) <= 0) {
+			$json['product']['empty_image'] = TEDDY_BEAR_CUSTOMIZE_ADDON_BUILD_URI . '/icons/Team meeting_Monochromatic.svg';
+		}
+
 		wp_send_json_success( $json, 200 );
 	}
 	public function submit_popup() {

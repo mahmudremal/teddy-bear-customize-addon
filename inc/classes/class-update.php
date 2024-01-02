@@ -53,9 +53,9 @@ class Update {
 	}
     private function get_repository_info() {
 		if (is_null($this->github_response)) { // Do we have a response?
-			$args = array();
+			$args = [];
 			$request_uri = sprintf('https://api.github.com/repos/%s/%s/releases', $this->username, $this->repository); // Build URI
-			$args = array();
+			$args = [];
 			if ($this->authorize_token) { // Is there an access token?
 				$args['headers']['Authorization'] = "bearer {$this->authorize_token}"; // Set the headers
 			}
@@ -68,10 +68,10 @@ class Update {
 	}
     public function initialize() {
         // set_site_transient('update_plugins', null);
-        add_filter('site_transient_update_plugins', array($this, 'modify_transient'));
-        add_filter('pre_set_site_transient_update_plugins', array($this, 'modify_transient'), 10, 1);
-        add_filter('plugins_api', array($this, 'plugin_popup'), 10, 3);
-        add_filter('upgrader_post_install', array($this, 'after_install'), 10, 3);
+        add_filter('site_transient_update_plugins', [$this, 'modify_transient']);
+        add_filter('pre_set_site_transient_update_plugins', [$this, 'modify_transient'], 10, 1);
+        add_filter('plugins_api', [$this, 'plugin_popup'], 10, 3);
+        add_filter('upgrader_post_install', [$this, 'after_install'], 10, 3);
         
         // Add Authorization Token to download_package
         add_filter('upgrader_pre_download',
@@ -88,21 +88,26 @@ class Update {
                 $version_tag = (isset($checked[$this->basename]) && !empty($checked[$this->basename]))?'v' . $checked[$this->basename]:false;
                 
 
-                if ($version_tag) {
-                    $out_of_date = version_compare($this->github_response['tag_name'], $version_tag, 'gt');
+                if ($version_tag && is_array($this->github_response)) {
 
-                    // print_r(['out_of_date', $out_of_date]);
+                    // print_r($this->github_response);
                     
-                    if ($out_of_date) {
-                        $new_files = $this->github_response['zipball_url'];
-                        $slug = current(explode('/', $this->basename));
-                        $plugin = [
-                            'slug' => $slug,
-                            'package' => $new_files,
-                            'url' => $this->plugin["PluginURI"],
-                            'new_version' => $this->github_response['tag_name']
-                        ];
-                        $transient->response[$this->basename] = (object) $plugin;
+                    try {
+                        $out_of_date = version_compare($this->github_response['tag_name'], $version_tag, 'gt');
+                            
+                        if ($out_of_date) {
+                            $new_files = $this->github_response['zipball_url'];
+                            $slug = current(explode('/', $this->basename));
+                            $plugin = [
+                                'slug' => $slug,
+                                'package' => $new_files,
+                                'url' => $this->plugin["PluginURI"],
+                                'new_version' => $this->github_response['tag_name']
+                            ];
+                            $transient->response[$this->basename] = (object) $plugin;
+                        }
+                    } catch (\Exception $th) {
+                        //throw $th;
                     }
                 }
             }
@@ -114,7 +119,7 @@ class Update {
             if ($args->slug == current(explode('/', $this->basename))) {
                 $this->get_repository_info();
             
-                $plugin = array(
+                $plugin = [
                     'name'				=> $this->plugin["Name"],
                     'slug'				=> $this->basename,
                     'requires'          => '3.3',
@@ -129,12 +134,12 @@ class Update {
                     'last_updated'		=> $this->github_response['published_at'],
                     'homepage'			=> $this->plugin["PluginURI"],
                     'short_description' => $this->plugin["Description"],
-                    'sections'			=> array(
+                    'sections'			=> [
                         'Description'	=> $this->plugin["Description"],
                         'Updates'		=> $this->github_response['body'],
-                   ),
+                    ],
                     'download_link'		=> $this->github_response['zipball_url']
-              );
+                ];
                 return (object) $plugin;
             }
         }
@@ -143,7 +148,7 @@ class Update {
 	public function download_package($args, $url) {
 		if (null !== $args['filename']) {
 			if ($this->authorize_token) { 
-				$args = array_merge($args, array("headers" => array("Authorization" => "token {$this->authorize_token}")));
+				$args = array_merge($args, ["headers" => ["Authorization" => "token {$this->authorize_token}"]]);
 			}
 		}
 		remove_filter('http_request_args', [$this, 'download_package']);

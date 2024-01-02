@@ -225,19 +225,23 @@ class Meta_Boxes {
 		$_key = '_teddy_custom_data';
 		if(array_key_exists($_key, $_POST)) {
 			update_post_meta($post_id, $_key, $_POST[$_key]);
-		}
-		foreach($teddy_Plushies->get_accessories_terms() as $_key => $_text) {
-			if(isset($_POST[$_key])) {
-				update_post_meta($post_id, $_key, $_POST[$_key]);
-				if(isset($_POST[$_key . '_thumb'])) {
-					update_post_meta($post_id, $_key . '_thumb', $_POST[$_key . '_thumb']);
+			/**
+			 * Update all accessory items either remove.
+			 */
+			foreach($teddy_Plushies->get_accessories_terms() as $_key => $_text) {
+				if(isset($_POST[$_key])) {
+					update_post_meta($post_id, $_key, $_POST[$_key]);
+					if(isset($_POST[$_key . '_thumb'])) {
+						update_post_meta($post_id, $_key . '_thumb', $_POST[$_key . '_thumb']);
+					}
+				} else {
+					delete_post_meta($post_id, $_key);
+					// if(!isset($_POST[$_key . '_thumb'])) {
+					// 	delete_post_meta($post_id, $_key . '_thumb', $_POST[$_key . '_thumb']);
+					// }
 				}
-			} else {
-				delete_post_meta($post_id, $_key);
-				// if(!isset($_POST[$_key . '_thumb'])) {
-				// 	delete_post_meta($post_id, $_key . '_thumb', $_POST[$_key . '_thumb']);
-				// }
 			}
+			
 		}
 	}
 	

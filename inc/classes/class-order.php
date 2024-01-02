@@ -161,7 +161,7 @@ class Order {
 								$order_item_product = $order_item->get_product();
 								if(!$teddy_Plushies->is_accessory($order_item_product->get_id())): ?>
 									<li class="fwp-outfit__items <?php echo esc_attr((true)?'fwp-outfit__certificate':''); ?>">
-										<a href="<?php echo esc_url(home_url('?certificate_preview='. $order_id .'-'.$order_item_id)); ?>" class="btn button link" target="_blank"><?php esc_html_e('Certificate', 'teddybearsprompts'); ?></a>
+										<a href="<?php echo esc_url(home_url('?certificate_preview='. $order_id .'-'.$order_item_id)); ?>" class="btn button link" data-certificate="<?php echo esc_attr($order_item_id); ?>" target="_blank"><?php esc_html_e('Certificate', 'teddybearsprompts'); ?></a>
 									</li>
 							<?php endif; ?>
 						<?php else: ?>
@@ -211,7 +211,8 @@ class Order {
 		global $teddy_Product;global $teddy_Voices;global $teddy_Order;
 		// if(!isset($order->is_order_confirmation) || $order->is_order_confirmation !== true) {return;}
 		// if($this->confirmMailTrack !== true) {return;}
-		if(in_array($order->get_status(), ['completed'])) {return;}
+		
+		if(in_array($order->get_status(), explode(',', str_replace([' '], [''], apply_filters('teddybear/project/system/getoption', 'order-avoid_askvoice', 'shipped, completed'))))) {return;}
 		if(!$teddy_Voices->should_exists_voices($order, $order_item)) {return;}
 		if(!$teddy_Voices->has_single_voices($order, $order_item)) {
 			$uploadVoiceURL = 'mailto:'.get_option('admin_email').'?subject='.esc_attr(__('Voice Record', 'teddybearsprompts')).'&body='.esc_attr(sprintf(__('Order #%d, Cart Item: #%d, Item Subtotal: %s %s Product: %s', 'teddybearsprompts'), $order->get_id(), $order_item->get_id(), $teddy_Order->get_order_item_subtotal($order_item, $order->get_id()), '%0D%0A', get_the_title($order_item->get_product_id())));
