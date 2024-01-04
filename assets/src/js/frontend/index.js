@@ -47,6 +47,7 @@ import Tidio_Chat from "./tidio";
 			this.init_events();
 			this.init_i18n();
 			this.init_search_form();
+			this.init_remove_acc_form();
 			voiceRecord.i18n = this.i18n;
 			PROMPTS.i18n = this.i18n;
 			voiceRecord.init_recorder(this);
@@ -863,6 +864,32 @@ import Tidio_Chat from "./tidio";
 
 		init_checkout_metadata() {
 			const thisClass = this;
+		}
+
+		init_remove_acc_form() {
+			const thisClass = this;
+			document.querySelectorAll('.woocommerce-removeAccountForm').forEach((form) => {
+				form.addEventListener('submit', (event) => {
+					const message = thisClass.i18n?.delete_acc_confirmation??'Are you sure you want to delete all of your account information? This will permanently remove you account with all relateed informations.';
+					if(confirm(message)) {
+						return true;
+					} else {
+						event.preventDefault();
+						return false;
+					}
+				});
+			});
+			if (thisClass.config?.notifications) {
+				document.querySelectorAll('main#main.site-main .entry-title').forEach(entry => {
+					var notifys = document.createElement('div');notifys.classList.add('notifys');
+					notifys.innerHTML = thisClass.config.notifications.map((row, index) => `
+					<div class="alert alert-danger" role="alert">
+						${row?.message??''}
+					</div>
+					`).join('');
+					entry.appendChild(notifys);
+				});
+			}
 		}
 		
 	}

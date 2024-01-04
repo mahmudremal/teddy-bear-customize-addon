@@ -15,11 +15,13 @@ class Project {
 		global $teddy_Cart;$teddy_Cart = Cart::get_instance();
 		global $teddy_Ajax;$teddy_Ajax = Ajax::get_instance();
 		global $teddy_Meta;$teddy_Meta = Meta::get_instance();
+		global $teddy_Noti;$teddy_Noti = Noti::get_instance();
 		global $teddy_Order;$teddy_Order = Order::get_instance();
 		global $teddy_Hooks;$teddy_Hooks = Hooks::get_instance();
 		global $teddy_Media;$teddy_Media = Media::get_instance();
 		global $teddy_Menus;$teddy_Menus = Menus::get_instance();
 		global $teddy_Email;$teddy_Email = Email::get_instance();
+		global $teddy_Price;$teddy_Price = Price::get_instance();
 		global $teddy_Update;$teddy_Update = Update::get_instance();
 		global $teddy_Filter;$teddy_Filter = Filter::get_instance();
 		global $teddy_Voices;$teddy_Voices = Voices::get_instance();

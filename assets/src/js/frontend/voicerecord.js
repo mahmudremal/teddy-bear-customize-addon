@@ -307,6 +307,10 @@ const voiceRecord = {
           voiceRecord.recordedBlob = null;
           // voiceRecord.wavesurfer.destroy();
           voiceRecord.rootElement.classList.remove('visible_audio');
+          /**
+           * Remove prices on upload voice
+           */
+          voiceRecord.popupCart.removeAdditionalPrice(voiceRecord.meta_tag, parseFloat(voiceRecord.recordButton.dataset.cost), false, voiceRecord.product_id);
         } else {
           /**
            * Add prices on upload voice

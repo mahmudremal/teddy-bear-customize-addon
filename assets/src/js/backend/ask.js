@@ -3,7 +3,13 @@ class Ask {
 		this.setup_hooks(thisClass);
 	}
 	setup_hooks(thisClass) {
+		this.init_events_4_teddy_info(thisClass);
 		this.init_ask_4_teddy_info(thisClass);
+	}
+	init_events_4_teddy_info(thisClass) {
+		document.body.addEventListener('order_item_update_success', (event) => {
+			location.reload();
+		});
 	}
 	init_ask_4_teddy_info(thisClass) {
 		const askClass = this;
@@ -22,6 +28,7 @@ class Ask {
 			document.querySelectorAll('.fwp-outfit__certificate .btn[data-certificate]').forEach((button) => {
 				button.addEventListener('click', (event) => {
 					if (window.teddyNameRequired.find(row => row.item_id == button.dataset.certificate)) {
+						event.preventDefault();
 						askClass.askForTeddyInfo(window.teddyNameRequired, thisClass);
 					}
 				});
@@ -47,30 +54,8 @@ class Ask {
 				pop.appendChild(askClass.get_ask_template(items, thisClass));
             },
 			// get_ask_template
-			preConfirm: (input) => {
-				const form = document.querySelector('.askteddyinfo__form');
-				const action = 'futurewordpress/project/ajax/update/orderitem';
-				if(form) {
-					var formdata = new FormData(form);
-					formdata.append('action', 'futurewordpress/project/ajax/update/orderitem');
-					formdata.append('_nonce', thisClass.ajaxNonce);
-					thisClass.sendToServer(formdata);
-				}
-				// return fetch('${thisClass.ajaxUrl}?action=${action}&_nonce=${thisClass.ajaxNonce}&order_id=${item.order_id}&item_id=${item.item_id}&teddyname=${input}')
-				// .then(response => {
-				//   if(!response.ok) {
-				// 	throw new Error(response.statusText)
-				//   }
-				//   return response.json()
-				// }).then(json => {
-				// 	console.log(json);
-				// 	if(json?.success) {}
-				// 	if(updateBtn) {updateBtn.classList.remove('disabled');updateBtn.removeAttribute('disabled')}
-				// }).catch(error => {
-				//   Swal.showValidationMessage(
-				// 	'Request failed: ' + error
-				// )
-				// })
+			preConfirm: () => {
+				return askClass.submit_ask_pops(thisClass);
 			},
 			allowOutsideClick: () => !thisClass.Swal.isLoading()
 		}).then((result) => {
@@ -123,6 +108,44 @@ class Ask {
 		});
 		container.appendChild(form);
 		return container;
+	}
+	submit_ask_pops(thisClass) {
+		const askClass = this;
+		const form = document.querySelector('.askteddyinfo__form');
+		const action = 'futurewordpress/project/ajax/update/orderitem';
+		if(form) {
+			var formdata = new FormData(form);
+			formdata.append('action', 'futurewordpress/project/ajax/update/orderitem');
+			formdata.append('_nonce', thisClass.ajaxNonce);
+			thisClass.sendToServer(formdata);
+
+			return new Promise((resolve, reject) => {
+				let intval = 0;
+				// Simulating an asynchronous task
+				setInterval(() => {
+					intval++;
+					if (intval >= 50) {
+						reject(new Error('Something wrong!'));
+					}
+					if (thisClass.lastJson?.hooks) {
+						['success', 'failed'].forEach((hook, index) => {
+							if (thisClass.lastJson.hooks.includes('order_item_update_' + hook)) {
+								switch (index) {
+									case 0:
+										resolve();
+										break;
+									default:
+										reject(new Error("Update operation failed"));
+										break;
+								}
+							}
+						});
+					}
+				}, 1000);
+			});
+		} else {
+			return false;
+		}
 	}
 }
 

@@ -2,6 +2,7 @@ import icons from "./icons";
 const PROMPTS = {
     i18n: {},voices: {}, names: [], currentGroups: 'standing',
     groupSelected: false, outfitSliders: [], groupExists: false,
+    
     get_template: (thisClass) => {
         var json, html;PROMPTS.global_cartBtn = false;
         html = document.createElement('div');html.classList.add('dynamic_popup');
