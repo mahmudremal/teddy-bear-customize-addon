@@ -1,0 +1,17 @@
+
+#fwplistivoamchartsmap {
+  margin: auto;
+  width: 100%;
+  max-width: 80rem;
+  min-height: 300px;
+  max-height: 100vh;
+  .leaflet-pane {
+    z-index: 1;
+  }
+  .leaflet-control-container {
+    .leaflet-control-attribution a[href*=leafletjs], .leaflet-control-attribution a[href*=leafletjs] + span {
+      display: none;
+    }
+  }
+}
+

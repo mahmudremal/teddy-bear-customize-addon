@@ -1,0 +1,6 @@
+.git
+languages
+.vscode
+node_modules
+build
+.env
