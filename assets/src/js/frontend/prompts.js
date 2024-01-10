@@ -1133,23 +1133,26 @@ const PROMPTS = {
         });
         const hasVoice = PROMPTS.get_data(thisClass).find((row)=>(row.type=='voice'));
         if(hasVoice) {
-            // if((thisClass.voiceRecord.audioPreview?.src??'') != '') {
+            var voiceArgs = {
+                title: PROMPTS.i18n?.voice??'Voice',
+                name: '', image: '',
+            };
+            var voice_name_path = 'field.'+(hasVoice?.orderAt??115)+'.'+(hasVoice?.fieldID??'115');
             if(thisClass.voiceRecord.recordedBlob !== null) {
                 const voiceName = await thisClass.voiceRecord.recordedFileName();
                 // PROMPTS.voices[voiceName] = await fetch(thisClass.voiceRecord.audioPreview.src).then(r => r.blob());
+                voiceArgs.value = voiceName;voiceArgs.voice = voiceName;
                 PROMPTS.voices[voiceName] = thisClass.voiceRecord.recordedBlob;
+                voiceArgs.cost = parseFloat(thisClass.voiceRecord.recordButton.dataset?.cost??'0');
                 if(formdata) {
                     formdata.append('voice', PROMPTS.voices[voiceName], voiceName);
                 }
-                form['field.'+(hasVoice?.orderAt??115)+'.'+(hasVoice?.fieldID??'115')] = {
-                    title: PROMPTS.i18n?.voice??'Voice',
-                    name: '',
-                    value: voiceName,
-                    // hasVoice?.steptitle??(hasVoice?.heading??'Voice'),
-                    image: '',
-                    cost: parseFloat(thisClass.voiceRecord.recordButton.dataset?.cost??'0'),
-                    voice: voiceName
-                };
+                form[voice_name_path] = voiceArgs;
+            } else {
+                if (document.querySelector('.do_recorder__released')) {
+                    voiceArgs.voiceLater = true;
+                    form[voice_name_path] = voiceArgs;
+                }
             }
         }
         form = thisClass.transformObjectKeys(form);

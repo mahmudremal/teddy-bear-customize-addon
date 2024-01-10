@@ -407,14 +407,14 @@ class Menus {
 					'label'					=> __('Shipped email CC', 'teddybearsprompts'),
 					'description'			=> __('Give here an email address if you wish to send a carbon copy.', 'teddybearsprompts'),
 					'type'					=> 'text',
-					'default'				=> __('Your Order shipped successfully', 'domain')
+					'default'				=> ''
 				],
 				[
 					'id' 					=> 'email-shipped_subject',
 					'label'					=> __('Enable shipped email', 'teddybearsprompts'),
 					'description'			=> __('Mark to enable shipped event email confirmation.', 'teddybearsprompts'),
 					'type'					=> 'text',
-					'default'				=> __('Your Order shipped successfully', 'domain')
+					'default'				=> __('Your Order shipped successfully', 'teddybearsprompts')
 				],
 				[
 					'id' 					=> 'email-shipped_template',
@@ -422,7 +422,7 @@ class Menus {
 					'description'			=> __('Give here shipping text or html email template with inlined css & no js.', 'teddybearsprompts'),
 					'type'					=> 'textarea',
 					'default'				=> sprintf(
-						__("Hey {{customer}},\nWe're glad to say that your order has been shipped successfully.\nBest Wishes", 'domain'),
+						__("Hey {{customer}},\nWe're glad to say that your order has been shipped successfully.\nBest Wishes", 'teddybearsprompts'),
 						// 
 					)
 				],
@@ -464,6 +464,98 @@ class Menus {
 					'type'					=> 'text',
 					'default'				=> 'shipped, completed'
 				],
+			]
+		];
+		$args['voice']		= [
+			'title'							=> __('Voice', 'teddybearsprompts'),
+			'description'					=> __('Voice template & necessey informations.', 'teddybearsprompts'),
+			'fields'						=> [
+
+				[
+					'id' 					=> 'voice-reminder_enable',
+					'label'					=> __('Enable Voice Reminding', 'teddybearsprompts'),
+					'description'			=> __('Marking this checkbox will apear a link button after single order item.', 'teddybearsprompts'),
+					'type'					=> 'checkbox',
+					'default'				=> true
+				],
+				[
+					'id' 					=> 'voice-reminder_label',
+					'label'					=> __('Button text', 'teddybearsprompts'),
+					'description'			=> __('Give here a button text for the "Send Recorded file" button.', 'teddybearsprompts'),
+					'type'					=> 'text',
+					'default'				=> __('Send Recorded voice', 'teddybearsprompts')
+				],
+				[
+					'id' 					=> 'voice-reminder_bg',
+					'label'					=> __('Button Background', 'teddybearsprompts'),
+					'description'			=> __('Pick a color for the button.', 'teddybearsprompts'),
+					'type'					=> 'color',
+					'default'				=> '#e63f51'
+				],
+				[
+					'id' 					=> 'voice-reminder_color',
+					'label'					=> __('Text Color', 'teddybearsprompts'),
+					'description'			=> __('Pick a color for the button text.', 'teddybearsprompts'),
+					'type'					=> 'color',
+					'default'				=> '#ffffff'
+				],
+				[
+					'id' 					=> 'voice-reminder_reciever',
+					'label'					=> __('Voice Reciever', 'teddybearsprompts'),
+					'description'			=> sprintf(
+						__('Give here an Email address where clients would be replied with. Site admin address is %s', 'teddybearsprompts'),
+						get_option('admin_email')
+					),
+					'type'					=> 'email',
+					'default'				=> get_option('admin_email')
+				],
+				[
+					'id' 					=> 'voice-reminder_subject',
+					'label'					=> __('Email Subject', 'teddybearsprompts'),
+					'description'			=> sprintf(
+						__('Give here an Email subject format that would be replaced with these magic word below. For Order ID: %s, for Item ID: %s.', 'teddybearsprompts'),
+						'<strong>{{order_id}}</strong>', '<strong>{{item_id}}</strong>'
+					),
+					'type'					=> 'text',
+					'default'				=> 'Order #{{order_id}}'
+				],
+				// [
+				// 	'id' 					=> 'voice-reminder_orderstatuses',
+				// 	'label'					=> __('Visible on Statuses', 'teddybearsprompts'),
+				// 	'description'			=> __('Give here all of the order statuses those are allowed to show voice reminder button visibility.', 'teddybearsprompts'),
+				// 	'type'					=> 'text',
+				// 	'default'				=> str_replace('wc-', '', implode(', ', function_exists('wc_get_order_statuses')?array_keys((array) wc_get_order_statuses()):['processing']))
+				// ],
+				
+			]
+		];
+		$args['certificate']		= [
+			'title'							=> __('Certificate', 'teddybearsprompts'),
+			'description'					=> __('Certificate template & necessey informations.', 'teddybearsprompts'),
+			'fields'						=> [
+
+				[
+					'id' 					=> 'certificate-enable',
+					'label'					=> __('Enable Certification', 'teddybearsprompts'),
+					'description'			=> __('Mark this option to enable or disable certification on order line.', 'teddybearsprompts'),
+					'type'					=> 'checkbox',
+					'default'				=> true
+				],
+				[
+					'id' 					=> 'certificate-onstatuses',
+					'label'					=> __('Order Statuses', 'teddybearsprompts'),
+					'description'			=> __('Give here those order statuses where you want to allow certificates.', 'teddybearsprompts'),
+					'type'					=> 'text',
+					'default'				=> 'completed, shipped'
+				],
+				[
+					'id' 					=> 'certificate-myacc-enable',
+					'label'					=> __('Abailable on My-Account', 'teddybearsprompts'),
+					'description'			=> __('Mark this option to show available certificates on user bashboard called my-account order details screen.', 'teddybearsprompts'),
+					'type'					=> 'checkbox',
+					'default'				=> true
+				],
+				
 			]
 		];
 

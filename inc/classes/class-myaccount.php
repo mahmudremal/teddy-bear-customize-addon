@@ -29,6 +29,9 @@ class Myaccount {
 
 		add_action('mepr_account_nav', [$this, 'mepr_account_nav'], 10, 1);
 		add_action('mepr_account_nav_content', [$this, 'mepr_account_nav_content'], 10, 1);
+
+		add_action('woocommerce_order_item_meta_end', [$this, 'woocommerce_order_item_add_certificate_link'], 10, 4);
+
 	}
 	/**
 	 * Fired on init hook for registering endpoints
@@ -207,6 +210,23 @@ class Myaccount {
 			<script>location.replace('<?php echo esc_url(site_url('/my-account/')); ?>');</script>
 			<?php
 		}
+	}
+
+	public function woocommerce_order_item_add_certificate_link($item_id, $order_item, $order, $plain_text) {
+		global $teddy_Certificate;
+		if (!apply_filters('teddybear/project/system/isactive', 'certificate-enable')) {return;}
+		/**
+		 * Check whether it it frontend or not.
+		 */
+		if (is_admin()) {return;}
+		if (function_exists('is_wc_endpoint_url') && !is_wc_endpoint_url('view-order')) {return;}
+		if (!in_array($order->get_status(), explode(',', str_replace(' ', '', apply_filters('teddybear/project/system/getoption', 'certificate-onstatuses', 'completed, shipped'))))) {return;}
+		if (!apply_filters('teddybear/project/system/isactive', 'certificate-myacc-enable')) {return;}
+		if (!$teddy_Certificate->get_single_certificates($order, $order_item)) {return;}
+		$order_id = $order->get_id();
+		?>
+		<a href="<?php echo esc_url(site_url('/?certificate_preview=' . $order_id . '-' . $item_id)); ?>" class="button btn" target="_blank"><?php esc_html_e('View certificate', 'teddybearsprompts'); ?></a>
+		<?php
 	}
 	
 }

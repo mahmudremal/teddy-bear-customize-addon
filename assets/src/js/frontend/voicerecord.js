@@ -280,8 +280,14 @@ const voiceRecord = {
     if (file) {
       voiceRecord.skipButton.classList.remove('do_recorder__skipped');
       voiceRecord.releaseButton.classList.remove('do_recorder__released');
-      if(file.size > (1024 * 1024 * 400)) {
-        alert('Max uploaded file size is 400MB');
+      if(file.size > (1024 * 1024 * 20)) {
+        var text = voiceRecord.i18n?.maxupload20mb??'Max uploaded file size is 20MB.';
+        voiceRecord.toastify({text: text,duration: 45000,close: true,gravity: "top",position: "right",stopOnFocus: true,style: {background: 'linear-gradient(to right, rgb(255 180 117), rgb(251, 122, 72))'}}).showToast();
+        voiceRecord.recordedBlob = null;
+        /**
+         * Remove prices on upload voice
+         */
+        voiceRecord.popupCart.removeAdditionalPrice(voiceRecord.meta_tag, parseFloat(voiceRecord.recordButton.dataset.cost), false, voiceRecord.product_id);
       } else {
         voiceRecord.recordedBlob = file;
         const fileURL = URL.createObjectURL(file);

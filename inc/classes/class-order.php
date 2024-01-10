@@ -36,8 +36,6 @@ class Order {
 		// add_shortcode( 'checkout_video', [ $this, 'checkout_video' ] );
 		add_action('add_meta_boxes', [$this, 'add_custom_meta_box']);
 
-		add_action('woocommerce_order_item_meta_end', [$this, 'woocommerce_order_item_add_certificate_link'], 11, 4);
-
 		add_action('woocommerce_order_item_meta_end', [$this, 'woocommerce_order_item_meta_end'], 10, 4);
 		add_filter('woocommerce_email_classes', [$this, 'custom_track_order_confirmation_email'], 1, 1);
 
@@ -86,6 +84,7 @@ class Order {
 				foreach ($order->get_items() as $order_item_id => $order_item) {
 					$item_name = $order_item->get_name();
 					$item_meta_data = $order_item->get_meta_data();
+					
 					$name_required = $this->is_name_required($order, $order_item);
 					if ($name_required) {
 						$teddyNameRequired[] = [
@@ -142,6 +141,7 @@ class Order {
 							</li>
 							<?php
 						}
+						
 						if ($teddy_Voices->should_exists_voices($order, $order_item)) {
 							if ($teddy_Voices->has_single_voices($order, $order_item)) {
 								foreach ($teddy_Voices->get_single_voices($order, $order_item) as $voiceURL) {
@@ -213,23 +213,27 @@ class Order {
 	}
 	public function woocommerce_order_item_meta_end($item_id, $order_item, $order, $plain_text) {
 		global $teddy_Product;global $teddy_Voices;global $teddy_Order;
+		if (!apply_filters('teddybear/project/system/isactive', 'voice-reminder_enable')) {return;}
 		// if (!isset($order->is_order_confirmation) || $order->is_order_confirmation !== true) {return;}
 		// if ($this->confirmMailTrack !== true) {return;}
 		
-		if (in_array($order->get_status(), explode(',', str_replace([' '], [''], apply_filters('teddybear/project/system/getoption', 'order-avoid_askvoice', 'shipped, completed'))))) {return;}
+		if (in_array($order->get_status(), explode(',', str_replace(' ', '', apply_filters('teddybear/project/system/getoption', 'order-avoid_askvoice', 'shipped, completed'))))) {return;}
+		// if (!in_array($order->get_status(), explode(',', str_replace(' ', '', apply_filters('teddybear/project/system/getoption', 'voice-reminder_orderstatuses', 'shipped, completed'))))) {return;}
 		if (!$teddy_Voices->should_exists_voices($order, $order_item)) {return;}
 		if (!$teddy_Voices->has_single_voices($order, $order_item)) {
-			$uploadVoiceURL = 'mailto:'.get_option('admin_email').'?subject='.esc_attr(__('Voice Record', 'teddybearsprompts')).'&body='.esc_attr(sprintf(__('Order #%d, Cart Item: #%d, Item Subtotal: %s %s Product: %s', 'teddybearsprompts'), $order->get_id(), $order_item->get_id(), $teddy_Order->get_order_item_subtotal($order_item, $order->get_id()), '%0D%0A', get_the_title($order_item->get_product_id())));
-			echo '<a href="' . esc_attr($uploadVoiceURL) . '" target="_blank" style="color: #fff;font-weight:normal;text-decoration:underline;background: #7f54b3;padding: 10px 15px;border-radius: 5px;line-height: 40px;text-decoration: none;">' . esc_html('Send Recorded voice', 'teddybearsprompts') . '</a>';
+			$to_email = apply_filters('teddybear/project/system/getoption', 'voice-reminder_reciever', get_option('admin_email'));
+			$uploadVoiceURL = 'mailto:' . $to_email . '?subject=' . urlencode(
+				str_replace(
+					['{{order_id}}', '{{item_id}}'],
+					[$order->get_id(), $order_item->get_id()],
+					apply_filters('teddybear/project/system/getoption', 'voice-reminder_subject', sprintf(__('Order #%s', 'teddybearsprompts'), '{{order_id}}'))
+				)
+			) . '&body=' . esc_attr(sprintf(__('Order #%d, Cart Item: #%d, Item Subtotal: %s %s Product: %s', 'teddybearsprompts'), $order->get_id(), $order_item->get_id(), $teddy_Order->get_order_item_subtotal($order_item, $order->get_id()), '%0D%0A', get_the_title($order_item->get_product_id())));
+
+			echo '<a href="' . esc_attr($uploadVoiceURL) . '" target="_blank" style="color: ' . esc_attr(apply_filters('teddybear/project/system/getoption', 'voice-reminder_color', '#fff')) . ';font-weight:normal;text-decoration:underline;background: ' . esc_attr(apply_filters('teddybear/project/system/getoption', 'voice-reminder_bg', '#7f54b3')) . ';padding: 10px 15px;border-radius: 5px;line-height: 40px;text-decoration: none;">' . esc_html(
+				apply_filters('teddybear/project/system/getoption', 'voice-reminder_label', __('Send Recorded voice', 'teddybearsprompts'))
+			) . '</a>';
 		}
-	}
-	public function woocommerce_order_item_add_certificate_link($item_id, $item, $order, $plain_text) {
-		if (!is_wc_endpoint_url('view-order')) {return;}
-		if (!in_array($order->get_status(), ['completed'])) {return;}
-		$order_id = $order->get_id();
-		?>
-		<a href="<?php echo esc_url(site_url('/?certificate_preview=' . $order_id . '-' . $item_id)); ?>" class="button btn" target="_blank"><?php esc_html_e('View certificate', 'teddybearsprompts'); ?></a>
-		<?php
 	}
 	
 	/**

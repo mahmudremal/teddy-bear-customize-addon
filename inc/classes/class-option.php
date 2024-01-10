@@ -72,7 +72,7 @@ class Option {
 		$settings_link = '<a href="options-general.php?page='.$this->general->slug.'">' . __('Settings', 'teddybearsprompts') . '</a>';
 		// array_push($links, $settings_link);
 		$links[] = $settings_link;
-		// $links[] = '<a href="https://www.fiverr.com/mahmud_remal/" target="_blank">' . __('Developer Support', 'teddybearsprompts') . '</a>';
+		$links[] = '<a href="https://www.fiverr.com/mahmud_remal/" target="_blank">' . __('Developer Support', 'teddybearsprompts') . '</a>';
 		return $links;
 	}
 	/**
