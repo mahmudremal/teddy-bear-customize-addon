@@ -71,7 +71,8 @@ const voiceRecord = {
     });
     voiceRecord.uploadInput.addEventListener('change', voiceRecord.uploadAudio);
     voiceRecord.uploadInput.addEventListener('click', (event) => {
-        const audioupload_instuction = voiceRecord.i18n?.audioupload_instuction??'Please upload file upto 20 seconds.';
+        const audioupload_instuction = voiceRecord.i18n?.audioupload_instuction??'Please upload file upto %d seconds.';
+        audioupload_instuction = audioupload_instuction.replace('%d', voiceRecord.duration);
         voiceRecord.audioInstructPreview.innerHTML = audioupload_instuction.replace(/(\r\n|\n\r|\r|\n)/g, '<br>' + '$1');
         voiceRecord.audioInstructPreview.classList.remove('d-none');
     });
@@ -278,6 +279,12 @@ const voiceRecord = {
     var file = event.target.files[0];
     // Max file size
     if (file) {
+      /**
+       * Init Preloader
+       */
+      /**
+       * Remove active status of skip & release buton
+       */
       voiceRecord.skipButton.classList.remove('do_recorder__skipped');
       voiceRecord.releaseButton.classList.remove('do_recorder__released');
       if(file.size > (1024 * 1024 * 20)) {
