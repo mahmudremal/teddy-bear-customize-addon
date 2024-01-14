@@ -1,0 +1,582 @@
+
+<div class="container">
+    <!-- Nav tabs -->
+  <ul class="nav nav-tab hidden">
+    <li class="active"><a href="#tab-upload" id="tab-handle-upload" data-toggle="tab">上传</a></li>
+    <li><a href="#tab-camera" id="tab-handle-camera" data-toggle="tab">拍照</a></li>
+    <li><a href="#tab-cropper" id="tab-handle-cropper" data-toggle="tab">裁剪</a></li>
+  </ul>
+
+  <!-- Tab panes -->
+  <div class="tab-content">
+    <div class="tab-pane active" id="tab-upload">
+      <button type="button" class="btn btn-primary" id="show-camera-tab">拍照</button>
+      <form action="/upload.aspx" class="dropzone" id="dropzone-form"></form>
+    </div>
+    <div class="tab-pane" id="tab-camera">            
+      <div class="camera-container">
+        <div>
+          <button type="button" class="btn btn-danger" id="cancel-capture">Cancel
+          </button>
+          <button type="button" class="btn btn-primary" id="capture">Capture</button>
+          <button type="button" class="btn btn-primary" id="resume-camera" style="display:none">Resume</button>    
+          <button type="button" class="btn btn-success" id="save-capture">Save
+          </button>
+        </div>
+        <video id="camera-video" width="640" height="480" autoplay></video>
+        <canvas id="capture-canvas" style="display:none"></canvas>
+      </div>
+    </div><!-- #tab-camera -->
+    <div class="tab-pane" id="tab-cropper">
+      <div class="row">
+        <form name="toolbarForm" class="col-md-3">        
+          <div class="toolbar-cropper toolbar-buttons">
+            <div class="clearfix">
+              <div class="img-thumbnail"></div>
+            </div>
+
+            <label class="btn">尺寸
+              <span id="dataPrintSize"></span>
+            </label>
+            <br>                
+            <div class="btn-group" data-toggle="buttons">
+              <!-- 长,宽,毫米 -->
+              <label class="btn btn-primary active">
+                <input type="radio" class="sr-only" name="printSize" value="210,297" checked/>
+                A4
+              </label>
+              <label class="btn btn-primary">
+                <input type="radio" class="sr-only" name="printSize" value="297,420"/>
+                A3
+              </label>
+              <label class="btn btn-primary">
+                <input type="radio" class="sr-only" name="printSize" value="176,250"/>
+                B5
+              </label>
+              <label class="btn btn-primary">
+                <input type="radio" class="sr-only" name="printSize" value="257,364"/>
+                B4
+              </label>
+              <label class="btn btn-primary">
+                <input type="radio" class="sr-only" name="printSize" value="184,260"/>
+                16开
+              </label>
+              <label class="btn btn-primary">
+                <input type="radio" class="sr-only" name="printSize" value="260,368"/>
+                8开
+              </label>
+              <label class="btn btn-primary">
+                <input type="radio" class="sr-only" name="printSize" value="85.6,54"/>
+                身份证
+              </label>
+              <label class="btn btn-primary">
+                <input type="radio" class="sr-only" name="printSize" value="143,105"/>
+                户口簿
+              </label>
+              <label class="btn btn-primary">
+                <input type="radio" class="sr-only" name="printSize" value="25,35"/>
+                一寸照片
+              </label>
+              <label class="btn btn-primary">
+                <input type="radio" class="sr-only" name="printSize" value="35,49"/>
+                二寸照片
+              </label>
+            </div>
+            <br>       
+
+            <label class="btn">方向</label>
+            <div class="btn-group" data-toggle="buttons">
+              <label class="btn btn-primary active">
+                <input type="radio" class="sr-only" name="orientation" value="portrait" checked/>
+                纵向
+              </label>
+              <label class="btn btn-primary">
+                <input type="radio" class="sr-only" name="orientation" value="landscape"/>
+                横向
+              </label>            
+            </div>
+            <br>
+
+            <label class="btn">缩放</label>
+            <div class="btn-group">            
+              <button type="button" class="btn btn-primary" data-method="zoom" data-option="0.1" title="Zoom In">
+                <span class="fa fa-search-plus"></span>
+              </button>
+              <button type="button" class="btn btn-primary" data-method="zoom" data-option="-0.1" title="Zoom Out">
+                <span class="fa fa-search-minus"></span>
+              </button>
+            </div>          
+            <label class="btn">
+              <span id="dataZoom">100</span>%
+            </label>
+            <div id="zoom-slider"></div>
+            <br>
+            
+            <label class="btn">旋转</label>
+            <div class="btn-group">
+              <button type="button" class="btn btn-primary" data-method="rotate" data-option="-90" title="Rotate Left">
+                <span class="fa fa-rotate-left"></span>
+                </span>
+              </button>
+              <button type="button" class="btn btn-primary" data-method="rotate" data-option="90" title="Rotate Right">
+                <span class="fa fa-rotate-right"></span>
+              </button>   
+            </div>
+
+            <label class="btn">
+              <span id="dataRotate">0</span>°
+            </label>         
+            <div id="rotate-slider"></div>
+            <div class="btn-group">
+              <button type="button" class="btn btn-danger" id="btn-cancel-cropper">撤销</button>
+              <button type="button" class="btn btn-danger" data-method="reset">重置</button>
+              <button type="button" class="btn btn-info" id="btn-preview">预览</button>
+            </div>
+          </div>
+
+          <div class="toolbar-preview toolbar-buttons" style="display:none">
+            <label class="btn">清晰度</label>
+            <div class="btn-group" data-toggle="buttons">            
+              <label class="btn btn-warning">
+                <input type="radio" class="sr-only" name="printDPI" value="72"/>
+                72<!--web质量-->
+              </label>
+              <label class="btn btn-warning active">
+                <input type="radio" class="sr-only" name="printDPI" value="170" checked/>
+                170<!--文本质量-->
+              </label>
+              <label class="btn btn-warning">
+                <input type="radio" class="sr-only" name="printDPI" value="300"/>
+                300<!--证件质量-->
+              </label>
+              <label class="btn btn-warning">
+                <input type="radio" class="sr-only" name="printDPI" value="600"/>
+                600<!--彩照质量-->
+              </label>
+            </div>
+            <br>
+
+            <label class="btn">质量</label>
+            <div class="btn-group" data-toggle="buttons">
+
+              <label class="btn btn-warning">
+                <input type="radio" class="sr-only" name="jpgQuality" value="50"/>
+                50
+              </label>
+
+              <label class="btn btn-warning">
+                <input type="radio" class="sr-only" name="jpgQuality" value="60"/>
+                60
+              </label>            
+              <label class="btn btn-warning">
+                <input type="radio" class="sr-only" name="jpgQuality" value="70"/>
+                70
+              </label>
+              <label class="btn btn-warning">
+                <input type="radio" class="sr-only" name="jpgQuality" value="80"/>
+                80
+              </label>            
+              <label class="btn btn-warning active">
+                <input type="radio" class="sr-only" name="jpgQuality" value="90" checked/>
+                90
+              </label>
+              <label class="btn btn-warning">
+                <input type="radio" class="sr-only" name="jpgQuality" value="100"/>
+                100
+              </label>
+            </div>
+            <br>
+
+            <div id="file-info"><p></p></div>
+            <div class="btn-group">
+              <button type="button" class="btn btn-danger" id="btn-cancel-preview">撤销</button>
+              <button type="button" class="btn btn-success" id="btn-upload">上传</button>
+            </div>
+          </div>                  
+        </form>
+        <div class="col-md-9">
+          <div class="cropper-container">
+            <img id="image-cropper"/>
+          </div>
+          <div class="preview-container" style="display:none" >
+            <img id="image-preview"/>
+          </div>
+        </div>
+      </div>
+    </div><!-- #tab-cropper -->
+  </div><!-- .tab-content -->
+</div>
+<style>
+  .saver {
+    display: none;
+  }
+
+  .cropper-container,
+  .preview-container,
+  .camera-container,
+  .img-thumbnail {
+    /* background-color: #e7e7e7; */
+    width: 100%;
+    text-align: center;
+  }
+
+  .cropper-container,
+  .preview-container,
+  .camera-container {
+    min-height: 200px;
+    max-height: 516px;
+    margin-bottom: 20px;
+  }
+
+  @media (min-width: 768px) {
+    .cropper-container,
+    .preview-container,
+    .camera-container {
+      min-height: 516px;
+    }
+  }
+
+  .cropper-container > img,
+  .preview-container > img {
+    max-width: 100%;
+  }
+
+  .img-thumbnail {
+    float: left;
+    margin-right: 10px;
+    margin-bottom: 10px;
+    overflow: hidden;
+    height: 200px;
+    width: 100%;
+  }
+
+  .img-thumbnail > img {
+    max-width: 100%;
+  }
+
+  .toolbar-buttons > .btn,
+  .toolbar-buttons > .btn-group,
+  .toolbar-buttons > .form-control {
+    margin-right: 5px;
+    margin-bottom: 10px;
+  }
+
+  .toolbar-buttons .ui-slider {
+    margin-top: 10px;
+    margin-bottom: 20px;
+  }
+
+  .toolbar-buttons .ui-slider .ui-slider-handle{
+    width: auto;
+    min-width: 1.2em;
+  }
+
+  @media (max-width: 400px) {
+    .btn-group-crop {
+      margin-right: -15px!important;
+    }
+
+    .btn-group-crop > .btn {
+      padding-left: 5px;
+      padding-right: 5px;
+    }
+  }
+
+</style>
+
+<link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/dropzone/4.3.0/dropzone.css'>
+<link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/cropper/2.3.4/cropper.css'>
+<link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css'>
+<link rel='stylesheet' href='https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css'>
+<link rel='stylesheet' href='//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css'>
+
+<script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.0/jquery.min.js'></script>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/dropzone/4.3.0/dropzone.js'></script>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/cropper/2.3.4/cropper.js'></script>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js'></script>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.0/jquery-ui.min.js'></script>
+<script>
+/*
+References: 
+http://stackoverflow.com/questions/29396413/using-cropper-js-before-dropzone-js-send-image-to-server
+http://stackoverflow.com/questions/4998908/convert-data-uri-to-file-then-append-to-formdata
+https://fengyuanchen.github.io/cropperjs/
+https://www.script-tutorials.com/demos/303/
+*/
+
+var $tabHandleUpload = $('#tab-handle-upload');
+var $tabHandleCamera = $('#tab-handle-camera');
+var $tabHandleCropper = $('#tab-handle-cropper');
+var $imageCropper = $('#image-cropper');
+var $imagePreview = $('#image-preview');
+var $dataPrintSize = $('#dataPrintSize');
+var $dataRotate = $('#dataRotate');
+var $dataZoom = $('#dataZoom');
+var cropperOptions = {
+  aspectRatio: 210 / 297,
+  autoCropArea: 1,
+  cropBoxResizable: true,
+  dragMode: 'move',
+  preview: '.img-thumbnail',
+  crop: function (e) {
+    $dataRotate.text(e.rotate);
+  },
+  zoom: function(e){
+    var ratio = Math.round(e.ratio * 1000)/10;
+    $dataZoom.text(ratio);
+  }
+};
+var cachedFilename;
+var croppingSrc;
+var compressedFile;
+
+// initialize dropzone
+Dropzone.autoDiscover = false;
+var myDropzone = new Dropzone(
+    "#dropzone-form",
+    {
+        autoProcessQueue: false
+    }
+);
+
+myDropzone.on("thumbnail", function(file) {
+  // ignore files which were already cropped and re-rendered
+  // to prevent infinite loop
+  if (file.cropped) {
+    return;
+  }
+        
+  // cache filename to re-assign it to cropped file
+  cachedFilename = file.name;
+  // remove not cropped file from dropzone (we will replace it later)
+  myDropzone.removeFile(file);
+
+  var reader = new FileReader(); 
+  reader.onloadend = function(event){ 
+    $imageCropper[0].onload = function(){ 
+      $imageCropper.cropper('destroy').cropper(cropperOptions);
+      $imageCropper[0].onload = null;
+    }
+
+    $imageCropper[0].src = event.target.result; 
+  }
+  // read uploaded file (triggers code above)
+  reader.readAsDataURL(file);
+
+  $tabHandleCropper.tab('show');
+  $('#file-info p.original').html('<h5>原图</h5>' + file.width + 'px &times; ' + file.height +'px<br>(<b>'+ Math.round(file.size/1024) +'k</b>)');
+
+});
+
+// Camera
+$('#show-camera-tab').on('click', function(){
+  $tabHandleCamera.tab('show');
+});
+
+var captureCanvas = $("#capture-canvas")[0]; 
+var video = $("#camera-video")[0];
+navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia;
+window.URL = window.URL || window.webkitURL || window.mozURL || window.msURL;
+
+$('#tab-handle-camera').on('shown.bs.tab', function(){
+  if (navigator.getUserMedia) {
+    navigator.getUserMedia({ "video": true }, function(stream) { 
+      video.src = window.URL.createObjectURL(stream) || stream; 
+      video.play(); 
+    }, function(e){
+      console.log(e);
+      alert("摄像头打开失败\n\r" + e.name +"\n\r" + e.message);
+    }); 
+ 
+    video.addEventListener('playing', function getVideoSize() {
+        video.width = video.videoWidth;
+        video.height = video.videoHeight;
+        video.removeEventListener('playing', getVideoSize, false);
+    }, false);
+  }  
+});
+
+// 拍照按钮 
+$("#capture").on('click', function() {
+  $(this).hide();
+  $("#resume-camera").show();
+  video.pause();
+}); 
+$("#resume-camera").on('click', function() {
+  $(this).hide();
+  $("#capture").show();
+  video.play();
+}); 
+$('#cancel-capture').on('click', function(){
+  $tabHandleUpload.tab('show');
+});
+// 保存按钮
+$('#save-capture').on('click', function(){
+  captureCanvas.width = video.width;
+  captureCanvas.height = video.height;
+  var context = captureCanvas.getContext("2d"); 
+  context.drawImage(video, 0, 0, video.width, video.height); 
+  var dataUrl = captureCanvas.toDataURL('image/jpeg', 100);
+  // transform it to Blob object
+  var capuredFile = dataURItoBlob(dataUrl);
+  // assign original filename
+  capuredFile.name = cachedFilename;
+  // add cropped file to dropzone
+  myDropzone.addFile(capuredFile);
+
+});
+
+
+// Cropper
+// Print Size
+$('input[name="printSize"]').on('change', function(){
+  var printSize = toolbarForm.printSize.value.split(',').map(parseFloat);
+  var width = printSize[0];
+  var height = printSize[1];
+  var orientation = width > height ? 'landscape' : 'portrait';
+  if(toolbarForm.orientation.value != orientation){
+    $('input[name="orientation"]').parent().click();
+  }
+  $dataPrintSize.html(width + 'mm &times;' + height + 'mm');
+  $imageCropper.cropper('setAspectRatio', width / height);
+});
+$('input[name="orientation"]').on('change', function(){
+  var printSize = toolbarForm.printSize.value.split(',').map(parseFloat);
+  var orientation = toolbarForm.orientation.value;
+  var width = orientation == 'landscape' ? Math.max.apply(null, printSize) : Math.min.apply(null, printSize);
+  var height = orientation == 'landscape' ? Math.min.apply(null, printSize) : Math.max.apply(null, printSize);
+  var aspectRatio = width / height;
+  $dataPrintSize.html(width + 'mm &times;' + height + 'mm');
+  $imageCropper.cropper('setAspectRatio', aspectRatio);
+});
+// Cropper Methods
+$('.toolbar-buttons').on('click', '[data-method]', function () {
+  var $this = $(this);
+  var data = $this.data();
+  var result;
+
+  if ($imageCropper.data('cropper') && data.method) {
+    if (data.method == 'rotate') {
+      //$imageCropper.cropper('clear');
+    }
+
+    result = $imageCropper.cropper(data.method, data.option, data.secondOption);
+
+    if (data.method == 'rotate') {
+      //$imageCropper.cropper('crop');
+    }
+
+  }
+});
+
+$('#btn-cancel-cropper').on('click', function(){
+  $tabHandleUpload.tab('show');
+});
+$('#btn-preview').on('click', function(){
+  $('.toolbar-cropper, .cropper-container').hide()
+  $('.toolbar-preview, .preview-container').show();
+  updatePreview();  
+});
+
+//cropper UI sliders
+$('#zoom-slider').slider({
+  min: 0.1,
+  max: 4,
+  value: 1,
+  step: 0.01,
+  slide: function( event, ui ) {
+    if ($imageCropper.data('cropper')){
+        $imageCropper.cropper('zoomTo', ui.value)
+    }
+  }
+});
+$('#rotate-slider').slider({
+  min: -10,
+  max: 10,
+  value: 0,
+  step: 0.1,
+  slide: function( event, ui ) {
+    if ($imageCropper.data('cropper')){
+        $imageCropper.cropper('rotateTo', ui.value)
+    }
+  }
+});
+
+//预览和压缩
+function updatePreview(){
+  var canvasOptions = {fillColor: '#fff'};
+  var printSize = toolbarForm.printSize.value.split(',').map(parseFloat);
+  var orientation = toolbarForm.orientation.value;
+  var width = orientation == 'landscape' ? Math.max.apply(null, printSize) : Math.min.apply(null, printSize);
+  var height = orientation == 'landscape' ? Math.min.apply(null, printSize) : Math.max.apply(null, printSize);
+  var dpi = toolbarForm.printDPI.value;
+  var quality = toolbarForm.jpgQuality.value / 100;
+  if (width && height && dpi){
+    // caclulate pixel size according to print size and DPI
+    canvasOptions.width = Math.round(width * dpi / 25.4);
+    canvasOptions.height = Math.round(height * dpi / 25.4);
+  }
+  var canvas = $imageCropper.cropper('getCroppedCanvas', canvasOptions);                                
+  // get cropped image data
+  var dataUrl = canvas.toDataURL('image/jpeg', quality);
+  // transform it to Blob object
+  compressedFile = dataURItoBlob(dataUrl);
+  // set 'cropped to true' (so that we don't get to that listener again)
+  compressedFile.cropped = true;
+  // assign original filename
+  compressedFile.name = cachedFilename;
+  
+
+  $('#file-info p.compressed').html('<h5>处理后</h5>' + width + 'mm &times;' + height + 'mm@'+ dpi +'DPI<br>'+ canvas.width + 'px &times; ' + canvas.height +'px<br>(<b>'+ Math.round(compressedFile.size/1024) +'k</b>)');
+  
+  if($imagePreview.data('cropper')){
+    $imagePreview.cropper('replace', dataUrl);
+  } else {
+    $imagePreview
+      .attr('src', dataUrl)
+      .cropper({
+        center: false,
+        autoCrop: false,
+        dragMode: 'move'
+      });
+  }
+}
+$('.toolbar-preview input').change(updatePreview);
+
+$('#btn-cancel-preview').on('click', function(){
+  $('.toolbar-cropper, .cropper-container').show();
+  $('.toolbar-preview, .preview-container').hide();
+  $imagePreview.cropper('destroy')
+});
+
+$('#btn-upload').on('click', function(){
+  $tabHandleUpload.tab('show');
+  // add cropped file to dropzone
+  myDropzone.addFile(compressedFile);
+  // upload cropped file with dropzone
+  myDropzone.processQueue();
+
+  $('#btn-cancel-preview').trigger('click');
+});
+
+
+function dataURItoBlob(dataURI) {
+    // convert base64/URLEncoded data component to raw binary data held in a string
+    var byteString;
+    if (dataURI.split(',')[0].indexOf('base64') >= 0)
+        byteString = atob(dataURI.split(',')[1]);
+    else
+        byteString = unescape(dataURI.split(',')[1]);
+
+    // separate out the mime component
+    var mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0];
+
+    // write the bytes of the string to a typed array
+    var ia = new Uint8Array(byteString.length);
+    for (var i = 0; i < byteString.length; i++) {
+        ia[i] = byteString.charCodeAt(i);
+    }
+
+    return new Blob([ia], {type:mimeString});
+}
+</script>

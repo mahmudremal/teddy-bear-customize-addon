@@ -1,0 +1,622 @@
+/*!
+ * Toastify js 1.12.0
+ * https://github.com/apvarun/toastify-js
+ * @license MIT licensed
+ *
+ * Copyright (C) 2018 Varun A P
+ */
+
+/*! ../dom-utils/contains.js */
+
+/*! ../dom-utils/getBoundingClientRect.js */
+
+/*! ../dom-utils/getClippingRect.js */
+
+/*! ../dom-utils/getComputedStyle.js */
+
+/*! ../dom-utils/getDocumentElement.js */
+
+/*! ../dom-utils/getLayoutRect.js */
+
+/*! ../dom-utils/getNodeName.js */
+
+/*! ../dom-utils/getOffsetParent.js */
+
+/*! ../dom-utils/getWindow.js */
+
+/*! ../dom-utils/instanceOf.js */
+
+/*! ../enums.js */
+
+/*! ../frontend/icons */
+
+/*! ../img/blank_certificate.jpg */
+
+/*! ../img/certificate_email_header.png */
+
+/*! ../img/certificate_email_sky.jpg */
+
+/*! ../img/dubido_certificate.png */
+
+/*! ../img/signature.png */
+
+/*! ../sass/admin.scss */
+
+/*! ../utils/computeAutoPlacement.js */
+
+/*! ../utils/computeOffsets.js */
+
+/*! ../utils/detectOverflow.js */
+
+/*! ../utils/expandToHashMap.js */
+
+/*! ../utils/getAltAxis.js */
+
+/*! ../utils/getBasePlacement.js */
+
+/*! ../utils/getFreshSideObject.js */
+
+/*! ../utils/getMainAxisFromPlacement.js */
+
+/*! ../utils/getOppositePlacement.js */
+
+/*! ../utils/getOppositeVariationPlacement.js */
+
+/*! ../utils/getVariation.js */
+
+/*! ../utils/math.js */
+
+/*! ../utils/mergePaddingObject.js */
+
+/*! ../utils/rectToClientRect.js */
+
+/*! ../utils/userAgent.js */
+
+/*! ../utils/within.js */
+
+/*! ./../webpack/buildin/global.js */
+
+/*! ./../webpack/buildin/module.js */
+
+/*! ./applyStyles.js */
+
+/*! ./arrow.js */
+
+/*! ./ask */
+
+/*! ./backend */
+
+/*! ./computeOffsets.js */
+
+/*! ./computeStyles.js */
+
+/*! ./contains.js */
+
+/*! ./createPopper.js */
+
+/*! ./detectOverflow.js */
+
+/*! ./dom-utils/getCompositeRect.js */
+
+/*! ./dom-utils/getComputedStyle.js */
+
+/*! ./dom-utils/getLayoutRect.js */
+
+/*! ./dom-utils/getOffsetParent.js */
+
+/*! ./dom-utils/instanceOf.js */
+
+/*! ./dom-utils/listScrollParents.js */
+
+/*! ./downloads */
+
+/*! ./enums.js */
+
+/*! ./eventListeners.js */
+
+/*! ./expandToHashMap.js */
+
+/*! ./flip.js */
+
+/*! ./format.js */
+
+/*! ./forms */
+
+/*! ./getBasePlacement.js */
+
+/*! ./getBoundingClientRect.js */
+
+/*! ./getComputedStyle.js */
+
+/*! ./getDocumentElement.js */
+
+/*! ./getDocumentRect.js */
+
+/*! ./getFreshSideObject.js */
+
+/*! ./getHTMLElementScroll.js */
+
+/*! ./getMainAxisFromPlacement.js */
+
+/*! ./getNodeName.js */
+
+/*! ./getNodeScroll.js */
+
+/*! ./getOffsetParent.js */
+
+/*! ./getParentNode.js */
+
+/*! ./getScrollParent.js */
+
+/*! ./getVariation.js */
+
+/*! ./getViewportRect.js */
+
+/*! ./getWindow.js */
+
+/*! ./getWindowScroll.js */
+
+/*! ./getWindowScrollBarX.js */
+
+/*! ./hide.js */
+
+/*! ./instanceOf.js */
+
+/*! ./isLayoutViewport.js */
+
+/*! ./isScrollParent.js */
+
+/*! ./isTableElement.js */
+
+/*! ./listScrollParents.js */
+
+/*! ./math.js */
+
+/*! ./media */
+
+/*! ./mergePaddingObject.js */
+
+/*! ./modifiers/applyStyles.js */
+
+/*! ./modifiers/arrow.js */
+
+/*! ./modifiers/computeStyles.js */
+
+/*! ./modifiers/eventListeners.js */
+
+/*! ./modifiers/flip.js */
+
+/*! ./modifiers/hide.js */
+
+/*! ./modifiers/index.js */
+
+/*! ./modifiers/offset.js */
+
+/*! ./modifiers/popperOffsets.js */
+
+/*! ./modifiers/preventOverflow.js */
+
+/*! ./offset.js */
+
+/*! ./popper-lite.js */
+
+/*! ./popper.js */
+
+/*! ./popperOffsets.js */
+
+/*! ./preventOverflow.js */
+
+/*! ./prompts */
+
+/*! ./rectToClientRect.js */
+
+/*! ./utils/debounce.js */
+
+/*! ./utils/detectOverflow.js */
+
+/*! ./utils/getBasePlacement.js */
+
+/*! ./utils/mergeByName.js */
+
+/*! ./utils/orderModifiers.js */
+
+/*! ./utils/uniqueBy.js */
+
+/*! ./utils/validateModifiers.js */
+
+/*! @popperjs/core */
+
+/*! awesomplete */
+
+/*! exports provided: applyStyles, arrow, computeStyles, eventListeners, flip, hide, offset, popperOffsets, preventOverflow */
+
+/*! exports provided: createPopper, popperGenerator, defaultModifiers, detectOverflow */
+
+/*! exports provided: createPopper, popperGenerator, defaultModifiers, detectOverflow, createPopperLite, applyStyles, arrow, computeStyles, eventListeners, flip, hide, offset, popperOffsets, preventOverflow */
+
+/*! exports provided: default */
+
+/*! exports provided: default, MultiDrag, Sortable, Swap */
+
+/*! exports provided: default, animateFill, createSingleton, delegate, followCursor, hideAll, inlinePositioning, roundArrow, sticky */
+
+/*! exports provided: distanceAndSkiddingToXY, default */
+
+/*! exports provided: isElement, isHTMLElement, isShadowRoot */
+
+/*! exports provided: mapToStyles, default */
+
+/*! exports provided: max, min, round */
+
+/*! exports provided: popperGenerator, createPopper, detectOverflow */
+
+/*! exports provided: top, bottom, right, left, auto, basePlacements, start, end, clippingParents, viewport, popper, reference, variationPlacements, placements, beforeRead, read, afterRead, beforeMain, main, afterMain, beforeWrite, write, afterWrite, modifierPhases */
+
+/*! exports provided: top, bottom, right, left, auto, basePlacements, start, end, clippingParents, viewport, popper, reference, variationPlacements, placements, beforeRead, read, afterRead, beforeMain, main, afterMain, beforeWrite, write, afterWrite, modifierPhases, applyStyles, arrow, computeStyles, eventListeners, flip, hide, offset, popperOffsets, preventOverflow, popperGenerator, detectOverflow, createPopperBase, createPopper, createPopperLite */
+
+/*! exports provided: within, withinMaxClamp */
+
+/*! he */
+
+/*! https://mths.be/he v1.2.0 by @mathias | MIT license */
+
+/*! no exports provided */
+
+/*! no static exports found */
+
+/*! regenerator-runtime -- Copyright (c) 2014-present, Facebook, Inc. -- license (MIT): https://github.com/facebook/regenerator/blob/main/LICENSE */
+
+/*! sortablejs */
+
+/*! sweetalert2 */
+
+/*! tippy.js */
+
+/*! toastify-js */
+
+/*! wavesurfer.js */
+
+/*!*************************!*\
+  !*** ./src/js/admin.js ***!
+  \*************************/
+
+/*!*****************************!*\
+  !*** ./src/sass/admin.scss ***!
+  \*****************************/
+
+/*!*******************************!*\
+  !*** ./node_modules/he/he.js ***!
+  \*******************************/
+
+/*!*******************************!*\
+  !*** ./src/img/signature.png ***!
+  \*******************************/
+
+/*!*******************************!*\
+  !*** ./src/js/backend/ask.js ***!
+  \*******************************/
+
+/*!*********************************!*\
+  !*** ./src/js/backend/forms.js ***!
+  \*********************************/
+
+/*!*********************************!*\
+  !*** ./src/js/backend/index.js ***!
+  \*********************************/
+
+/*!*********************************!*\
+  !*** ./src/js/backend/media.js ***!
+  \*********************************/
+
+/*!**********************************!*\
+  !*** ./src/js/frontend/icons.js ***!
+  \**********************************/
+
+/*!***********************************!*\
+  !*** (webpack)/buildin/global.js ***!
+  \***********************************/
+
+/*!***********************************!*\
+  !*** (webpack)/buildin/module.js ***!
+  \***********************************/
+
+/*!***********************************!*\
+  !*** ./src/js/backend/prompts.js ***!
+  \***********************************/
+
+/*!*************************************!*\
+  !*** ./src/js/backend/downloads.js ***!
+  \*************************************/
+
+/*!***************************************!*\
+  !*** ./src/img/blank_certificate.jpg ***!
+  \***************************************/
+
+/*!****************************************!*\
+  !*** ./src/img/dubido_certificate.png ***!
+  \****************************************/
+
+/*!*******************************************!*\
+  !*** ./src/img/certificate_email_sky.jpg ***!
+  \*******************************************/
+
+/*!**********************************************!*\
+  !*** ./src/img/certificate_email_header.png ***!
+  \**********************************************/
+
+/*!*************************************************!*\
+  !*** ./node_modules/awesomplete/awesomplete.js ***!
+  \*************************************************/
+
+/*!*************************************************!*\
+  !*** ./node_modules/tippy.js/dist/tippy.esm.js ***!
+  \*************************************************/
+
+/*!**************************************************!*\
+  !*** ./node_modules/@popperjs/core/lib/enums.js ***!
+  \**************************************************/
+
+/*!**************************************************!*\
+  !*** ./node_modules/@popperjs/core/lib/index.js ***!
+  \**************************************************/
+
+/*!**************************************************!*\
+  !*** ./node_modules/toastify-js/src/toastify.js ***!
+  \**************************************************/
+
+/*!***************************************************!*\
+  !*** ./node_modules/@popperjs/core/lib/popper.js ***!
+  \***************************************************/
+
+/*!*******************************************************!*\
+  !*** ./node_modules/@popperjs/core/lib/utils/math.js ***!
+  \*******************************************************/
+
+/*!********************************************************!*\
+  !*** ./node_modules/@popperjs/core/lib/popper-lite.js ***!
+  \********************************************************/
+
+/*!*********************************************************!*\
+  !*** ./node_modules/@popperjs/core/lib/createPopper.js ***!
+  \*********************************************************/
+
+/*!*********************************************************!*\
+  !*** ./node_modules/@popperjs/core/lib/utils/format.js ***!
+  \*********************************************************/
+
+/*!*********************************************************!*\
+  !*** ./node_modules/@popperjs/core/lib/utils/within.js ***!
+  \*********************************************************/
+
+/*!*********************************************************!*\
+  !*** ./node_modules/sortablejs/modular/sortable.esm.js ***!
+  \*********************************************************/
+
+/*!**********************************************************!*\
+  !*** ./node_modules/sweetalert2/dist/sweetalert2.all.js ***!
+  \**********************************************************/
+
+/*!***********************************************************!*\
+  !*** ./node_modules/@popperjs/core/lib/modifiers/flip.js ***!
+  \***********************************************************/
+
+/*!***********************************************************!*\
+  !*** ./node_modules/@popperjs/core/lib/modifiers/hide.js ***!
+  \***********************************************************/
+
+/*!***********************************************************!*\
+  !*** ./node_modules/@popperjs/core/lib/utils/debounce.js ***!
+  \***********************************************************/
+
+/*!***********************************************************!*\
+  !*** ./node_modules/@popperjs/core/lib/utils/uniqueBy.js ***!
+  \***********************************************************/
+
+/*!***********************************************************!*\
+  !*** ./node_modules/wavesurfer.js/dist/wavesurfer.esm.js ***!
+  \***********************************************************/
+
+/*!************************************************************!*\
+  !*** ./node_modules/@popperjs/core/lib/modifiers/arrow.js ***!
+  \************************************************************/
+
+/*!************************************************************!*\
+  !*** ./node_modules/@popperjs/core/lib/modifiers/index.js ***!
+  \************************************************************/
+
+/*!************************************************************!*\
+  !*** ./node_modules/@popperjs/core/lib/utils/userAgent.js ***!
+  \************************************************************/
+
+/*!*************************************************************!*\
+  !*** ./node_modules/@popperjs/core/lib/modifiers/offset.js ***!
+  \*************************************************************/
+
+/*!*************************************************************!*\
+  !*** ./node_modules/@popperjs/core/lib/utils/getAltAxis.js ***!
+  \*************************************************************/
+
+/*!**************************************************************!*\
+  !*** ./node_modules/@popperjs/core/lib/utils/mergeByName.js ***!
+  \**************************************************************/
+
+/*!***************************************************************!*\
+  !*** ./node_modules/@popperjs/core/lib/dom-utils/contains.js ***!
+  \***************************************************************/
+
+/*!***************************************************************!*\
+  !*** ./node_modules/@popperjs/core/lib/utils/getVariation.js ***!
+  \***************************************************************/
+
+/*!****************************************************************!*\
+  !*** ./node_modules/@popperjs/core/lib/dom-utils/getWindow.js ***!
+  \****************************************************************/
+
+/*!*****************************************************************!*\
+  !*** ./node_modules/@popperjs/core/lib/dom-utils/instanceOf.js ***!
+  \*****************************************************************/
+
+/*!*****************************************************************!*\
+  !*** ./node_modules/@popperjs/core/lib/utils/computeOffsets.js ***!
+  \*****************************************************************/
+
+/*!*****************************************************************!*\
+  !*** ./node_modules/@popperjs/core/lib/utils/detectOverflow.js ***!
+  \*****************************************************************/
+
+/*!*****************************************************************!*\
+  !*** ./node_modules/@popperjs/core/lib/utils/orderModifiers.js ***!
+  \*****************************************************************/
+
+/*!******************************************************************!*\
+  !*** ./node_modules/@popperjs/core/lib/dom-utils/getNodeName.js ***!
+  \******************************************************************/
+
+/*!******************************************************************!*\
+  !*** ./node_modules/@popperjs/core/lib/modifiers/applyStyles.js ***!
+  \******************************************************************/
+
+/*!******************************************************************!*\
+  !*** ./node_modules/@popperjs/core/lib/utils/expandToHashMap.js ***!
+  \******************************************************************/
+
+/*!*******************************************************************!*\
+  !*** ./node_modules/@popperjs/core/lib/utils/getBasePlacement.js ***!
+  \*******************************************************************/
+
+/*!*******************************************************************!*\
+  !*** ./node_modules/@popperjs/core/lib/utils/rectToClientRect.js ***!
+  \*******************************************************************/
+
+/*!********************************************************************!*\
+  !*** ./node_modules/@popperjs/core/lib/dom-utils/getLayoutRect.js ***!
+  \********************************************************************/
+
+/*!********************************************************************!*\
+  !*** ./node_modules/@popperjs/core/lib/dom-utils/getNodeScroll.js ***!
+  \********************************************************************/
+
+/*!********************************************************************!*\
+  !*** ./node_modules/@popperjs/core/lib/dom-utils/getParentNode.js ***!
+  \********************************************************************/
+
+/*!********************************************************************!*\
+  !*** ./node_modules/@popperjs/core/lib/modifiers/computeStyles.js ***!
+  \********************************************************************/
+
+/*!********************************************************************!*\
+  !*** ./node_modules/@popperjs/core/lib/modifiers/popperOffsets.js ***!
+  \********************************************************************/
+
+/*!********************************************************************!*\
+  !*** ./node_modules/@popperjs/core/lib/utils/validateModifiers.js ***!
+  \********************************************************************/
+
+/*!*********************************************************************!*\
+  !*** ./node_modules/@popperjs/core/lib/dom-utils/isScrollParent.js ***!
+  \*********************************************************************/
+
+/*!*********************************************************************!*\
+  !*** ./node_modules/@popperjs/core/lib/dom-utils/isTableElement.js ***!
+  \*********************************************************************/
+
+/*!*********************************************************************!*\
+  !*** ./node_modules/@popperjs/core/lib/modifiers/eventListeners.js ***!
+  \*********************************************************************/
+
+/*!*********************************************************************!*\
+  !*** ./node_modules/@popperjs/core/lib/utils/getFreshSideObject.js ***!
+  \*********************************************************************/
+
+/*!*********************************************************************!*\
+  !*** ./node_modules/@popperjs/core/lib/utils/mergePaddingObject.js ***!
+  \*********************************************************************/
+
+/*!**********************************************************************!*\
+  !*** ./node_modules/@popperjs/core/lib/dom-utils/getClippingRect.js ***!
+  \**********************************************************************/
+
+/*!**********************************************************************!*\
+  !*** ./node_modules/@popperjs/core/lib/dom-utils/getDocumentRect.js ***!
+  \**********************************************************************/
+
+/*!**********************************************************************!*\
+  !*** ./node_modules/@popperjs/core/lib/dom-utils/getOffsetParent.js ***!
+  \**********************************************************************/
+
+/*!**********************************************************************!*\
+  !*** ./node_modules/@popperjs/core/lib/dom-utils/getScrollParent.js ***!
+  \**********************************************************************/
+
+/*!**********************************************************************!*\
+  !*** ./node_modules/@popperjs/core/lib/dom-utils/getViewportRect.js ***!
+  \**********************************************************************/
+
+/*!**********************************************************************!*\
+  !*** ./node_modules/@popperjs/core/lib/dom-utils/getWindowScroll.js ***!
+  \**********************************************************************/
+
+/*!**********************************************************************!*\
+  !*** ./node_modules/@popperjs/core/lib/modifiers/preventOverflow.js ***!
+  \**********************************************************************/
+
+/*!***********************************************************************!*\
+  !*** ./node_modules/@popperjs/core/lib/dom-utils/getCompositeRect.js ***!
+  \***********************************************************************/
+
+/*!***********************************************************************!*\
+  !*** ./node_modules/@popperjs/core/lib/dom-utils/getComputedStyle.js ***!
+  \***********************************************************************/
+
+/*!***********************************************************************!*\
+  !*** ./node_modules/@popperjs/core/lib/dom-utils/isLayoutViewport.js ***!
+  \***********************************************************************/
+
+/*!***********************************************************************!*\
+  !*** ./node_modules/@popperjs/core/lib/utils/computeAutoPlacement.js ***!
+  \***********************************************************************/
+
+/*!***********************************************************************!*\
+  !*** ./node_modules/@popperjs/core/lib/utils/getOppositePlacement.js ***!
+  \***********************************************************************/
+
+/*!************************************************************************!*\
+  !*** ./node_modules/@popperjs/core/lib/dom-utils/listScrollParents.js ***!
+  \************************************************************************/
+
+/*!*************************************************************************!*\
+  !*** ./node_modules/@popperjs/core/lib/dom-utils/getDocumentElement.js ***!
+  \*************************************************************************/
+
+/*!**************************************************************************!*\
+  !*** ./node_modules/@popperjs/core/lib/dom-utils/getWindowScrollBarX.js ***!
+  \**************************************************************************/
+
+/*!***************************************************************************!*\
+  !*** ./node_modules/@popperjs/core/lib/dom-utils/getHTMLElementScroll.js ***!
+  \***************************************************************************/
+
+/*!***************************************************************************!*\
+  !*** ./node_modules/@popperjs/core/lib/utils/getMainAxisFromPlacement.js ***!
+  \***************************************************************************/
+
+/*!****************************************************************************!*\
+  !*** ./node_modules/@popperjs/core/lib/dom-utils/getBoundingClientRect.js ***!
+  \****************************************************************************/
+
+/*!********************************************************************************!*\
+  !*** ./node_modules/@popperjs/core/lib/utils/getOppositeVariationPlacement.js ***!
+  \********************************************************************************/
+
+/**!
+ * Sortable 1.15.0
+ * @author	RubaXa   <trash@rubaxa.org>
+ * @author	owenm    <owen23355@gmail.com>
+ * @license MIT
+ */
+
+/**!
+* tippy.js v6.3.7
+* (c) 2017-2021 atomiks
+* MIT License
+*/
