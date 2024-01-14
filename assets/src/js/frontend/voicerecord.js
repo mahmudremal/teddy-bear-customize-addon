@@ -71,9 +71,10 @@ const voiceRecord = {
     });
     voiceRecord.uploadInput.addEventListener('change', voiceRecord.uploadAudio);
     voiceRecord.uploadInput.addEventListener('click', (event) => {
-        const audioupload_instuction = voiceRecord.i18n?.audioupload_instuction??'Please upload file upto 20 seconds.';
-        voiceRecord.audioInstructPreview.innerHTML = audioupload_instuction.replace(/(\r\n|\n\r|\r|\n)/g, '<br>' + '$1');
-        voiceRecord.audioInstructPreview.classList.remove('d-none');
+      var audioupload_instuction = voiceRecord.i18n?.audioupload_instuction??'Please upload file upto %d seconds.';
+      audioupload_instuction = audioupload_instuction.replace('%d', voiceRecord.duration);
+      voiceRecord.audioInstructPreview.innerHTML = audioupload_instuction.replace(/(\r\n|\n\r|\r|\n)/g, '<br>' + '$1');
+      voiceRecord.audioInstructPreview.classList.remove('d-none');
     });
     rootElement.appendChild(voiceRecord.uploadButton);
 
