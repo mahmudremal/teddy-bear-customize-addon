@@ -418,6 +418,11 @@ class Ajax {
 		foreach($filteredData as $i => $name) {
 			$args['names'][] = $name;
 		}
+		
+		if (apply_filters('teddybear/project/system/isactive', 'names-randomize')) {
+			shuffle($args['names']);
+		}
+		
 		wp_send_json_success($args);
 	}
 

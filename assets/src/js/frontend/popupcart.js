@@ -2,6 +2,7 @@ const popupCart = {
     basePrice: 0,
     priceSign: '$',
     additionalPrices: [],
+    ajaxUrl: false,
 
     setBasePrice: (price) => {
         popupCart.basePrice = price;
@@ -48,11 +49,25 @@ const popupCart = {
         return (popupCart.basePrice + additionalPriceTotal);
     },
     updateTotalPrice: () => {
-        document.querySelectorAll('.calculated-prices .price_amount').forEach((priceAlt) => {
+        document.querySelectorAll('.calculated-prices .price_amount').forEach(async (priceAlt) => {
             priceAlt.classList.add('animate__shakeX', 'animate__animated');
-            priceAlt.innerHTML = popupCart.priceSign +''+ parseFloat(popupCart.getTotalPrice()).toFixed(2) + popupCart.cartIcon;
+            var local = popupCart.local.replace('_', '-');
+            var priceAmount = parseFloat(popupCart.getTotalPrice()).toFixed(2);
+
+            if (local != 'en-US' && Intl && typeof Intl?.NumberFormat === 'function') {
+                priceAmount = new Intl.NumberFormat(local).format(priceAmount);
+            }
+
+            // if (popupCart?.ajaxUrl) {
+            //     var res = await fetch(popupCart.ajaxUrl + '?action=futurewordpress/project/ajax/i18n/number&decimal=2&number=' + priceAmount).then(res => res.json()).then(json => {
+            //         priceAmount = json?.number??priceAmount;
+            //     }).catch(error => console.error(error));
+            // }
+
+            priceAlt.innerHTML = popupCart.priceSign +''+ priceAmount + popupCart.cartIcon;
             setTimeout(() => {priceAlt.classList.remove('animate__shakeX', 'animate__animated');}, 1000);
         });
-    }
+    },
+    
 };
 export default popupCart;

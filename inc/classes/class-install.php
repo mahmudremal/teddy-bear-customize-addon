@@ -13,13 +13,9 @@ class Install {
 		$this->setup_hooks();
 	}
 	protected function setup_hooks() {
-		add_action('init', [ $this, 'load_plugin_textdomain' ], 1, 0);
 		
 		register_activation_hook(TEDDY_BEAR_CUSTOMIZE_ADDON__FILE__, [ $this, 'register_activation_hook' ]);
 		register_deactivation_hook(TEDDY_BEAR_CUSTOMIZE_ADDON__FILE__, [ $this, 'register_deactivation_hook' ]);
-	}
-	public function load_plugin_textdomain() {
-		load_plugin_textdomain('teddybearsprompts', false, dirname(plugin_basename(TEDDY_BEAR_CUSTOMIZE_ADDON__FILE__)) . '/languages');
 	}
 	public function register_activation_hook() {
 		global $wpdb;$prefix = $wpdb->prefix . 'fwp_';

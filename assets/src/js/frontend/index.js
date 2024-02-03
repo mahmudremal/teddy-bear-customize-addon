@@ -42,6 +42,8 @@ import Tidio_Chat from "./tidio";
 			// this.Twig = Twig;
 			this.flatpickr = flatpickr;
 			popupCart.priceSign = this.config?.currencySign??'$';
+			popupCart.local = this.config?.local??'en-US';
+			popupCart.ajaxUrl = this.ajaxUrl;
 			this.popupCart = popupCart;
 			this.init_toast();
 			this.init_events();
@@ -271,7 +273,7 @@ import Tidio_Chat from "./tidio";
 											<img class="swal2-footer__wraping__thumbnail" src="${(thisClass.lastJson?.wrapping)?.thumbnail??''}" alt="Packaging" />
 											`:''
 										}
-										${(thisClass.lastJson?.wrapping)?.title??(thisClass.i18n?.addwrapping??'Add wrapping paper')} (${thisClass.config?.currencySign??''} ${((thisClass.lastJson?.wrapping)?.price??0).toFixed(2)})
+										${(thisClass.lastJson?.wrapping)?.title??(thisClass.i18n?.addwrappingpaper??'Add wrapping paper')} (${thisClass.config?.currencySign??''} ${((thisClass.lastJson?.wrapping)?.price??0).toFixed(2)})
 
 										<button class="btn btn-primary button" id="addwrapping_checkbox" data-mode="add">
 											<span>${thisClass.i18n?.addwrapping??'Add wrapping'}</span>

@@ -759,12 +759,12 @@ const PROMPTS = {
                         label: PROMPTS.i18n?.chooseaname4me??'Choose a name for me',
                         // placeholder: PROMPTS.i18n?.teddyfullname??'Teddy full Name',
                         dataset: {title: PROMPTS.i18n?.teddyfullname??'Teddy full Name'},
-                        options: [{value: 'tochoose', label: 'Choose a name for me'}]
+                        options: [{value: 'tochoose', label: PROMPTS.i18n?.chooseaname4me??'Choose a name for me'}]
                     },
                     teddy_birth: {
                         type: 'date', // default: new Date().toLocaleDateString('en-US'),
                         label: PROMPTS.i18n?.teddybirth??'Birth date',
-                        // placeholder: PROMPTS.i18n?.teddybirth??'Date of teddy\'s birth',
+                        // placeholder: PROMPTS.i18n?.dtofteddybirth??'Date of teddy\'s birth',
                         dataset: {title: PROMPTS.i18n?.teddybirth??'Birth date'}
                     },
                     teddy_reciever: {

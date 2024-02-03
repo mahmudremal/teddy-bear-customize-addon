@@ -100,7 +100,7 @@ class Menus {
 	}
 	public function menus($args) {
 		// apply_filters('teddybear/project/system/isactive', 'standard-enable')
-		$args['standard']		= [
+		$args['standard']	= [
 			'title'							=> __('General', 'teddybearsprompts'),
 			'description'					=> __('General settings for teddy-bear customization popup.', 'teddybearsprompts'),
 			'fields'						=> [
@@ -181,7 +181,7 @@ class Menus {
 				],
 			]
 		];
-		$args['default']		= [
+		$args['default']	= [
 			'title'							=> __('Teddy Meta', 'teddybearsprompts'),
 			'description'					=> __('Teddy bear\'s default data that will be replaced if meta on specific product not exists or empty exists. Existing data won\'t be replaced.', 'teddybearsprompts'),
 			'fields'						=> [
@@ -222,10 +222,17 @@ class Menus {
 				],
 			]
 		];
-		$args['names']			= [
+		$args['names']		= [
 			'title'							=> __('Teddy name', 'teddybearsprompts'),
 			'description'					=> __('List of teddy names that will include in a lottery when user choose to suggest a teddy name.', 'teddybearsprompts'),
 			'fields'						=> [
+				[
+					'id' 					=> 'names-randomize',
+					'label'					=> __('Randomize names', 'teddybearsprompts'),
+					'description'			=> __('Mark to randomize these names before sending to client.', 'teddybearsprompts'),
+					'type'					=> 'checkbox',
+					'default'				=> false
+				],
 				...$this->optionaize_teddy_names(),
 				[
 					'id' 					=> 'do_repeater_name',
@@ -236,7 +243,7 @@ class Menus {
 				],
 			]
 		];
-		$args['addons']			= [
+		$args['addons']		= [
 			'title'							=> __('Addons', 'teddybearsprompts'),
 			'description'					=> __('Necessary addons for after customization process. Including packaging wrappings.', 'teddybearsprompts'),
 			'fields'						=> [
@@ -554,6 +561,73 @@ class Menus {
 					'description'			=> __('Mark this option to show available certificates on user bashboard called my-account order details screen.', 'teddybearsprompts'),
 					'type'					=> 'checkbox',
 					'default'				=> true
+				],
+				
+			]
+		];
+		$args['cusrev']		= [
+			'title'							=> __('Review', 'teddybearsprompts'),
+			'description'					=> __('Setup your custom settings for woocommerce customer review plugin.', 'teddybearsprompts'),
+			'fields'						=> [
+
+				[
+					'id' 					=> 'cusrev-completedorder-link',
+					'label'					=> __('Completed order Link', 'teddybearsprompts'),
+					'description'			=> __('Mark to enable link pushing on completed order notification.', 'teddybearsprompts'),
+					'type'					=> 'checkbox',
+					'default'				=> true
+				],
+				[
+					'id' 					=> 'cusrev-completedorder-css',
+					'label'					=> __('Completed order CSS', 'teddybearsprompts'),
+					'description'			=> __('"Write a Review" button inline CSS. Button is and HTML <a> element.', 'teddybearsprompts'),
+					'type'					=> 'text',
+					'default'				=> 'font-weight:normal;background:#0085ba;border-color:#0073aa;color:#fff;text-decoration:none;padding:10px;border-radius:10px;'
+				],
+				[
+					'id' 					=> 'cusrev-completedorder-text',
+					'label'					=> __('Completed order Text', 'teddybearsprompts'),
+					'description'			=> __('Setup custom button text here for completed order review link.', 'teddybearsprompts'),
+					'type'					=> 'text',
+					'default'				=> 'Write a Review'
+				],
+				[
+					'id' 					=> 'cusrev-completedorder-template',
+					'label'					=> __('Completed order HTML template', 'teddybearsprompts'),
+					'description'			=> sprintf(__('Give here HTML template for the section of Review Link. Use (%s) for the place of the Button. Use (%s) for the link only.', 'teddybearsprompts'), '{{button}}', '{{link}}'),
+					'type'					=> 'text',
+					'default'				=> '{{button}}'
+				],
+				
+			]
+		];
+		$args['translate']		= [
+			'title'							=> __('Translate', 'teddybearsprompts'),
+			'description'					=> __('Setup your translations related informations here.', 'teddybearsprompts'),
+			'fields'						=> [
+				[
+					'id' 					=> 'translate-enable',
+					'label'					=> __('Enable translation', 'teddybearsprompts'),
+					'description'			=> __('Enable live translations those are setting from here Required API key.', 'teddybearsprompts'),
+					'type'					=> 'checkbox',
+					'default'				=> true
+				],
+				[
+					'id' 					=> 'translate-toonly',
+					'label'					=> __('Translate to', 'teddybearsprompts'),
+					'description'			=> false, // __('', 'teddybearsprompts'),
+					'type'					=> 'select',
+					'options'				=> [
+						
+					],
+					'default'				=> true
+				],
+				[
+					'id' 					=> 'translate-api',
+					'label'					=> __('API key', 'teddybearsprompts'),
+					'description'			=> __('Provice lecto.ai api key to translate text. Text will store after translation to avoid api limit exceed.', 'teddybearsprompts'),
+					'type'					=> 'text',
+					'default'				=> ''
 				],
 				
 			]

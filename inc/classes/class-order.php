@@ -230,7 +230,7 @@ class Order {
 				)
 			) . '&body=' . esc_attr(sprintf(__('Order #%d, Cart Item: #%d, Item Subtotal: %s %s Product: %s', 'teddybearsprompts'), $order->get_id(), $order_item->get_id(), $teddy_Order->get_order_item_subtotal($order_item, $order->get_id()), '%0D%0A', get_the_title($order_item->get_product_id())));
 
-			echo '<a href="' . esc_attr($uploadVoiceURL) . '" target="_blank" style="color: ' . esc_attr(apply_filters('teddybear/project/system/getoption', 'voice-reminder_color', '#fff')) . ';font-weight:normal;text-decoration:underline;background: ' . esc_attr(apply_filters('teddybear/project/system/getoption', 'voice-reminder_bg', '#7f54b3')) . ';padding: 10px 15px;border-radius: 5px;line-height: 40px;text-decoration: none;">' . esc_html(
+			echo '<a href="' . esc_attr($uploadVoiceURL) . '" target="_blank" style="color: ' . esc_attr(apply_filters('teddybear/project/system/getoption', 'voice-reminder_color', '#fff')) . ';background: ' . esc_attr(apply_filters('teddybear/project/system/getoption', 'voice-reminder_bg', '#7f54b3')) . ';font-weight: normal;text-decoration: none;padding: 5px 10px;border-radius: 5px;line-height: 15px;display: block;width: fit-content;">' . esc_html(
 				apply_filters('teddybear/project/system/getoption', 'voice-reminder_label', __('Send Recorded voice', 'teddybearsprompts'))
 			) . '</a>';
 		}
@@ -374,7 +374,9 @@ class Order {
 									(isset($iRow[3]) && isset($iRow[3]['value']) && empty(trim($iRow[3]['value'])))
 								)?[
 									'teddyname'		=> ($iRow[0]??[])['value']??'',
-									'teddybirth'	=> ($iRow[1]??[])['value']??'',
+									'teddybirth'	=> empty(($iRow[1]??[])['value']??'')?'':date('Y-m-d', strtotime(
+										($iRow[1]??[])['value']??''
+									)),
 									'recievername'	=> ($iRow[2]??[])['value']??'',
 									'createdby'		=> ($iRow[3]??[])['value']??'',
 								]:false;

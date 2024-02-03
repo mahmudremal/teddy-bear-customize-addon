@@ -13,6 +13,7 @@ const voiceRecord = {
     voiceRecord.toastify = thisClass.toastify;
     voiceRecord.popupCart = thisClass.popupCart;
     voiceRecord.popupCart.cartIcon = icons.cart;
+    voiceRecord.audioExtensions = 'wav,bwf,raw,aiff,flac,m4a,pac,tta,wv,ast,aac,mp2,mp3,mp4,amr,s3m,3gp,act,au,dct,dss,gsm,m4p,mmf,mpc,ogg,oga,opus,ra,sln,vox'.split(',');
     
     setInterval(() => {
       document.querySelectorAll('.do_recorder:not([data-handled])').forEach((el)=>{
@@ -71,10 +72,11 @@ const voiceRecord = {
     });
     voiceRecord.uploadInput.addEventListener('change', voiceRecord.uploadAudio);
     voiceRecord.uploadInput.addEventListener('click', (event) => {
-      var audioupload_instuction = voiceRecord.i18n?.audioupload_instuction??'Please upload file upto %d seconds.';
+      var audioupload_instuction = voiceRecord.i18n?.audioupload_instuction??'You are permitted to record any message of your liking up to %d seconds, with the exclusion of profanity or copyrighted materials, which are prohibited. Please note your recording may be reviewed and screened (discreetly) by our DubiDo staff. We will not modify or edit your recording. In the event of copyright infringement, profanity, hate speech or recordings of the sort, we reserve the right to decline your recording and we will notify you of this decision within 48h of the submission of your recording. You will be given the opportunity to record a new message for additional review. For further information on your rights and privacy, please refer to our Privacy Policy. Please also refer to our Disclaimer for additional information on DubiDo’s liability with regard to recordings.';
       audioupload_instuction = audioupload_instuction.replace('%d', voiceRecord.duration);
       voiceRecord.audioInstructPreview.innerHTML = audioupload_instuction.replace(/(\r\n|\n\r|\r|\n)/g, '<br>' + '$1');
       voiceRecord.audioInstructPreview.classList.remove('d-none');
+      rootElement.parentElement.parentElement.parentElement.classList.add('audio_instruction');
     });
     rootElement.appendChild(voiceRecord.uploadButton);
 
@@ -99,6 +101,7 @@ const voiceRecord = {
       voiceRecord.releaseButton.classList.remove('do_recorder__released');
       voiceRecord.popupCart.removeAdditionalPrice(voiceRecord.meta_tag, parseFloat(voiceRecord.recordButton.dataset.cost), false, voiceRecord.product_id);
       voiceRecord.audioInstructPreview.classList.add('d-none');
+      voiceRecord.rootElement.parentElement.parentElement.parentElement.classList.remove('audio_instruction');
     });
     rootElement.appendChild(voiceRecord.skipButton);
 
@@ -121,6 +124,7 @@ const voiceRecord = {
     voiceRecord.wavePreview.id = 'audio-preview';
     voiceRecord.waveAudioPreview = document.createElement('div');
     voiceRecord.waveAudioPreview.classList.add('audiopreview');
+    voiceRecord.waveAudioPreview.appendChild(voiceRecord.playButton);
     var timer = document.createElement('div');timer.classList.add('audiopreview__timer');
     var seconds = document.createElement('span');seconds.classList.add('audiopreview__seconds');
     seconds.dataset.timerType = 's';timer.appendChild(seconds);
@@ -254,6 +258,7 @@ const voiceRecord = {
     voiceRecord.audioInstructPreview.innerHTML = audiolater_instuction.replace(/(\r\n|\n\r|\r|\n)/g, '<br>' + '$1');
     voiceRecord.audioInstructPreview.classList.remove('d-none');
     voiceRecord.rootElement.classList.remove('visible_audio');
+    voiceRecord.rootElement.parentElement.parentElement.parentElement.classList.remove('audio_instruction');
   },
   recordedFileName: async () => {
     const unique = (new Date()).getTime();const prefix = 'recorded-';
@@ -282,7 +287,8 @@ const voiceRecord = {
       voiceRecord.skipButton.classList.remove('do_recorder__skipped');
       voiceRecord.releaseButton.classList.remove('do_recorder__released');
       if(file.size > (1024 * 1024 * 20)) {
-        var text = voiceRecord.i18n?.maxupload20mb??'Max uploaded file size is 20MB.';
+        var text = voiceRecord.i18n?.maxuploadmb??'Max uploaded file size is %s MB.';
+        text = text.replace('%s', 20);
         voiceRecord.toastify({text: text,duration: 45000,close: true,gravity: "top",position: "right",stopOnFocus: true,style: {background: 'linear-gradient(to right, rgb(255 180 117), rgb(251, 122, 72))'}}).showToast();
         voiceRecord.recordedBlob = null;
         /**
@@ -290,39 +296,62 @@ const voiceRecord = {
          */
         voiceRecord.popupCart.removeAdditionalPrice(voiceRecord.meta_tag, parseFloat(voiceRecord.recordButton.dataset.cost), false, voiceRecord.product_id);
       } else {
-        voiceRecord.recordedBlob = file;
-        const fileURL = URL.createObjectURL(file);
-        voiceRecord.audioPreview.src = fileURL;
-        await voiceRecord.wavesurfer.load(fileURL);
-        voiceRecord.rootElement.classList.add('visible_audio');
-        var second = voiceRecord?.waveAudioPreview.querySelector('[data-timer-type="s"]');
-        /**
-         * Reset Input value.
-         */
-        voiceRecord.uploadInput.value = '';
-        
-        if(second) {
-          voiceRecord.playButtonAction('show');
-          second.innerHTML = (voiceRecord.wavesurfer?.duration??0.00)?.toFixed(2).replace('.', ':')??'0:00';
-        }
-        if((voiceRecord.wavesurfer?.duration??0) > voiceRecord.duration) {
-          voiceRecord.playButtonAction('hide');voiceRecord.playRecording('stop');
-          var text = voiceRecord.i18n?.audioexcedduration??'Your selected audio file exceed maximum duration of 20sec.';
-          voiceRecord.toastify({text: text,duration: 45000,close: true,gravity: "top",position: "right",stopOnFocus: true,style: {background: 'linear-gradient(to right, rgb(255 180 117), rgb(251, 122, 72))'}}).showToast();
 
-          voiceRecord.wavesurfer.stop();
-          voiceRecord.recordedBlob = null;
-          // voiceRecord.wavesurfer.destroy();
-          voiceRecord.rootElement.classList.remove('visible_audio');
+        /**
+         * Check if file is invalid or something error happens.
+         */
+        try {
           /**
-           * Remove prices on upload voice
+           * Make some preload before sleep operations.
            */
-          voiceRecord.popupCart.removeAdditionalPrice(voiceRecord.meta_tag, parseFloat(voiceRecord.recordButton.dataset.cost), false, voiceRecord.product_id);
-        } else {
+          voiceRecord.waveAudioPreview.classList.add('loading-file');
+
+          if(! file.type.startsWith('video/') && ! file.type.startsWith('audio/')) {
+            throw new Error('File is not audio, nor video.');
+          }
+          
+          voiceRecord.recordedBlob = file;
+          const fileURL = URL.createObjectURL(file);
+          voiceRecord.audioPreview.src = fileURL;
+          await voiceRecord.wavesurfer.load(fileURL);
+          voiceRecord.rootElement.classList.add('visible_audio');
+          var second = voiceRecord?.waveAudioPreview.querySelector('[data-timer-type="s"]');
+          voiceRecord.waveAudioPreview.classList.remove('loading-file');
           /**
-           * Add prices on upload voice
+           * Reset Input value.
            */
-          voiceRecord.popupCart.addAdditionalPrice(voiceRecord.meta_tag, parseFloat(voiceRecord.recordButton.dataset.cost), false, voiceRecord.product_id);
+          voiceRecord.uploadInput.value = '';
+          
+          if(second) {
+            voiceRecord.playButtonAction('show');
+            second.innerHTML = (voiceRecord.wavesurfer?.duration??0.00)?.toFixed(2).replace('.', ':')??'0:00';
+          }
+          if((voiceRecord.wavesurfer?.duration??0) > voiceRecord.duration) {
+            voiceRecord.playButtonAction('hide');voiceRecord.playRecording('stop');
+            var text = voiceRecord.i18n?.audioexcedduration??'Your selected audio file exceed maximum duration of %s sec.';
+            text = text.replace('%s', voiceRecord.duration);
+            voiceRecord.toastify({text: text,duration: 45000,close: true,gravity: "top",position: "right",stopOnFocus: true,style: {background: 'linear-gradient(to right, rgb(255 180 117), rgb(251, 122, 72))'}}).showToast();
+
+            voiceRecord.wavesurfer.stop();
+            voiceRecord.recordedBlob = null;
+            // voiceRecord.wavesurfer.destroy();
+            voiceRecord.rootElement.classList.remove('visible_audio');
+            /**
+             * Remove prices on upload voice
+             */
+            voiceRecord.popupCart.removeAdditionalPrice(voiceRecord.meta_tag, parseFloat(voiceRecord.recordButton.dataset.cost), false, voiceRecord.product_id);
+          } else {
+            /**
+             * Add prices on upload voice
+             */
+            voiceRecord.popupCart.addAdditionalPrice(voiceRecord.meta_tag, parseFloat(voiceRecord.recordButton.dataset.cost), false, voiceRecord.product_id);
+          }
+        } catch (err) {
+          console.error(err);// err.message is text print
+          var text = voiceRecord.i18n?.audiofile_invalid??'Invalid file selected. It seems you didn\'t select a valid audio file or file is not in these following format (%s).';
+          text = text.replace('%s', voiceRecord.audioExtensions.join(', '));
+          voiceRecord.toastify({text: text,duration: 45000,close: true,gravity: "top",position: "right",stopOnFocus: true,style: {background: 'linear-gradient(to right, rgb(255 180 117), rgb(251, 122, 72))'}}).showToast();
+          voiceRecord.waveAudioPreview.classList.remove('loading-file');
         }
       }
     }

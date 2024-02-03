@@ -108,7 +108,8 @@ class Assets {
 			'i18n'					=> [
 				'pls_wait'			=> __('Please wait...', 'teddybearsprompts'),
 			],
-			'currencySign'		=> get_woocommerce_currency_symbol()
+			'currencySign'		=> get_woocommerce_currency_symbol(),
+			'local'				=> get_user_locale()
 			
 		], (array) $args);
 		

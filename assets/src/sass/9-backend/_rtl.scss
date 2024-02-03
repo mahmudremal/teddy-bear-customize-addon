@@ -1,0 +1,10 @@
+html {
+  &[dir="rtl"] {
+
+    .settings-container table tbody tr td label[for^=teddy-] {
+      right: unset;
+      left: 15px;
+    }
+    
+  }
+}

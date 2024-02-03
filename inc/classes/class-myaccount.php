@@ -44,6 +44,7 @@ class Myaccount {
 		}
 		
 		add_action('woocommerce_account_edit-account_endpoint', [$this, 'woocommerce_account_edit_account_endpoint'], 10, 0);
+		add_action('woocommerce_account_orders_endpoint', [$this, 'woocommerce_account_orders_endpoint'], 10, 0);
 	}
 	public function init_memberpress() {
 		if(!class_exists('MeprHooks')) {return;}
@@ -133,8 +134,6 @@ class Myaccount {
 		// wp_safe_redirect($redirect);
 	}
 
-
-
 	public function woocommerce_account_edit_account_endpoint() {
 		?>
 		<form class="woocommerce-removeAccountForm delete-account" action="<?php echo esc_url(admin_url('admin-post.php')); ?>" method="post">
@@ -149,10 +148,11 @@ class Myaccount {
 		<style>form.woocommerce-removeAccountForm.delete-account {margin: auto;margin-top: 50px;border: 1px solid #ddd;padding: 10px;}</style>
 		<?php
 	}
+	public function woocommerce_account_orders_endpoint() {
+		?><style>.woocommerce-account .woocommerce + br + nav, .woocommerce-account .woocommerce + br + nav + p, .woocommerce-account .woocommerce + br + nav + p + p {display: none;}</style><?php
+	}
 	public function woocommerce_account_membersclub_endpoint() {
-		?>
-		<script>location.replace('<?php echo esc_url(site_url('/account/')); ?>');</script>
-		<?php
+		?><script>location.replace('<?php echo esc_url(site_url('/account/')); ?>');</script><?php
 	}
 
 	/**

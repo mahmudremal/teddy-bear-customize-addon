@@ -390,7 +390,7 @@ const PROMPTS = {
                 
                 input = document.createElement('input');input.classList.add('form-control', 'form-control-'+field.type);input.id='thefield'+PROMPTS.lastfieldID;input.name = 'description';input.setAttribute('value', data?.description??'');
                 label = document.createElement('label');label.classList.add('form-label');
-                label.setAttribute('for', input.id);label.innerHTML = PROMPTS.i18n?.placeholder_text??'Field descriptions.';
+                label.setAttribute('for', input.id);label.innerHTML = PROMPTS.i18n?.fielddesc??'Field descriptions.';
                 fieldset.appendChild(label);fieldset.appendChild(input);
                 PROMPTS.lastfieldID++;
                 input = document.createElement('input');input.classList.add('form-control', 'form-control-'+field.type);input.type='text';input.name = 'placeholder';input.id='thefield'+PROMPTS.lastfieldID;input.setAttribute('value', data?.placeholder??'');
@@ -421,7 +421,7 @@ const PROMPTS = {
                     input.setAttribute('value', data?.cost??'');input.name = 'cost';
                     label = document.createElement('label');label.classList.add('form-label');
                     label.setAttribute('for', input.id);
-                    label.innerHTML = PROMPTS.i18n?.placeholder_ordefault??'Additional cost';
+                    label.innerHTML = PROMPTS.i18n?.additionalcost??'Additional cost';
                     fieldset.appendChild(label);fieldset.appendChild(input);
                  */
                 input = document.createElement('input');input.classList.add('form-control', 'form-control-'+field.type);input.type = data?.type??field.type;
@@ -699,7 +699,7 @@ const PROMPTS = {
             el.dataset.handled = true;
             el.addEventListener('click', (event) => {
                 event.preventDefault();
-                if(confirm(PROMPTS.i18n?.areusure??'Are you sure?')) {
+                if(confirm(PROMPTS.i18n?.rusure??'Are you sure?')) {
                     if(el.parentElement&&el.parentElement.parentElement) {
                         el.parentElement.parentElement.remove();
                     } else {

@@ -1,0 +1,16 @@
+html {
+  &[dir="rtl"] {
+    .swal2-popup.fwp-swal2-popup .dynamic_popup__header__image {
+      @include mq($from: 250px) {
+        transform: translateX(-40%);
+      }
+      @include mq($from: 350px) {
+        transform: translateX(-50%);
+      }
+      @include mq($until: 250px) {
+        transform: unset;
+      }
+    }
+    
+  }
+}
