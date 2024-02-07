@@ -74,7 +74,7 @@ const voiceRecord = {
     voiceRecord.uploadInput.addEventListener('click', (event) => {
       var audioupload_instuction = voiceRecord.i18n?.audioupload_instuction??'You are permitted to record any message of your liking up to %d seconds, with the exclusion of profanity or copyrighted materials, which are prohibited. Please note your recording may be reviewed and screened (discreetly) by our DubiDo staff. We will not modify or edit your recording. In the event of copyright infringement, profanity, hate speech or recordings of the sort, we reserve the right to decline your recording and we will notify you of this decision within 48h of the submission of your recording. You will be given the opportunity to record a new message for additional review. For further information on your rights and privacy, please refer to our Privacy Policy. Please also refer to our Disclaimer for additional information on DubiDo’s liability with regard to recordings.';
       audioupload_instuction = audioupload_instuction.replace('%d', voiceRecord.duration);
-      voiceRecord.audioInstructPreview.innerHTML = audioupload_instuction.replace(/(\r\n|\n\r|\r|\n)/g, '<br>' + '$1');
+      voiceRecord.audioInstructPreview.innerHTML = voiceRecord.nl2br(audioupload_instuction);
       voiceRecord.audioInstructPreview.classList.remove('d-none');
       rootElement.parentElement.parentElement.parentElement.classList.add('audio_instruction');
     });
@@ -182,7 +182,7 @@ const voiceRecord = {
         voiceRecord.skipButton.classList.remove('do_recorder__skipped');
         voiceRecord.releaseButton.classList.remove('do_recorder__released');
         const audiorecord_instuction = voiceRecord.i18n?.audiorecord_instuction??'Please record your voice upto 20 seconds.';
-        voiceRecord.audioInstructPreview.innerHTML = audiorecord_instuction.replace(/(\r\n|\n\r|\r|\n)/g, '<br>' + '$1');
+        voiceRecord.audioInstructPreview.innerHTML = voiceRecord.nl2br(audiorecord_instuction);
         voiceRecord.audioInstructPreview.classList.remove('d-none');
         /** **here** */
       })
@@ -255,7 +255,7 @@ const voiceRecord = {
     voiceRecord.skipButton.classList.remove('do_recorder__skipped');
     voiceRecord.releaseButton.classList.add('do_recorder__released');
     const audiolater_instuction = voiceRecord.i18n?.audiolater_instuction??'1. Receive instructions & button in order email.\n2. Upload audio file anytime later.\n3. we will ship when your audio file is received.';
-    voiceRecord.audioInstructPreview.innerHTML = audiolater_instuction.replace(/(\r\n|\n\r|\r|\n)/g, '<br>' + '$1');
+    voiceRecord.audioInstructPreview.innerHTML = voiceRecord.nl2br(audiolater_instuction);
     voiceRecord.audioInstructPreview.classList.remove('d-none');
     voiceRecord.rootElement.classList.remove('visible_audio');
     voiceRecord.rootElement.parentElement.parentElement.parentElement.classList.remove('audio_instruction');
@@ -367,6 +367,12 @@ const voiceRecord = {
       default:
         break;
     }
+  },
+  nl2br: (str) => {
+    if (typeof str === 'undefined' || str === null) {
+      return '';
+    }
+    return (str + '').replaceAll(/([^>\r\n]?)(\r\n|\n\r|\r|\n)/g, '$1<br />$2').replaceAll('\\n', '<br>').replaceAll('\n', '<br>').replaceAll('\ n', '<br>');
   }
 
 };

@@ -115,13 +115,10 @@ class Product {
 				$field2Translate = ['label', 'heading', 'placeholder', 'steptitle', 'subtitle', 'product_title', 'description'];
 				foreach($field2Translate as $toTrans) {
 					if (isset($_prod[$toTrans])) {
-						if ($toTrans == 'label' && is_numeric($_prod[$toTrans])) {
-							continue;
-						}
-						$_prod[$toTrans] = apply_filters('teddybear/project/system/translate', $_prod[$toTrans], 'teddybearsprompts', $_prod[$toTrans] . ' - input field', get_user_locale());
+						if ($toTrans == 'label' && is_numeric($_prod[$toTrans])) {continue;}
+						$json[$_posI][$i][$toTrans] = apply_filters('teddybear/project/system/translate', $_prod[$toTrans], 'teddybearsprompts', $_prod[$toTrans] . ' - input field');
 					}
 				}
-				$json[$_posI][$i] = $_prod;
 				
 				
 				if (!empty(trim($_prod['headerbg']))) {
@@ -162,7 +159,7 @@ class Product {
 								if ($toTrans == 'label' && is_numeric($option[$toTrans])) {
 									continue;
 								}
-								$option[$toTrans] = apply_filters('teddybear/project/system/translate', $option[$toTrans], 'teddybearsprompts', $option[$toTrans] . ' - input field', get_user_locale());
+								$option[$toTrans] = apply_filters('teddybear/project/system/translate', $option[$toTrans], 'teddybearsprompts', $option[$toTrans] . ' - input field');
 							}
 						}
 						
@@ -232,7 +229,7 @@ class Product {
 										if ($toTrans == 'label' && is_numeric($option[$toTrans])) {
 											continue;
 										}
-										$option[$toTrans] = apply_filters('teddybear/project/system/translate', $option[$toTrans], 'teddybearsprompts', $option[$toTrans] . ' - input field', get_user_locale());
+										$option[$toTrans] = apply_filters('teddybear/project/system/translate', $option[$toTrans], 'teddybearsprompts', $option[$toTrans] . ' - input field');
 									}
 								}
 								

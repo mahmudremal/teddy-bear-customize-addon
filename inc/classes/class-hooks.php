@@ -32,7 +32,7 @@ class Hooks {
     if($teddy_Plushies->is_accessory($product->get_id())) {return;}
     $config = ['id' => $product->get_id()];
     ?>
-    <button type="button" class="init_cusomizeaddtocartbtn" data-config="<?php echo esc_attr(json_encode($config)); ?>"><?php esc_html_e('Customize', 'teddybearsprompts'); ?></button>
+    <button type="button" class="init_cusomizeaddtocartbtn" data-config="<?php echo esc_attr(json_encode($config)); ?>"><?php echo esc_html__('Customize', 'teddybearsprompts'); ?></button>
     <?php
   }
   public function woocommerce_loop_add_to_cart_link($add_to_cart_html, $product, $args) {

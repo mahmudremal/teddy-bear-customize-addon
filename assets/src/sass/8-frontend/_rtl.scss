@@ -1,14 +1,30 @@
 html {
   &[dir="rtl"] {
-    .swal2-popup.fwp-swal2-popup .dynamic_popup__header__image {
-      @include mq($from: 250px) {
-        transform: translateX(-40%);
+    .swal2-popup.fwp-swal2-popup .dynamic_popup {
+      &__header {
+        &__image {
+          @include mq($from: 250px) {
+            transform: translateX(-40%);
+          }
+          @include mq($from: 350px) {
+            transform: translateX(-50%);
+          }
+          @include mq($until: 250px) {
+            transform: unset;
+          }
+        }
       }
-      @include mq($from: 350px) {
-        transform: translateX(-50%);
-      }
-      @include mq($until: 250px) {
-        transform: unset;
+      .popup_body {
+        
+        button[data-type=done],
+        .popup_step .do_recorder .audiopreview__timer {
+          left: 10px;
+          right: unset;
+        }
+        .popup_step fieldset .form-wrap .form-control-label.form-control-checkbox {
+          flex-direction: row-reverse;
+        }
+
       }
     }
     

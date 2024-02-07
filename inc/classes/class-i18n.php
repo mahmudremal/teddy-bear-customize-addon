@@ -13,22 +13,25 @@ class I18n {
 		$this->setup_hooks();
 	}
 	protected function setup_hooks() {
-
-		if (isset($_GET['dev_mode_translate'])) {
-			print_r(
-				$this->request_translations('What is Bangladesh', 'bn', 'en', 'en_US')
-			);
-			wp_die('Site is under maintenance. Please hold on 5 min. Ref: Remal (mahmudremal@yahoo.com)');
-		}
 		
 		add_action('init', [$this, 'load_plugin_translations'], 1, 0);
 		add_action('plugins_loaded', [$this, 'load_plugin_textdomain'], 1, 0);
+
 		add_action('wp_ajax_nopriv_futurewordpress/project/ajax/i18n/js', [$this, 'js_translates'], 10, 0);
 		add_action('wp_ajax_futurewordpress/project/ajax/i18n/js', [$this, 'js_translates'], 10, 0);
 
 		add_action('wp_ajax_nopriv_futurewordpress/project/ajax/i18n/number', [$this, 'number_translates'], 10, 0);
 		add_action('wp_ajax_futurewordpress/project/ajax/i18n/number', [$this, 'number_translates'], 10, 0);
+		
 		add_filter('teddybear/project/system/translate', [$this, 'translate'], 10, 4);
+		
+		add_action('wp_ajax_nopriv_futurewordpress/project/ajax/i18n/list', [$this, 'ajaxList'], 10, 0);
+		add_action('wp_ajax_futurewordpress/project/ajax/i18n/list', [$this, 'ajaxList'], 10, 0);
+
+		add_action('wp_ajax_nopriv_futurewordpress/project/ajax/i18n/update', [$this, 'updateList'], 10, 0);
+		add_action('wp_ajax_futurewordpress/project/ajax/i18n/update', [$this, 'updateList'], 10, 0);
+
+		// add_action( 'elementor/widget/render_content', [$this, 'elementor_widget_render_content'], 10, 2);
 	}
 	public function load_plugin_translations() {
 		$this->translations = (array) $this->get_translations('teddy-bear-translations', []);
@@ -84,7 +87,7 @@ class I18n {
 			'delete_acc_confirmation' => __('Are you sure you want to delete all of your account information? This will permanently remove you account with all relateed informations.', 'teddybearsprompts'),
 			'next' => __('Next', 'teddybearsprompts'),
 			'pls_wait' => __('Please wait...', 'teddybearsprompts'),
-			'add_to_cart' => __('Add To Cart', 'teddybearsprompts'),
+			'add_to_cart' => __('Add to cart', 'teddybearsprompts'),
 			'total' => __('Total', 'teddybearsprompts'),
 			'skip' => __('Skip', 'teddybearsprompts'),
 			'teddyname' => __('Teddy name', 'teddybearsprompts'),
@@ -131,6 +134,10 @@ class I18n {
 			'audioexcedduration' => __('Your selected audio file exceed maximum duration of %s sec.', 'teddybearsprompts'),
 			'audiofile_invalid' => __('Invalid file selected. It seems you didn\'t select a valid audio file or file is not in these following format (%s).', 'teddybearsprompts'),
 
+			'translations' => __('Translations', 'teddybearsprompts'),
+			'cancel' => __('Cancel', 'teddybearsprompts'),
+			'submit' => __('Submit', 'teddybearsprompts'),
+
 		];
 
 		wp_send_json_success([
@@ -159,26 +166,34 @@ class I18n {
 	 * $language_code | (string) (Optional) Return the translation in this language. Default is NULL which returns the current language
 	 */
 	public function translate($text, $domain, $name, $language_code = NULL) {
-		if (!$text || empty($text)) {
+		if ($language_code === NULL) {
+			$language_code = apply_filters('teddybear/project/system/getoption', 'translate-toonly', 'user') == 'user'?get_user_locale():get_locale();
+		}
+		if (!$text || empty(trim($text))) {
 			return $text;
 		}
 		if (has_filter('wpml_translate_single_string')) {
 			return apply_filters('wpml_translate_single_string', $text, $domain, $name, $language_code);
 		}
 		// count($this->translations) >= 1
-		if ($text && !empty($text)) {
+		if ($text && !empty($text)
+			// && $this->isEnglish($text)
+			// && get_locale() == 'en_US'
+		) {
 			if ($language_code && !empty($language_code)) {
+				$clonedText = str_replace(['\\', '\'', "'"], ['', "", ''], $text);
 				foreach ($this->translations as $i => $row) {
-					if (isset($row['en_US']) && $row['en_US'] == $text && isset($this->translations[$i][$language_code])) {
+					if (isset($row['en_US']) && $row['en_US'] == $clonedText && isset($this->translations[$i][$language_code])) {
 						return $this->translations[$i][$language_code];
 					}
 				}
-				$args = ['en_US' => $text];
-				if ($language_code != 'en_US') {
-					$args[$language_code] = '';
+				if ($this->isEnglish($clonedText)) {
+					$args = ['en_US' => $clonedText];
+					$args[$language_code] = isset($args[$language_code])?$args[$language_code]:'';
+					$this->translations[] = $args;
+					$is_updated = $this->update_translations('teddy-bear-translations');
 				}
-				$this->translations[] = $args;
-				$is_updated = $this->update_translations('teddy-bear-translations');
+				
 			}
 		}
 		return __($text, $domain);
@@ -331,5 +346,45 @@ class I18n {
 		}
 		return false;
 	}
+	public function ajaxList() {
+		wp_send_json_success([
+			'hooks' => ['ajaxList-success'],
+			'list'  => $this->translations
+		], 200);
+	}
+	public function updateList() {
+		$json = ['hooks' => ['updateI18nList-failed']];
+		if (isset($_POST['i18n']) && is_array($_POST['i18n'])) {
+
+			$this->translations = $_POST['i18n'];
+			$is_updated = $this->update_translations('teddy-bear-translations');
+
+			$json['list'] = $_POST['i18n'];
+			$json['hooks'] = ['updateI18nList-success'];
+		}
+		wp_send_json_success($json, 200);
+	}
+
+
+
+	/**
+	 * To change elementor text
+	 */
+	public function elementor_widget_render_content($content, $widget) {
+		// echo sprintf('Hi there %s', $content);
+		return $content;
+	}
+	public function isEnglish($string) {
+		// Removing non-English characters
+		$englishString = preg_replace('/[^A-Za-z0-9\s]/', '', $string);
+		
+		// Comparing the length of the original string and the English-only string
+		if (strlen($string) === strlen($englishString)) {
+			return true; // The string is in English
+		} else {
+			return false; // The string contains non-English characters
+		}
+	}
+	
 
 }

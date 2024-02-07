@@ -106,6 +106,7 @@ class Ajax {
 				'is_parent' => false,
 				'toast'		=> false, // '<strong>' . count($requested) . '</strong> people requested this service in the last 10 minutes!',
 				'thumbnail'	=> ['1x' => '', '2x' => ''],
+				'custom_data'	=> get_post_meta($productData['id'], '_teddy_custom_data', true),
 				'custom_fields' => $teddy_Product->get_frontend_product_json($dataset['product_id'])
 			],
 		];

@@ -15,7 +15,7 @@ const PROMPTS = {
         return html;
     },
     init_prompts: (thisClass) => {
-        PROMPTS.core = thisClass;
+        // PROMPTS.core = thisClass;
     },
     init_events: (thisClass) => {
         document.querySelectorAll('.popup_foot .button[data-react], .back2previous_step[data-react="back"]').forEach((el) => {
@@ -430,8 +430,8 @@ const PROMPTS = {
             }
         });
         
-        
-        PROMPTS.currentStep=0;PROMPTS.do_pagination(true, thisClass);
+        // 
+        PROMPTS.currentStep = 0;PROMPTS.do_pagination(true, thisClass);
     },
     init_group_select_events: (thisClass) => {
         document.querySelectorAll('.teddy_position__single:not([data-handled])').forEach((el) => {
@@ -750,7 +750,7 @@ const PROMPTS = {
                 var inputsArgs = {}, inputs = {
                     teddy_name: {
                         type: 'text',
-                        label: PROMPTS.i18n?.teddyname??'Teddy name',
+                        label: PROMPTS.i18n?.teddyfullname??'Teddy name',
                         // placeholder: PROMPTS.i18n?.teddyfullname??'Teddy full Name',
                         dataset: {title: PROMPTS.i18n?.teddyfullname??'Teddy full Name'}
                     },

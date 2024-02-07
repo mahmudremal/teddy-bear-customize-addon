@@ -1837,13 +1837,13 @@ $frameHeight: 600px;
         margin: 10px auto;
         max-width: $frameWidth;
         & > label {
+          gap: 5px;
           display: flex;
           align-items: center;
         }
         input {
           width: 20px;
           height: 20px;
-          margin-right: 10px;
         }
         .btn {
           // color: $blackColor;
@@ -1854,7 +1854,6 @@ $frameHeight: 600px;
         &__thumbnail {
           width: auto;
           height: 20px;
-          margin-right: 10px;
         }
       }
     }

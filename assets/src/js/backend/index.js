@@ -11,6 +11,7 @@ import icons from "../frontend/icons";
 import Awesomplete from "awesomplete";
 import FWProject_Forms from "./forms";
 import DOWNLOADS from "./downloads"
+import i18nForm from "./i18n";
 import Ask from "./ask";
 
 (function ($) {
@@ -37,6 +38,7 @@ import Ask from "./ask";
 			this.Ask = new Ask(this);
 			this.he = PROMPTS.he = he;
 			new FWProject_Forms(this);
+			this.iForm = new i18nForm(this);
 			this.init_i18n();
 			this.init_tabs();
 			this.init_toast();

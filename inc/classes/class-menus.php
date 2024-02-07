@@ -100,6 +100,47 @@ class Menus {
 	}
 	public function menus($args) {
 		// apply_filters('teddybear/project/system/isactive', 'standard-enable')
+		$args['translate']		= [
+			'title'							=> __('Translate', 'teddybearsprompts'),
+			'description'					=> __('Setup your translations related informations here.', 'teddybearsprompts'),
+			'fields'						=> [
+				[
+					'id' 					=> 'translate-enable',
+					'label'					=> __('Enable translation', 'teddybearsprompts'),
+					'description'			=> __('Enable live translations those are setting from here Required API key.', 'teddybearsprompts'),
+					'type'					=> 'checkbox',
+					'default'				=> true
+				],
+				[
+					'id' 					=> 'translate-toonly',
+					'label'					=> __('Translate to', 'teddybearsprompts'),
+					'description'			=> false, // __('', 'teddybearsprompts'),
+					'type'					=> 'radio',
+					'options'				=> [
+						'user'				=> __('User Profile', 'teddybearsprompts'),
+						'site'				=> __('Site Language', 'teddybearsprompts'),
+					],
+					// 'default'				=> 'site'
+				],
+				// [
+				// 	'id' 					=> 'translate-api',
+				// 	'label'					=> __('API key', 'teddybearsprompts'),
+				// 	'description'			=> __('Provice lecto.ai api key to translate text. Text will store after translation to avoid api limit exceed.', 'teddybearsprompts'),
+				// 	'type'					=> 'text',
+				// 	'default'				=> ''
+				// ],
+				/**
+				 * Repeater
+				 */
+				[
+					'id' 					=> 'repeater_translate',
+					'label'					=> '',
+					'description'			=> false,
+					'type'					=> 'button',
+					'default'				=> __('Translation list', 'teddybearsprompts')
+				],
+			]
+		];
 		$args['standard']	= [
 			'title'							=> __('General', 'teddybearsprompts'),
 			'description'					=> __('General settings for teddy-bear customization popup.', 'teddybearsprompts'),
@@ -181,7 +222,7 @@ class Menus {
 				],
 			]
 		];
-		$args['default']	= [
+		$args['default']		= [
 			'title'							=> __('Teddy Meta', 'teddybearsprompts'),
 			'description'					=> __('Teddy bear\'s default data that will be replaced if meta on specific product not exists or empty exists. Existing data won\'t be replaced.', 'teddybearsprompts'),
 			'fields'						=> [
@@ -222,7 +263,7 @@ class Menus {
 				],
 			]
 		];
-		$args['names']		= [
+		$args['names']			= [
 			'title'							=> __('Teddy name', 'teddybearsprompts'),
 			'description'					=> __('List of teddy names that will include in a lottery when user choose to suggest a teddy name.', 'teddybearsprompts'),
 			'fields'						=> [
@@ -243,7 +284,7 @@ class Menus {
 				],
 			]
 		];
-		$args['addons']		= [
+		$args['addons']			= [
 			'title'							=> __('Addons', 'teddybearsprompts'),
 			'description'					=> __('Necessary addons for after customization process. Including packaging wrappings.', 'teddybearsprompts'),
 			'fields'						=> [
@@ -305,7 +346,7 @@ class Menus {
 				],
 			]
 		];
-		$args['badges']		= [
+		$args['badges']			= [
 			'title'							=> __('Badges', 'teddybearsprompts'),
 			'description'					=> __('Products shop grid featured & Best Seller badges', 'teddybearsprompts'),
 			'fields__'						=> [
@@ -398,7 +439,7 @@ class Menus {
 				],
 			]
 		];
-		$args['email']		= [
+		$args['email']			= [
 			'title'							=> __('Email', 'teddybearsprompts'),
 			'description'					=> __('Email template & necessey informations.', 'teddybearsprompts'),
 			'fields'						=> [
@@ -446,7 +487,7 @@ class Menus {
 				],
 			]
 		];
-		$args['order']		= [
+		$args['order']			= [
 			'title'							=> __('Order', 'teddybearsprompts'),
 			'description'					=> __('Order information an necessery data.', 'teddybearsprompts'),
 			'fields'						=> [
@@ -473,7 +514,7 @@ class Menus {
 				],
 			]
 		];
-		$args['voice']		= [
+		$args['voice']			= [
 			'title'							=> __('Voice', 'teddybearsprompts'),
 			'description'					=> __('Voice template & necessey informations.', 'teddybearsprompts'),
 			'fields'						=> [
@@ -536,7 +577,7 @@ class Menus {
 				
 			]
 		];
-		$args['certificate']		= [
+		$args['certificate']	= [
 			'title'							=> __('Certificate', 'teddybearsprompts'),
 			'description'					=> __('Certificate template & necessey informations.', 'teddybearsprompts'),
 			'fields'						=> [
@@ -565,7 +606,7 @@ class Menus {
 				
 			]
 		];
-		$args['cusrev']		= [
+		$args['cusrev']			= [
 			'title'							=> __('Review', 'teddybearsprompts'),
 			'description'					=> __('Setup your custom settings for woocommerce customer review plugin.', 'teddybearsprompts'),
 			'fields'						=> [
@@ -597,37 +638,6 @@ class Menus {
 					'description'			=> sprintf(__('Give here HTML template for the section of Review Link. Use (%s) for the place of the Button. Use (%s) for the link only.', 'teddybearsprompts'), '{{button}}', '{{link}}'),
 					'type'					=> 'text',
 					'default'				=> '{{button}}'
-				],
-				
-			]
-		];
-		$args['translate']		= [
-			'title'							=> __('Translate', 'teddybearsprompts'),
-			'description'					=> __('Setup your translations related informations here.', 'teddybearsprompts'),
-			'fields'						=> [
-				[
-					'id' 					=> 'translate-enable',
-					'label'					=> __('Enable translation', 'teddybearsprompts'),
-					'description'			=> __('Enable live translations those are setting from here Required API key.', 'teddybearsprompts'),
-					'type'					=> 'checkbox',
-					'default'				=> true
-				],
-				[
-					'id' 					=> 'translate-toonly',
-					'label'					=> __('Translate to', 'teddybearsprompts'),
-					'description'			=> false, // __('', 'teddybearsprompts'),
-					'type'					=> 'select',
-					'options'				=> [
-						
-					],
-					'default'				=> true
-				],
-				[
-					'id' 					=> 'translate-api',
-					'label'					=> __('API key', 'teddybearsprompts'),
-					'description'			=> __('Provice lecto.ai api key to translate text. Text will store after translation to avoid api limit exceed.', 'teddybearsprompts'),
-					'type'					=> 'text',
-					'default'				=> ''
 				],
 				
 			]
