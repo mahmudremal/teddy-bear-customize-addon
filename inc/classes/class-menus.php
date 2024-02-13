@@ -100,47 +100,6 @@ class Menus {
 	}
 	public function menus($args) {
 		// apply_filters('teddybear/project/system/isactive', 'standard-enable')
-		$args['translate']		= [
-			'title'							=> __('Translate', 'teddybearsprompts'),
-			'description'					=> __('Setup your translations related informations here.', 'teddybearsprompts'),
-			'fields'						=> [
-				[
-					'id' 					=> 'translate-enable',
-					'label'					=> __('Enable translation', 'teddybearsprompts'),
-					'description'			=> __('Enable live translations those are setting from here Required API key.', 'teddybearsprompts'),
-					'type'					=> 'checkbox',
-					'default'				=> true
-				],
-				[
-					'id' 					=> 'translate-toonly',
-					'label'					=> __('Translate to', 'teddybearsprompts'),
-					'description'			=> false, // __('', 'teddybearsprompts'),
-					'type'					=> 'radio',
-					'options'				=> [
-						'user'				=> __('User Profile', 'teddybearsprompts'),
-						'site'				=> __('Site Language', 'teddybearsprompts'),
-					],
-					// 'default'				=> 'site'
-				],
-				// [
-				// 	'id' 					=> 'translate-api',
-				// 	'label'					=> __('API key', 'teddybearsprompts'),
-				// 	'description'			=> __('Provice lecto.ai api key to translate text. Text will store after translation to avoid api limit exceed.', 'teddybearsprompts'),
-				// 	'type'					=> 'text',
-				// 	'default'				=> ''
-				// ],
-				/**
-				 * Repeater
-				 */
-				[
-					'id' 					=> 'repeater_translate',
-					'label'					=> '',
-					'description'			=> false,
-					'type'					=> 'button',
-					'default'				=> __('Translation list', 'teddybearsprompts')
-				],
-			]
-		];
 		$args['standard']	= [
 			'title'							=> __('General', 'teddybearsprompts'),
 			'description'					=> __('General settings for teddy-bear customization popup.', 'teddybearsprompts'),
@@ -604,6 +563,47 @@ class Menus {
 					'default'				=> true
 				],
 				
+			]
+		];
+		$args['translate']		= [
+			'title'							=> __('Translate', 'teddybearsprompts'),
+			'description'					=> __('Setup your translations related informations here.', 'teddybearsprompts'),
+			'fields'						=> [
+				[
+					'id' 					=> 'translate-enable',
+					'label'					=> __('Enable translation', 'teddybearsprompts'),
+					'description'			=> __('Enable live translations those are setting from here Required API key.', 'teddybearsprompts'),
+					'type'					=> 'checkbox',
+					'default'				=> true
+				],
+				[
+					'id' 					=> 'translate-toonly',
+					'label'					=> __('Translate to', 'teddybearsprompts'),
+					'description'			=> false, // __('', 'teddybearsprompts'),
+					'type'					=> 'radio',
+					'options'				=> [
+						'user'				=> __('User Profile', 'teddybearsprompts'),
+						'site'				=> __('Site Language', 'teddybearsprompts'),
+					],
+					// 'default'				=> 'site'
+				],
+				// [
+				// 	'id' 					=> 'translate-api',
+				// 	'label'					=> __('API key', 'teddybearsprompts'),
+				// 	'description'			=> __('Provice lecto.ai api key to translate text. Text will store after translation to avoid api limit exceed.', 'teddybearsprompts'),
+				// 	'type'					=> 'text',
+				// 	'default'				=> ''
+				// ],
+				/**
+				 * Repeater
+				 */
+				[
+					'id' 					=> 'repeater_translate',
+					'label'					=> '',
+					'description'			=> false,
+					'type'					=> 'button',
+					'default'				=> __('Translation list', 'teddybearsprompts')
+				],
 			]
 		];
 		$args['cusrev']			= [
