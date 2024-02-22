@@ -189,7 +189,9 @@ class Cart {
 		if (isset($cart_item['custom_makeup']) && !in_array($cart_item_key, $this->showedAlready)) {
 			foreach ($cart_item['custom_makeup'] as $fee) {
 				// if (!empty($fee['price']) && is_numeric($fee['price'])) {
-					$item_name .= '<br><small class="additional-charges">'.esc_html($fee['item']).': '.wc_price($fee['price']).' x '.esc_html(number_format_i18n($cart_item['quantity'], 0)).'</small>';
+					$item_name .= '<br><small class="additional-charges">'.esc_html(
+						apply_filters('teddybear/project/system/translate/string', $fee['item'], 'teddybearsprompts', $fee['item'] . ' - input field')
+					).': '.wc_price($fee['price']).' x '.esc_html(number_format_i18n($cart_item['quantity'], 0)).'</small>';
 				// }
 			}
 			// $cart_item['_additional_charges_applied'] = true;

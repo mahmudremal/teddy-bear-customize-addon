@@ -116,7 +116,7 @@ class Product {
 				foreach($field2Translate as $toTrans) {
 					if (isset($_prod[$toTrans])) {
 						if ($toTrans == 'label' && is_numeric($_prod[$toTrans])) {continue;}
-						$json[$_posI][$i][$toTrans] = apply_filters('teddybear/project/system/translate', $_prod[$toTrans], 'teddybearsprompts', $_prod[$toTrans] . ' - input field');
+						$json[$_posI][$i][$toTrans] = apply_filters('teddybear/project/system/translate/string', $_prod[$toTrans], 'teddybearsprompts', $_prod[$toTrans] . ' - input field');
 					}
 				}
 				
@@ -159,7 +159,7 @@ class Product {
 								if ($toTrans == 'label' && is_numeric($option[$toTrans])) {
 									continue;
 								}
-								$option[$toTrans] = apply_filters('teddybear/project/system/translate', $option[$toTrans], 'teddybearsprompts', $option[$toTrans] . ' - input field');
+								$option[$toTrans] = apply_filters('teddybear/project/system/translate/string', $option[$toTrans], 'teddybearsprompts', $option[$toTrans] . ' - input field');
 							}
 						}
 						
@@ -229,7 +229,7 @@ class Product {
 										if ($toTrans == 'label' && is_numeric($option[$toTrans])) {
 											continue;
 										}
-										$option[$toTrans] = apply_filters('teddybear/project/system/translate', $option[$toTrans], 'teddybearsprompts', $option[$toTrans] . ' - input field');
+										$option[$toTrans] = apply_filters('teddybear/project/system/translate/string', $option[$toTrans], 'teddybearsprompts', $option[$toTrans] . ' - input field');
 									}
 								}
 								

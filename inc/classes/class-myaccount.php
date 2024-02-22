@@ -37,7 +37,7 @@ class Myaccount {
 	 * Fired on init hook for registering endpoints
 	 */
 	public function init() {
-		$this->endPoints = ['membersclub' => __('Members Club', 'domain')];
+		$this->endPoints = ['membersclub' => __('Members Club', 'teddybearsprompts')];
 		foreach ($this->endPoints as $key => $row) {
 			add_rewrite_endpoint($key, EP_PAGES);
 			add_action('woocommerce_account_' . $key . '_endpoint', [$this, 'woocommerce_account_' . str_replace(['-'], ['_'], $key) . '_endpoint'], 10, 0);
@@ -57,10 +57,10 @@ class Myaccount {
 	 * Adding Custom menus on my-account navigation.
 	 */
 	public function woocommerce_account_menu_items($items, $endpoints) {
+		if(!class_exists('MeprHooks')) {return;}
 		if(isset($items['points']) && ! $this->check_user_role()) {
 			unset($items['points']);
 		}
-
 		/**
 		 * Add custom menu for Switching to membership screen.
 		 */
@@ -140,9 +140,9 @@ class Myaccount {
 			<p>
 				<?php wp_nonce_field('woocommerce-remove-account', '_nonce', true, true); ?>
 				<input type="hidden" name="action" value="woocommerce-remove-account">
-				<button type="submit" class="woocommerce-delete-account button" name="delete_account_details" value="<?php esc_attr_e('Delete Account', 'domain'); ?>"><?php esc_html_e('Delete Account', 'domain'); ?></button>
+				<button type="submit" class="woocommerce-delete-account button" name="delete_account_details" value="<?php esc_attr_e('Delete Account', 'teddybearsprompts'); ?>"><?php esc_html_e('Delete Account', 'teddybearsprompts'); ?></button>
 				<input type="hidden" name="remove-account" value="unconfirmed">
-				<span style="display: block;"><?php esc_html_e('Deleting account by confirming will permanently erase all of your information form database. Proceed with caution.', 'domain'); ?></span>
+				<span style="display: block;"><?php esc_html_e('Deleting account by confirming will permanently erase all of your information form database. Proceed with caution.', 'teddybearsprompts'); ?></span>
 			</p>
 		</form>
 		<style>form.woocommerce-removeAccountForm.delete-account {margin: auto;margin-top: 50px;border: 1px solid #ddd;padding: 10px;}</style>
@@ -162,7 +162,7 @@ class Myaccount {
 		/**
 		 * Verify nonce request authentication and validity.
 		 */
-		if(!isset($_POST['_nonce']) || !wp_verify_nonce($_POST['_nonce'], 'woocommerce-remove-account')) {wp_die(__('Suspecious request identified!', 'domain'), __('Fatal Failed!', 'domain'));}
+		if(!isset($_POST['_nonce']) || !wp_verify_nonce($_POST['_nonce'], 'woocommerce-remove-account')) {wp_die(__('Suspecious request identified!', 'teddybearsprompts'), __('Fatal Failed!', 'teddybearsprompts'));}
 
 		/**
 		 * Start removing all informations.
@@ -174,10 +174,10 @@ class Myaccount {
 			/**
 			 * Return to the edit account screen.
 			 */
-			$noti = apply_filters('teddybear/project/add/notify', 'user_removed', ['message' => __('User has been removed successfully.', 'domain'), 'user' => $current_user_id], false);
+			$noti = apply_filters('teddybear/project/add/notify', 'user_removed', ['message' => __('User has been removed successfully.', 'teddybearsprompts'), 'user' => $current_user_id], false);
 			wp_safe_redirect(wp_get_referer());
 		} else {
-			wp_die(__('Something error happens while trying to remove your account.', 'domain'), __('Failed!', 'domain'));
+			wp_die(__('Something error happens while trying to remove your account.', 'teddybearsprompts'), __('Failed!', 'teddybearsprompts'));
 		}
 
 		/**
@@ -200,15 +200,15 @@ class Myaccount {
 		 $profile_url = $mepr_options->account_page_url() . '?action=wcmyaccount';
 		?>
 		<span class="mepr-nav-item mepr_bbpress_myaccount <?php echo esc_attr($support_active); ?>">
-			<a href="<?php echo esc_url($profile_url); ?>" id="mepr-account-bbpress-myaccount"><?php esc_html_e('My Account', 'domain'); ?></a>
+			<a href="<?php echo esc_url($profile_url); ?>" id="mepr-account-bbpress-myaccount"><?php esc_html_e('My Account', 'teddybearsprompts'); ?></a>
 		</span>
 		<?php
 	}
 	public function mepr_account_nav_content($action) {
 		if($action == 'wcmyaccount') {
-			?>
-			<script>location.replace('<?php echo esc_url(site_url('/my-account/')); ?>');</script>
-			<?php
+			$my_account = esc_url(site_url('/my-account/'));
+			wp_redirect($my_account);
+			echo '<script>location.replace("'.$my_account.'");</script>';
 		}
 	}
 
@@ -224,8 +224,9 @@ class Myaccount {
 		if (!apply_filters('teddybear/project/system/isactive', 'certificate-myacc-enable')) {return;}
 		if (!$teddy_Certificate->get_single_certificates($order, $order_item)) {return;}
 		$order_id = $order->get_id();
+		$certificate_preview = site_url('/certificates/' . $order_id . '/' . $item_id . '/');
 		?>
-		<a href="<?php echo esc_url(site_url('/?certificate_preview=' . $order_id . '-' . $item_id)); ?>" class="button btn" target="_blank"><?php esc_html_e('View certificate', 'teddybearsprompts'); ?></a>
+		<a href="<?php echo esc_url($certificate_preview); ?>" class="button btn" target="_blank"><?php esc_html_e('View certificate', 'teddybearsprompts'); ?></a>
 		<?php
 	}
 	

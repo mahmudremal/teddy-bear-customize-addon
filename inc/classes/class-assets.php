@@ -109,7 +109,7 @@ class Assets {
 				'pls_wait'			=> __('Please wait...', 'teddybearsprompts'),
 			],
 			'currencySign'		=> get_woocommerce_currency_symbol(),
-			'local'				=> apply_filters('teddybear/project/system/getoption', 'translate-toonly', 'user') == 'user'?get_user_locale():get_locale()
+			'local'				=> apply_filters('teddybear/project/system/get_locale', get_user_locale())
 			
 		], (array) $args);
 		

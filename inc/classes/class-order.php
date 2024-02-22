@@ -160,17 +160,18 @@ class Order {
 							}
 						}
 						?>
+						<?php $certificate_preview = site_url('/certificates/' . $order_id . '/' . $order_item_id . '/'); ?>
 						<?php if ($custom_dataset): ?>
 							<?php
 								$order_item_product = $order_item->get_product();
 								if (!$teddy_Plushies->is_accessory($order_item_product->get_id())): ?>
 									<li class="fwp-outfit__items <?php echo esc_attr((true)?'fwp-outfit__certificate':''); ?>">
-										<a href="<?php echo esc_url(home_url('?certificate_preview='. $order_id .'-'.$order_item_id)); ?>" class="btn button link" data-certificate="<?php echo esc_attr($order_item_id); ?>" target="_blank"><?php esc_html_e('Certificate', 'teddybearsprompts'); ?></a>
+										<a href="<?php echo esc_url($certificate_preview); ?>" class="btn button link" data-certificate="<?php echo esc_attr($order_item_id); ?>" target="_blank"><?php esc_html_e('Certificate', 'teddybearsprompts'); ?></a>
 									</li>
 							<?php endif; ?>
 						<?php else: ?>
 							<li class="fwp-outfit__items <?php echo esc_attr((true)?'fwp-outfit__certificate':''); ?>">
-								<a href="<?php echo esc_url(home_url('?certificate_preview='. $order_id .'-'.$order_item_id)); ?>" class="link" target="_blank"><?php esc_html_e('Necessery information missing on this item.', 'teddybearsprompts'); ?></a>
+								<a href="<?php echo esc_url($certificate_preview); ?>" class="link" target="_blank"><?php esc_html_e('Necessery information missing on this item.', 'teddybearsprompts'); ?></a>
 							</li>
 						<?php endif; ?>
 						</ul>
@@ -323,17 +324,26 @@ class Order {
 		// $order->get_status();
 		
 		$certificates = $teddy_Certificate->get_all_certificates($order, $preview);
-		
+		$notFoundError = true;$errorMessage = false;
 		try {
+			// 
+			// print_r([$certificates, $preview]);wp_die('Hi');
+			// 
 			if (count($certificates) >= 1) {
+				$notFoundError = false;
 				do_action('teddybearpopupaddon_mail_certificates', $certificates, [
 					'to'		=> $order->get_billing_email()
 				]);
 			} else {
-				// wp_die(__('No certificate found.', 'teddybearsprompts'));
+				wp_die(__('No certificate found.', 'teddybearsprompts'));
 			}
 		} catch (\Exception $e) {
-			wp_die($e->getMessage(), __('Error happens', 'teddybearsprompts'));
+			$errorMessage = $e->getMessage();
+		}
+		if ($notFoundError) {
+			get_header();
+			do_shortcode('[elementor-template id="3135"]');
+			get_footer();
 		}
 	}
 	public function woocommerce_order_status_changed($order_id, $old_status, $new_status) {

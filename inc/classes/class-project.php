@@ -34,6 +34,7 @@ class Project {
 		global $teddy_Product;$teddy_Product = Product::get_instance();
 		global $teddy_Checkout;$teddy_Checkout = Checkout::get_instance();
 		global $teddy_Plushies;$teddy_Plushies = Plushies::get_instance();
+		global $teddy_Endpoint;$teddy_Endpoint = Endpoint::get_instance();
 		global $teddy_Myaccount;$teddy_Myaccount = Myaccount::get_instance();
 		global $teddy_Meta_Boxes;$teddy_Meta_Boxes = Meta_Boxes::get_instance();
 		global $teddy_Certificate;$teddy_Certificate = Certificate::get_instance();

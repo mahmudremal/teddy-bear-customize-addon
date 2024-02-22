@@ -5,7 +5,7 @@ if ($plain_text) :
 else:
   $html_button = '<a href="'.esc_url($review_link).'" target="_blank" rel="noopener noreferrer" style="'.esc_attr(apply_filters('teddybear/project/system/getoption', 'cusrev-completedorder-css', 'font-weight:normal;background:#0085ba;border-color:#0073aa;color:#fff;text-decoration:none;padding:10px;border-radius:10px;')).'">'.esc_html(
     apply_filters(
-      'teddybear/project/system/translate', 
+      'teddybear/project/system/translate/string', 
       apply_filters('teddybear/project/system/getoption', 'cusrev-completedorder-text', 'Write a Review'),
       'teddybearsprompts',
       'Write a Review - input field'

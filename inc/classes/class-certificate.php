@@ -34,11 +34,14 @@ class Certificate {
 	
 
 		// Set document information
-		$pdf->SetCreator('mahmud_remal');
+		$pdf->SetCreator('https://www.fiverr.com/mahmud_remal');
 		$pdf->SetAuthor(get_bloginfo('name'));
 		$pdf->SetTitle(__('Teddy Birth Certificate', 'teddybearsprompts'));
 		$pdf->setSubject(__('Teddy Birth Certificate', 'teddybearsprompts'));
-		$pdf->setKeywords('Certificate', 'Birth certificate');
+		$pdf->setKeywords(
+			__('Certificate', 'teddybearsprompts'),
+			__('Birth certificate', 'teddybearsprompts')
+		);
 
 		// Disable default header and footer
 		$pdf->setPrintHeader(false);
@@ -143,7 +146,10 @@ class Certificate {
 		$pdf->SetAuthor(get_bloginfo('name'));
 		$pdf->SetTitle(__('Teddy Birth Certificate', 'teddybearsprompts'));
 		$pdf->setSubject(__('Teddy Birth Certificate', 'teddybearsprompts'));
-		$pdf->setKeywords('Certificate', 'Birth certificate');
+		$pdf->setKeywords(
+			__('Certificate', 'teddybearsprompts'),
+			__('Birth certificate', 'teddybearsprompts')
+		);
 
 		// Disable default header and footer
 		// $pdf->setPrintHeader(false);
@@ -267,12 +273,14 @@ class Certificate {
 
 			$order_id = $parts[0];
 			$item_id = $parts[1];
-
 			$order = wc_get_order((int) $order_id);
+
 			if(!$order || is_wp_error($order)) {
 				wp_die(__('Certificate not found!', 'teddybearsprompts'));
 			}
+
 			$teddy_Order->woocommerce_order_action_send_birth_certificates($order, $item_id);
+			// do_action('woocommerce_order_action_send_birth_certificates', $order, $item_id);
 		}
 	}
 	
@@ -336,7 +344,7 @@ class Certificate {
 		$pdf->SetXY($stringX, ($stringY - 4.5));$pdf->SetFont('dejavusans', '', 8);
 		$pdf->Write(0, $text, '', 0, '', true, 0, false, false, 0);
 		$pdf->SetFont('dejavusans', '', 10);
-		$text = $args->id_num;
+		$text = apply_filters('teddybear/project/system/translate/number', $args->id_num);
 		$pdf->SetXY($stringX, $stringY);$stringY += 13;
 		$pdf->Write(0, $text, '', 0, '', true, 0, false, false, 0);
 
@@ -344,7 +352,7 @@ class Certificate {
 		$pdf->SetXY($stringX, ($stringY - 4.5));$pdf->SetFont('dejavusans', '', 8);
 		$pdf->Write(0, $text, '', 0, '', true, 0, false, false, 0);
 		$pdf->SetFont('dejavusans', '', 10);
-		$text = $args->weight;
+		$text = apply_filters('teddybear/project/system/translate/string', $args->weight, 'teddybearsprompts', $args->weight . ' - input field');
 		$pdf->SetXY($stringX, $stringY);$stringY += 13;
 		$pdf->Write(0, $text, '', 0, '', true, 0, false, false, 0);
 
@@ -352,7 +360,7 @@ class Certificate {
 		$pdf->SetXY($stringX, ($stringY - 4.5));$pdf->SetFont('dejavusans', '', 8);
 		$pdf->Write(0, $text, '', 0, '', true, 0, false, false, 0);
 		$pdf->SetFont('dejavusans', '', 10);
-		$text = $args->brow;
+		$text = apply_filters('teddybear/project/system/translate/string', $args->brow, 'teddybearsprompts', $args->brow . ' - input field');
 		$pdf->SetXY($stringX, $stringY);$stringY += 13;
 		$pdf->Write(0, $text, '', 0, '', true, 0, false, false, 0);
 		
@@ -385,7 +393,7 @@ class Certificate {
 		$pdf->SetXY($stringX, ($stringY - 4.5));$pdf->SetFont('dejavusans', '', 8);
 		$pdf->Write(0, $text, '', 0, '', true, 0, false, false, 0);
 		$pdf->SetFont('dejavusans', '', 10);
-		$text = $args->height;
+		$text = apply_filters('teddybear/project/system/translate/string', $args->height, 'teddybearsprompts', $args->height . ' - input field');
 		$pdf->SetXY($stringX, $stringY);$stringY += 13;
 		$pdf->Write(0, $text, '', 0, '', true, 0, false, false, 0);
 		
@@ -393,7 +401,7 @@ class Certificate {
 		$pdf->SetXY($stringX, ($stringY - 4.5));$pdf->SetFont('dejavusans', '', 8);
 		$pdf->Write(0, $text, '', 0, '', true, 0, false, false, 0);
 		$pdf->SetFont('dejavusans', '', 10);
-		$text = $args->eye;
+		$text = apply_filters('teddybear/project/system/translate/string', $args->eye, 'teddybearsprompts', $args->eye . ' - input field');
 		$pdf->SetXY($stringX, $stringY);$stringY += 13;
 		$pdf->Write(0, $text, '', 0, '', true, 0, false, false, 0);
 		
@@ -423,7 +431,7 @@ class Certificate {
 	public function woocommerce_email_attachments($attachments , $email_id, $order) {
 		if(!in_array($order->get_status(), explode(',', str_replace([' '], [''], apply_filters('teddybear/project/system/getoption', 'order-attach_status', 'shipped'))))) {return;}
 		$certificates = $this->get_all_certificates($order);
-		// print_r($certificates);wp_die();
+		
 		foreach($certificates as $certificate) {
 			if($certificate && !empty($certificate) && file_exists($certificate) && !is_dir($certificate)) {
 				$attachments[] = $certificate;
@@ -444,7 +452,7 @@ class Certificate {
 	public function get_single_certificates($order, $order_item, $preview = false) {
 		global $teddy_Product;global $teddy_Meta;$certificates = [];
 		$order_id = $order->get_id();
-		$item_id = $order_item->get_id();
+		$item_id  = $order_item->get_id();
 		// $item_name = $order_item->get_name();
 		// $product = $order_item->get_product();
 		// $quantity = $order_item->get_quantity();
@@ -496,6 +504,7 @@ class Certificate {
 				}
 			}
 		}
+
 		return $certificates;
 	}
 	

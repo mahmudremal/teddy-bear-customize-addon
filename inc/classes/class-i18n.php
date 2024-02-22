@@ -23,7 +23,9 @@ class I18n {
 		add_action('wp_ajax_nopriv_futurewordpress/project/ajax/i18n/number', [$this, 'number_translates'], 10, 0);
 		add_action('wp_ajax_futurewordpress/project/ajax/i18n/number', [$this, 'number_translates'], 10, 0);
 		
-		add_filter('teddybear/project/system/translate', [$this, 'translate'], 10, 4);
+		add_filter('teddybear/project/system/translate/string', [$this, 'translate_string'], 10, 4);
+		add_filter('teddybear/project/system/translate/number', [$this, 'translate_number'], 10, 4);
+		add_filter('teddybear/project/system/get_locale', [$this, 'get_locale'], 10, 1);
 		
 		add_action('wp_ajax_nopriv_futurewordpress/project/ajax/i18n/list', [$this, 'ajaxList'], 10, 0);
 		add_action('wp_ajax_futurewordpress/project/ajax/i18n/list', [$this, 'ajaxList'], 10, 0);
@@ -156,6 +158,9 @@ class I18n {
 			)
 		], 200);
 	}
+	public function get_locale($default = false) {
+		return apply_filters('teddybear/project/system/getoption', 'translate-toonly', 'user') == 'user'?get_user_locale():get_locale();
+	}
 	/**
 	 * https://wpml.org/wpml-hook/wpml_translate_single_string/
 	 * @description Retrieves an individual (as opposed to a string that is part of a package**) text string translation. The filter looks for a string with matching $domain and $name. If it finds it, it looks for a translation in the current language or the language you specify. If a translation exists, it will return it. Otherwise, it will return the original string.
@@ -165,7 +170,7 @@ class I18n {
 	 * $name | (string) (Required) The string’s registered name
 	 * $language_code | (string) (Optional) Return the translation in this language. Default is NULL which returns the current language
 	 */
-	public function translate($text, $domain, $name, $language_code = NULL) {
+	public function translate_string($text, $domain, $name, $language_code = NULL) {
 		if ($language_code === NULL) {
 			$language_code = apply_filters('teddybear/project/system/getoption', 'translate-toonly', 'user') == 'user'?get_user_locale():get_locale();
 		}
@@ -197,6 +202,18 @@ class I18n {
 			}
 		}
 		return __($text, $domain);
+	}
+	public function translate_number($number, $decimal = 0, $locale = NULL) {
+		if (!$locale || empty($locale)) {
+			$locale = apply_filters('teddybear/project/system/get_locale', get_user_locale());
+		}
+		return number_format_i18n(
+			$number,
+			$decimal,
+			false,
+			false,
+			$locale
+		);
 	}
 
 	private function request_translations($text, $translate_to, $translate_from, $language_code) {

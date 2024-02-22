@@ -540,7 +540,6 @@ class Menus {
 			'title'							=> __('Certificate', 'teddybearsprompts'),
 			'description'					=> __('Certificate template & necessey informations.', 'teddybearsprompts'),
 			'fields'						=> [
-
 				[
 					'id' 					=> 'certificate-enable',
 					'label'					=> __('Enable Certification', 'teddybearsprompts'),
@@ -561,6 +560,14 @@ class Menus {
 					'description'			=> __('Mark this option to show available certificates on user bashboard called my-account order details screen.', 'teddybearsprompts'),
 					'type'					=> 'checkbox',
 					'default'				=> true
+				],
+				[
+					'id' 					=> 'certificate-404template',
+					'label'					=> __('404 Template', 'teddybearsprompts'),
+					'description'			=> __('Select a template for certificate not found issue.', 'teddybearsprompts'),
+					'type'					=> 'select',
+					'default'				=> false,
+					'options'				=> $this->get_query(['post_type' => 'elementor_library', 'type' => 'option', 'limit' => 500])
 				],
 				
 			]
