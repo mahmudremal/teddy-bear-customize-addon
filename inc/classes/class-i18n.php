@@ -71,7 +71,10 @@ class I18n {
 			// frontend JS
 			'somethingwentwrong' => __('Something went wrong!', 'teddybearsprompts'),
 			'checkout' => __('Checkout', 'teddybearsprompts'),
-			'record' => __('Record', 'teddybearsprompts'),
+
+			'record' => apply_filters('teddybear/project/system/translate/string', 'Record', 'teddybearsprompts', 'Record' . ' - input field'),
+			
+			// 'record' => __('Record', 'teddybearsprompts'),
 			'stop' => __('Stop', 'teddybearsprompts'),
 			'play' => __('play', 'teddybearsprompts'),
 			'download' => __('Download', 'teddybearsprompts'),
