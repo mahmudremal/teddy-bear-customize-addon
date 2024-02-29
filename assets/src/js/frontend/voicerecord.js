@@ -1,13 +1,17 @@
-import RecordRTC from 'recordrtc';
-import WaveSurfer from 'wavesurfer.js';
-import RecordPlugin from 'wavesurfer.js/dist/plugins/record.esm.js';
+// import RecordRTC from 'recordrtc';
+// import WaveSurfer from 'wavesurfer.js';
+// import RecordPlugin from 'wavesurfer.js/dist/plugins/record.esm.js';
 import icons from './icons';
 
 
 const voiceRecord = {
   meta_tag: 'Voice', recordedBlob: null, duration: 20, rootElement: false, product_id: false,
+  // WaveSurfer: WaveSurfer, RecordPlugin: RecordPlugin,
   init_recorder: (thisClass) => {
     var form, html, config, json;
+
+    if (!(voiceRecord?.WaveSurfer && voiceRecord?.RecordPlugin)) {return;}
+    
     voiceRecord.config = thisClass.config;
     voiceRecord.i18n = thisClass.i18n;
     voiceRecord.toastify = thisClass.toastify;
@@ -137,7 +141,7 @@ const voiceRecord = {
 
     window.voiceRecord = voiceRecord;
 
-    voiceRecord.wavesurfer = WaveSurfer.create({
+    voiceRecord.wave_instance = voiceRecord.WaveSurfer.create({
       container: '#'+voiceRecord.wavePreview.id,
       // waveColor: '#de424b',
       // progressColor: '#973137',
@@ -152,12 +156,12 @@ const voiceRecord = {
       barGap: 1,
       height: 20,
     });
-    voiceRecord.record = voiceRecord.wavesurfer.registerPlugin(RecordPlugin.create())
+    voiceRecord.record = voiceRecord.wave_instance.registerPlugin(voiceRecord.RecordPlugin.create())
     
     const recButton = voiceRecord.recordButton;
     recButton.onclick = async () => {
-      if (voiceRecord.wavesurfer.isPlaying()) {
-        voiceRecord.wavesurfer.pause();
+      if (voiceRecord.wave_instance.isPlaying()) {
+        voiceRecord.wave_instance.pause();
       }
       if(voiceRecord.record.isRecording()) {
         voiceRecord.record.stopRecording();
@@ -189,19 +193,19 @@ const voiceRecord = {
     }
     
     // Play/pause
-    voiceRecord.wavesurfer.once('ready', () => {
-      // voiceRecord.playButton.onclick = () => {voiceRecord.wavesurfer.playPause();}
-      voiceRecord.wavesurfer.on('play', () => {
+    voiceRecord.wave_instance.once('ready', () => {
+      // voiceRecord.playButton.onclick = () => {voiceRecord.wave_instance.playPause();}
+      voiceRecord.wave_instance.on('play', () => {
         voiceRecord.playButton.innerHTML = icons.pause;
         voiceRecord.playButton.title = voiceRecord.i18n?.pause??'Pause';
       });
-      voiceRecord.wavesurfer.on('pause', () => {
+      voiceRecord.wave_instance.on('pause', () => {
         voiceRecord.playButton.innerHTML = icons.play;
         voiceRecord.playButton.title = voiceRecord.i18n?.play??'Play';
       });
-      // voiceRecord.wavesurfer.once('interaction', () => {voiceRecord.wavesurfer.playPause()});
-      voiceRecord.wavesurfer.on('finish', () => {
-        voiceRecord.wavesurfer.setTime(0);
+      // voiceRecord.wave_instance.once('interaction', () => {voiceRecord.wave_instance.playPause()});
+      voiceRecord.wave_instance.on('finish', () => {
+        voiceRecord.wave_instance.setTime(0);
       });
     });
     voiceRecord.record.on('stopRecording', async () => {
@@ -233,19 +237,19 @@ const voiceRecord = {
   playRecording: (type = false) => {
     switch (type) {
       case 'stop':
-        voiceRecord.wavesurfer.stop();
+        voiceRecord.wave_instance.stop();
         break;
       case 'play':
-        voiceRecord.wavesurfer.play();
+        voiceRecord.wave_instance.play();
         break;
       default:
-        voiceRecord.wavesurfer.playPause();
+        voiceRecord.wave_instance.playPause();
         break;
     }
   },
   releaseRecording: () => {
-    if(voiceRecord.wavesurfer) {
-      // voiceRecord.wavesurfer.destroy()
+    if(voiceRecord.wave_instance) {
+      // voiceRecord.wave_instance.destroy()
     }
     voiceRecord.playButtonAction('hide');voiceRecord.playRecording('stop');
     voiceRecord.recordedBlob = null;voiceRecord.audioPreview.src = '';
@@ -313,7 +317,7 @@ const voiceRecord = {
           voiceRecord.recordedBlob = file;
           const fileURL = URL.createObjectURL(file);
           voiceRecord.audioPreview.src = fileURL;
-          await voiceRecord.wavesurfer.load(fileURL);
+          await voiceRecord.wave_instance.load(fileURL);
           voiceRecord.rootElement.classList.add('visible_audio');
           var second = voiceRecord?.waveAudioPreview.querySelector('[data-timer-type="s"]');
           voiceRecord.waveAudioPreview.classList.remove('loading-file');
@@ -324,17 +328,17 @@ const voiceRecord = {
           
           if(second) {
             voiceRecord.playButtonAction('show');
-            second.innerHTML = (voiceRecord.wavesurfer?.duration??0.00)?.toFixed(2).replace('.', ':')??'0:00';
+            second.innerHTML = (voiceRecord.wave_instance?.duration??0.00)?.toFixed(2).replace('.', ':')??'0:00';
           }
-          if((voiceRecord.wavesurfer?.duration??0) > voiceRecord.duration) {
+          if((voiceRecord.wave_instance?.duration??0) > voiceRecord.duration) {
             voiceRecord.playButtonAction('hide');voiceRecord.playRecording('stop');
             var text = voiceRecord.i18n?.audioexcedduration??'Your selected audio file exceed maximum duration of %s sec.';
             text = text.replace('%s', voiceRecord.duration);
             voiceRecord.toastify({text: text,duration: 45000,close: true,gravity: "top",position: "right",stopOnFocus: true,style: {background: 'linear-gradient(to right, rgb(255 180 117), rgb(251, 122, 72))'}}).showToast();
 
-            voiceRecord.wavesurfer.stop();
+            voiceRecord.wave_instance.stop();
             voiceRecord.recordedBlob = null;
-            // voiceRecord.wavesurfer.destroy();
+            // voiceRecord.wave_instance.destroy();
             voiceRecord.rootElement.classList.remove('visible_audio');
             /**
              * Remove prices on upload voice

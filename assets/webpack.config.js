@@ -18,13 +18,9 @@ const LIB_DIR = path.resolve(__dirname, 'src/library');
 const BUILD_DIR = path.resolve(__dirname, 'build');
 const SRC_DIR = path.resolve(__dirname, 'src');
 const entry = {
-	public: JS_DIR + '/public.js',
-	admin: JS_DIR + '/admin.js',
-	// single: JS_DIR + '/single.js',
-	// editor: JS_DIR + '/editor.js',
-	// blocks: JS_DIR + '/blocks.js',
-	// author: JS_DIR + '/author.js',
-	// search: JS_DIR + '/search.js',
+	public		: JS_DIR + '/public.js',
+	admin		: JS_DIR + '/admin.js',
+	recorder	: JS_DIR + '/recorder.js',
 };
 const output = {
 	path: BUILD_DIR,

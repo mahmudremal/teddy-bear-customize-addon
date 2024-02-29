@@ -475,7 +475,7 @@ class Menus {
 		];
 		$args['voice']			= [
 			'title'							=> __('Voice', 'teddybearsprompts'),
-			'description'					=> __('Voice template & necessey informations.', 'teddybearsprompts'),
+			'description'					=> __('Voice template & necessey informations. Please review translation popup each time you change this text. Avoid special caracter or placeholders such as (%d, %d, %f etc.) while trying to translate Strings.', 'teddybearsprompts'),
 			'fields'						=> [
 
 				[
@@ -534,6 +534,57 @@ class Menus {
 				// 	'default'				=> str_replace('wc-', '', implode(', ', function_exists('wc_get_order_statuses')?array_keys((array) wc_get_order_statuses()):['processing']))
 				// ],
 				
+				[
+					'id' 					=> 'translate-audioupload_instuction',
+					'label'					=> __('Voice upload message', 'teddybearsprompts'),
+					'description'			=> __('Give here diclaimer in English language that will be filter on translation query.', 'teddybearsprompts'),
+					'type'					=> 'textarea',
+					'default'				=> 'You are permitted to record any message of your liking up to %d seconds, with the exclusion of profanity or copyrighted materials, which are prohibited. Please note your recording may be reviewed and screened (discreetly) by our DubiDo staff. We will not modify or edit your recording. In the event of copyright infringement, profanity, hate speech or recordings of the sort, we reserve the right to decline your recording and we will notify you of this decision within 48h of the submission of your recording. You will be given the opportunity to record a new message for additional review. For further information on your rights and privacy, please refer to our Privacy Policy. Please also refer to our Disclaimer for additional information on DubiDo’s liability with regard to recordings.'
+				],
+				[
+					'id' 					=> 'translate-ipreferrecordlater',
+					'label'					=> __('Voice Later message', 'teddybearsprompts'),
+					'description'			=> __('Give here diclaimer in English language that will be filter on translation query.', 'teddybearsprompts'),
+					'type'					=> 'textarea',
+					'default'				=> 'You are permitted to record any message of your liking up to %d seconds, with the exclusion of profanity or copyrighted materials, which are prohibited. Please note your recording may be reviewed and screened (discreetly) by our DubiDo staff. We will not modify or edit your recording. In the event of copyright infringement, profanity, hate speech or recordings of the sort, we reserve the right to decline your recording and we will notify you of this decision within 48h of the submission of your recording. You will be given the opportunity to record a new message for additional review. For further information on your rights and privacy, please refer to our Privacy Policy. Please also refer to our Disclaimer for additional information on DubiDo’s liability with regard to recordings.'
+				],
+				[
+					'id' 					=> 'translate-ipreferrecordlater',
+					'label'					=> __('Voice Later message', 'teddybearsprompts'),
+					'description'			=> __('Give here diclaimer in English language that will be filter on translation query.', 'teddybearsprompts'),
+					'type'					=> 'textarea',
+					'default'				=> '1. Receive instructions & button in order email.\n2. Upload audio file anytime later.\n3. we will ship when your audio file is received.'
+				],
+				[
+					'id' 					=> 'translate-audiorecord_instuction',
+					'label'					=> __('Voice Record message', 'teddybearsprompts'),
+					'description'			=> __('Give here diclaimer in English language that will be filter on translation query.', 'teddybearsprompts'),
+					'type'					=> 'textarea',
+					'default'				=> 'Please record your voice upto 20 seconds.'
+				],
+				[
+					'id' 					=> 'translate-maxuploadmb',
+					'label'					=> __('Max Upload exceed', 'teddybearsprompts'),
+					'description'			=> __('Give here diclaimer in English language that will be filter on translation query.', 'teddybearsprompts'),
+					'type'					=> 'textarea',
+					'default'				=> 'Max uploaded file size is %s MB.'
+				],
+				[
+					'id' 					=> 'translate-audioexcedduration',
+					'label'					=> __('Exceed Duration', 'teddybearsprompts'),
+					'description'			=> __('Give here diclaimer in English language that will be filter on translation query.', 'teddybearsprompts'),
+					'type'					=> 'textarea',
+					'default'				=> 'Your selected audio file exceed maximum duration of %s sec.'
+				],
+				[
+					'id' 					=> 'translate-audiofile_invalid',
+					'label'					=> __('Exceed Duration', 'teddybearsprompts'),
+					'description'			=> __('Give here diclaimer in English language that will be filter on translation query.', 'teddybearsprompts'),
+					'type'					=> 'textarea',
+					'default'				=> 'Invalid file selected. It seems you didn\'t select a valid audio file or file is not in these following format (%s).'
+				],
+
+
 			]
 		];
 		$args['certificate']	= [
@@ -594,13 +645,6 @@ class Menus {
 					],
 					// 'default'				=> 'site'
 				],
-				// [
-				// 	'id' 					=> 'translate-api',
-				// 	'label'					=> __('API key', 'teddybearsprompts'),
-				// 	'description'			=> __('Provice lecto.ai api key to translate text. Text will store after translation to avoid api limit exceed.', 'teddybearsprompts'),
-				// 	'type'					=> 'text',
-				// 	'default'				=> ''
-				// ],
 				/**
 				 * Repeater
 				 */
@@ -611,6 +655,7 @@ class Menus {
 					'type'					=> 'button',
 					'default'				=> __('Translation list', 'teddybearsprompts')
 				],
+				
 			]
 		];
 		$args['cusrev']			= [

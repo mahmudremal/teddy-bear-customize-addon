@@ -1,3 +1,4 @@
+
 export const keenSliderNavigation = (slider) => {
     let wrapper, dots, arrowLeft, arrowRight;
     function markup(remove) {
@@ -84,3 +85,4 @@ export const keenSliderNavigation = (slider) => {
       markup(true)
     })
 }
+

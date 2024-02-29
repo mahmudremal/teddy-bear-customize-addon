@@ -1,4 +1,6 @@
+// import Glide, { Controls, Breakpoints } from '@glidejs/glide/dist/glide.modular.esm'
 import icons from "./icons";
+
 const PROMPTS = {
     i18n: {},voices: {}, names: [], currentGroups: 'standing',
     groupSelected: false, outfitSliders: [], groupExists: false,
@@ -219,7 +221,9 @@ const PROMPTS = {
             });
         });
         document.querySelectorAll('.dynamic_popup input[type="date"]').forEach((el) => {
-            el.type = 'text';thisClass.flatpickr(el, {enableTime: false, dateFormat: "d M, Y"});
+            if (thisClass?.flatpickr) {
+                el.type = 'text';thisClass.flatpickr(el, {enableTime: false, dateFormat: "d M, Y"});
+            }
         });
 
         document.querySelectorAll('.dynamic_popup button[data-type="done"]:not([data-handled])').forEach((done) => {
@@ -307,107 +311,135 @@ const PROMPTS = {
         // });
         document.querySelectorAll('.form-fields__group__outfit > div:not([data-handled-slide])').forEach((el) => {
             el.dataset.handledSlide = true;var wrap, wrapEL;
+            const useKeen = true;
+            if (!useKeen) {
+                wrap = el.querySelector('.form-wrap__image');
+                var newWrap = document.createElement('ul');
+                newWrap.classList.add(...wrap.classList.value.split(' '));
+                [...wrap.children].forEach(li => {
+                    newWrap.appendChild(li);
+                });
+                wrap.parentElement.appendChild(newWrap);wrap.remove();
+            }
+            
             wrap = wrapEL = el.querySelector('.form-wrap__image');
             var splide = wrap.parentElement;
-            if(wrap) {
+            if(wrap && splide) {
+                var glide = splide.parentElement;
+                if (!useKeen) {
+                    glide.classList.add('glide');
+                    glide.id = 'glide-' + Math.floor(Math.random() * 20);
+                    splide.classList.add('glide__track');
+                    splide.dataset.glideEl = "track";
+                    wrap.classList.add('glide__slides');
+                }
+                
+                if (!useKeen) {
+                    var controls = document.createElement('div');
+                    controls.dataset.glideEl = 'controls';
+                    ['prev', 'next'].forEach(type => {
+                        var button = document.createElement('button');
+                        button.classList.add('slider__arrow', 'slider__arrow--' + type, 'glide__arrow', 'glide__arrow--' + type);
+                        button.dataset.glideDir = (type == 'prev')?'<':'>';button.type = 'button';
+                        button.innerHTML = (type == 'prev')?`
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24">
+                            <path d="M0 12l10.975 11 2.848-2.828-6.176-6.176H24v-3.992H7.646l6.176-6.176L10.975 1 0 12z"/>
+                        </svg>
+                        `:`
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24">
+                            <path d="M13.025 1l-2.847 2.828 6.176 6.176h-16.354v3.992h16.354l-6.176 6.176 2.847 2.828 10.975-11z"/>
+                        </svg>
+                        `;
+                        controls.appendChild(button);
+                    });
+                    glide.appendChild(controls);
+                    // 
+                    var navDots = document.createElement('div');
+                    navDots.dataset.glideEl = 'navDots[nav]';
+                    navDots.classList.add('slider__bullets', 'glide__bullets');
+                    navDots.innerHTML = '';
+                    for (var index = 0;index <= wrap.children.length;index++) {
+                        navDots.innerHTML += `<button class="slider__bullet glide__bullet" type="button" data-glide-dir="=${index}"></button>`;
+                    }
+                    glide.appendChild(navDots);
+                }
                 
                 wrap.querySelectorAll('.form-control-label').forEach((elem, i) => {
-                    elem.classList.add('keen-slider__slide', 'number-slide' + (i + 1), 'splide__slide');
-                });
-                if(false) {
-                    splide.parentElement.classList.add('splide');
-                    splide.classList.add('splide__track');
-
-                    var track = document.createElement('div');
-                    track.className = splide.className;
-                    splide.childNodes.forEach((fieldset) => {
-                        track.appendChild(fieldset);
-                    });
-                    splide.parentElement.insertBefore(track, splide);
-                    
-                    
-                    wrap.classList.add('keen-slider', 'splide__list');
-                    /**
-                     * Convert <fieldset> to <ul>
-                     */
-                    var oldNode = wrap, newNode = document.createElement('ul'), node, nextNode;
-                    newNode.className = wrap.className;node = oldNode.firstChild;
-                    while (node) {
-                        nextNode = node.nextSibling;
-
-                        var oldItem = node, newItem = document.createElement('li'), item, nextItem;
-                        newItem.className = node.className;item = oldItem.firstChild;
-                        while (item) {
-                            nextItem = item.nextSibling;newItem.appendChild(item);item = nextItem;
-                        }
-
-                        console.log(newItem);
-                        
-                        newNode.appendChild(newItem);
-                        node.remove();node = nextNode;
+                    if (useKeen) {
+                        elem.classList.add('keen-slider__slide', 'number-slide' + (i + 1));
+                    } else {
+                        elem.classList.add('splide__slide');
+                        var slide = document.createElement('li');
+                        slide.classList.add('glide__slide');
+                        slide.appendChild(elem);
+                        wrap.appendChild(slide);
                     }
-                    wrap = newNode;
+                });
 
-                    const slider = new thisClass.Splide(splide.parentElement, {
-                        type   : 'slide', // fade | loop
-                        // padding: '5rem',
-                        perPage: 5,
-                        rewind : true,
-                        perMove: 1,
-                        omitEnd: true,
-                        focus  : 'center', // 0 | 1 | 2
-                        drag   : 'free', // 'free',
-                        // snap   : true,
-                        // direction: 'ttb', // rtl
-                        // height   : '10rem',
-                        // wheel    : true,
-                        // autoWidth: true,
-                        // autoplay: true,
-                        pagination  : true,
-                        gap    : '5px',
-                        breakpoints: {
-                            500: {perPage: 5, drag: 'free'},
-                        },
-
-                    });
-                    wrapEL.parentElement.appendChild(wrap);wrapEL.remove();
-                    slider.mount();
-                } else {
-                    var arrows = document.createElement('div');arrows.classList.add('keen-slider__arrows');
-                    arrows.innerHTML = icons.left;
-                    arrows.innerHTML += icons.right;
-                    wrap.parentElement.appendChild(arrows);
+                if (true) {
+                    var arrows = document.createElement('div');
+                    if (useKeen) {
+                        arrows.classList.add('keen-slider__arrows');
+                        arrows.innerHTML = document.body.classList.contains('rtl')?icons.right + icons.left : icons.left + icons.right;
+                        wrap.classList.add('keen-slider');
+                        wrap.parentElement.appendChild(arrows);
+                    }
                     setTimeout(() => {
-                        wrap.style.maxWidth = '80%';
-                        
-                        const slider = new thisClass.KeenSlider(wrap, {
-                            drag: false, // loop: true, mode: "free",
-                            slides: {perView: 5, spacing: 5},
-                            breakpoints: {
-                                "(max-width: 500px)": {
-                                    mode: "free", drag: true,
-                                    // slides: {perView: 5, spacing: 5},
+                        // wrap.style.maxWidth = '80%';
+                        var slider = false;
+                        if (useKeen) {
+                            slider = new thisClass.KeenSlider(wrap, {
+                                spacing: 10,
+                                drag: false, // loop: true, mode: "free",
+                                slides: {perView: 5, spacing: 5},
+                                rtl: document.body.classList.contains('rtl'),
+                                breakpoints: {
+                                    "(max-width: 500px)": {
+                                        mode: "free", drag: true,
+                                        // slides: {perView: 5, spacing: 5},
+                                    },
+                                }
+                            }, [
+                                slider => {
+                                  slider.on('created', () => {
+                                    setTimeout(() => {
+                                        // wrap.style.maxWidth = 'unset';
+                                        console.log('Slider created');
+                                        // const event = new Event('resize');
+                                        // window.dispatchEvent(event);
+                                    }, 2000);
+                                  })
                                 },
-                            }
-                        }, [
-                            slider => {
-                              slider.on('created', () => {
+                            ]);
+                        } else {
+                            slider = new Glide('#' + glide.id, {
+                                // type: 'carousel', // 'slider',
+                                // autoplay: 1500,
+                                startAt: 0,
+                                perView: 5,
+                                // gap: 10,
+                                keyboard: true,
+                                bound: true,
+                                direction: document.body.classList.contains('rtl')?'rtl':'ltr',
+                                // peek: {before: 50, after: 50},
+                                breakpoints: {
+                                    // 1024: {perView: 5},
+                                    600: {perView: 5},
+                                    // 450: {perView: 4},
+                                    400: {perView: 4}
+                                }
+                            });
+                            glide.querySelector('.glide__arrow--prev').addEventListener('click', (event) => slider.go('>'));
+                            glide.querySelector('.glide__arrow--next').addEventListener('click', (event) => slider.go('<'));
+                            slider.on(['mount.after'], () => {
+                                console.log('Event fired');
                                 setTimeout(() => {
-                                    wrap.style.maxWidth = 'unset';
-                                    // console.log('Slider created');
-                                    var theIntvalI = 0, theIntval = setInterval(() => {
-                                        theIntvalI++;
-                                        if(theIntvalI <= 20) {
-                                            const event = new Event('resize');window.dispatchEvent(event);
-                                        } else {
-                                            clearInterval(theIntval);
-                                        }
-                                    }, 1500);
-                                    
-                                }, 2000);
-                              })
-                            },
-                        ]);
+                                    slider.update({peek: {before: 50, after: 50}});
+                                    const event = new Event('resize');window.dispatchEvent(event);
+                                }, 300);
+                            });
+                            slider.mount({Controls, Breakpoints});
+                        }
                         PROMPTS.outfitSliders.push(slider);
                         
                         arrows.querySelectorAll('.svg_icon').forEach((elem) => {
@@ -415,10 +447,19 @@ const PROMPTS = {
                                 var arrow_mode = ((elem?.querySelector('svg'))?.dataset)?.arrow;
                                 switch(arrow_mode) {
                                     case 'left':
-                                        slider.prev();
+                                        if (useKeen) {
+                                            slider.prev();
+                                        } else {
+                                            slider.go('<');
+                                        }
+                                        
                                         break;
                                     case 'right':
-                                        slider.next();
+                                        if (useKeen) {
+                                            slider.next();
+                                        } else {
+                                            slider.go('>');
+                                        }
                                         break;
                                     default:
                                         break;
@@ -750,7 +791,7 @@ const PROMPTS = {
                 var inputsArgs = {}, inputs = {
                     teddy_name: {
                         type: 'text',
-                        label: PROMPTS.i18n?.teddyfullname??'Teddy name',
+                        label: PROMPTS.i18n?.teddyfullname??'Teddy\'s name',
                         // placeholder: PROMPTS.i18n?.teddyfullname??'Teddy full Name',
                         dataset: {title: PROMPTS.i18n?.teddyfullname??'Teddy full Name'}
                     },
@@ -769,9 +810,9 @@ const PROMPTS = {
                     },
                     teddy_reciever: {
                         type: 'text',
-                        label: PROMPTS.i18n?.recieversname??'Reciever\'s Name',
-                        // placeholder: PROMPTS.i18n?.recieversname??'Reciever\'s Name',
-                        dataset: {title: PROMPTS.i18n?.recieversname??'Reciever\'s Name'}
+                        label: PROMPTS.i18n?.teddy_reciever??'Reciever\'s Name',
+                        // placeholder: PROMPTS.i18n?.teddy_reciever??'Reciever\'s Name',
+                        dataset: {title: PROMPTS.i18n?.teddy_reciever??'Reciever\'s Name'}
                     },
                     teddy_sender: {
                         type: 'text',
@@ -1048,7 +1089,6 @@ const PROMPTS = {
         formdata.append('formdata', JSON.stringify(args));
         formdata.append('_nonce', thisClass.ajaxNonce);
         formdata.append('action', 'futurewordpress/project/ajax/search/popup');
-    
         request = await fetch(thisClass.ajaxUrl, {
             method: 'POST',
             headers: {
@@ -1197,6 +1237,13 @@ const PROMPTS = {
                                 if(presentStep) {
                                     document.querySelector('.popup_body').dataset.stepType = presentStep.type;
                                 }
+                                switch (presentStep.type) {
+                                    case 'outfit':
+                                        const event = new Event('resize');window.dispatchEvent(event);
+                                        break;
+                                    default:
+                                        break;
+                                }
                             }
 
                             PROMPTS.global_cartBtn = true;
@@ -1215,6 +1262,75 @@ const PROMPTS = {
                 })
             });
         }, 300);
+    },
+    init_css_n_js: (thisClass) => {
+        var csses = [
+            'https://cdn.jsdelivr.net/npm/keen-slider@latest/keen-slider.min.css',
+            // 'https://glidejs.com/css/app.css',
+            'https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css',
+            'https://cdnjs.cloudflare.com/ajax/libs/toastify-js/1.6.1/toastify.min.css'
+        ];
+        csses.forEach(url => {
+            var link = document.createElement('link');
+            link.rel = 'stylesheet';link.href = url;
+            document.head.appendChild(link);
+        });
+        var scripts = [
+            {
+                src     : 'https://unpkg.com/popper.js@1',
+                callback: () => {}
+            },
+            {
+                src     : 'https://cdn.jsdelivr.net/npm/keen-slider@latest/keen-slider.js',
+                callback: () => {
+                    thisClass.KeenSlider = window.KeenSlider;
+                    thisClass.init_search_form();
+                }
+            },
+            {
+                src     : 'https://cdn.jsdelivr.net/npm/sweetalert2@11',
+                callback: () => {
+                    thisClass.Swal = window.Swal;
+                    thisClass.init_toast();
+                }
+            },
+            {
+                src     : 'https://cdn.jsdelivr.net/npm/flatpickr',
+                callback: () => {thisClass.flatpickr = window.flatpickr;}
+            },
+            {
+                src     : thisClass.config.buildPath + '/js/recorder.js',
+                callback: () => {
+                    thisClass.voiceRecord.WaveSurfer = window.WaveSurfer;
+                    thisClass.voiceRecord.RecordPlugin = window.RecordPlugin;
+                    thisClass.voiceRecord.init_recorder(thisClass);
+                }
+            },
+            {
+                src     : 'https://cdnjs.cloudflare.com/ajax/libs/toastify-js/1.6.1/toastify.min.js',
+                callback: () => {thisClass.toastify = window.Toastify;}
+            },
+            {
+                src     : 'https://unpkg.com/tippy.js@5',
+                callback: () => {thisClass.tippy = window.tippy;}
+            },
+        ];
+        scripts.forEach(row => {
+            PROMPTS.addScript(row.src, row.callback);
+        });
+    },
+    addScript: (fileSrc, callback) => {
+        var head = document.getElementsByTagName('head')[0];
+        var script = document.createElement('script');
+        script.type = 'text/javascript';
+        script.onreadystatechange = function() {
+          if (this.readyState == 'complete') {
+            callback();
+          }
+        } 
+        script.onload = callback;
+        script.src = fileSrc;
+        head.appendChild(script);
     }
     
 };
