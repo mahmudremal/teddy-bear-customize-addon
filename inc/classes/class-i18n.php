@@ -40,6 +40,8 @@ class I18n {
 		add_filter('load_textdomain_mofile', [$this, 'load_textdomain_mofile'], 10, 2);
 
 		// add_filter('futurewordpress/project/teddybearpopupaddon/javascript/siteconfig', [$this, 'pushConfig'], 10, 2);
+
+		add_filter('futurewordpress/project/teddybearpopupaddon/javascript/siteconfig', [$this, 'javascript_siteconfig'], 10, 2);
 	}
 	public function load_textdomain_mofile($mofile, $domain) {
 		if ($domain == 'teddybearsprompts') {
@@ -60,131 +62,7 @@ class I18n {
 		load_plugin_textdomain('teddybearsprompts', false, $this->language_path);
 	}
 	public function js_translates() {
-		$translates = [
-			// backend JS
-			'continue' => __('Continue', 'teddybearsprompts'),
-			'back' => __('Back', 'teddybearsprompts'),
-			'selectatype' => __('Select a type', 'teddybearsprompts'),
-			'proceed' => __('Proceed', 'teddybearsprompts'),
-			'popup_subheading_text' => __('PopUp Sub-heading text', 'teddybearsprompts'),
-			'popup_subheading' => __('PopUp Sub Heading', 'teddybearsprompts'),
-			'select_image' => __('Select image', 'teddybearsprompts'),
-			'select_image_desc' => __('Select an image for popup header. It should be less weight, vertical and optimized.', 'teddybearsprompts'),
-			'popup_heading_text' => __('PopUp Heading text', 'teddybearsprompts'),
-			'popup_heading' => __('PopUp Heading', 'teddybearsprompts'),
-			'required' => __('Required', 'teddybearsprompts'),
-			'placeholder_text' => __('Placeholder text', 'teddybearsprompts'),
-			'placeholder_ordefault' => __('Additional cost', 'teddybearsprompts'),
-			'input_label' => __('Input label', 'teddybearsprompts'),
-			'add_new_group' => __('Add new group', 'teddybearsprompts'),
-			'teddy_name' => __('Teddy name', 'teddybearsprompts'),
-			'teddy_birth' => __('Teddy birth', 'teddybearsprompts'),
-			'teddy_sender' => __('Sender\'s Name', 'teddybearsprompts'),
-
-			'teddy_reciever' => apply_filters('teddybear/project/system/translate/string', 'Reciever\'s Name', 'teddybearsprompts', 'Reciever\'s Name' . ' - input field'),
-			// 'teddy_reciever' => __('Reciever\'s Name', 'teddybearsprompts'),
-			
-			'select_thumbnail' => __('Select thumbnail', 'teddybearsprompts'),
-			'field_type' => __('Field type', 'teddybearsprompts'),
-			'row_title' => __('Row title', 'teddybearsprompts'),
-			'layer_order' => __('Layer Order', 'teddybearsprompts'),
-
-			// frontend JS
-			'somethingwentwrong' => __('Something went wrong!', 'teddybearsprompts'),
-			'checkout' => __('Checkout', 'teddybearsprompts'),
-
-			'record' => apply_filters('teddybear/project/system/translate/string', 'Record', 'teddybearsprompts', 'Record' . ' - input field'),
-			// 'record' => __('Record', 'teddybearsprompts'),
-
-			'stop' => __('Stop', 'teddybearsprompts'),
-
-			'play' => apply_filters('teddybear/project/system/translate/string', 'Play', 'teddybearsprompts', 'Play' . ' - input field'),
-			// 'play' => __('Play', 'teddybearsprompts'),
-			
-			'download' => __('Download', 'teddybearsprompts'),
-			'pause' => __('Pause', 'teddybearsprompts'),
-
-
-			'rusure2clspopup' => __('Are you sure you want to close this popup?', 'teddybearsprompts'),
-			'addaccessories' => __('Add accessories', 'teddybearsprompts'),
-			'buymoreplushies' => __('Buy more plushies', 'teddybearsprompts'),
-			'addwrappingpaper' => __('Add wrapping paper', 'teddybearsprompts'),
-			'addwrapping' => __('Add wrapping', 'teddybearsprompts'),
-			'youmayalsolike' => __('You may also like', 'teddybearsprompts'),
-			'obtainplushieswraps' => __('Obtain plushies that come in wrapped packaging.', 'teddybearsprompts'),
-			'removewrapping' => __('Remove Wrapping', 'teddybearsprompts'),
-			'delete_acc_confirmation' => __('Are you sure you want to delete all of your account information? This will permanently remove you account with all relateed informations.', 'teddybearsprompts'),
-			'next' => __('Next', 'teddybearsprompts'),
-			'pls_wait' => __('Please wait...', 'teddybearsprompts'),
-			'add_to_cart' => __('Add to cart', 'teddybearsprompts'),
-			'total' => __('Total', 'teddybearsprompts'),
-			
-			'skip' => apply_filters('teddybear/project/system/translate/string', 'Skip', 'teddybearsprompts', 'Skip' . ' - input field'),
-			// 'skip' => __('Skip', 'teddybearsprompts'),
-			
-			'teddyname' => __('Teddy name', 'teddybearsprompts'),
-
-			'teddyfullname'			=> apply_filters('teddybear/project/system/translate/string', 'Teddy full Name', 'teddybearsprompts', 'Teddy full Name' . ' - input field'),
-			// 'teddyfullname' => __('Teddy full Name', 'teddybearsprompts'),
-			
-			'chooseaname4me' => __('Choose a name for me', 'teddybearsprompts'),
-			'teddybirth' => __('Birth date', 'teddybearsprompts'),
-			'dtofteddybirth' => __('Date of teddy\'s birth', 'teddybearsprompts'),
-			'sendersname' => __('Created with love by', 'teddybearsprompts'),
-			'voice' => __('Voice', 'teddybearsprompts'),
-
-			// Admin area js
-			'globallydefined' => __('This product is globally defined and until disabling forceful definition, you can\'t customize this popup.', 'teddybearsprompts'),
-			'productname' => __('Product title', 'teddybearsprompts'),
-			'data' => __('Data', 'teddybearsprompts'),
-			'nothingleft' => __('Nothing left', 'teddybearsprompts'),
-			'addnewfield' => __('Add new field', 'teddybearsprompts'),
-			'update' => __('Update', 'teddybearsprompts'),
-			'svg_icon' => __('SVG icon', 'teddybearsprompts'),
-			'give_svg_text_conts' => __('Your SVG text content here.', 'teddybearsprompts'),
-			'popup_step_text' => __('PopUp Step text', 'teddybearsprompts'),
-			'popup_steptext_desc' => __('PopUp Step text not more then 10 characters.', 'teddybearsprompts'),
-			'fielddesc' => __('Field descriptions.', 'teddybearsprompts'),
-			'add_new_option' => __('Add new option', 'teddybearsprompts'),
-			'additionalcost' => __('Additional cost', 'teddybearsprompts'),
-			'productvoice' => __('Product Voice', 'teddybearsprompts'),
-			'duration_sec' => __('Duration (sec.).', 'teddybearsprompts'),
-			'remove' => __('Remove', 'teddybearsprompts'),
-			'rusure' => __('Are you sure?', 'teddybearsprompts'),
-			'export' => __('Export', 'teddybearsprompts'),
-			'import' => __('Import', 'teddybearsprompts'),
-			'untrustable' => __('We can\'t find trustable imports contents.', 'teddybearsprompts'),
-			'errorparsingjson' => __('Error parsing JSON:', 'teddybearsprompts'),
-			'standingplushies' => __('Standing Plushies', 'teddybearsprompts'),
-			'sittingplushies' => __('Sitting Plushies', 'teddybearsprompts'),
-			
-			'upload' => apply_filters('teddybear/project/system/translate/string', 'Upload', 'teddybearsprompts', 'Upload' . ' - input field'),
-			// 'upload' => __('Upload', 'teddybearsprompts'),
-			
-			// 'audioupload_instuction' => __('You are permitted to record any message of your liking up to %d seconds, with the exclusion of profanity or copyrighted materials, which are prohibited. Please note your recording may be reviewed and screened (discreetly) by our DubiDo staff. We will not modify or edit your recording. In the event of copyright infringement, profanity, hate speech or recordings of the sort, we reserve the right to decline your recording and we will notify you of this decision within 48h of the submission of your recording. You will be given the opportunity to record a new message for additional review. For further information on your rights and privacy, please refer to our Privacy Policy. Please also refer to our Disclaimer for additional information on DubiDo’s liability with regard to recordings.', 'teddybearsprompts'),
-			// 'ipreferrecordlater' => __('I prefer to add my voice later', 'teddybearsprompts'),
-			'add_later' => __('Add Later', 'teddybearsprompts'),
-			// 'audiorecord_instuction' => __('Please record your voice upto 20 seconds.', 'teddybearsprompts'),
-			'audiolater_instuction' => __('1. Receive instructions & button in order email.\n2. Upload audio file anytime later.\n3. we will ship when your audio file is received.', 'teddybearsprompts'),
-
-			// 'maxuploadmb' => __('Max uploaded file size is %s MB.', 'teddybearsprompts'),
-
-			'audioexcedduration' => __('Your selected audio file exceed maximum duration of %s sec.', 'teddybearsprompts'),
-			'audiofile_invalid' => __('Invalid file selected. It seems you didn\'t select a valid audio file or file is not in these following format (%s).', 'teddybearsprompts'),
-
-			'translations' => __('Translations', 'teddybearsprompts'),
-			'cancel' => __('Cancel', 'teddybearsprompts'),
-			'submit' => __('Submit', 'teddybearsprompts'),
-
-
-			
-			'audioupload_instuction'		=> apply_filters('teddybear/project/system/translate/string', apply_filters('teddybear/project/system/getoption', 'translate-audioupload_instuction', ''), 'teddybearsprompts', apply_filters('teddybear/project/system/getoption', 'translate-audioupload_instuction', '') . ' - input field'),
-			'ipreferrecordlater'			=> apply_filters('teddybear/project/system/translate/string', apply_filters('teddybear/project/system/getoption', 'translate-ipreferrecordlater', ''), 'teddybearsprompts', apply_filters('teddybear/project/system/getoption', 'translate-ipreferrecordlater', '') . ' - input field'),
-			'audiorecord_instuction'		=> apply_filters('teddybear/project/system/translate/string', apply_filters('teddybear/project/system/getoption', 'translate-audiorecord_instuction', ''), 'teddybearsprompts', apply_filters('teddybear/project/system/getoption', 'translate-audiorecord_instuction', '') . ' - input field'),
-			'maxuploadmb'		=> apply_filters('teddybear/project/system/translate/string', apply_filters('teddybear/project/system/getoption', 'translate-maxuploadmb', ''), 'teddybearsprompts', apply_filters('teddybear/project/system/getoption', 'translate-maxuploadmb', '') . ' - input field'),
-			'audioexcedduration'		=> apply_filters('teddybear/project/system/translate/string', apply_filters('teddybear/project/system/getoption', 'translate-audioexcedduration', ''), 'teddybearsprompts', apply_filters('teddybear/project/system/getoption', 'translate-audioexcedduration', '') . ' - input field'),
-			'audiofile_invalid'		=> apply_filters('teddybear/project/system/translate/string', apply_filters('teddybear/project/system/getoption', 'translate-audiofile_invalid', ''), 'teddybearsprompts', apply_filters('teddybear/project/system/getoption', 'translate-audiofile_invalid', '') . ' - input field'),
-		];
+		$translates = [];// $this->scripts_translations();
 
 		wp_send_json_success([
 			'hooks'			=> ['ajaxi18nloaded'],
@@ -458,5 +336,139 @@ class I18n {
 		return $args;
 	}
 	
+	public function scripts_translations() {
+		return [
+			// backend JS
+			'continue' => __('Continue', 'teddybearsprompts'),
+			'back' => __('Back', 'teddybearsprompts'),
+			'selectatype' => __('Select a type', 'teddybearsprompts'),
+			'proceed' => __('Proceed', 'teddybearsprompts'),
+			'popup_subheading_text' => __('PopUp Sub-heading text', 'teddybearsprompts'),
+			'popup_subheading' => __('PopUp Sub Heading', 'teddybearsprompts'),
+			'select_image' => __('Select image', 'teddybearsprompts'),
+			'select_image_desc' => __('Select an image for popup header. It should be less weight, vertical and optimized.', 'teddybearsprompts'),
+			'popup_heading_text' => __('PopUp Heading text', 'teddybearsprompts'),
+			'popup_heading' => __('PopUp Heading', 'teddybearsprompts'),
+			'required' => __('Required', 'teddybearsprompts'),
+			'placeholder_text' => __('Placeholder text', 'teddybearsprompts'),
+			'placeholder_ordefault' => __('Additional cost', 'teddybearsprompts'),
+			'input_label' => __('Input label', 'teddybearsprompts'),
+			'add_new_group' => __('Add new group', 'teddybearsprompts'),
+			'teddy_name' => __('Teddy name', 'teddybearsprompts'),
+			'teddy_birth' => __('Teddy birth', 'teddybearsprompts'),
+			'teddy_sender' => __('Sender\'s Name', 'teddybearsprompts'),
+
+			'teddy_reciever' => apply_filters('teddybear/project/system/translate/string', 'Reciever\'s Name', 'teddybearsprompts', 'Reciever\'s Name' . ' - input field'),
+			// 'teddy_reciever' => __('Reciever\'s Name', 'teddybearsprompts'),
+			
+			'select_thumbnail' => __('Select thumbnail', 'teddybearsprompts'),
+			'field_type' => __('Field type', 'teddybearsprompts'),
+			'row_title' => __('Row title', 'teddybearsprompts'),
+			'layer_order' => __('Layer Order', 'teddybearsprompts'),
+
+			// frontend JS
+			'somethingwentwrong' => __('Something went wrong!', 'teddybearsprompts'),
+			'checkout' => __('Checkout', 'teddybearsprompts'),
+
+			// 'record' => apply_filters('teddybear/project/system/translate/string', 'Record', 'teddybearsprompts', 'Record' . ' - input field'),
+			'record' => __('Record', 'teddybearsprompts'),
+
+			'stop' => __('Stop', 'teddybearsprompts'),
+
+			// 'play' => apply_filters('teddybear/project/system/translate/string', 'Play', 'teddybearsprompts', 'Play' . ' - input field'),
+			'play' => __('Play', 'teddybearsprompts'),
+			
+			'download' => __('Download', 'teddybearsprompts'),
+			'pause' => __('Pause', 'teddybearsprompts'),
+
+
+			'rusure2clspopup' => __('Are you sure you want to close this popup?', 'teddybearsprompts'),
+			'addaccessories' => __('Add accessories', 'teddybearsprompts'),
+			'buymoreplushies' => __('Buy more plushies', 'teddybearsprompts'),
+			'addwrappingpaper' => __('Add wrapping paper', 'teddybearsprompts'),
+			'addwrapping' => __('Add wrapping', 'teddybearsprompts'),
+			'youmayalsolike' => __('You may also like', 'teddybearsprompts'),
+			'obtainplushieswraps' => __('Obtain plushies that come in wrapped packaging.', 'teddybearsprompts'),
+			'removewrapping' => __('Remove Wrapping', 'teddybearsprompts'),
+			'delete_acc_confirmation' => __('Are you sure you want to delete all of your account information? This will permanently remove you account with all relateed informations.', 'teddybearsprompts'),
+			'next' => __('Next', 'teddybearsprompts'),
+			'pls_wait' => __('Please wait...', 'teddybearsprompts'),
+			'add_to_cart' => __('Add to cart', 'teddybearsprompts'),
+			'total' => __('Total', 'teddybearsprompts'),
+			
+			// 'skip' => apply_filters('teddybear/project/system/translate/string', 'Skip', 'teddybearsprompts', 'Skip' . ' - input field'),
+			'skip' => __('Skip', 'teddybearsprompts'),
+			
+			'teddyname' => __('Teddy name', 'teddybearsprompts'),
+
+			// 'teddyfullname'			=> apply_filters('teddybear/project/system/translate/string', 'Teddy full Name', 'teddybearsprompts', 'Teddy full Name' . ' - input field'),
+			'teddyfullname' => __('Teddy full Name', 'teddybearsprompts'),
+			
+			'chooseaname4me' => __('Choose a name for me', 'teddybearsprompts'),
+			'teddybirth' => __('Birth date', 'teddybearsprompts'),
+			'dtofteddybirth' => __('Date of teddy\'s birth', 'teddybearsprompts'),
+			'sendersname' => __('Created with love by', 'teddybearsprompts'),
+			'voice' => __('Voice', 'teddybearsprompts'),
+
+			// Admin area js
+			'globallydefined' => __('This product is globally defined and until disabling forceful definition, you can\'t customize this popup.', 'teddybearsprompts'),
+			'productname' => __('Product title', 'teddybearsprompts'),
+			'data' => __('Data', 'teddybearsprompts'),
+			'nothingleft' => __('Nothing left', 'teddybearsprompts'),
+			'addnewfield' => __('Add new field', 'teddybearsprompts'),
+			'update' => __('Update', 'teddybearsprompts'),
+			'svg_icon' => __('SVG icon', 'teddybearsprompts'),
+			'give_svg_text_conts' => __('Your SVG text content here.', 'teddybearsprompts'),
+			'popup_step_text' => __('PopUp Step text', 'teddybearsprompts'),
+			'popup_steptext_desc' => __('PopUp Step text not more then 10 characters.', 'teddybearsprompts'),
+			'fielddesc' => __('Field descriptions.', 'teddybearsprompts'),
+			'add_new_option' => __('Add new option', 'teddybearsprompts'),
+			'additionalcost' => __('Additional cost', 'teddybearsprompts'),
+			'productvoice' => __('Product Voice', 'teddybearsprompts'),
+			'duration_sec' => __('Duration (sec.).', 'teddybearsprompts'),
+			'remove' => __('Remove', 'teddybearsprompts'),
+			'rusure' => __('Are you sure?', 'teddybearsprompts'),
+			'export' => __('Export', 'teddybearsprompts'),
+			'import' => __('Import', 'teddybearsprompts'),
+			'untrustable' => __('We can\'t find trustable imports contents.', 'teddybearsprompts'),
+			'errorparsingjson' => __('Error parsing JSON:', 'teddybearsprompts'),
+			'standingplushies' => __('Standing Plushies', 'teddybearsprompts'),
+			'sittingplushies' => __('Sitting Plushies', 'teddybearsprompts'),
+			
+			// 'upload' => apply_filters('teddybear/project/system/translate/string', 'Upload', 'teddybearsprompts', 'Upload' . ' - input field'),
+			'upload' => __('Upload', 'teddybearsprompts'),
+			
+			// 'audioupload_instuction' => __('You are permitted to record any message of your liking up to %d seconds, with the exclusion of profanity or copyrighted materials, which are prohibited. Please note your recording may be reviewed and screened (discreetly) by our DubiDo staff. We will not modify or edit your recording. In the event of copyright infringement, profanity, hate speech or recordings of the sort, we reserve the right to decline your recording and we will notify you of this decision within 48h of the submission of your recording. You will be given the opportunity to record a new message for additional review. For further information on your rights and privacy, please refer to our Privacy Policy. Please also refer to our Disclaimer for additional information on DubiDo’s liability with regard to recordings.', 'teddybearsprompts'),
+			// 'ipreferrecordlater' => __('I prefer to add my voice later', 'teddybearsprompts'),
+			'add_later' => __('Add Later', 'teddybearsprompts'),
+			// 'audiorecord_instuction' => __('Please record your voice upto 20 seconds.', 'teddybearsprompts'),
+			'audiolater_instuction' => __('1. Receive instructions & button in order email.\n2. Upload audio file anytime later.\n3. we will ship when your audio file is received.', 'teddybearsprompts'),
+
+			// 'maxuploadmb' => __('Max uploaded file size is %s MB.', 'teddybearsprompts'),
+
+			'audioexcedduration' => __('Your selected audio file exceed maximum duration of %s sec.', 'teddybearsprompts'),
+			'audiofile_invalid' => __('Invalid file selected. It seems you didn\'t select a valid audio file or file is not in these following format (%s).', 'teddybearsprompts'),
+
+			'translations' => __('Translations', 'teddybearsprompts'),
+			'cancel' => __('Cancel', 'teddybearsprompts'),
+			'submit' => __('Submit', 'teddybearsprompts'),
+
+
+			
+			'audioupload_instuction'		=> apply_filters('teddybear/project/system/translate/string', apply_filters('teddybear/project/system/getoption', 'translate-audioupload_instuction', ''), 'teddybearsprompts', apply_filters('teddybear/project/system/getoption', 'translate-audioupload_instuction', '') . ' - input field'),
+			'ipreferrecordlater'			=> apply_filters('teddybear/project/system/translate/string', apply_filters('teddybear/project/system/getoption', 'translate-ipreferrecordlater', ''), 'teddybearsprompts', apply_filters('teddybear/project/system/getoption', 'translate-ipreferrecordlater', '') . ' - input field'),
+			'audiorecord_instuction'		=> apply_filters('teddybear/project/system/translate/string', apply_filters('teddybear/project/system/getoption', 'translate-audiorecord_instuction', ''), 'teddybearsprompts', apply_filters('teddybear/project/system/getoption', 'translate-audiorecord_instuction', '') . ' - input field'),
+			'maxuploadmb'		=> apply_filters('teddybear/project/system/translate/string', apply_filters('teddybear/project/system/getoption', 'translate-maxuploadmb', ''), 'teddybearsprompts', apply_filters('teddybear/project/system/getoption', 'translate-maxuploadmb', '') . ' - input field'),
+			'audioexcedduration'		=> apply_filters('teddybear/project/system/translate/string', apply_filters('teddybear/project/system/getoption', 'translate-audioexcedduration', ''), 'teddybearsprompts', apply_filters('teddybear/project/system/getoption', 'translate-audioexcedduration', '') . ' - input field'),
+			'audiofile_invalid'		=> apply_filters('teddybear/project/system/translate/string', apply_filters('teddybear/project/system/getoption', 'translate-audiofile_invalid', ''), 'teddybearsprompts', apply_filters('teddybear/project/system/getoption', 'translate-audiofile_invalid', '') . ' - input field'),
+		];
+	}
+	public function javascript_siteconfig($args, $is_admin = false) {
+		$args['i18n'] = [
+			...$args['i18n'],
+			...$this->scripts_translations()
+		];
+		return $args;
+	}
 
 }
