@@ -27,7 +27,7 @@ class i18nForm {
     getList(thisClass) {
         const formClass = this;
         var formdata = new FormData();
-        formdata.append('action', 'futurewordpress/project/ajax/i18n/list');
+        formdata.append('action', 'teddybear/project/ajax/i18n/list');
         formdata.append('_nonce', thisClass.ajaxNonce);
         thisClass.sendToServer(formdata);
     }
@@ -89,7 +89,7 @@ class i18nForm {
                         return await new Promise((resolve) => {
                             setTimeout(() => {
                                 var formdata = new FormData(tform);
-                                formdata.append('action', 'futurewordpress/project/ajax/i18n/update');
+                                formdata.append('action', 'teddybear/project/ajax/i18n/update');
                                 formdata.append('_nonce', thisClass.ajaxNonce);
                                 thisClass.sendToServer(formdata);
                                 resolve();

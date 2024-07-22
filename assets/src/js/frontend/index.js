@@ -4,65 +4,71 @@
  * @package TeddyBearCustomizeAddon
  */
 
-// import Swal from "sweetalert2";
-// import Awesomplete from "awesomplete";
 import PROMPTS from "./prompts";
-// import Toastify from 'toastify-js';
-import voiceRecord from "./voicerecord";
+
+
+import Exim from "./exim"
+
 import popupCart from "./popupcart";
 
-// import flatpickr from "flatpickr";
-// import tippy from 'tippy.js';
-// import Splide from '@splidejs/splide';
 // import icons from "./icons";
-
-// import KeenSlider from 'keen-slider';
 import { keenSliderNavigation } from "./slider";
+import isSvg from 'is-svg';
 
 // import Glide from '@glidejs/glide/dist/glide.modular.esm';
 
 
 
-import Exim from "./exim"
 import Tidio_Chat from "./tidio";
-// import Twig from 'twig';
+import flatpickr from "flatpickr";
+import tippy from 'tippy.js';
+import WaveSurfer from 'wavesurfer.js';
+import Swal from "sweetalert2";
+import Awesomplete from "awesomplete";
+import Toastify from 'toastify-js';
+import RecordPlugin from 'wavesurfer.js/dist/plugins/record.esm.js';
+import Splide from '@splidejs/splide';
+
+
+
+import KeenSlider from 'keen-slider';
 
 ( function ( $ ) {
-	class FutureWordPress_Frontend {
+	class FutureWordPress_Frontend extends popupCart {
 		constructor() {
+			super();
 			this.config = fwpSiteConfig;
 			this.ajaxUrl = this.config?.ajaxUrl??'';
-			this.ajaxNonce = this.config?.ajax_nonce??'';// this.tippy = tippy;
+			this.ajaxNonce = this.config?.ajax_nonce??'';
 			this.lastAjax = false;this.profile = this.config?.profile??false;
 			var i18n = this.config?.i18n??{};this.noToast = true;
-			// this.KeenSlider = KeenSlider;// this.Glide = Glide;
 			this.i18n = {confirming: 'Confirming', ...i18n};
-			this.Exim = new Exim(this);// this.Splide = Splide;
+			this.Exim = new Exim(this);
 			this.setup_hooks();
 		}
 		setup_hooks() {
-			const thisClass = this;
 			window.thisClass = this;
 			this.prompts = PROMPTS;
-			// this.Swal = Swal;
 			// this.Twig = Twig;
-			// this.flatpickr = flatpickr;
-			popupCart.priceSign = this.config?.currencySign??'$';
-			popupCart.local = this.config?.local??'en-US';
-			popupCart.ajaxUrl = this.ajaxUrl;
-			this.popupCart = popupCart;
+			this.config.local = this.config?.local??'en-US';
+			this.popupCart = new popupCart();
+			this.popupCart.ajaxUrl = this.ajaxUrl;
+			this.popupCart.priceSign = this.config?.currencySign??'$';
 			// this.init_toast();
 			this.init_events();
 			this.init_i18n();
 			// this.init_search_form();
 			this.init_remove_acc_form();
-			voiceRecord.i18n = this.i18n;
+			// voiceRecord.i18n = this.i18n;
 			PROMPTS.i18n = this.i18n;
-			this.voiceRecord = voiceRecord;
+			// // this.voiceRecord = voiceRecord;
 			// this.voiceRecord.init_recorder(this);
 			new Tidio_Chat();
 
 			// this.move_lang_switcher();
+
+			this.tippy = (el, args) => {}; // console.log('tippyjs missing', args)
+			this.toastify = (args) => {return {showToast: () => {}}};
 
 			this.show_add_to_wishlist();
 			this.popup_show_only4israel();
@@ -70,7 +76,22 @@ import Tidio_Chat from "./tidio";
 			this.init_wrapping_on_checkout();
 			this.single_product_input_stepper();
 			this.remove_my_account_points_tab();
-			this.prompts.init_css_n_js(this);
+			// this.prompts.init_css_n_js(this);
+			this.init_css_n_js_local();
+		}
+		init_css_n_js_local() {
+			this.tippy = tippy;
+			this.flatpickr = flatpickr;
+			this.KeenSlider = KeenSlider;
+			this.KeenSlider = KeenSlider;
+			this.Swal = window.Swal = Swal;
+			window.WaveSurfer = WaveSurfer;
+			window.RecordPlugin = RecordPlugin;
+			this.toastify = Toastify;
+			this.init_search_form();
+			this.init_toast();
+			// this.Splide = Splide;
+			// this.Glide = Glide;
 		}
 		init_toast() {
 			const thisClass = this;
@@ -114,9 +135,9 @@ import Tidio_Chat from "./tidio";
 			}
 		}
 		init_events() {
-			const thisClass = this;var template, html;
+			const thisClass = this;
 			document.body.addEventListener('gotproductpopupresult', async (event) => {
-
+				thisClass.product = thisClass.lastJson.product;
 				if (typeof woocs_convert_price_filter == 'function') {
 					const product = thisClass.lastJson.product;
 					product.price = woocs_convert_price_filter(parseFloat(product.price));
@@ -146,30 +167,37 @@ import Tidio_Chat from "./tidio";
 				// thisClass.prompts.lastJson.product.price
 
 				thisClass.prompts.lastJson = thisClass.lastJson;
-				thisClass.popupCart.additionalPrices = [];
-				thisClass.popupCart.basePrice = parseFloat(thisClass.prompts.lastJson.product.price);
-				thisClass.popupCart.priceSign = thisClass.prompts.lastJson.product.currency;
+				thisClass.additionalPrices = [];
+				thisClass.basePrice = parseFloat(thisClass.prompts.lastJson.product.price);
+				thisClass.priceSign = thisClass.prompts.lastJson.product.currency;
 				var custom_fields = PROMPTS.get_data(thisClass, true);
 				if (custom_fields.sitting?.length <= 0 || custom_fields.standing?.length <= 0) {
 					PROMPTS.currentGroups = (custom_fields.sitting?.length >= 1)?'sitting':'standing';
 					PROMPTS.groupSelected = true;
 				}
-				template = await thisClass.prompts.get_template(thisClass);
-				html = document.createElement('div');html.appendChild(template);
-				// && json.header.product_photo
+				
 				var current_groups = PROMPTS.get_data(thisClass);
 				if (thisClass.Swal && thisClass.Swal.isVisible()) {
-					var steps = (current_groups)?current_groups.map((row, i)=>(row.steptitle=='')?(i+1):(
-						`${(row?.stepicon)?`<div class="swal2-progress-step__icon">${row.stepicon}</div>`:``}
-						<span>${row.steptitle}</span>`
-					)):[];
+					var steps = (current_groups)?current_groups.map((row, i)=> {
+						row.steptitle = (row?.steptitle && row.steptitle != '')?row.steptitle:(i + 1);
+						return `${(row?.stepicon)?`<div class="swal2-progress-step__icon">${
+								isSvg(row.stepicon)?row.stepicon:`<img src="${row.stepicon}" alt="${row?.stepicon_id??''}" />`
+							}</div>`:``}
+							<span>${row.steptitle}</span>`;
+					}):[];
 					// thisClass.prompts.progressSteps = [...new Set(thisClass.prompts.lastJson.product.custom_fields.map((row, i)=>(row.steptitle=='')?(i+1):row.steptitle))];
 					thisClass.prompts.progressSteps = [...new Set(steps)];
-					thisClass.Swal.update({
-						html: html.innerHTML,
+					var sHtml_id = `the_fieldto_replace`;
+					await thisClass.Swal.update({
+						html: `<div id="${sHtml_id}" class="dynamic_popup"></div>`, // html.innerHTML,
 						currentProgressStep: 0,
-						progressSteps: thisClass.prompts.progressSteps
+						progressSteps: thisClass.prompts.progressSteps,
+						// onRender: () => console.log('Hi onRender'),
+						// didRender: () => console.log('Hi didRender'),
+						// onUpdate: () => console.log('Hi onUpdate'),
+						// didUpdate: () => console.log('Hi didUpdate'),
 					});
+					// html.innerHTML
 					thisClass.prompts.lastJson = thisClass.lastJson;
 					if (thisClass.lastJson.product && thisClass.lastJson.product.toast) {
 						thisClass.toastify({
@@ -183,17 +211,24 @@ import Tidio_Chat from "./tidio";
 							onClick: function(){} // Callback after click
 						}).showToast();
 					}
+					// return;
 					setTimeout(() => {
+						document.querySelectorAll(`#${sHtml_id}.dynamic_popup`).forEach(async (root) => {
+							var template = await thisClass.prompts.get_template(thisClass);
+							root.innerHTML = '';// root.className = '';
+							root.appendChild(template);
+						});
+						// return;
 						var fields = thisClass.prompts.get_data(thisClass);
 						if (fields) {
 							var voice = fields.find((row)=>row.type == 'voice');
 							if (voice) {
 								voice.cost = (!(voice?.cost) || voice.cost == '')?0:voice.cost;
 								// voiceRecord.meta_tag = voice.steptitle;
-								voiceRecord.product_id = (voice?.product && parseInt(voice.product) !== NaN)?parseInt(voice.product):false;
+								// voiceRecord.product_id = (voice?.product && parseInt(voice.product) !== NaN)?parseInt(voice.product):false;
 								
-								voiceRecord.duration = parseFloat((voice.duration == '')?'20':voice.duration);
-								// popupCart.addAdditionalPrice(voice.steptitle, parseFloat(voice.cost));
+								// voiceRecord.duration = parseFloat((voice.duration == '')?'20':voice.duration);
+								// this.popupCart.addAdditionalPrice(voice.steptitle, parseFloat(voice.cost));
 							}
 							if (PROMPTS.groupSelected) {
 								thisClass.prompts.init_events(thisClass);
@@ -212,20 +247,7 @@ import Tidio_Chat from "./tidio";
 								template.classList.add('dynamic_popup__error');
 								template.appendChild(image);popup.appendChild(template);
 							}
-							
 						}
-						/**
-						 * Enabling close button event.
-						 */
-						document.querySelectorAll('.popup_close:not([data-handled])').forEach((el) => {
-							el.dataset.handled = true;
-							el.addEventListener('click', (event) => {
-								event.preventDefault();
-								if (confirm(PROMPTS.i18n?.rusure2clspopup??'Are you sure you want to close this popup?')) {
-									thisClass.Swal.close();
-								}
-							});
-						});
 					}, 300);
 				}
 			});
@@ -323,45 +345,47 @@ import Tidio_Chat from "./tidio";
 									slider => {
 										slider.on('created', () => {
 											slider.container.dataset.slidesHandled = true;
+											setTimeout(() => {
+												slider.container.querySelectorAll('.keen-slider .keen-slider__slide').forEach(element => {
+													element.addEventListener('click', (event) => {
+														event.preventDefault();event.stopPropagation();
+														if (element.classList.contains('active')) {
+															element.classList.remove('active');
+															this.popupCart.wc_removeAdditionalPrice(element, thisClass);
+														} else {
+															element.classList.add('active');
+															this.popupCart.wc_addAdditionalPrice(element, thisClass);
+														}
+													});
+												});
+												document.querySelectorAll('.swal2-footer__wraping .btn').forEach(element => {
+													if (!(thisClass?.addWrappingBtn)) {
+														thisClass.addWrappingBtn = element;
+													}
+													element.addEventListener('click', (event) => {
+														event.preventDefault();event.stopPropagation();
+														element.disabled = true;
+														// thisClass.addWrappingBtn = el;
+														var formdata = new FormData();
+														formdata.append('action', 'teddybear/project/ajax/add/wrapping');
+														formdata.append('_quantity', 1);
+														formdata.append('_mode', element.dataset?.mode);
+														formdata.append('cartitemkey', thisClass.cartItemKey);
+														formdata.append('_nonce', thisClass.ajaxNonce);
+														thisClass.sendToServer(formdata);
+														setTimeout(() => {element.disabled = false;}, 20000);
+													});
+												});
+											}, 1200);
 										})
 									}
 								]);
-								setTimeout(() => {
-									document.querySelectorAll('.keen-slider .keen-slider__slide').forEach((el) => {
-										el.addEventListener('click', (e) => {
-											if (el.classList.contains('active')) {
-												el.classList.remove('active');
-												popupCart.wc_removeAdditionalPrice(el, thisClass);
-											} else {
-												el.classList.add('active');
-												popupCart.wc_addAdditionalPrice(el, thisClass);
-											}
-										});
-									});
-									document.querySelectorAll('.swal2-footer__wraping .btn').forEach((el) => {
-										if (!(thisClass?.addWrappingBtn)) {
-											thisClass.addWrappingBtn = el;
-										}
-										el.addEventListener('click', (event) => {
-											event.preventDefault();el.disabled = true;
-											// thisClass.addWrappingBtn = el;
-											var formdata = new FormData();
-											formdata.append('action', 'futurewordpress/project/ajax/add/wrapping');
-											formdata.append('_quantity', 1);
-											formdata.append('_mode', el.dataset?.mode);
-											formdata.append('cartitemkey', thisClass.cartItemKey);
-											formdata.append('_nonce', thisClass.ajaxNonce);
-											thisClass.sendToServer(formdata);
-											setTimeout(() => {el.disabled = false;}, 20000);
-										});
-									});
-								}, 1200);
 							}, 300);
 						},
 						allowOutsideClick: () => !Swal.isLoading(),
 					}).then((res) => {
 
-						console.log(res.isConfirmed, res.isDenied, res.isDismissed);
+						// console.log(res.isConfirmed, res.isDenied, res.isDismissed);
 						
 						if (res.isConfirmed) {
 							/**
@@ -391,7 +415,8 @@ import Tidio_Chat from "./tidio";
 			});
 			document.body.addEventListener('ajaxi18nloaded', async (event) => {
 				if (!(thisClass.lastJson?.translates??false)) {return;}
-				voiceRecord.i18n = thisClass.i18n = PROMPTS.i18n = {...thisClass.i18n, ...thisClass.lastJson.translates};
+				// voiceRecord.i18n = 
+				thisClass.i18n = PROMPTS.i18n = {...thisClass.i18n, ...thisClass.lastJson.translates};
 			});
 			document.body.addEventListener('namesuggestionloaded', async (event) => {
 				if (!(thisClass.lastJson?.names??false)) {return;}
@@ -419,25 +444,25 @@ import Tidio_Chat from "./tidio";
 		init_i18n() {
 			const thisClass = this;
 			var formdata = new FormData();
-			formdata.append('action', 'futurewordpress/project/ajax/i18n/js');
+			formdata.append('action', 'teddybear/project/ajax/i18n/js');
 			formdata.append('_nonce', thisClass.ajaxNonce);
 			thisClass.sendToServer(formdata);
 
 			var formdata = new FormData();
-			formdata.append('action', 'futurewordpress/project/ajax/suggested/names');
+			formdata.append('action', 'teddybear/project/ajax/suggested/names');
 			formdata.append('_nonce', thisClass.ajaxNonce);
 			thisClass.sendToServer(formdata);
 		}
 		sendToServer( data ) {
 			const thisClass = this;var message;
-			$.ajax({
+			var ajax_args = {
 				url: thisClass.ajaxUrl,
 				type: "POST",
 				data: data,    
 				cache: false,
 				contentType: false,
 				processData: false,
-				success: function( json ) {
+				success: (json) => {
 					thisClass.lastJson = json.data;
 					if ((json?.data??false)) {
 						var message = ((json?.data??false)&&typeof json.data==='string')?json.data:(
@@ -454,13 +479,14 @@ import Tidio_Chat from "./tidio";
 						}
 					}
 				},
-				error: function(err) {
-					// thisClass.notify.fire({icon: 'warning',title: err.responseText})
+				error: (err) => {
+					if (err.responseText === false && err.responseText == '' || err.responseText == '0') {return;}
 					err.responseText = (err.responseText && err.responseText != '')?err.responseText:thisClass.i18n?.somethingwentwrong??'Something went wrong!';
 					thisClass.toastify({text: err.responseText,className: "info",style: {background: "linear-gradient(to right, rgb(222 66 75), rgb(249 144 150))"}}).showToast();
 					// console.log(err);
 				}
-			});
+			};
+			$.ajax(ajax_args);
 		}
 		generate_formdata(form=false) {
 			const thisClass = this;let data;
@@ -581,7 +607,7 @@ import Tidio_Chat from "./tidio";
 						if (preview) {
 							preview.removeAttribute('srcset');container.classList.add('keen-slider');
 							container.classList.add('uael-gallery', 'navigation-wrapper');
-							
+							// 
 							// container.parentElement.classList.add('');
 							// var node = document.createElement('div');
 							container.classList.add('uael-gallery__row');
@@ -611,7 +637,7 @@ import Tidio_Chat from "./tidio";
 								image.width = row.image_url[1];image.height = row.image_url[2];
 								card.appendChild(image);container.appendChild(card);
 								// card.addEventListener('click', (event) => {
-								// 	event.stopPropagation();event.preventDefault();
+								// 	event.preventDefault();event.stopPropagation();
 								// 	if (preview && preview.src != card.dataset.imageFull) {
 								// 		preview.src = card.dataset.imageFull;
 								// 		console.log(preview.src);
@@ -627,6 +653,7 @@ import Tidio_Chat from "./tidio";
 							 * Init Keen Slider
 							 */
 							const slider = new thisClass.KeenSlider(container, {}, [keenSliderNavigation]);
+							// console.log(slider, gallery, container)
 	
 							// slider => {
 							// 	// slider.on('slideChanged', () => {
@@ -644,6 +671,7 @@ import Tidio_Chat from "./tidio";
 							// container.parentElement.insertBefore(arrows, container);
 							// arrows.querySelectorAll('.svg_icon').forEach((elem) => {
 							//     elem.addEventListener('click', (event) => {
+							//		   event.preventDefault();event.stopPropagation();
 							//         var arrow_mode = ((elem?.querySelector('svg'))?.dataset)?.arrow;
 							//         switch(arrow_mode) {
 							//             case 'left':
@@ -672,10 +700,10 @@ import Tidio_Chat from "./tidio";
 					// node.appendChild(el);card.appendChild(node);
 					
 					el.addEventListener('click', (event) => {
-						event.preventDefault();
+						event.preventDefault();event.stopPropagation();
 						PROMPTS.groupSelected = false;
 						PROMPTS.currentGroups = 'standing';
-						html = PROMPTS.get_template(thisClass);
+						html = PROMPTS.get_preloader(thisClass);
 						Swal.fire({
 							title: false, width: 600,
 							showConfirmButton: false,
@@ -692,9 +720,8 @@ import Tidio_Chat from "./tidio";
 							didOpen: async () => {
 								config = JSON.parse(el.dataset.config);
 								json = {product_id: config.id};
-								
 								var formdata = new FormData();
-								formdata.append('action', 'futurewordpress/project/ajax/search/product');
+								formdata.append('action', 'teddybear/project/ajax/search/product');
 								formdata.append('dataset', await JSON.stringify(json));
 								formdata.append('_nonce', thisClass.ajaxNonce);
 								thisClass.sendToServer(formdata);
@@ -709,11 +736,6 @@ import Tidio_Chat from "./tidio";
 										iconHtml: '<div class="dashicons dashicons-yes" style="transform: scale(3);"></div>',
 										title: thisClass.i18n?.somethingwentwrong??'Something went wrong!',
 									});
-								} else if ( thisClass.lastReqs.content_type == 'text') {
-									// result.value.data 
-									thisClass.handle_completion();
-								} else {
-									const selectedImages = await thisClass.choose_image();
 								}
 							}
 						})
@@ -819,10 +841,10 @@ import Tidio_Chat from "./tidio";
 			if (wrapping) {
 				const button = wrapping?.querySelector('.btn-rounded');
 				button?.addEventListener('click', (event) => {
-					event.preventDefault();
+					event.preventDefault();event.stopPropagation();
 					button.disabled = true;button.querySelector('i.fa')?.classList.add('fa-circle-o-notch', 'fa-spin');
 					var formdata = new FormData();
-					formdata.append('action', 'futurewordpress/project/ajax/add/wrapping');
+					formdata.append('action', 'teddybear/project/ajax/add/wrapping');
 					formdata.append('_nonce', thisClass.ajaxNonce);
 					formdata.append('_quantity', 1);
 					formdata.append('_mode', button.dataset?.mode);
@@ -841,7 +863,8 @@ import Tidio_Chat from "./tidio";
 				minus.classList.add('cc_item_quantity_update', 'cc_item_quantity_minus');
 				plus.classList.add('cc_item_quantity_update', 'cc_item_quantity_plus');
 				minus.innerHTML = '-';plus.innerHTML = '+';
-				plus.addEventListener('click', () => {
+				plus.addEventListener('click', (event) => {
+					event.preventDefault();event.stopPropagation();
 					let currentValue = parseFloat(el.value);
 					const step = (el?.step)?parseFloat(el.step):1;
 					const max = (el?.max)?parseFloat(el.max):Number.MAX_SAFE_INTEGER;
@@ -849,7 +872,8 @@ import Tidio_Chat from "./tidio";
 						currentValue += step;el.value = currentValue;
 					}
 				});
-				minus.addEventListener('click', () => {
+				minus.addEventListener('click', (event) => {
+					event.preventDefault();event.stopPropagation();
 					let currentValue = parseFloat(el.value);
 					const step = (el?.step)?parseFloat(el.step):1;
 					const min = (el?.min)?parseFloat(el.min):1;
@@ -909,6 +933,12 @@ import Tidio_Chat from "./tidio";
 			}
 		}
 		
+		empty_cart() {
+			var formdata = new FormData();
+			formdata.append('action', 'teddybear/project/ajax/empty/cart');
+			formdata.append('_nonce', this.ajaxNonce);
+			this.sendToServer(formdata);
+		}
 	}
 	new FutureWordPress_Frontend();
 } )( jQuery );

@@ -16,3 +16,9 @@ if( ! function_exists( 'get_FwpOption' ) ) {
     return isset( TEDDY_BEAR_CUSTOMIZE_ADDON_OPTIONS[ $opt ] ) ? TEDDY_BEAR_CUSTOMIZE_ADDON_OPTIONS[ $opt ] : $def;
   }
 }
+if( ! function_exists( 'teddy_fixSlashes' ) ) {
+  function teddy_fixSlashes($path) {
+    return str_replace(['/', '\/'], [DIRECTORY_SEPARATOR, DIRECTORY_SEPARATOR], $path);
+  }
+}
+

@@ -18,7 +18,7 @@ class Assets {
 		add_action('wp_enqueue_scripts', [$this, 'register_scripts']);
 		
 		add_action('admin_enqueue_scripts', [$this, 'admin_enqueue_scripts'], 10, 1);
-		add_filter('futurewordpress/project/teddybearpopupaddon/javascript/siteconfig', [$this, 'siteConfig'], 1, 2);
+		add_filter('teddybear/project/teddybearpopupaddon/javascript/siteconfig', [$this, 'siteConfig'], 1, 2);
 		// add_filter('style_loader_src', [$this, 'style_loader_src'], 10, 2);
 		// add_filter('script_loader_src', [$this, 'style_loader_src'], 10, 2);
 	}
@@ -35,7 +35,7 @@ class Assets {
 		$version = $this->filemtime(TEDDY_BEAR_CUSTOMIZE_ADDON_BUILD_JS_DIR_PATH.'/public.js');
 		wp_register_script('teddybearaddon-public', TEDDY_BEAR_CUSTOMIZE_ADDON_BUILD_JS_URI . '/public.js', ['jquery'], $version.'.'.rand(0, 999), true);
 		wp_enqueue_script('teddybearaddon-public');
-		wp_localize_script('teddybearaddon-public', 'fwpSiteConfig', apply_filters('futurewordpress/project/teddybearpopupaddon/javascript/siteconfig', []));
+		wp_localize_script('teddybearaddon-public', 'fwpSiteConfig', apply_filters('teddybear/project/teddybearpopupaddon/javascript/siteconfig', []));
 	}
 	private function allow_enqueue() {
 		return (function_exists('is_checkout') && (is_checkout() || is_order_received_page() || is_wc_endpoint_url('order-received')));
@@ -88,7 +88,7 @@ class Assets {
 		wp_enqueue_style('teddybearaddon-admin');
 		wp_enqueue_script('teddybearaddon-admin');
 		wp_enqueue_style('teddybearaddon-public');wp_enqueue_script('teddybearaddon-admin');
-		wp_localize_script('teddybearaddon-admin', 'fwpSiteConfig', apply_filters('futurewordpress/project/teddybearpopupaddon/javascript/siteconfig', [
+		wp_localize_script('teddybearaddon-admin', 'fwpSiteConfig', apply_filters('teddybear/project/teddybearpopupaddon/javascript/siteconfig', [
 			'config' => [
 				'product_id' => isset($_GET['post'])?(int) $_GET['post']:get_query_var('post',false)
 			]
@@ -100,7 +100,7 @@ class Assets {
 	public function siteConfig($args, $is_admin = false) {
 		$args = wp_parse_args([
 			'ajaxUrl'    		=> admin_url('admin-ajax.php'),
-			'ajax_nonce' 		=> wp_create_nonce('futurewordpress/project/teddybearpopupaddon/verify/nonce'),
+			'ajax_nonce' 		=> apply_filters('teddybear/project/nonce/create', false, 'ajax_nonce'),
 			'is_admin' 			=> is_admin(),
 			'buildPath'  		=> TEDDY_BEAR_CUSTOMIZE_ADDON_BUILD_URI,
 			'audioDuration'  	=> TEDDY_BEAR_CUSTOMIZE_ADDON_AUDIO_DURATION,

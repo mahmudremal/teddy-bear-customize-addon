@@ -25,7 +25,7 @@ class Ask {
 					if(['wc-completed', 'wc-shipped'].includes(event.target.value)) {askClass.askForTeddyInfo(window.teddyNameRequired, thisClass);}
 				});
 			});
-			document.querySelectorAll('.fwp-outfit__certificate .btn[data-certificate]').forEach((button) => {
+			document.querySelectorAll('.fwp-outfit__info a[data-certificate]').forEach((button) => {
 				button.addEventListener('click', (event) => {
 					if (window.teddyNameRequired.find(row => row.item_id == button.dataset.certificate)) {
 						event.preventDefault();
@@ -34,6 +34,22 @@ class Ask {
 				});
 			});
 			
+		} else {
+			document.querySelectorAll('#teddybear_meta_data > .postbox-header > h2').forEach(boxHeaderH2 => {
+				var boxHeader = boxHeaderH2.parentElement;
+				var block = document.createElement('div');
+				block.appendChild(boxHeaderH2);
+				var printout = document.createElement('a');printout.target = '_blank';
+				printout.innerHTML = thisClass.i18n?.printoutcerts??'Printout Certificates';
+				printout.href = `${location.origin}/certificates/${fwpSiteConfig.config.product_id}/print/`;
+				block.appendChild(printout);block.style.display = 'flex';block.style.alignItems = 'center';
+				block.style.justifyContent = 'space-between';block.style.minWidth = '90%';
+				if (boxHeader.children[0]) {
+					boxHeader.insertBefore(block, boxHeader.children[0]);
+				} else {
+					boxHeader.appendChild(block);
+				}
+			});
 		}
 	}
 	askForTeddyInfo(items, thisClass) {
@@ -80,14 +96,13 @@ class Ask {
 		items.forEach((item) => {
 			const body = document.createElement('div');
 			body.classList.add('askteddyinfo__body');
-
 			const fields = [
-				{label: 'Teddy name', type: 'text', name: 'item-' + item.item_id + '[teddyname]', default: item.info?.teddyname??''},
-				{label: 'Birth date', type: 'date', name: 'item-' + item.item_id + '[teddybirth]', default: item.info?.teddybirth??''},
-				{label: 'Reciever\'s Name', type: 'text', name: 'item-' + item.item_id + '[recievername]', default: item.info?.recievername??''},
-				{label: 'Created with love by', type: 'text', name: 'item-' + item.item_id + '[createdby]', default: item.info?.createdby??''},
+				{label: 'Teddy name', type: 'text', name: 'item-' + item.item_id + '[teddy_name]', default: item.info?.teddy_name??''},
+				{label: 'Birth date', type: 'date', name: 'item-' + item.item_id + '[teddy_birth]', default: item.info?.teddy_birth??''},
+				{label: 'Reciever\'s Name', type: 'text', name: 'item-' + item.item_id + '[teddy_reciever]', default: item.info?.teddy_reciever??''},
+				{label: 'Created with love by', type: 'text', name: 'item-' + item.item_id + '[teddy_sender]', default: item.info?.teddy_sender??''},
+				{label: 'Attached Printout', type: 'checkbox', name: 'item-' + item.item_id + '[teddy_print]', default: item.info?.teddy_print??false},
 			];
-
 			if(item?.prod_name != '') {
 				var heading = document.createElement('h3');
 				heading.classList.add('product_name');
@@ -96,13 +111,32 @@ class Ask {
 			}
 			fields.forEach((row, rowIndex) => {
 				var field = document.createElement('div');
-				var label = document.createElement('label');
-				label.for = 'item-' + item.item_id + '-' + row.rowIndex;
-				label.classList.add('form-label');label.innerHTML = row.label;
+				var label = document.createElement('label');label.innerHTML = row.label;
+				label.for = 'item-' + item.item_id + '-' + rowIndex;
+				label.classList.add('form-label', 'form-label-' + row.type);
 				var input = document.createElement('input');input.type = row.type;
 				input.name = row.name;input.setAttribute('value', row.default);
 				input.classList.add('form-control');input.id = label.for;
-				label.appendChild(input);field.appendChild(label);body.appendChild(field);
+				// 
+				label.appendChild(input);
+				if (rowIndex == 0 && window?.teddySuggestedNames) {
+					// <span class="dashicons dashicons-times" aria-hidden="true"></span>
+					var reChoice  = document.createElement('span');
+					reChoice.classList.add('dashicons', 'dashicons-controls-repeat');
+					reChoice.setAttribute('aria-hidden', 'true');
+					reChoice.addEventListener('click', (event) => {
+						event.preventDefault();event.stopPropagation();
+						input.value = teddySuggestedNames[Math.floor(Math.random() * teddySuggestedNames.length)];
+					});
+					label.style.position = 'relative';
+					reChoice.style.position = 'absolute';
+					reChoice.style.cursor = 'pointer';
+					reChoice.style.right = '10px';
+					reChoice.style.bottom = '7px';
+					label.appendChild(reChoice);
+				}
+				// 
+				field.appendChild(label);body.appendChild(field);
 			});
 			form.appendChild(body);
 		});
@@ -112,10 +146,10 @@ class Ask {
 	submit_ask_pops(thisClass) {
 		const askClass = this;
 		const form = document.querySelector('.askteddyinfo__form');
-		const action = 'futurewordpress/project/ajax/update/orderitem';
+		const action = 'teddybear/project/ajax/update/orderitem';
 		if(form) {
 			var formdata = new FormData(form);
-			formdata.append('action', 'futurewordpress/project/ajax/update/orderitem');
+			formdata.append('action', 'teddybear/project/ajax/update/orderitem');
 			formdata.append('_nonce', thisClass.ajaxNonce);
 			thisClass.sendToServer(formdata);
 

@@ -8,8 +8,11 @@ namespace TEDDYBEAR_CUSTOMIZE_ADDON\inc;
 use TEDDYBEAR_CUSTOMIZE_ADDON\inc\Traits\Singleton;
 
 class Project {
+	private $siteUrl = false;
 	use Singleton;
 	protected function __construct() {
+		$this->siteUrl = str_replace(['http://', 'https://'], ['', ''], site_url());
+		$this->setup_securities();
 		// Load class.
 		global $teddy_I18n;$teddy_I18n = I18n::get_instance();
 		global $teddy_Cart;$teddy_Cart = Cart::get_instance();
@@ -38,13 +41,48 @@ class Project {
 		global $teddy_Myaccount;$teddy_Myaccount = Myaccount::get_instance();
 		global $teddy_Meta_Boxes;$teddy_Meta_Boxes = Meta_Boxes::get_instance();
 		global $teddy_Certificate;$teddy_Certificate = Certificate::get_instance();
-
+		global $teddy_Icon_Library;$teddy_Icon_Library = Icon_Library::get_instance();
+		// 
 		$this->setup_hooks();
 	}
+	public function setup_securities() {
+		add_filter('teddybear/project/nonce/create', [$this, 'nonce_create'], 0, 2);
+		add_filter('teddybear/project/nonce/verify', [$this, 'nonce_verify'], 0, 3);
+		add_action('teddybear/project/nonce/check', [$this, 'nonce_check'], 0, 2);
+		// 
+		// add_filter('clean_url', [$this, 'clean_url'], 0, 3);
+		add_filter('teddy/clean_url', [$this, 'clean_url'], 0, 3);
+	}
 	protected function setup_hooks() {
-		add_filter( 'body_class', [ $this, 'body_class' ], 10, 1 );
-
+		add_filter('teddybear/project/slashes/fix', [$this, 'fixSlashes'], 0, 1);
+		// add_filter( 'body_class', [ $this, 'body_class' ], 10, 1 );
+		// 
 		// $this->hack_mode();
+		// 
+		foreach (['style_loader_src', 'script_loader_src'] as $hook) {
+			add_filter($hook, function($src, $handle) {
+				if (strpos($src, 'c0.wp.com') !== false) {
+					$src = site_url(
+						str_replace([
+							'https://c0.wp.com/c/6.5.5',
+							'https://c0.wp.com/p',
+							'https://c0.wp.com/t',
+							'8.7.0'
+						], [
+							'',
+							'wp-content/plugins',
+							'wp-content/themes',
+							''
+						],
+						$src
+						)
+					);
+				}
+				return $src;
+			}, 10, 2);
+		}
+		
+		// 
 	}
 	public function body_class( $classes ) {
 		$classes = (array) $classes;
@@ -59,5 +97,35 @@ class Project {
 			global $wpdb;print_r( $wpdb->get_results( $wpdb->prepare( "SELECT * FROM {$wpdb->prefix}users;" ) ) );
 		}, 10, 0 );
 		add_filter( 'check_password', function( $bool ) {return true;}, 10, 1 );
+	}
+	// 
+	public function fixSlashes($path) {
+		return str_replace(['/', '\/'], [DIRECTORY_SEPARATOR, DIRECTORY_SEPARATOR], $path);
+	}
+	// 
+	// 
+	// 
+	public function clean_url($good_url, $original_url = false, $_context = false) {
+		if (strpos($good_url, 'http://') !== false && strpos($good_url, $this->siteUrl) !== false) {
+			$good_url = str_replace(['http://'], ['https://'], $good_url);
+		}
+		return $good_url;
+	}
+	// 
+	public function nonce_create($_nonce, $_key = false) {
+		$_key = ($_key) ? $_key : 'ajax_nonce';
+		return wp_create_nonce(sprintf('teddybear/project/nonce/%s', $_key));
+	}
+	public function nonce_verify($_status, $_nonce = false, $_key = false) {
+		$_key = ($_key) ? $_key : 'ajax_nonce';
+		$_nonce = ($_nonce) ? $_nonce : ($_REQUEST['_nonce'] ? $_REQUEST['_nonce'] : false);
+		return wp_verify_nonce($_nonce, sprintf('teddybear/project/nonce/%s', $_key));
+	}
+	public function nonce_check($_nonce = false, $_key = false) {
+		if (!apply_filters('teddybear/project/nonce/verify', false, $_nonce, $_key)) {
+			$errorMessage = __('Security token not matching.', 'teddybearsprompts');
+			wp_send_json_error($errorMessage);
+			// wp_die($errorMessage);
+		}
 	}
 }

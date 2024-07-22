@@ -16,13 +16,21 @@ class Meta {
 	protected function setup_hooks() {
 	}
 	public function get_order_item_charges($order_item, $order) {
-		return (array) $order_item->get_meta('custom_makeup', true);
+		$_makeup = $order_item->get_meta('custom_makeup', true);
+		if (empty($_makeup)) {$_makeup = [];}
+		return (array) $_makeup;
 	}
 	public function get_order_item_dataset($order_item, $order) {
-		return (array) $order_item->get_meta('custom_dataset', true);
+		$_dataset = $order_item->get_meta('custom_dataset', true);
+		// if (empty($_dataset)) {
+		// 	$_dataset = get_post_meta($order_item->get_id());
+		// }
+		if (empty($_dataset)) {$_dataset = [];}
+		return (array) $_dataset;
 	}
 	public function get_order_item_popset($order_item, $order_id, $post_id = false) {
-		$item_meta = $order_item->get_meta('custom_popset', true);
-		
+		$_popset = $order_item->get_meta('custom_popset', true);
+		if (empty($_popset)) {$_popset = [];}
+		return (array) $_popset;
 	}
 }

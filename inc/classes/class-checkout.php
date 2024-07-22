@@ -23,8 +23,8 @@ class Checkout {
 		add_filter('peachpay_calculate_carts', [$this, 'peachpay_calculate_carts'], 10, 1);
 		add_filter('peachpay_cart_page_line_item', [$this, 'peachpay_cart_page_line_item'], 10, 2);
 
-		add_action('wp_ajax_nopriv_futurewordpress/project/ajax/remove/singlecartmeta', [$this, 'remove_singlecartmeta'], 10, 0);
-		add_action('wp_ajax_futurewordpress/project/ajax/remove/singlecartmeta', [$this, 'remove_singlecartmeta'], 10, 0);
+		add_action('wp_ajax_nopriv_teddybear/project/ajax/remove/singlecartmeta', [$this, 'remove_singlecartmeta'], 10, 0);
+		add_action('wp_ajax_teddybear/project/ajax/remove/singlecartmeta', [$this, 'remove_singlecartmeta'], 10, 0);
 	}
 	public function import_fontend_js_on_checkout($content, $allowed_html, $allowed_protocols) {
 		if(strpos($content, 'var checkout_data') !== false) {
@@ -122,7 +122,7 @@ class Checkout {
 												if(conditions) {
 													meta.meta_item_cart_key = trash.parentElement.parentElement.parentElement.dataset?.cartItemId??'';
 													var search = Object.keys(meta).map(function(key) {return key+'='+meta[key];}).join('&');
-													fetch('<?php echo esc_url(admin_url('admin-ajax.php?action=futurewordpress/project/ajax/remove/singlecartmeta')); ?>&'+search, {
+													fetch('<?php echo esc_url(admin_url('admin-ajax.php?action=teddybear/project/ajax/remove/singlecartmeta')); ?>&'+search, {
 														method: 'POST', cache: 'no-cache', headers: {'Content-Type': 'application/json'},
 														body: JSON.stringify(meta)
 													})

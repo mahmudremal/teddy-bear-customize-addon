@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        .slide-container {
+            display: flex;
+            overflow: hidden;
+        }
+        .slides {
+            display: flex;
+        }
+        .slide {
+            display: block;
+            box-sizing: border-box;
+        }
+        .slide img {
+            width: 100%;
+        }
+        .navigation {
+            text-align: center;
+            margin-top: 10px;
+        }
+        .navigation button {
+            padding: 5px 10px;
+            margin: 0 5px;
+        }
+    </style>
+    <title>Image Slider</title>
+</head>
+<body>
+    <div class="slide-container" id="slide-container">
+        <div class="slides" id="slides">
+            <div class="slide"><img src="https://dubido.local/wp-content/uploads/2023/11/Con-blue-standing.png" alt="Slide 1"></div>
+            <div class="slide"><img src="https://dubido.local/wp-content/uploads/2023/07/20064_201121113240.png" alt="Slide 2"></div>
+            <div class="slide"><img src="https://dubido.local/wp-content/uploads/2023/07/20258-stand.png" alt="Slide 3"></div>
+            <div class="slide"><img src="https://dubido.local/wp-content/uploads/2023/07/3.png" alt="Slide 3"></div>
+            <div class="slide"><img src="https://dubido.local/wp-content/uploads/2023/07/20101_201121113240.png" alt="Slide 3"></div>
+            <div class="slide"><img src="https://dubido.local/wp-content/uploads/2023/07/20024_201121113239-1.png" alt="Slide 3"></div>
+            <div class="slide"><img src="https://dubido.local/wp-content/uploads/2023/11/Con-blue-standing.png" alt="Slide 1"></div>
+            <div class="slide"><img src="https://dubido.local/wp-content/uploads/2023/07/20064_201121113240.png" alt="Slide 2"></div>
+            <div class="slide"><img src="https://dubido.local/wp-content/uploads/2023/07/20258-stand.png" alt="Slide 3"></div>
+            <div class="slide"><img src="https://dubido.local/wp-content/uploads/2023/07/3.png" alt="Slide 3"></div>
+            <div class="slide"><img src="https://dubido.local/wp-content/uploads/2023/07/20101_201121113240.png" alt="Slide 3"></div>
+            <div class="slide"><img src="https://dubido.local/wp-content/uploads/2023/07/20024_201121113239-1.png" alt="Slide 3"></div>
+            <div class="slide"><img src="https://dubido.local/wp-content/uploads/2023/11/Con-blue-standing.png" alt="Slide 1"></div>
+            <div class="slide"><img src="https://dubido.local/wp-content/uploads/2023/07/20064_201121113240.png" alt="Slide 2"></div>
+            <div class="slide"><img src="https://dubido.local/wp-content/uploads/2023/07/20258-stand.png" alt="Slide 3"></div>
+            <div class="slide"><img src="https://dubido.local/wp-content/uploads/2023/07/3.png" alt="Slide 3"></div>
+            <div class="slide"><img src="https://dubido.local/wp-content/uploads/2023/07/20101_201121113240.png" alt="Slide 3"></div>
+            <div class="slide"><img src="https://dubido.local/wp-content/uploads/2023/07/20024_201121113239-1.png" alt="Slide 3"></div>
+        </div>
+    </div>
+    <div class="navigation">
+        <button class="prev">Prev</button>
+        <button class="next">Next</button>
+    </div>
+<script>
+/**
+ * The Slider class is responsible for initializing and managing an image slider.
+ * It takes an optional configuration object as a parameter, which can be used to customize the behavior and appearance of the slider.
+ * The default configuration values are as follows:
+ */
+// 
+class Slider {
+    constructor(config = {}) {
+        this.config = Object.assign({
+            container: false,
+            autoplay: false,
+            arrows: false,
+            perview: true,
+            slides: false,
+            perSlide: 2,
+            dots: false,
+            loop: true,
+            speed: 300,
+            space: 5,
+            view: 1,
+            transition: 0.3,
+            dragFree: false
+        }, config);
+        if (this.config.slides === false) {
+            this.config.slides = this.config.container.querySelector('.slides');
+        }
+        if (!this.config.slides) {
+            this.config.slides = document.createElement('div');
+        }
+        if (this.config.arrows === false) {
+            this.config.arrows = {};
+        }
+        this.totalSlides = this.config.slides.children.length;
+        this.currentIndex = 0;
+        this.init_elements();
+        this.update();
+        this.init_drag();
+        if (this.config.autoplay) {
+            this.startAutoplay();
+        }
+    }
+
+    init_elements() {
+        if (this.config.arrows?.prev) {
+            if (this.config.arrows.prev?.nodeType) {}
+            if (typeof this.config.arrows.prev == 'string') {
+                this.config.arrows.prev = document.querySelector(this.config.arrows.prev);
+            }
+        }
+        if (!(this.config.arrows?.prev)) {
+            this.config.arrows.prev = document.createElement('span');
+        }
+        this.config.arrows.prev.addEventListener('click', (event) => {
+            event.preventDefault(); event.stopPropagation(); this.prev();
+        });
+
+        if (this.config.arrows?.next) {
+            if (this.config.arrows.next?.nodeType) {}
+            if (typeof this.config.arrows.next == 'string') {
+                this.config.arrows.next = document.querySelector(this.config.arrows.next);
+            }
+        }
+        if (!(this.config.arrows?.next)) {
+            this.config.arrows.next = document.createElement('span');
+        }
+        this.config.arrows.next.addEventListener('click', (event) => {
+            event.preventDefault(); event.stopPropagation(); this.next();
+        });
+    }
+
+    isRTL() {
+        return getComputedStyle(this.config.container).direction === 'rtl';
+    }
+
+    next() {
+        this.currentIndex += this.config.perSlide;
+        if (this.config.loop && this.currentIndex >= this.totalSlides - this.config.view + 1) {
+            this.transition(true).then(() => {
+                this.currentIndex = 0;
+                this.update();
+                this.transition(false);
+            });
+        } else if (this.currentIndex >= this.totalSlides - this.config.view + 1) {
+            this.currentIndex = this.totalSlides - this.config.view;
+            this.update();
+        } else {
+            this.update();
+        }
+    }
+
+    prev() {
+        this.currentIndex -= this.config.perSlide;
+        if (this.config.loop && this.currentIndex < 0) {
+            this.transition(true).then(() => {
+                this.currentIndex = this.totalSlides - this.config.view;
+                this.update();
+                this.transition(false);
+            });
+        } else if (this.currentIndex < 0) {
+            this.currentIndex = 0;
+            this.update();
+        } else {
+            this.update();
+        }
+    }
+
+    update() {
+        const visibleWidth = this.config.container.clientWidth;
+        this.config.slides.style.gap = `${this.config.space}px`;
+        const calcWidth = (visibleWidth - (this.config.view - 1) * this.config.space) / this.config.view;
+        [...this.config.slides.children].forEach(slide => slide.style.width = `${calcWidth}px`);
+        const totalSlideWidth = calcWidth + this.config.space;
+        const newTransform = -this.currentIndex * totalSlideWidth * (this.isRTL() ? -1 : 1);
+        this.config.slides.style.transform = `translateX(${newTransform}px)`;
+    }
+
+    startAutoplay() {
+        this.autoplay = setInterval(() => {
+            this.next();
+        }, this.config.speed);
+    }
+
+    stopAutoplay() {
+        clearInterval(this.autoplay);
+    }
+
+    transition(stop = false) {
+        return new Promise((resolve) => {
+            if (this.config.transition === false) {
+                stop = true;
+            }
+            setTimeout(() => {
+                this.config.slides.style.transition = stop ? `unset` : `transform ${this.config.transition}s ease`;
+                resolve();
+            }, 100);
+        });
+    }
+
+    init_drag() {
+        let isDragging = false;
+        let startPos = 0;
+        let currentTranslate = 0;
+        let prevTranslate = 0;
+
+        const touchStart = (index) => {
+            return (event) => {
+                isDragging = true;
+                startPos = event.type.includes('mouse') ? event.pageX : event.touches[0].clientX;
+                this.currentIndex = index;
+                this.config.slides.style.transition = 'none';
+            };
+        };
+
+        const touchMove = (event) => {
+            if (isDragging) {
+                const currentPosition = event.type.includes('mouse') ? event.pageX : event.touches[0].clientX;
+                currentTranslate = prevTranslate + currentPosition - startPos;
+                this.config.slides.style.transform = `translateX(${currentTranslate}px)`;
+            }
+        };
+
+        const touchEnd = () => {
+            isDragging = false;
+            const movedBy = currentTranslate - prevTranslate;
+            if (!this.config.dragFree) {
+                if (movedBy < -100 && this.currentIndex < this.totalSlides - this.config.view) {
+                    this.next();
+                }
+                if (movedBy > 100 && this.currentIndex > 0) {
+                    this.prev();
+                }
+                this.config.slides.style.transition = `transform ${this.config.transition}s ease`;
+                this.config.slides.style.transform = `translateX(${-this.currentIndex * (this.config.slides.children[0].offsetWidth + this.config.space) * (this.isRTL() ? -1 : 1)}px)`;
+                prevTranslate = -this.currentIndex * (this.config.slides.children[0].offsetWidth + this.config.space) * (this.isRTL() ? -1 : 1);
+            }
+        };
+
+        this.config.slides.addEventListener('mousedown', touchStart(this.currentIndex));
+        this.config.slides.addEventListener('mousemove', touchMove);
+        this.config.slides.addEventListener('mouseup', touchEnd);
+        this.config.slides.addEventListener('mouseleave', touchEnd);
+        this.config.slides.addEventListener('touchstart', touchStart(this.currentIndex));
+        this.config.slides.addEventListener('touchmove', touchMove);
+        this.config.slides.addEventListener('touchend', touchEnd);
+    }
+}
+
+// 
+var slider = window.theSlider = new Slider({
+    container: document.querySelector('.slide-container'),
+    arrows: {
+        prev: document.querySelector('.navigation button:first-child'),
+        next: document.querySelector('.navigation button:last-child')
+    },
+    transition: .3,
+    autoplay: false,
+    speed: 3000,
+    loop: true,
+    perview: 1,
+    space: 30,
+    view: 3,
+});
+</script>
+</body>
+</html>

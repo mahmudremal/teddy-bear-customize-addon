@@ -25,7 +25,7 @@ class Voices {
 		}
 		return $voices;
 	}
-	public function get_single_voices($order, $order_item) {
+	public function get_single_voices($order, $order_item, $return_object = false) {
 		global $teddy_Product;global $teddy_Meta;$voices = [];
 		$order_id = $order->get_id();
 		$item_id = $order_item->get_id();
@@ -33,19 +33,18 @@ class Voices {
 		$popup_meta = $teddy_Product->get_order_pops_meta($order, $order_item, $product_id);
 		if (!$popup_meta || !is_array($popup_meta) || count($popup_meta) <= 0) {return $voices;}
 		
-		foreach ($popup_meta as $posI => $posRow) {
-			foreach ($posRow as $i => $field) {
-				if ($field['type'] == 'voice') {
-					$item_meta_data = $teddy_Meta->get_order_item_dataset($order_item, $order);
-					if (!$item_meta_data) {continue;}
-					foreach ($item_meta_data['field'] as $i => $iRow) {
-						foreach ($iRow as $j => $jRow) {
-							if (isset($jRow['voice']) && !empty($jRow['voice'])) {
-								$voices[] = TEDDY_BEAR_CUSTOMIZE_ADDON_UPLOAD_DIR . '' . $jRow['voice'];
-							}
-						}
-					}
-				}
+		$_dataset = $teddy_Meta->get_order_item_dataset($order_item, $order);
+		if (!$_dataset) {return $voices;}
+		foreach ($_dataset as $row) {
+			if (!is_array($row) || !isset($row['type']) || $row['type'] != 'voice') {continue;}
+			if (!isset($row['attaced']) || empty($row['attaced'])) {$row['attaced'] = ['skip' => true];}
+			if (isset($row['attaced']['blob']) && !empty($row['attaced']['blob'])) {
+				$row['attaced']['blob'] = apply_filters('teddybear/project/slashes/fix', TEDDY_BEAR_CUSTOMIZE_ADDON_UPLOAD_DIR . $row['attaced']['blob']);
+			}
+			if ($return_object) {
+				$voices[] = $row['attaced'];
+			} else {
+				$voices[] = $row['attaced']['blob'];
 			}
 		}
 		return $voices;

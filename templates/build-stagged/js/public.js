@@ -19587,7 +19587,7 @@ var Exim = /*#__PURE__*/function () {
       this.current_paged = paged;
       this.current_operation = type;
       var formdata = new FormData(); // content || product
-      formdata.append('action', 'futurewordpress/project/ajax/export/' + type);
+      formdata.append('action', 'teddybear/project/ajax/export/' + type);
       formdata.append('_nonce', thisClass.ajaxNonce);
       formdata.append('paged', paged);
       thisClass.sendToServer(formdata);
@@ -20171,7 +20171,7 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
                                         el.disabled = true;
                                         // thisClass.addWrappingBtn = el;
                                         var formdata = new FormData();
-                                        formdata.append('action', 'futurewordpress/project/ajax/add/wrapping');
+                                        formdata.append('action', 'teddybear/project/ajax/add/wrapping');
                                         formdata.append('_quantity', 1);
                                         formdata.append('_mode', (_el$dataset = el.dataset) === null || _el$dataset === void 0 ? void 0 : _el$dataset.mode);
                                         formdata.append('cartitemkey', thisClass.cartItemKey);
@@ -20354,11 +20354,11 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
       value: function init_i18n() {
         var thisClass = this;
         var formdata = new FormData();
-        formdata.append('action', 'futurewordpress/project/ajax/i18n/js');
+        formdata.append('action', 'teddybear/project/ajax/i18n/js');
         formdata.append('_nonce', thisClass.ajaxNonce);
         thisClass.sendToServer(formdata);
         var formdata = new FormData();
-        formdata.append('action', 'futurewordpress/project/ajax/suggested/names');
+        formdata.append('action', 'teddybear/project/ajax/suggested/names');
         formdata.append('_nonce', thisClass.ajaxNonce);
         thisClass.sendToServer(formdata);
       }
@@ -20654,7 +20654,7 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
                         product_id: config.id
                       };
                       formdata = new FormData();
-                      formdata.append('action', 'futurewordpress/project/ajax/search/product');
+                      formdata.append('action', 'teddybear/project/ajax/search/product');
                       _context9.t0 = formdata;
                       _context9.next = 7;
                       return JSON.stringify(json);
@@ -20853,7 +20853,7 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
             button.disabled = true;
             (_button$querySelector = button.querySelector('i.fa')) === null || _button$querySelector === void 0 || _button$querySelector.classList.add('fa-circle-o-notch', 'fa-spin');
             var formdata = new FormData();
-            formdata.append('action', 'futurewordpress/project/ajax/add/wrapping');
+            formdata.append('action', 'teddybear/project/ajax/add/wrapping');
             formdata.append('_nonce', thisClass.ajaxNonce);
             formdata.append('_quantity', 1);
             formdata.append('_mode', (_button$dataset = button.dataset) === null || _button$dataset === void 0 ? void 0 : _button$dataset.mode);
@@ -21010,7 +21010,7 @@ var popupCart = {
     var _remove = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
     var price = parseFloat((_el$dataset$cost = (_el$dataset = el.dataset) === null || _el$dataset === void 0 ? void 0 : _el$dataset.cost) !== null && _el$dataset$cost !== void 0 ? _el$dataset$cost : '0');
     var formdata = new FormData();
-    formdata.append('action', 'futurewordpress/project/ajax/update/cart');
+    formdata.append('action', 'teddybear/project/ajax/update/cart');
     formdata.append('_product', parseInt(el.dataset.product));
     formdata.append('_mode', _remove ? 'del' : 'add');
     formdata.append('_nonce', thisClass.ajaxNonce);
@@ -21151,7 +21151,7 @@ var PROMPTS = {
         var keyword = document.querySelector('#keyword_search');
         keyword = keyword ? keyword.value : '';
         // Make the AJAX request to fetch suggestions
-        fetch(thisClass.ajaxUrl + '?action=futurewordpress/project/teddybearpopupaddon/action/get_autocomplete&term=location&query=' + encodeURIComponent(query) + '&keyword=' + encodeURIComponent(keyword)).then(function (response) {
+        fetch(thisClass.ajaxUrl + '?action=teddybear/project/teddybearpopupaddon/action/get_autocomplete&term=location&query=' + encodeURIComponent(query) + '&keyword=' + encodeURIComponent(keyword)).then(function (response) {
           return response.json();
         }).then(function (data) {
           var _data$data;
@@ -22164,7 +22164,7 @@ var PROMPTS = {
 
             // data.product = PROMPTS.lastJson.product.id;
             formdata = new FormData();
-            formdata.append('action', 'futurewordpress/project/ajax/cart/add');
+            formdata.append('action', 'teddy/ajax/cart/add');
             formdata.append('_nonce', thisClass.ajaxNonce);
             _context2.next = 36;
             return PROMPTS.get_formdata(thisClass, formdata);
@@ -22442,7 +22442,7 @@ var PROMPTS = {
             args.field.product = PROMPTS.lastJson.product.name;
             formdata.append('formdata', JSON.stringify(args));
             formdata.append('_nonce', thisClass.ajaxNonce);
-            formdata.append('action', 'futurewordpress/project/ajax/search/popup');
+            formdata.append('action', 'teddybear/project/ajax/search/popup');
             _context4.next = 10;
             return fetch(thisClass.ajaxUrl, {
               method: 'POST',

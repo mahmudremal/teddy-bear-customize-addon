@@ -23,8 +23,8 @@ class Columns {
 		add_filter('manage_edit-shop_order_columns', [$this, 'manage_edit_shop_order_columns'], 10, 1);
 		add_action('manage_posts_custom_column', [$this, 'manage_shop_order_custom_column'], 10, 2);
 		
-		add_action('wp_ajax_nopriv_futurewordpress/project/ajax/order/downloads', [$this, 'ajax_order_downloads'], 10, 0);
-		add_action('wp_ajax_futurewordpress/project/ajax/order/downloads', [$this, 'ajax_order_downloads'], 10, 0);
+		// add_action('wp_ajax_nopriv_teddybear/project/ajax/order/downloads', [$this, 'ajax_order_downloads'], 10, 0);
+		add_action('wp_ajax_teddybear/project/ajax/order/downloads', [$this, 'ajax_order_downloads'], 10, 0);
 
 	}
 	public function manage_edit_product_columns($columns) {
@@ -113,20 +113,27 @@ class Columns {
 		}
 	}
 	public function ajax_order_downloads() {
+		do_action('teddybear/project/nonce/check', $_POST['_nonce']);
 		global $teddy_Certificate;global $teddy_Voices;
 		$json = ['hooks' => ['order_downloads_failed'], 'attached' => []];
+		$abspath = apply_filters('teddybear/project/slashes/fix', ABSPATH);
 		if(isset($_POST['order_id'])) {
 			$order = wc_get_order((int) $_POST['order_id']);
 			if($order && !is_wp_error($order)) {
 				foreach($order->get_items() as $order_item_id => $order_item) {
-					$voices = (array) $teddy_Voices->get_single_voices($order, $order_item);
-					foreach($voices as $i => $voice_path) {
-						$voices[$i] = str_replace(ABSPATH, home_url('/'), $voice_path);
+					$voices = (array) $teddy_Voices->get_single_voices($order, $order_item, true);
+					// foreach($voices as $i => $voice_path) {
+					// 	$voices[$i] = str_replace([$abspath], [home_url('/')], $voice_path);
+					// 	$voices[$i] = str_replace([DIRECTORY_SEPARATOR], ['/'], $voices[$i]);
+					// }
+					$certificates = [];
+					$certificate_paths = (array) $teddy_Certificate->get_single_certificates($order, $order_item);
+					foreach($certificate_paths as $i => $pdf_path) {
+						if (empty(trim($pdf_path))) {continue;}
+						$pdf_path = str_replace([$abspath], [home_url('/')], $pdf_path);
+						$certificates[] = str_replace([DIRECTORY_SEPARATOR], ['/'], $pdf_path);
 					}
-					$certificates = (array) $teddy_Certificate->get_single_certificates($order, $order_item);
-					foreach($certificates as $i => $pdf_path) {
-						$certificates[$i] = str_replace(ABSPATH, home_url('/'), $pdf_path);
-					}
+					// 
 					$json['attached'][] = [
 						'product'		=> $order_item->get_name(),
 						'quantity'		=> $order_item->get_quantity(),
@@ -138,7 +145,8 @@ class Columns {
 							'voices'		=> $voices,
 							'certificates'	=> $certificates
 						],
-						'meta_data'		=> []
+						'meta_data'		=> [],
+						// 
 					];
 				}
 				if(count($json['attached']) <= 0) {

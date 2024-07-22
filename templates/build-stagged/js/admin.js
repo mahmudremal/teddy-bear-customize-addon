@@ -15433,10 +15433,10 @@ var Ask = /*#__PURE__*/function () {
     value: function submit_ask_pops(thisClass) {
       var askClass = this;
       var form = document.querySelector('.askteddyinfo__form');
-      var action = 'futurewordpress/project/ajax/update/orderitem';
+      var action = 'teddybear/project/ajax/update/orderitem';
       if (form) {
         var formdata = new FormData(form);
-        formdata.append('action', 'futurewordpress/project/ajax/update/orderitem');
+        formdata.append('action', 'teddybear/project/ajax/update/orderitem');
         formdata.append('_nonce', thisClass.ajaxNonce);
         thisClass.sendToServer(formdata);
         return new Promise(function (resolve, reject) {
@@ -15571,7 +15571,7 @@ var DOWNLOADS = {
             while (1) switch (_context.prev = _context.next) {
               case 0:
                 formdata = new FormData();
-                formdata.append('action', 'futurewordpress/project/ajax/order/downloads');
+                formdata.append('action', 'teddybear/project/ajax/order/downloads');
                 formdata.append('_nonce', thisClass.ajaxNonce);
                 formdata.append('order_id', (_config2 = config) === null || _config2 === void 0 ? void 0 : _config2.order_id);
                 thisClass.sendToServer(formdata);
@@ -15989,7 +15989,7 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
       value: function init_i18n() {
         var thisClass = this;
         var formdata = new FormData();
-        formdata.append('action', 'futurewordpress/project/ajax/i18n/js');
+        formdata.append('action', 'teddybear/project/ajax/i18n/js');
         formdata.append('_nonce', thisClass.ajaxNonce);
         thisClass.sendToServer(formdata);
       }
@@ -16197,7 +16197,7 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
                 while (1) switch (_context3.prev = _context3.next) {
                   case 0:
                     formdata = new FormData();
-                    formdata.append('action', 'futurewordpress/project/ajax/edit/product');
+                    formdata.append('action', 'teddybear/project/ajax/edit/product');
                     formdata.append('_nonce', thisClass.ajaxNonce);
                     formdata.append('product_id', product_id);
                     thisClass.sendToServer(formdata);
@@ -16563,7 +16563,7 @@ var mediaImages = {
   },
   uploadBlobData: function uploadBlobData(blobData, imageName, thisClass) {
     var formdata = new FormData();
-    formdata.append('action', 'futurewordpress/project/teddybearpopupaddon/action/import_image_from_blob');
+    formdata.append('action', 'teddybear/project/teddybearpopupaddon/action/import_image_from_blob');
     formdata.append('_nonce', thisClass.ajaxNonce);
     formdata.append('image', blobData, imageName);
     formdata.append('imageName', imageName);
@@ -16878,7 +16878,7 @@ var PROMPTS = {
           // console.log(popsData);return;
 
           var formdata = new FormData();
-          formdata.append('action', 'futurewordpress/project/ajax/save/product');
+          formdata.append('action', 'teddybear/project/ajax/save/product');
           formdata.append('product_id', (_thisClass$config$pro = (_thisClass$config = thisClass.config) === null || _thisClass$config === void 0 ? void 0 : _thisClass$config.product_id) !== null && _thisClass$config$pro !== void 0 ? _thisClass$config$pro : '');
           formdata.append('dataset', JSON.stringify(popsData));
           formdata.append('_nonce', thisClass.ajaxNonce);
@@ -18080,7 +18080,7 @@ var PROMPTS = {
                 var _thisClass$config$pro2, _thisClass$config2;
                 thisClass.isImporting = true;
                 var formdata = new FormData();
-                formdata.append('action', 'futurewordpress/project/ajax/save/product');
+                formdata.append('action', 'teddybear/project/ajax/save/product');
                 formdata.append('product_id', (_thisClass$config$pro2 = (_thisClass$config2 = thisClass.config) === null || _thisClass$config2 === void 0 ? void 0 : _thisClass$config2.product_id) !== null && _thisClass$config$pro2 !== void 0 ? _thisClass$config$pro2 : '');
                 formdata.append('dataset', JSON.stringify(parsedData.imports));
                 formdata.append('_nonce', thisClass.ajaxNonce);

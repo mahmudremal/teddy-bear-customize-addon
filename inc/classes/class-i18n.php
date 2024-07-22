@@ -19,29 +19,29 @@ class I18n {
 		add_action('init', [$this, 'load_plugin_translations'], 1, 0);
 		add_action('init', [$this, 'load_plugin_textdomain'], 1, 0);
 
-		add_action('wp_ajax_nopriv_futurewordpress/project/ajax/i18n/js', [$this, 'js_translates'], 10, 0);
-		add_action('wp_ajax_futurewordpress/project/ajax/i18n/js', [$this, 'js_translates'], 10, 0);
+		add_action('wp_ajax_nopriv_teddybear/project/ajax/i18n/js', [$this, 'js_translates'], 10, 0);
+		add_action('wp_ajax_teddybear/project/ajax/i18n/js', [$this, 'js_translates'], 10, 0);
 
-		add_action('wp_ajax_nopriv_futurewordpress/project/ajax/i18n/number', [$this, 'number_translates'], 10, 0);
-		add_action('wp_ajax_futurewordpress/project/ajax/i18n/number', [$this, 'number_translates'], 10, 0);
+		add_action('wp_ajax_nopriv_teddybear/project/ajax/i18n/number', [$this, 'number_translates'], 10, 0);
+		add_action('wp_ajax_teddybear/project/ajax/i18n/number', [$this, 'number_translates'], 10, 0);
 		
 		add_filter('teddybear/project/system/translate/string', [$this, 'translate_string'], 10, 4);
 		add_filter('teddybear/project/system/translate/number', [$this, 'translate_number'], 10, 4);
 		add_filter('teddybear/project/system/get_locale', [$this, 'get_locale'], 10, 1);
 		
-		add_action('wp_ajax_nopriv_futurewordpress/project/ajax/i18n/list', [$this, 'ajaxList'], 10, 0);
-		add_action('wp_ajax_futurewordpress/project/ajax/i18n/list', [$this, 'ajaxList'], 10, 0);
+		add_action('wp_ajax_nopriv_teddybear/project/ajax/i18n/list', [$this, 'ajaxList'], 10, 0);
+		add_action('wp_ajax_teddybear/project/ajax/i18n/list', [$this, 'ajaxList'], 10, 0);
 
-		add_action('wp_ajax_nopriv_futurewordpress/project/ajax/i18n/update', [$this, 'updateList'], 10, 0);
-		add_action('wp_ajax_futurewordpress/project/ajax/i18n/update', [$this, 'updateList'], 10, 0);
+		add_action('wp_ajax_nopriv_teddybear/project/ajax/i18n/update', [$this, 'updateList'], 10, 0);
+		add_action('wp_ajax_teddybear/project/ajax/i18n/update', [$this, 'updateList'], 10, 0);
 
 		// add_action( 'elementor/widget/render_content', [$this, 'elementor_widget_render_content'], 10, 2);
 
 		add_filter('load_textdomain_mofile', [$this, 'load_textdomain_mofile'], 10, 2);
 
-		// add_filter('futurewordpress/project/teddybearpopupaddon/javascript/siteconfig', [$this, 'pushConfig'], 10, 2);
+		// add_filter('teddybear/project/teddybearpopupaddon/javascript/siteconfig', [$this, 'pushConfig'], 10, 2);
 
-		add_filter('futurewordpress/project/teddybearpopupaddon/javascript/siteconfig', [$this, 'javascript_siteconfig'], 10, 2);
+		add_filter('teddybear/project/teddybearpopupaddon/javascript/siteconfig', [$this, 'javascript_siteconfig'], 10, 2);
 	}
 	public function load_textdomain_mofile($mofile, $domain) {
 		if ($domain == 'teddybearsprompts') {
@@ -62,14 +62,14 @@ class I18n {
 		load_plugin_textdomain('teddybearsprompts', false, $this->language_path);
 	}
 	public function js_translates() {
-		$translates = [];// $this->scripts_translations();
-
+		do_action('teddybear/project/nonce/check', $_POST['_nonce']);
 		wp_send_json_success([
 			'hooks'			=> ['ajaxi18nloaded'],
-			'translates'	=> $translates
+			'translates'	=> [] // $this->scripts_translations() // this muted because it will load with page load
 		]);
 	}
 	public function number_translates() {
+		do_action('teddybear/project/nonce/check', $_POST['_nonce']);
 		wp_send_json([
 			'number' => number_format_i18n(
 				$_REQUEST['number']??0,
@@ -286,12 +286,14 @@ class I18n {
 		return false;
 	}
 	public function ajaxList() {
+		do_action('teddybear/project/nonce/check', $_POST['_nonce']);
 		wp_send_json_success([
 			'hooks' => ['ajaxList-success'],
 			'list'  => $this->translations
 		], 200);
 	}
 	public function updateList() {
+		do_action('teddybear/project/nonce/check', $_POST['_nonce']);
 		$json = ['hooks' => ['updateI18nList-failed']];
 		if (isset($_POST['i18n']) && is_array($_POST['i18n'])) {
 
@@ -337,6 +339,7 @@ class I18n {
 	}
 	
 	public function scripts_translations() {
+		// return [];
 		return [
 			// backend JS
 			'continue' => __('Continue', 'teddybearsprompts'),
@@ -356,10 +359,10 @@ class I18n {
 			'add_new_group' => __('Add new group', 'teddybearsprompts'),
 			'teddy_name' => __('Teddy name', 'teddybearsprompts'),
 			'teddy_birth' => __('Teddy birth', 'teddybearsprompts'),
-			'teddy_sender' => __('Sender\'s Name', 'teddybearsprompts'),
+			'teddy_sender' => __("Sender's Name", 'teddybearsprompts'),
 
-			'teddy_reciever' => apply_filters('teddybear/project/system/translate/string', 'Reciever\'s Name', 'teddybearsprompts', 'Reciever\'s Name' . ' - input field'),
-			// 'teddy_reciever' => __('Reciever\'s Name', 'teddybearsprompts'),
+			// 'teddy_reciever' => apply_filters('teddybear/project/system/translate/string', "Reciever's Name", 'teddybearsprompts', "Reciever's Name" . ' - input field'),
+			'teddy_reciever' => __("Reciever's Name", 'teddybearsprompts'),
 			
 			'select_thumbnail' => __('Select thumbnail', 'teddybearsprompts'),
 			'field_type' => __('Field type', 'teddybearsprompts'),
@@ -406,12 +409,12 @@ class I18n {
 			
 			'chooseaname4me' => __('Choose a name for me', 'teddybearsprompts'),
 			'teddybirth' => __('Birth date', 'teddybearsprompts'),
-			'dtofteddybirth' => __('Date of teddy\'s birth', 'teddybearsprompts'),
+			'dtofteddybirth' => __("Date of teddy's birth", 'teddybearsprompts'),
 			'sendersname' => __('Created with love by', 'teddybearsprompts'),
 			'voice' => __('Voice', 'teddybearsprompts'),
 
 			// Admin area js
-			'globallydefined' => __('This product is globally defined and until disabling forceful definition, you can\'t customize this popup.', 'teddybearsprompts'),
+			'globallydefined' => __("This product is globally defined and until disabling forceful definition, you can't customize this popup.", 'teddybearsprompts'),
 			'productname' => __('Product title', 'teddybearsprompts'),
 			'data' => __('Data', 'teddybearsprompts'),
 			'nothingleft' => __('Nothing left', 'teddybearsprompts'),
@@ -430,7 +433,7 @@ class I18n {
 			'rusure' => __('Are you sure?', 'teddybearsprompts'),
 			'export' => __('Export', 'teddybearsprompts'),
 			'import' => __('Import', 'teddybearsprompts'),
-			'untrustable' => __('We can\'t find trustable imports contents.', 'teddybearsprompts'),
+			'untrustable' => __("We can't find trustable imports contents.", 'teddybearsprompts'),
 			'errorparsingjson' => __('Error parsing JSON:', 'teddybearsprompts'),
 			'standingplushies' => __('Standing Plushies', 'teddybearsprompts'),
 			'sittingplushies' => __('Sitting Plushies', 'teddybearsprompts'),
@@ -438,29 +441,38 @@ class I18n {
 			// 'upload' => apply_filters('teddybear/project/system/translate/string', 'Upload', 'teddybearsprompts', 'Upload' . ' - input field'),
 			'upload' => __('Upload', 'teddybearsprompts'),
 			
-			// 'audioupload_instuction' => __('You are permitted to record any message of your liking up to %d seconds, with the exclusion of profanity or copyrighted materials, which are prohibited. Please note your recording may be reviewed and screened (discreetly) by our DubiDo staff. We will not modify or edit your recording. In the event of copyright infringement, profanity, hate speech or recordings of the sort, we reserve the right to decline your recording and we will notify you of this decision within 48h of the submission of your recording. You will be given the opportunity to record a new message for additional review. For further information on your rights and privacy, please refer to our Privacy Policy. Please also refer to our Disclaimer for additional information on DubiDo’s liability with regard to recordings.', 'teddybearsprompts'),
+			'audioupload_instuction' => __('You are permitted to record any message of your liking up to %d seconds, with the exclusion of profanity or copyrighted materials, which are prohibited. Please note your recording may be reviewed and screened (discreetly) by our DubiDo staff. We will not modify or edit your recording. In the event of copyright infringement, profanity, hate speech or recordings of the sort, we reserve the right to decline your recording and we will notify you of this decision within 48h of the submission of your recording. You will be given the opportunity to record a new message for additional review. For further information on your rights and privacy, please refer to our Privacy Policy. Please also refer to our Disclaimer for additional information on DubiDo’s liability with regard to recordings.', 'teddybearsprompts'),
 			// 'ipreferrecordlater' => __('I prefer to add my voice later', 'teddybearsprompts'),
 			'add_later' => __('Add Later', 'teddybearsprompts'),
-			// 'audiorecord_instuction' => __('Please record your voice upto 20 seconds.', 'teddybearsprompts'),
+			'audiorecord_instuction' => __('Please record your voice upto %s seconds.', 'teddybearsprompts'),
 			'audiolater_instuction' => __('1. Receive instructions & button in order email.\n2. Upload audio file anytime later.\n3. we will ship when your audio file is received.', 'teddybearsprompts'),
 
-			// 'maxuploadmb' => __('Max uploaded file size is %s MB.', 'teddybearsprompts'),
+			'maxuploadmb' => __('Oh! The file you are trying to upload is too heavy. Put ♥ - the file must be up to %sMb', 'teddybearsprompts'),
 
-			'audioexcedduration' => __('Your selected audio file exceed maximum duration of %s sec.', 'teddybearsprompts'),
-			'audiofile_invalid' => __('Invalid file selected. It seems you didn\'t select a valid audio file or file is not in these following format (%s).', 'teddybearsprompts'),
+			'audioexcedduration' => __('Office! The file I uploaded is too long. Note ♥ The length of the recording does not exceed %s seconds.', 'teddybearsprompts'),
+			'audiofile_invalid' => __("Invalid file selected. It seems you didn't select a valid audio file or file is not in these following format (%s).", 'teddybearsprompts'),
 
 			'translations' => __('Translations', 'teddybearsprompts'),
 			'cancel' => __('Cancel', 'teddybearsprompts'),
 			'submit' => __('Submit', 'teddybearsprompts'),
+			'invalid_file' => __('File is not audio, nor video.', 'teddybearsprompts'),
+			'gotit' => __('Got it', 'teddybearsprompts'),
+			'plsprint4me' => __('Please print for me', 'teddybearsprompts'),
+			'maybe_file_invalid' => __('Something went wrong or maybe file you uploaded is invaild.', 'teddybearsprompts'),
+			'certnotgenerated' => __('Certificate not generated yet.', 'teddybearsprompts'),
+			'voice_skipped' => __('Voice Skipped.', 'teddybearsprompts'),
+			'voicewillsend' => __('Voice will be send through email.', 'teddybearsprompts'),
+			'method_s' => __('Method: %s', 'teddybearsprompts'),
+			'printoutcerts' => __('Printout Certificates', 'teddybearsprompts'),
 
 
 			
-			'audioupload_instuction'		=> apply_filters('teddybear/project/system/translate/string', apply_filters('teddybear/project/system/getoption', 'translate-audioupload_instuction', ''), 'teddybearsprompts', apply_filters('teddybear/project/system/getoption', 'translate-audioupload_instuction', '') . ' - input field'),
-			'ipreferrecordlater'			=> apply_filters('teddybear/project/system/translate/string', apply_filters('teddybear/project/system/getoption', 'translate-ipreferrecordlater', ''), 'teddybearsprompts', apply_filters('teddybear/project/system/getoption', 'translate-ipreferrecordlater', '') . ' - input field'),
-			'audiorecord_instuction'		=> apply_filters('teddybear/project/system/translate/string', apply_filters('teddybear/project/system/getoption', 'translate-audiorecord_instuction', ''), 'teddybearsprompts', apply_filters('teddybear/project/system/getoption', 'translate-audiorecord_instuction', '') . ' - input field'),
-			'maxuploadmb'		=> apply_filters('teddybear/project/system/translate/string', apply_filters('teddybear/project/system/getoption', 'translate-maxuploadmb', ''), 'teddybearsprompts', apply_filters('teddybear/project/system/getoption', 'translate-maxuploadmb', '') . ' - input field'),
-			'audioexcedduration'		=> apply_filters('teddybear/project/system/translate/string', apply_filters('teddybear/project/system/getoption', 'translate-audioexcedduration', ''), 'teddybearsprompts', apply_filters('teddybear/project/system/getoption', 'translate-audioexcedduration', '') . ' - input field'),
-			'audiofile_invalid'		=> apply_filters('teddybear/project/system/translate/string', apply_filters('teddybear/project/system/getoption', 'translate-audiofile_invalid', ''), 'teddybearsprompts', apply_filters('teddybear/project/system/getoption', 'translate-audiofile_invalid', '') . ' - input field'),
+			// 'audioupload_instuction'		=> apply_filters('teddybear/project/system/translate/string', apply_filters('teddybear/project/system/getoption', 'translate-audioupload_instuction', ''), 'teddybearsprompts', apply_filters('teddybear/project/system/getoption', 'translate-audioupload_instuction', '') . ' - input field'),
+			// 'ipreferrecordlater'			=> apply_filters('teddybear/project/system/translate/string', apply_filters('teddybear/project/system/getoption', 'translate-ipreferrecordlater', ''), 'teddybearsprompts', apply_filters('teddybear/project/system/getoption', 'translate-ipreferrecordlater', '') . ' - input field'),
+			// 'audiorecord_instuction'		=> apply_filters('teddybear/project/system/translate/string', apply_filters('teddybear/project/system/getoption', 'translate-audiorecord_instuction', ''), 'teddybearsprompts', apply_filters('teddybear/project/system/getoption', 'translate-audiorecord_instuction', '') . ' - input field'),
+			// 'maxuploadmb'		=> apply_filters('teddybear/project/system/translate/string', apply_filters('teddybear/project/system/getoption', 'translate-maxuploadmb', ''), 'teddybearsprompts', apply_filters('teddybear/project/system/getoption', 'translate-maxuploadmb', '') . ' - input field'),
+			// 'audioexcedduration'		=> apply_filters('teddybear/project/system/translate/string', apply_filters('teddybear/project/system/getoption', 'translate-audioexcedduration', ''), 'teddybearsprompts', apply_filters('teddybear/project/system/getoption', 'translate-audioexcedduration', '') . ' - input field'),
+			// 'audiofile_invalid'		=> apply_filters('teddybear/project/system/translate/string', apply_filters('teddybear/project/system/getoption', 'translate-audiofile_invalid', ''), 'teddybearsprompts', apply_filters('teddybear/project/system/getoption', 'translate-audiofile_invalid', '') . ' - input field'),
 		];
 	}
 	public function javascript_siteconfig($args, $is_admin = false) {

@@ -27,13 +27,14 @@ class Cart {
 		$this->setup_hooks();
 	}
 	protected function setup_hooks() {
-		// add_action('wp_ajax_nopriv_add_to_cart', [$this, 'ajax_add_to_cart'], 10, 0);
-		// add_action('wp_ajax_add_to_cart', [$this, 'ajax_add_to_cart'], 10, 0);
-		add_action('wp_ajax_nopriv_futurewordpress/project/ajax/cart/add', [$this, 'ajax_add_to_cart'], 10, 0);
-		add_action('wp_ajax_futurewordpress/project/ajax/cart/add', [$this, 'ajax_add_to_cart'], 10, 0);
+		add_action('wp_ajax_nopriv_teddy/ajax/cart/add', [$this, 'ajax_add_to_cart'], 10, 0);
+		add_action('wp_ajax_teddy/ajax/cart/add', [$this, 'ajax_add_to_cart'], 10, 0);
 
-		add_action('wp_ajax_nopriv_futurewordpress/project/ajax/update/cart', [$this, 'ajax_update_cart'], 10, 0);
-		add_action('wp_ajax_futurewordpress/project/ajax/update/cart', [$this, 'ajax_update_cart'], 10, 0);
+		add_action('wp_ajax_nopriv_teddybear/project/ajax/update/cart', [$this, 'ajax_update_cart'], 10, 0);
+		add_action('wp_ajax_teddybear/project/ajax/update/cart', [$this, 'ajax_update_cart'], 10, 0);
+
+		add_action('wp_ajax_nopriv_teddybear/project/ajax/empty/cart', [$this, 'ajax_empty_cart'], 10, 0);
+		add_action('wp_ajax_teddybear/project/ajax/empty/cart', [$this, 'ajax_empty_cart'], 10, 0);
 
 		// add_action('woocommerce_cart_calculate_fees', [$this, 'woocommerce_cart_calculate_fees'], 10, 0);
 		add_filter('woocommerce_cart_item_name', [$this, 'display_additional_charges'], 10, 3);
@@ -50,11 +51,12 @@ class Cart {
 	}
 
 	public function ajax_add_to_cart() {
+		do_action('teddybear/project/nonce/check', $_POST['_nonce']);
 		if (!isset($_POST['product_id']) || !isset($_POST['quantity'])) {
 			wp_send_json_error('Missing required data.');
 		}
 		$json = [
-			'hooks' => ['popup_submitting_failed'],
+			'hooks' => ['popup_submitting_failed'], 'voices_path' => [],
 			'message' => __('Something went wrong. Please try again.', 'teddybearsprompts')
 		];
 		$product_id = intval($_POST['product_id']);
@@ -63,27 +65,88 @@ class Cart {
 		if (!$product || !$product->is_purchasable()) {
 			wp_send_json_error('Invalid product or product is not purchasable.');
 		}
-		
+		// 
 		try {
-			$dataset = json_decode(preg_replace('/[\x00-\x1F\x80-\xFF]/', '', stripslashes(html_entity_decode($_POST['dataset']))), true);
-			$charges = json_decode(preg_replace('/[\x00-\x1F\x80-\xFF]/', '', stripslashes(html_entity_decode($_POST['charges']))), true);
-			if (isset($_FILES['voice'])) {
-				$is_uploaded = $this->custom_upload_audio_video($_FILES['voice']);
-				$is_uploaded = str_replace([ABSPATH], [site_url('/')], $is_uploaded);
-				$json['voice_path'] = $is_uploaded;
+			$dataset = json_decode(preg_replace('/[\x00-\x1F\x80-\xFF]/', '', stripslashes(html_entity_decode($_POST['dataset']??''))), true);
+			$charges = json_decode(preg_replace('/[\x00-\x1F\x80-\xFF]/', '', stripslashes(html_entity_decode($_POST['charges']??''))), true);
+			if (isset($_FILES['_blobs'])) {
+				if (isset($_FILES['_blobs']['name'])) {
+					$_FILES['_blobs'] = [$_FILES['_blobs']];
+				}
+				foreach ($_FILES['_blobs'] as $file) {
+					$is_uploaded = $this->custom_upload_audio_video($file);
+					$is_uploaded = str_replace([ABSPATH], [''], $is_uploaded);
+					$json['voices_path'][] = $is_uploaded;
+				}
+			}
+			if (isset($_FILES['_canvas'])) {
+				if (isset($_FILES['_canvas']['name'])) {
+					$_FILES['_canvas'] = [$_FILES['_canvas']];
+				}
+				foreach ($_FILES['_canvas'] as $file) {
+					$is_uploaded = $this->custom_upload_file($file);
+					$is_uploaded = str_replace([ABSPATH], [''], $is_uploaded);
+					$json['canvas_path'][] = $is_uploaded;
+				}
 			}
 			$this->charges = [];$this->dataset = [];
 			foreach ($charges as $i => $row) {
 				if (isset($row['product']) && !empty(trim($row['product'])) && is_numeric($row['product'])) {
 					$row['product'] = $row['product'];
 					$row['cart_item_key'] = WC()->cart->add_to_cart((int) $row['product'], $quantity);
-
+					// 
 					$charges[$i] = $row;
+				}
+			}
+			$_canvas = (isset($json['canvas_path']) && !empty($json['canvas_path']))?$json['canvas_path']:false;$quantity = 1;
+			foreach ($dataset as $i => $_row) {
+				if ($_canvas) {$dataset[$i]['_canvas'] = $_canvas;$_canvas = false;}
+				switch ($_row['type']) {
+					case 'outfit':
+						if ($_row['groups']) {
+							foreach ((array) $_row['groups'] as $_group) {
+								foreach ((array) $_group['options'] as $_option) {
+									if (!isset($_option['product']) || empty($_option['product'])) {continue;}
+                                    $_product = wc_get_product((int) $_option['product']);
+                                    if ($_product && $_product->is_purchasable()) {
+                                        // $_option['product'] = $_product->get_id();
+                                        $_option['cart_item_key'] = WC()->cart->add_to_cart($_product->get_id(), $quantity);
+                                    }
+                                }
+							}
+						}
+						break;
+					case 'radio':
+					case 'select':
+					case 'checkbox':
+						foreach ((array) $_row['options'] as $_option) {
+							if (!isset($_option['product']) || empty($_option['product'])) {continue;}
+							$_product = wc_get_product((int) $_option['product']);
+							if ($_product && $_product->is_purchasable()) {
+								// $_option['product'] = $_product->get_id();
+								$_option['cart_item_key'] = WC()->cart->add_to_cart($_product->get_id(), $quantity);
+							}
+						}
+						break;
+					default:
+						$_option = $_row;
+						if (isset($_option['product']) && !empty($_option['product'])) {
+							$_product = wc_get_product((int) $_option['product']);
+							if ($_product && $_product->is_purchasable()) {
+								// $_option['product'] = $_product->get_id();
+								$_option['cart_item_key'] = WC()->cart->add_to_cart($_product->get_id(), $quantity);
+							}
+						}
+						break;
 				}
 			}
 			$this->charges = $charges;$this->dataset = $dataset;
 			$this->prod2AdAccessory = $product_id;
 			$cart_item_key = WC()->cart->add_to_cart($product_id, $quantity);
+			// 
+			// $cart_item = WC()->cart->get_cart_item($cart_item_key);
+			// print_r($cart_item);wp_die();
+			// 
 			$this->prod2AdAccessory = false;
 			$json['hooks'] = ['popup_submitting_done'];
 			// $json['redirectedTo'] = wc_get_checkout_url();
@@ -97,7 +160,6 @@ class Cart {
 			}
 			
 			$json['message'] = false;
-			// $custom_data = (array) get_post_meta($product_id, '_teddy_custom_data', true);
 			$json['confirmation'] = [
 				'title'				=> sprintf(__('Added successfully %s', 'teddybearsprompts'), get_the_title($product_id)),
 				'accessoriesUrl'	=> get_the_permalink(apply_filters('teddybear/project/system/getoption', 'standard-accessory', 2115)), // (isset($custom_data['accessoriesUrl']) && !empty($custom_data['accessoriesUrl']))?esc_url($custom_data['accessoriesUrl']):get_the_permalink(2115),
@@ -113,6 +175,7 @@ class Cart {
 		}
 	}
 	public function ajax_update_cart() {
+		do_action('teddybear/project/nonce/check', $_POST['_nonce']);
 		$json = ['message' => __('Something went wrong. Please try again.', 'teddybearsprompts'), 'hooks' => ['popup_submitting_failed']];
 		if (isset($_POST['_product']) && isset($_POST['_price']) && isset($_POST['_mode'])) {
 			switch ($_POST['_mode']) {
@@ -144,12 +207,16 @@ class Cart {
 	public function woocommerce_add_cart_item_data($cart_item_data, $product_id, $variation_id, $quantity) {
 		global $teddy_Product;global $teddy_Plushies;
 		if ($this->prod2AdAccessory && $this->prod2AdAccessory != $product_id) {return $cart_item_data;}
-		if (count($this->charges) <= 0 || count($this->dataset) <= 0) {return $cart_item_data;}
+		if (count($this->dataset) <= 0) {return $cart_item_data;}
+		// if (count($this->charges) <= 0) {return $cart_item_data;}
 		if ($teddy_Plushies->is_accessory($product_id)) {return $cart_item_data;}
-		$cart_item_data['custom_makeup'] = $this->charges;
-		$cart_item_data['custom_dataset'] = $this->dataset;
-		$cart_item_data['custom_popset'] = $teddy_Product->get_post_meta($product_id, '_product_custom_popup', true);
-		
+		if ($this->dataset && count($this->dataset) > 0) {
+			$cart_item_data['custom_dataset'] = $this->dataset;
+		}
+		if ($this->charges && count($this->charges) > 0) {
+			$cart_item_data['custom_makeup'] = $this->charges;
+		}
+		// $cart_item_data['custom_popset'] = $teddy_Product->get_post_meta($product_id, '_product_custom_popup', true);
 		return $cart_item_data;
 	}
 	public function woocommerce_cart_calculate_fees() {
@@ -186,13 +253,57 @@ class Cart {
 	}
 	public function display_additional_charges($item_name, $cart_item, $cart_item_key) {
 		// if (isset($cart_item['_additional_charges_applied'])) {return $item_name;}
-		if (isset($cart_item['custom_makeup']) && !in_array($cart_item_key, $this->showedAlready)) {
-			foreach ($cart_item['custom_makeup'] as $fee) {
-				// if (!empty($fee['price']) && is_numeric($fee['price'])) {
-					$item_name .= '<br><small class="additional-charges">'.esc_html(
-						apply_filters('teddybear/project/system/translate/string', $fee['item'], 'teddybearsprompts', $fee['item'] . ' - input field')
-					).': '.wc_price($fee['price']).' x '.esc_html(number_format_i18n($cart_item['quantity'], 0)).'</small>';
-				// }
+		if (isset($cart_item['custom_dataset']) && !in_array($cart_item_key, $this->showedAlready)) {
+			foreach ($cart_item['custom_dataset'] as $dataRow) {
+				if ($dataRow && is_array($dataRow)) {
+					try {
+						switch ($dataRow['type']) {
+							case 'radio':
+							case 'checkbox':
+							case 'select':
+								if (isset($dataRow['options'])) {
+									foreach ($dataRow['options'] as $index => $option) {
+										if (isset($option['cost'])) {
+											$option['label'] = empty($option['label'])?$dataRow['type']:$dataRow['label'];
+											$option['cost'] = is_string($option['cost'])?floatval($option['cost']):$option['cost'];
+											// $option['product'] // means it's a product
+											$item_name .= '<br><small class="additional-charges">'.esc_html(
+												apply_filters('teddybear/project/system/translate/string', $option['label'], 'teddybearsprompts', $option['label'] . ' - input field')
+											).': '.wc_price($option['cost']).' x '.esc_html(number_format_i18n($cart_item['quantity'], 0)).'</small>';
+										}
+									}
+								}
+								break;
+							case 'outfit':
+								if (isset($dataRow['groups'])) {
+									foreach ($dataRow['groups'] as $gIndex => $group) {
+										if (isset($group['options'])) {
+											foreach ($group['options'] as $oIndex => $option) {
+												if (isset($option['cost'])) {
+													$option['label'] = empty($option['label'])?$dataRow['type']:$dataRow['label'];
+													$option['cost'] = is_string($option['cost'])?floatval($option['cost']):$option['cost'];
+													$item_name .= '<br><small class="additional-charges">'.esc_html(
+														apply_filters('teddybear/project/system/translate/string', $option['label'], 'teddybearsprompts', $option['label'] . ' - input field')
+													).': '.wc_price($option['cost']).' x '.esc_html(number_format_i18n($cart_item['quantity'], 0)).'</small>';
+												}
+											}
+										}
+									}
+								}
+								break;
+							default:
+								$option = $dataRow;
+								if (isset($option['cost'])) {
+									$option['label'] = empty($option['label'])?$dataRow['type']:$dataRow['label'];
+									$option['cost'] = is_string($option['cost'])?floatval($option['cost']):$option['cost'];
+									$item_name .= '<br><small class="additional-charges">'.esc_html(
+										apply_filters('teddybear/project/system/translate/string', $option['label'], 'teddybearsprompts', $option['label'] . ' - input field')
+									).': '.wc_price($option['cost']).' x '.esc_html(number_format_i18n($cart_item['quantity'], 0)).'</small>';
+								}
+								break;
+						}
+					} catch (\Error $th) {}
+				}
 			}
 			// $cart_item['_additional_charges_applied'] = true;
 			$this->showedAlready[] = $cart_item_key;
@@ -218,20 +329,52 @@ class Cart {
 		}
 	}
 	public function calculate_cart_item_subtotal($cart_item, $cart_item_key, $return = false, $accessoriesOnly = false) {
-		if (array_key_exists('custom_makeup', $cart_item) && !in_array($cart_item_key, $this->calculatedAlready)) {
+		if (array_key_exists('custom_dataset', $cart_item) && !empty($cart_item['custom_dataset']) && !in_array($cart_item_key, $this->calculatedAlready)) {
 			$additional_cost = 0;
-			foreach ($cart_item['custom_makeup'] as $fee) {
-				if ($fee && is_array($fee)) {
+			foreach ($cart_item['custom_dataset'] as $dataRow) {
+				if ($dataRow && is_array($dataRow)) {
 					try {
-						$fee['price'] = floatval($fee['price']);
-					} catch (\Error $th) {}
-					if (!empty($fee['price']) && is_numeric($fee['price'])) {
-						
-						if (!isset($fee['product']) || !$fee['product']) {
-							// $additional_cost += ($fee['price'] * $cart_item['quantity']);
-							$additional_cost += $fee['price'];
+						switch ($dataRow['type']??'') {
+							case 'radio':
+							case 'checkbox':
+							case 'select':
+								if (isset($dataRow['options'])) {
+									foreach ($dataRow['options'] as $index => $option) {
+										if (isset($option['cost'])) {
+											$option['cost'] = is_string($option['cost'])?floatval($option['cost']):$option['cost'];
+											if ($option['cost'] && $option['cost'] > 0) {
+												$additional_cost += $option['cost'];
+											}
+										}
+									}
+								}
+								break;
+							case 'outfit':
+								if (isset($dataRow['groups'])) {
+									foreach ($dataRow['groups'] as $gIndex => $group) {
+										if (isset($group['options'])) {
+											foreach ($group['options'] as $oIndex => $option) {
+												if (isset($option['cost'])) {
+													$option['cost'] = is_string($option['cost'])?floatval($option['cost']):$option['cost'];
+													if ($option['cost'] && $option['cost'] > 0) {
+														$additional_cost += $option['cost'];
+													}
+												}
+											}
+										}
+									}
+								}
+								break;
+							default:
+								if (isset($dataRow['cost'])) {
+									$dataRow['cost'] = is_string($dataRow['cost'])?floatval($dataRow['cost']):$dataRow['cost'];
+									if ($dataRow['cost'] && $dataRow['cost'] > 0) {
+										$additional_cost += $dataRow['cost'];
+									}
+								}
+								break;
 						}
-					}
+					} catch (\Error $th) {}
 				}
 			}
 
@@ -251,6 +394,8 @@ class Cart {
 			}
 			// $this->calculatedAlready[] = $cart_item_key;
 			if ($return) {return $calculatedPrice;}
+		} else {
+			// 
 		}
 		if ($return) {
 			return ($accessoriesOnly)?0:($cart_item['data']->get_price() * $cart_item['quantity']);
@@ -271,6 +416,7 @@ class Cart {
 		return ($total + $accessoriesCost);
 	}
 	public function custom_upload_audio_video($file) {
+		// print_r($file);wp_die();
 		$upload_dir = wp_upload_dir();$custom_dir = 'custom_popup';
 		$target_dir = $upload_dir['basedir'].'/'.$custom_dir.'/';
 		if (!file_exists($target_dir)) {mkdir($target_dir, 0755, true);}
@@ -283,6 +429,17 @@ class Cart {
 		if ($file['size'] > $max_file_size) {
 			throw new \Exception(__('Error: File size exceeds the maximum limit of 400 MB.', 'teddybearsprompts'));
 		}
+		$target_file = $target_dir . $file_name;
+		if (!move_uploaded_file($file_tmp, $target_file)) {
+			throw new \Exception(__('Error uploading file.', 'teddybearsprompts'));
+		}
+		return $target_file;
+	}
+	public function custom_upload_file($file) {
+		$upload_dir = wp_upload_dir();$custom_dir = 'custom_popup';
+		$target_dir = $upload_dir['basedir'].'/'.$custom_dir.'/';
+		if (!file_exists($target_dir)) {mkdir($target_dir, 0755, true);}
+		$file_name = $file['name'];$file_tmp = $file['tmp_name'];$file_type = $file['type'];
 		$target_file = $target_dir . $file_name;
 		if (!move_uploaded_file($file_tmp, $target_file)) {
 			throw new \Exception(__('Error uploading file.', 'teddybearsprompts'));
@@ -318,6 +475,14 @@ class Cart {
 			$results[] = $product_data;
 		}
 		return $results;
+	}
+	public function ajax_empty_cart() {
+		do_action('teddybear/project/nonce/check', $_GET['_nonce']);
+		if (WC()->cart->empty_cart()) {
+			wp_send_json_success();
+		} else {
+			wp_send_json_error();
+		}
 	}
 
 }

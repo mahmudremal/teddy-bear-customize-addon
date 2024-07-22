@@ -50,15 +50,23 @@ class Meta_Boxes {
 	public function custom_meta_box_html($post) {
 		global $teddy_Plushies;
 		$this->options = (array) get_post_meta($post->ID, '_teddy_custom_data', true);
+		$_opened_tab = get_post_meta($post->ID, '_dubido_opened_tab', true);
+		$_tabs = [
+			'accessories' => __('Accessories', 'teddybearsprompts'),
+			'custompops' => __('Customization', 'teddybearsprompts'),
+		];
+		if (!$_opened_tab) {$_opened_tab = array_keys($_tabs)[0];}
 		?>
 		<div class="fwp-tabs__container">
+			<input type="hidden" name="_dubido_opened_tab" value="<?php echo esc_attr($_opened_tab); ?>">
 			<div class="fwp-tabs__wrap">
 				<div class="fwp-tabs__navs">
-					<div class="fwp-tabs__nav-item active" data-target="#the-accessories"><?php esc_html_e( 'Accessories', 'teddybearsprompts' ); ?></div>
-					<div class="fwp-tabs__nav-item" data-target="#the-custompops"><?php esc_html_e( 'Customization', 'teddybearsprompts' ); ?></div>
+					<?php foreach ($_tabs as $_tabKey => $_text) : ?>
+					<div class="fwp-tabs__nav-item <?php echo esc_attr(($_opened_tab == $_tabKey)?'active':''); ?>" data-target="#the-<?php echo esc_attr($_tabKey); ?>" data-tab-key="<?php echo esc_attr($_tabKey); ?>"><?php echo esc_html($_text); ?></div>
+					<?php endforeach; ?>
 				</div>
 				<div class="fwp-tabs__tabs-field">
-					<div class="fwp-tabs__content active" id="the-accessories">
+					<div class="fwp-tabs__content <?php echo esc_attr(($_opened_tab == 'accessories')?'active':''); ?>" id="the-accessories">
 						<div class="fwp-form-wraper">
 							<div class="fwp-form-wrap">
 								<?php
@@ -108,7 +116,7 @@ class Meta_Boxes {
 							</div>
 						</div>
 					</div>
-					<div class="fwp-tabs__content" id="the-custompops">
+					<div class="fwp-tabs__content <?php echo esc_attr(($_opened_tab == 'custompops')?'active':''); ?>" id="the-custompops">
 						<?php
 							$post_meta = get_post_meta($post_id, '_teddy_custom_data', true);
 							$global_key = (isset($post_meta['product_type']) && $post_meta['product_type'] == 'sitting')?'sitting-global':'standing-global';
@@ -242,6 +250,10 @@ class Meta_Boxes {
 				}
 			}
 			
+		}
+		$_key = '_dubido_opened_tab';
+		if(array_key_exists($_key, $_POST) && get_post_type($post_id) == 'product') {
+			update_post_meta($post_id, $_key, $_POST[$_key]);
 		}
 	}
 	

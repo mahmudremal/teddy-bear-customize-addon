@@ -15,6 +15,7 @@ const DOWNLOADS = {
             if((thisClass?.lastJson)?.attached) {
                 DOWNLOADS.lastAttached = thisClass.lastJson.attached;
                 const pops = document.querySelector('.attachments_popup');
+                // 
                 if(pops && DOWNLOADS.lastAttached.length >= 1) {
                     pops.innerHTML = `
                     <table>
@@ -25,21 +26,38 @@ const DOWNLOADS = {
                             </tr>
                         </thead>
                         <tbody>
-                            
-                            ${DOWNLOADS.lastAttached.map((order_item) => `
+                            ${DOWNLOADS.lastAttached.filter(row => row.attached.voices.length || row.attached.certificates.length).map((order_item) => `
                             <tr>
                                 <th>
                                     <a class="attachment__title" href="${order_item.product_edit}" target="_blank">${order_item.product}</a> x ${order_item.quantity}
                                 </th>
                                 <td>
                                     ${Object.keys(order_item.attached).map((key) => (
-                                        order_item.attached[key] && (order_item.attached[key]?.length >= 1)
+                                        order_item.attached[key] // && (order_item.attached[key]?.length >= 1)
                                     )?`
                                         <span class="attachment__type">${key}</span>
                                         <div class="attachment__row">
-                                            ${order_item.attached[key].map((link) => `
-                                                <a class="btn attachment__download" href="${link}" target="_blank" download="${DOWNLOADS.get_merged_download_file_name(link, key, order_item)}">${DOWNLOADS.get_merged_download_file_name(link, key, order_item)}</a>
-                                            `).join('')}
+                                            ${
+                                            (key == 'voices')?`
+                                                ${order_item.attached[key].map((voice) => `
+                                                    ${(voice?.skip)?thisClass.i18n?.voice_skipped??'Voice Skipped.':''}
+                                                    ${(voice?.later)?thisClass.i18n?.voicewillsend??'Voice will be send through email.':''}
+                                                    ${(voice?.blob)?`
+                                                        <a class="btn attachment__download" href="${voice.blob}" target="_blank" download="${DOWNLOADS.get_merged_download_file_name(voice.blob, key, order_item)}" title="${
+                                                            wp.i18n.sprintf(thisClass.i18n?.method_s??'Method: %s', (voice?.method??'').replace('"', ''))
+                                                        }">${DOWNLOADS.get_merged_download_file_name(voice.blob, key, order_item)}</a>
+                                                    `:''}
+                                                `).join('')}
+                                            `:(order_item.attached[key].length >= 1)
+                                            ?
+                                                order_item.attached[key].map((link) => link.trim() == ''?`
+                                                    <span class="attachment__needgen">${thisClass.i18n?.certnotgenerated??'Certificate not generated yet.'}</span>
+                                                `:`
+                                                    <a class="btn attachment__download" href="${link}" target="_blank" download="${DOWNLOADS.get_merged_download_file_name(link, key, order_item)}">${DOWNLOADS.get_merged_download_file_name(link, key, order_item)}</a>
+                                                `).join('')
+                                            :
+                                                ``
+                                            }
                                         </div>
                                     `:'').join('')}
                                 </td>
@@ -93,7 +111,7 @@ const DOWNLOADS = {
             title: false, // width: 600,
             didOpen: async () => {
                 var formdata = new FormData();
-                formdata.append('action', 'futurewordpress/project/ajax/order/downloads');
+                formdata.append('action', 'teddybear/project/ajax/order/downloads');
                 formdata.append('_nonce', thisClass.ajaxNonce);
                 formdata.append('order_id', config?.order_id);
                 thisClass.sendToServer(formdata);

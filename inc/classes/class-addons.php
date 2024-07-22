@@ -17,8 +17,8 @@ class Addons {
 		add_filter('tm_epo_fields', [$this, 'tm_epo_fields'], 10, 1);
 		// add_action('woocommerce_review_order_before_payment', [$this, 'woocommerce_review_order_before_payment'], 10, 0);
 
-		add_action('wp_ajax_nopriv_futurewordpress/project/ajax/add/wrapping', [$this, 'add_wrapping'], 10, 0);
-		add_action('wp_ajax_futurewordpress/project/ajax/add/wrapping', [$this, 'add_wrapping'], 10, 0);
+		add_action('wp_ajax_nopriv_teddybear/project/ajax/add/wrapping', [$this, 'add_wrapping'], 10, 0);
+		add_action('wp_ajax_teddybear/project/ajax/add/wrapping', [$this, 'add_wrapping'], 10, 0);
 
 		add_action('woocommerce_cart_calculate_fees', [$this, 'woocommerce_cart_calculate_fees'], 10, 0);
 		

@@ -15,29 +15,32 @@ class Ajax {
 		$this->setup_hooks();
 	}
 	protected function setup_hooks() {
-		add_action('wp_ajax_futurewordpress/project/teddybearpopupaddon/action/get_autocomplete', [$this, 'get_autocomplete'], 10, 0);
-		add_action('wp_ajax_nopriv_futurewordpress/project/teddybearpopupaddon/action/get_autocomplete', [$this, 'get_autocomplete'], 10, 0);
+		add_action('wp_ajax_teddybear/project/teddybearpopupaddon/action/get_autocomplete', [$this, 'get_autocomplete'], 10, 0);
+		add_action('wp_ajax_nopriv_teddybear/project/teddybearpopupaddon/action/get_autocomplete', [$this, 'get_autocomplete'], 10, 0);
 
-		add_action('wp_ajax_futurewordpress/project/ajax/search/product', [$this, 'search_product'], 10, 0);
-		add_action('wp_ajax_nopriv_futurewordpress/project/ajax/search/product', [$this, 'search_product'], 10, 0);
-		add_action('wp_ajax_futurewordpress/project/ajax/submit/popup', [$this, 'submit_popup'], 10, 0);
-		add_action('wp_ajax_nopriv_futurewordpress/project/ajax/submit/popup', [$this, 'submit_popup'], 10, 0);
+		add_action('wp_ajax_teddybear/project/ajax/search/product', [$this, 'search_product'], 10, 0);
+		add_action('wp_ajax_nopriv_teddybear/project/ajax/search/product', [$this, 'search_product'], 10, 0);
+		add_action('wp_ajax_teddybear/project/ajax/submit/popup', [$this, 'submit_popup'], 10, 0);
+		add_action('wp_ajax_nopriv_teddybear/project/ajax/submit/popup', [$this, 'submit_popup'], 10, 0);
 
-		add_action('wp_ajax_futurewordpress/project/ajax/edit/product', [$this, 'edit_product'], 10, 0);
-		add_action('wp_ajax_futurewordpress/project/ajax/save/product', [$this, 'save_product'], 10, 0);
+		add_action('wp_ajax_teddybear/project/ajax/edit/product', [$this, 'edit_product'], 10, 0);
+		add_action('wp_ajax_teddybear/project/ajax/save/product', [$this, 'save_product'], 10, 0);
 
-		add_action('wp_ajax_futurewordpress/project/ajax/search/popup', [$this, 'search_popup'], 10, 0);
-		add_action('wp_ajax_nopriv_futurewordpress/project/ajax/search/popup', [$this, 'search_popup'], 10, 0);
+		add_action('wp_ajax_teddybear/project/ajax/search/popup', [$this, 'search_popup'], 10, 0);
+		add_action('wp_ajax_nopriv_teddybear/project/ajax/search/popup', [$this, 'search_popup'], 10, 0);
 		
-		add_action('wp_ajax_futurewordpress/project/ajax/update/orderitem', [$this, 'update_orderitem'], 10, 0);
+		add_action('wp_ajax_teddybear/project/ajax/update/orderitem', [$this, 'update_orderitem'], 10, 0);
 
-		add_action('wp_ajax_nopriv_futurewordpress/project/ajax/suggested/names', [$this, 'suggested_names'], 10, 0);
-		add_action('wp_ajax_futurewordpress/project/ajax/suggested/names', [$this, 'suggested_names'], 10, 0);
+		add_action('wp_ajax_nopriv_teddybear/project/ajax/suggested/names', [$this, 'suggested_names'], 10, 0);
+		add_action('wp_ajax_teddybear/project/ajax/suggested/names', [$this, 'suggested_names'], 10, 0);
 
-		add_action('wp_ajax_nopriv_futurewordpress/project/ajax/checkout/fetch', [$this, 'checkout_fetch'], 10, 0);
-		add_action('wp_ajax_futurewordpress/project/ajax/checkout/fetch', [$this, 'checkout_fetch'], 10, 0);
+		add_action('wp_ajax_nopriv_teddybear/project/ajax/checkout/fetch', [$this, 'checkout_fetch'], 10, 0);
+		add_action('wp_ajax_teddybear/project/ajax/checkout/fetch', [$this, 'checkout_fetch'], 10, 0);
+
+		// add_action('init', [$this, 'remove_customizations'], 10, 0);
 	}
 	public function get_autocomplete() {
+		do_action('teddybear/project/nonce/check', $_GET['_nonce']);
 		global $wpdb;
 		switch ($_GET['term']) {
 			case 'product':
@@ -61,8 +64,12 @@ class Ajax {
 		wp_send_json_success( $res, 200 );
 	}
 	public function search_product() {
+		do_action('teddybear/project/nonce/check', $_POST['_nonce']);
+		// $json = json_decode(file_get_contents(TEDDY_BEAR_CUSTOMIZE_ADDON_DIR_PATH . '/templates/sample.product.json'));
+		// wp_send_json($json);
+
 		global $wpdb;global  $woocommerce;global $teddy_Product;global $teddy_Plushies;
-		// check_ajax_referer('futurewordpress/project/teddybearpopupaddon/verify/nonce', '_nonce', true);
+		// check_ajax_referer('teddybear/project/teddybearpopupaddon/verify/nonce', '_nonce', true);
 		$dataset = $request = json_decode(preg_replace('/[\x00-\x1F\x80-\xFF]/', '', stripslashes(html_entity_decode(isset($_POST['dataset'])?$_POST['dataset']:'{}'))), true);
 		
 		$_product = wc_get_product($request['product_id']);
@@ -118,7 +125,8 @@ class Ajax {
 		wp_send_json_success( $json, 200 );
 	}
 	public function submit_popup() {
-		// check_ajax_referer('futurewordpress/project/teddybearpopupaddon/verify/nonce', '_nonce', true);
+		do_action('teddybear/project/nonce/check', $_POST['_nonce']);
+		// check_ajax_referer('teddybear/project/teddybearpopupaddon/verify/nonce', '_nonce', true);
 		$request = json_decode(preg_replace('/[\x00-\x1F\x80-\xFF]/', '', stripslashes(html_entity_decode($_POST['dataset']))), true);
 		$json = [
 			'hooks' => ['popup_submitting_done'],
@@ -162,16 +170,17 @@ class Ajax {
 		wp_send_json_success( $json, 200 );
 	}
 	public function search_popup() {
+		do_action('teddybear/project/nonce/check', $_POST['_nonce']);
 		global $wpdb;
 		$json = ['hooks' => ['popup_searching_done']];
-		// check_ajax_referer('futurewordpress/project/teddybearpopupaddon/verify/nonce', '_nonce', true);
+		// check_ajax_referer('teddybear/project/teddybearpopupaddon/verify/nonce', '_nonce', true);
 		$request = json_decode(preg_replace('/[\x00-\x1F\x80-\xFF]/', '', stripslashes(html_entity_decode($_POST['formdata']))), true);
-		
+		// 
 		wp_send_json_error($json);
 	}
 	public function save_product() {
-		$result = [];
-		$result['hooks'] = ['product_updated'];$result['message'] = __( 'Popup updated Successfully', 'teddybearsprompts' );
+		do_action('teddybear/project/nonce/check', $_POST['_nonce']);
+		$result = [];$result['hooks'] = ['product_updated'];$result['message'] = __( 'Popup updated Successfully', 'teddybearsprompts' );
 		$request = json_decode(preg_replace('/[\x00-\x1F\x80-\xFF]/', '', stripslashes(html_entity_decode($_POST['dataset']))), true);
 		$result['json'] = $request;
 		$product_id = $_POST['product_id'];
@@ -179,6 +188,7 @@ class Ajax {
 		wp_send_json_success($result, 200);
 	}
 	public function edit_product() {
+		do_action('teddybear/project/nonce/check', $_POST['_nonce']);
 		global $teddy_Product;$json = [];global $teddy_Plushies;// $teddy_Product->
 		$json['product'] = (array) get_post_meta($_POST['product_id'], '_product_custom_popup', true);
 		$json['hooks'] = ['gotproductpopupresult'];
@@ -187,6 +197,9 @@ class Ajax {
 			foreach($json['product'][$_posi] as $i => $_prod) {
 				if(isset($_prod['headerbg']) && !empty(trim($_prod['headerbg']))) {
 					$json['product'][$_posi][$i]['headerbgurl'] = wp_get_attachment_url($_prod['headerbg']);
+				}
+				if(isset($_prod['stepicon_id']) && !empty(trim($_prod['stepicon_id']))) {
+					$json['product'][$_posi][$i]['stepicon'] = apply_filters('teddy/library/icon', '', (int) $_prod['stepicon_id']);
 				}
 				if(isset($_prod['product']) && !empty(trim($_prod['product']))) {
 					$_product = wc_get_product($_prod['product']);
@@ -247,6 +260,26 @@ class Ajax {
 				'ID'		=> $_post->ID,
 				'title'		=> get_the_title($_post),
 				'thumbnail'	=> get_the_post_thumbnail_url($_post)
+			];
+		}
+		$json['categories'] = [];
+		$args = [
+			'taxonomy'     => 'product_cat',
+			'orderby'      => 'name',
+			'show_count'   => true,
+			'pad_counts'   => true,
+			'hierarchical' => false,
+			'hide_empty'   => false,
+			'title_li'     => ''
+		];
+		$_categories = get_categories($args);
+		foreach($_categories as $_cat) {
+			$json['categories'][] = [
+				'ID'		=> $_cat->term_id,
+				'title'		=> $_cat->name,
+				'thumbnail'	=> false,
+				'count'		=> $_cat->count,
+				'link'		=> get_term_link($_cat->slug, 'product_cat'),
 			];
 		}
 		wp_send_json_success($json, 200);
@@ -340,7 +373,8 @@ class Ajax {
 	}
 
 	public function update_orderitem() {
-		global $teddy_Product;global $teddy_Meta;
+		do_action('teddybear/project/nonce/check', $_POST['_nonce']);
+		global $teddy_Product;global $teddy_Meta;global $wpdb;
 		$json = ['hooks' => ['order_item_update_failed'], 'message' => __('Something went wrong. Please review your request again.', 'teddybearsprompts')];
 		// if(!isset($_POST['order_id']) || empty($_POST['order_id']) || !isset($_POST['item_id']) || empty($_POST['item_id']) || !isset($_POST['teddyname']) || empty($_POST['teddyname'])) {
 		// 	wp_send_json_error($json);
@@ -354,51 +388,32 @@ class Ajax {
 		foreach($order->get_items() as $item_id => $order_item) {
 			if(!in_array($item_id, $askedteddyinfo)) {continue;}
 			$product_id = $order_item->get_product_id();
-			$custom_popup = $teddy_Product->get_order_pops_meta($order, $order_item, $product_id);
-			foreach($custom_popup as $posI => $posRow) {
-				foreach($posRow as $i => $field) {
-					if($field['type'] == 'info') {
-						$item_meta_data = $teddy_Meta->get_order_item_dataset($order_item, $order);
-						if(!$item_meta_data) {continue;}
-						foreach($item_meta_data['field'] as $i => $iRow) {
-							foreach($iRow as $j => $jRow) {
-								if($field['steptitle'] == $jRow['title'] && $j == 0) {
-									if(
-										isset($item_meta_data['field'][$i][0]['value'])
-										// && isset($item_meta_data['field'][$i][1]['value'])
-										// && isset($item_meta_data['field'][$i][2]['value'])
-										// && isset($item_meta_data['field'][$i][3]['value'])
-									) {
-										foreach(['teddyname', 'teddybirth', 'recievername', 'createdby'] as $fI => $fIText) {
-											$reqsField = $_POST['item-' . $item_id]??[];
-											if(isset($item_meta_data['field'][$i][$fI]) && isset($reqsField[$fIText])) {
-												$item_meta_data['field'][$i][$fI]['value'] = $reqsField[$fIText];
-											}
-											
-										}
-										
-										global $wpdb;
-										$wpdb->update(
-											"{$wpdb->prefix}woocommerce_order_itemmeta",
-											[
-												'meta_value'		=> maybe_serialize($item_meta_data)
-											],
-											[
-												'meta_key'		=> 'custom_dataset',
-												'order_item_id'	=> $item_id
-											],
-											['%s'],
-											['%s', '%d']
-										);
-										$json['message'] = __('Successfully Updated your teddy bear name.', 'teddybearsprompts');
-										$json['hooks'] = ['order_item_update_success'];
-										$failed = false;
-									}
-								}
-							}
-						}
-					}
-				}
+			// $custom_popup = $teddy_Product->get_order_pops_meta($order, $order_item, $product_id);
+			$_dataset = $teddy_Meta->get_order_item_dataset($order_item, $order);
+			$_infoIndex = array_search('info', array_column($_dataset, 'type'));
+			if (isset($_dataset[$_infoIndex]) && isset($_dataset[$_infoIndex]['type']) && $_dataset[$_infoIndex]['type'] == 'info') {
+				$_dataset[$_infoIndex]['infos'] = $_dataset[$_infoIndex]['infos']??[];
+				$_infos = $_POST['item-' . $item_id]??[];
+				if (empty($_infos)) {continue;}
+				$_dataset[$_infoIndex]['infos'] = [
+					...$_dataset[$_infoIndex]['infos'],
+					...$_infos
+				];
+				$wpdb->update(
+					"{$wpdb->prefix}woocommerce_order_itemmeta",
+					[
+						'meta_value'		=> maybe_serialize($_dataset)
+					],
+					[
+						'meta_key'		=> 'custom_dataset',
+						'order_item_id'	=> $item_id
+					],
+					['%s'],
+					['%s', '%d']
+				);
+				$json['message'] = __('Successfully Updated your teddy bear name.', 'teddybearsprompts');
+				$json['hooks'] = ['order_item_update_success'];
+				$failed = false;
 			}
 		}
 		if(!$failed) {
@@ -407,7 +422,8 @@ class Ajax {
 			wp_send_json_error($json);
 		}
 	}
-	public function suggested_names() {
+	public function suggested_names($return_obj = false) {
+		if (!$return_obj) {do_action('teddybear/project/nonce/check', $_POST['_nonce']);}
 		$args = ['names' => [], 'hooks' => ['namesuggestionloaded']];
 		$filteredKeys = array_keys(TEDDY_BEAR_CUSTOMIZE_ADDON_OPTIONS);
 		$filteredData = [];
@@ -423,11 +439,12 @@ class Ajax {
 		if (apply_filters('teddybear/project/system/isactive', 'names-randomize')) {
 			shuffle($args['names']);
 		}
-		
-		wp_send_json_success($args);
+		if (!$return_obj) {wp_send_json_success($args);}
+		return $args['names'];
 	}
 
 	public function checkout_fetch() {
+		do_action('teddybear/project/nonce/check', $_POST['_nonce']);
 		$json = ['hooks' => ['checkout-fetch-failed'], 'message' => __('Something went wrong. Please review your request again.', 'teddybearsprompts')];
 		if(isset($_POST['_meta_id'])) {
 			$json['metas'] = [];$_meta_id = explode(',', $_POST['_meta_id']);
@@ -446,5 +463,17 @@ class Ajax {
 			wp_send_json_success($json);
 		}
 		wp_send_json_error($json);
+	}
+	public function remove_customizations() {
+		global $wpdb;
+		$meta_key = '';
+		$table = $wpdb->prefix . 'postmeta';
+		$res = $wpdb->get_results(
+			$wpdb->prepare(
+				"SELECT * FROM {$table} WHERE meta_key=%s LIMIT 50;",
+				'_product_custom_popup'
+			)
+		);
+		print_r($res);wp_die();
 	}
 }

@@ -41,7 +41,7 @@ const mediaImages = {
       },
       uploadBlobData: (blobData, imageName, thisClass) => {
         var formdata = new FormData();
-        formdata.append('action', 'futurewordpress/project/teddybearpopupaddon/action/import_image_from_blob');
+        formdata.append('action', 'teddybear/project/teddybearpopupaddon/action/import_image_from_blob');
         formdata.append('_nonce', thisClass.ajaxNonce);
         formdata.append('image', blobData, imageName);
         formdata.append('imageName', imageName);

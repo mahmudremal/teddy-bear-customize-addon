@@ -18,12 +18,19 @@ This plugin specially created for [Dubido](https://dubido.co.il/), a customized 
   * One click Import feature.
   * One click Export feature.
 
-![Products](/templates/screenshot/dolls-preview.jpg)
-![Pops](/templates/screenshot/customization-screen.png)
-![Hearts](/templates/screenshot/select-hearts.jpg)
-![Outfits](/templates/screenshot/select-outfits.jpg)
-![Recorder](/templates/screenshot/voice-addons.jpg)
-![Confirm](/templates/screenshot/confirmation.jpg)
+
+![Dolls row](/templates/screenshot/dolls-preview.jpg)
+![Preload](/templates/screenshot/preloading.png)
+![Customization](/templates/screenshot/customization-screen.png)
+![Hearts](/templates/screenshot/hearts.png)
+![Outfits](/templates/screenshot/outfits.png)
+![voice](/templates/screenshot/voice-addons.png)
+![Plushies Informations](/templates/screenshot/infos.png)
+![preview](/templates/screenshot/preview.png)
+![confirmation](/templates/screenshot/confirmation.png)
+![Certificate english](/templates/screenshot/certificate-english-version.png)
+![Certificate hebrew](/templates/screenshot/certificate-hebrew-version.png)
+![Certificate printout](/templates/screenshot/printout.png)
 
 
 #### Hey there, I'm Remal Mahmud, currently diving into some exciting freelance projects! 😉 Feel free to explore and don't hesitate to reach out!

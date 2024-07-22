@@ -20,6 +20,7 @@ class Menus {
 		add_filter('teddybear/project/settings/general', [$this, 'general'], 10, 1);
 		add_filter('teddybear/project/settings/fields', [$this, 'menus'], 10, 1);
 		add_action('in_admin_header', [$this, 'in_admin_header'], 100, 0);
+		add_filter('teddybear/project/settings/fields/content', [$this, 'settings_fields_content'], 10, 2);
 	}
 	public function register_menus() {
 		register_nav_menus([
@@ -70,8 +71,7 @@ class Menus {
 	/**
 	 * Supply necessry tags that could be replace on frontend.
 	 * 
-	 * @return string
-	 * @return array
+	 * @return string|array
 	 */
 	public function commontags($html = false) {
 		$arg = [];$tags = [
@@ -620,7 +620,14 @@ class Menus {
 					'default'				=> false,
 					'options'				=> $this->get_query(['post_type' => 'elementor_library', 'type' => 'option', 'limit' => 500])
 				],
-				
+				[
+					'id' 					=> 'certificate-bgtemplate',
+					'label'					=> __('Certificate background', 'teddybearsprompts'),
+					'description'			=> __('Select a background image for certificate.', 'teddybearsprompts'),
+					'type'					=> 'iconupload',
+					'default'				=> __('Select background', 'teddybearsprompts')
+				],
+				// 
 			]
 		];
 		$args['translate']		= [
@@ -805,6 +812,39 @@ class Menus {
 			];
 		}
 		return $args;
+	}
+	public function settings_fields_content($html, $row) {
+		switch ($row['type']??'') {
+			case 'iconupload':
+				ob_start();
+				?>
+				<div class="iconupload">
+					<div class="iconupload-wrap">
+						<div class="iconupload-block">
+							<?php
+							$_data = apply_filters('teddybear/project/system/getoption', $row['id'], false);
+							$_exist = ($_data && is_int($_data))?apply_filters('teddy/library/icon', false, (int) $_data):false;
+							$_exist = ($_exist && !empty($_exist))?$_exist:false;
+							?>
+							<?php if ($_exist) : ?>
+								<div class="iconupload-preview">
+									<span class="deshicons deshicons-cross"></span>
+									<img src="<?php echo esc_url($_exist); ?>" alt="<?php echo esc_attr(pathinfo($_exist, PATHINFO_BASENAME)); ?>" class="iconupload-image" />
+								</div>
+							<?php endif; ?>
+							<button type="button" class="btn button iconupload-select">
+								<?php echo esc_html($_exist?__('Change Icon', 'teddybearsprompts'):__('Select Icon', 'teddybearsprompts')); ?>
+							</button>
+						</div>
+					</div>
+				</div>
+				<?php
+				$html = ob_get_clean();
+				break;
+			default:
+				break;
+		}
+		return $html;
 	}
 }
 

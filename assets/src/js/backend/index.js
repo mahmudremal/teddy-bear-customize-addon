@@ -5,6 +5,7 @@ import Toastify from 'toastify-js';
 import Sortable from 'sortablejs';
 import mediaImages from "./media";
 import WaveSurfer from 'wavesurfer.js';
+import EnvelopePlugin from 'wavesurfer.js/dist/plugins/envelope.js';
 import tippy from 'tippy.js';
 import he from 'he';
 import icons from "../frontend/icons";
@@ -47,6 +48,7 @@ import Ask from "./ask";
 			this.init_tooltips();
 			this.init_wavesurfer();
 			this.initRandTeddyName();
+			this.init_voice_records();
 			this.initRandTeddyBadge();
 			this.downloadable_attached_pops();
 			this.fix_product_data_display_issue();
@@ -139,7 +141,7 @@ import Ask from "./ask";
 		init_i18n() {
 			const thisClass = this;
 			var formdata = new FormData();
-			formdata.append('action', 'futurewordpress/project/ajax/i18n/js');
+			formdata.append('action', 'teddybear/project/ajax/i18n/js');
 			formdata.append('_nonce', thisClass.ajaxNonce);
 			thisClass.sendToServer(formdata);
 		}
@@ -152,7 +154,7 @@ import Ask from "./ask";
 				cache: false,
 				contentType: false,
 				processData: false,
-				success: function(json) {
+				success: (json) => {
 					thisClass.lastJson = json.data;
 					if((json?.data??false)) {
 						var message = ((json?.data??false)&&typeof json.data==='string')?json.data:(
@@ -169,10 +171,11 @@ import Ask from "./ask";
 						}
 					}
 				},
-				error: function(err) {
+				error: (err) => {
 					// thisClass.notify.fire({icon: 'warning',title: err.responseText})
-					thisClass.toastify({text: err.responseText,className: "info",style: {background: "linear-gradient(to right, #00b09b, #96c93d)"}}).showToast();
 					console.log(err.responseText);
+					if (err.responseText === false || err.responseText == '0') {return;}
+					thisClass.toastify({text: err.responseText,className: "info",style: {background: "linear-gradient(to right, #00b09b, #96c93d)"}}).showToast();
 				}
 			});
 		}
@@ -321,7 +324,7 @@ import Ask from "./ask";
 				html: html.innerHTML,
 				didOpen: async () => {
 					var formdata = new FormData();
-					formdata.append('action', 'futurewordpress/project/ajax/edit/product');
+					formdata.append('action', 'teddybear/project/ajax/edit/product');
 					formdata.append('_nonce', thisClass.ajaxNonce);
 					formdata.append('product_id', product_id);
 
@@ -348,18 +351,44 @@ import Ask from "./ask";
 				}
 			})
 		}
-		init_wavesurfer__() {
-			document.querySelectorAll('.fwp-outfit__player[data-audio]').forEach((el)=>{
-				const wavesurfer = WaveSurfer.create({
-					container: el,
-					waveColor: '#4F4A85',
-					progressColor: '#383351',
-					url: el.dataset.audio,
-				  })
-				  
-				  wavesurfer.on('interaction', () => {
-					wavesurfer.play()
-				  })
+		init_voice_records() {
+			const thisClass = this;
+			document.querySelectorAll('.fwp-outfit__voice').forEach(container => {
+				container.querySelectorAll('.voicegrid__player[data-config]').forEach(element => {
+					const config = JSON.parse(element.dataset?.config??'{}');
+					console.log(config);
+					const download = document.createElement('a');
+					const button = document.createElement('button');
+					const playingon = document.createElement('div');
+					// playingon.style.height = '40px';
+					container.classList.add('fwp-outfit__voice__enabled');
+					button.type = 'button';button.textContent = thisClass.i18n?.play??'Play';
+					download.target = '_blank';download.href = config.url;download.download = config.name;
+					download.textContent = thisClass.i18n?.download??'Download';
+					const wave = WaveSurfer.create({
+						height: 80,
+						url: config.url,
+						reflection: true,
+						responsive: true,
+						mediaControls: true,
+						container: playingon,
+						waveColor: '#4F4A85',
+						progressColor: '#383351'
+					});
+					button.addEventListener('click', (event) => {
+						event.preventDefault();
+						// event.stopPropagation();
+						wave.playPause();
+					});
+					// wave.on('interaction', () => wave.play());
+					wave.once('ready', () => {
+						wave.on('play', () => button.textContent = thisClass.i18n?.pause??'Pause');
+						wave.on('pause', () => button.textContent = thisClass.i18n?.play??'Play');
+					});
+					element.appendChild(button);
+					element.appendChild(playingon);
+					element.appendChild(download);
+				});
 			});
 		}
 		init_wavesurfer() {
@@ -440,26 +469,26 @@ import Ask from "./ask";
 		}
 		init_tooltips() {
 			const thisClass = this;
-			document.querySelectorAll('.fwp-outfit__image:not([data-handled-tippy])').forEach((el)=>{
-				el.dataset.handledTippy = true;
-				tippy(el, {
+			document.querySelectorAll('.fwp-outfit__image:not([data-handled-tippy])').forEach(element => {
+				element.dataset.handledTippy = true;
+				tippy(element, {
 					allowHTML: true,
-					content: '\
-					<div class="fwp-image__tippy">\
-						<img src="'+el.src+'" alt="" class="fwp-image__tippy__image">\
-						<strong class="fwp-image__tippy__price">'+el.dataset.item+' ('+el.dataset.price+')</strong>\
-						<span class="fwp-image__tippy__title">'+el.dataset.product+'</span>\
-					</div>'
+					content: `
+					<div class="fwp-image__tippy">
+						<img src="${element.src}" alt="" class="fwp-image__tippy__image">
+						<strong class="fwp-image__tippy__price">${element.dataset.item} (${element.dataset.price})</strong>
+						<span class="fwp-image__tippy__title">${element.dataset.product}</span>
+					</div>`
 				});
 			});
-			document.querySelectorAll('.fwppopspopup-open:disabled').forEach((el)=>{
-				tippy(el.parentElement, {
+			document.querySelectorAll('.fwppopspopup-open:disabled').forEach(element => {
+				tippy(element.parentElement, {
 					content: thisClass.i18n?.globallydefined??'This product is globally defined and until disabling forceful definition, you can\'t customize this popup.'
 				});
 			});
-			document.querySelectorAll('.tippy-tooltip:not([data-handled-tippy])').forEach((el)=>{
-				el.dataset.handledTippy = true;
-				tippy(el, {content: el.dataset?.tippyContent??false});
+			document.querySelectorAll('.tippy-tooltip:not([data-handled-tippy])').forEach(element => {
+				element.dataset.handledTippy = true;
+				tippy(element, {content: element.dataset?.tippyContent??false});
 			});
 		}
 		initRandTeddyName() {
@@ -523,11 +552,15 @@ import Ask from "./ask";
 					el.dataset.handled = true;
 					el.querySelectorAll('.fwp-tabs__nav-item').forEach((tabEl, tabI) => {
 						tabEl.addEventListener('click', function(event) {
-							if(this.dataset.target) {
+							event.preventDefault();
+							if(tabEl.dataset.target) {
 								el.querySelector('.active').classList.remove('active');
-								this.classList.add('active');
-								document.querySelector(this.dataset.target).parentElement.querySelector('.active').classList.remove('active');
-								document.querySelector(this.dataset.target).classList.add('active');
+								tabEl.classList.add('active');
+								[...document.querySelectorAll('.fwp-tabs__tabs-field > *')].map(elem => elem.classList.remove('active'));
+								var tabC = document.querySelector(tabEl.dataset.target);
+								if (tabC) {tabC.classList.add('active');}
+								var _tabInput = document.querySelector('input[type="hidden"][name="_dubido_opened_tab"]');
+								if (_tabInput) {_tabInput.value = tabEl.dataset.tabKey;}
 							}
 						});
 					});

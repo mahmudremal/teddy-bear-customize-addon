@@ -108,7 +108,6 @@ class Product {
 		$json = ($json && !empty($json))?(array)$json:[];
 		foreach ($json as $_posI => $_pos) {
 			foreach ($json[$_posI] as $i => $_prod) {
-
 				/**
 				 * Translation operations.
 				 */
@@ -119,10 +118,12 @@ class Product {
 						$json[$_posI][$i][$toTrans] = apply_filters('teddybear/project/system/translate/string', $_prod[$toTrans], 'teddybearsprompts', $_prod[$toTrans] . ' - input field');
 					}
 				}
-				
-				
+				// 
 				if (!empty(trim($_prod['headerbg']))) {
 					$json[$_posI][$i]['headerbgurl'] = wp_get_attachment_url($_prod['headerbg']);
+				}
+				if(isset($_prod['stepicon_id']) && !empty(trim($_prod['stepicon_id']))) {
+					$json[$_posI][$i]['stepicon'] = apply_filters('teddy/library/icon', '', (int) $_prod['stepicon_id']);
 				}
 				if (isset($_prod['product']) && !empty(trim($_prod['product']))) {
 					$_product = wc_get_product((int) $_prod['product']);
@@ -138,7 +139,7 @@ class Product {
 						}
 					}
 				}
-				
+				// 
 				if (isset($_prod['options'])) {
 					$_prod['options'] = (!empty($_prod['options']))?(array)$_prod['options']:[];
 					foreach ($_prod['options'] as $j => $option) {
@@ -217,9 +218,36 @@ class Product {
 				}
 				if (isset($_prod['groups'])) {
 					foreach ($_prod['groups'] as $k => $group) {
+						if(isset($group['categories'])) {
+							$_option_cats = [];
+							$group['options'] = isset($group['options'])?(array) $group['options']:[];
+							foreach($group['categories'] as $l => $option) {
+								if (isset($option['label']) && !empty($option['label'])) {
+									$_option_cats[] = intval($option['label']);
+								}
+							}
+							if(!empty($_option_cats)) {
+								$_products = wc_get_products([
+									'limit'					=> 50,
+									'return'				=> 'ids',
+									'orderby'				=> 'date',
+									'order'					=> 'DESC',
+									'product_category_id'	=> $_option_cats
+								]);
+								if ($_products && !is_wp_error($_products)) {
+									foreach ($_products as $_product) {
+										$group['options'][] = [
+											'label'				=> $_product,
+											// 'product'		=> $_product->get_id(),
+											// 'cost'			=> $_product->get_price(),
+											'product_category'	=> $_option_cats
+										];
+									}
+								}
+							}
+						}
 						if (isset($group['options'])) {
 							foreach ($group['options'] as $l => $option) {
-
 								/**
 								 * Translation operations.
 								 */
@@ -265,9 +293,7 @@ class Product {
 									$json[$_posI][$i]['groups'][$k]['options'][$l] = $option;
 								}
 							}
-							/**
-							 * Resort them with serialize
-							 */
+							/* Resort them with serialize */
 							// $group['options'] = array_values($group['options']);
 						}
 					}

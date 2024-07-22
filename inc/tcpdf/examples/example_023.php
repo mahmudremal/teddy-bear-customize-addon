@@ -69,7 +69,7 @@ if (@file_exists(dirname(__FILE__).'/lang/eng.php')) {
 // ---------------------------------------------------------
 
 // set font
-$pdf->setFont('times', 'BI', 14);
+$pdf->setFont('Courier', 'BI', 14);
 
 // Start First Page Group
 $pdf->startPageGroup();

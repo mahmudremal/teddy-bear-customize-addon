@@ -202,10 +202,10 @@ class Option {
 			case 'checkbox_multi':
 			case 'radio':
 			case 'select_multi':
-				$html .= apply_filters('teddybear/project/settings/fields/label', '<br/><span class="description">' . $field['description'] . '</span>', $field);
+				$html .= apply_filters('teddybear/project/settings/fields/content', '<br/><span class="description">' . $field['description'] . '</span>', $field);
 			break;
 			default:
-				$html .= apply_filters('teddybear/project/settings/fields/label', '<label for="' . esc_attr($field['id']) . '"><span class="description">' . $field['description'] . '</span></label>' . "\n", $field);
+				$html .= apply_filters('teddybear/project/settings/fields/content', '<label for="' . esc_attr($field['id']) . '"><span class="description">' . $field['description'] . '</span></label>' . "\n", $field);
 			break;
 		}
 		echo $html;

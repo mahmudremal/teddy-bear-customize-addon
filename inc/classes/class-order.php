@@ -84,105 +84,195 @@ class Order {
 				foreach ($order->get_items() as $order_item_id => $order_item) {
 					$item_name = $order_item->get_name();
 					$item_meta_data = $order_item->get_meta_data();
-					
 					$name_required = $this->is_name_required($order, $order_item);
+					// 
 					if ($name_required) {
+						$name_required = wp_parse_args((array) $name_required, [
+							'teddy_birth' => ''
+						]);
+						$name_required['teddybirth'] = $name_required['teddy_birth'];
+						if (empty(trim($name_required['teddy_birth']))) {
+							$name_required['teddy_birth'] = date('d-M-Y H:i:s');
+						}
+						$name_required['teddy_birth'] = date('Y-m-d', strtotime($name_required['teddy_birth']));
 						$teddyNameRequired[] = [
-							'prod_name'			=> $item_name,
 							'order_id'			=> $order_id,
+							'prod_name'			=> $item_name,
 							'item_id'			=> $order_item_id,
 							'info'				=> $name_required
 						];
 					}
-					if (!empty($item_meta_data)) {
+					$_dataset = $teddy_Meta->get_order_item_dataset($order_item, $order);
+					// echo '<pre style="display: n one;">';print_r($_dataset);echo '<pre>';
+					if (!empty($_dataset)) {
 						?>
-						<span class="fwp-outfit__product"><?php echo esc_html(sprintf('Item: %s', $item_name)); ?></span>
-						<ul class="fwp-outfit__list">
-						<?php
-						// Getting Icons.
-						$custom_dataset = $teddy_Meta->get_order_item_dataset($order_item, $order);
-						$custom_charges = $teddy_Meta->get_order_item_charges($order_item, $order);
-						$custom_popset = $teddy_Meta->get_order_item_popset($order_item, $order);
-						
-						foreach ($item_meta_data as $meta) {
-							if (!$this->is_allowed_meta_tag($meta->key, $meta, $item_meta_data)) {continue;}
-
-							if (is_array($meta->value)) {continue;}
-							$thumbnailImage = $voiceFileExists = $voiceFileArgs = false;
-							
-							
-							if ($custom_dataset && isset($custom_dataset['field'])) {
-								foreach ((array) $custom_dataset['field'] as $i => $iRow) {
-									if (is_array($iRow)) {
-										foreach ($iRow as $j => $jRow) {
-											$jRow = (object) $jRow;
-											if (
-												isset($jRow->value) && isset($jRow->price) && isset($jRow->image) && 
-												!empty($jRow->image) && strtolower($jRow->value) == strtolower($meta->key)
-												// && $jRow->price == $meta->value
-											) {
-												$thumbnailImage = $jRow->image;
-												$attachment_id = attachment_url_to_postid($thumbnailImage);
-												if ($attachment_id) {
-													$thumbnailImage = wp_get_attachment_thumb_url($attachment_id);
-												} else {
-													// print_r('Not found');
+						<span class="fwp-outfit__product"><?php echo esc_html(sprintf(__('Item: %s', 'teddybearsprompts'), $item_name)); ?></span>
+						<ol class="fwp-outfit__list">
+							<?php
+							$_object = [];$_canvas = false;
+							foreach ($_dataset as $key => $dataRow) {
+								if (!is_array($dataRow)) {continue;}
+								if (!isset($dataRow['type'])) {continue;}
+								if (isset($dataRow['_canvas']) && !$_canvas) {
+									$_canvas = (array) $dataRow['_canvas'];
+								}
+								switch ($dataRow['type']) {
+									case 'radio':
+									case 'checkbox':
+									case 'select':
+										if (isset($dataRow['options'])) {
+											foreach ($dataRow['options'] as $oIndex => $option) {
+												// if (isset($option['product']) && !empty($option['product'])) {continue;}
+												$_object[] = [
+													'product'		=> isset($option['product'])?$option['product']:false,
+													'cost'			=> isset($option['cost'])?floatval($option['cost']):0,
+													'label'			=> isset($option['label'])?$option['label']:false,
+													'type'			=> $dataRow['type']
+												];
+											}
+										}
+										break;
+									case 'outfit':
+										if (isset($dataRow['groups'])) {
+											foreach ($dataRow['groups'] as $gIndex => $group) {
+												if (isset($group['options'])) {
+													foreach ($group['options'] as $oIndex => $option) {
+														// if (isset($option['product']) && !empty($option['product'])) {continue;}
+														$_object[] = [
+															'product'		=> isset($option['product'])?$option['product']:false,
+															'cost'			=> isset($option['cost'])?floatval($option['cost']):0,
+															'label'			=> isset($option['label'])?$option['label']:false,
+															'type'			=> $dataRow['type']
+														];
+													}
 												}
 											}
 										}
-									}
+										break;
+									case 'voice':
+										$option = $dataRow;
+										$_object[] = [
+											'product'		=> isset($option['product'])?$option['product']:false,
+											'cost'			=> isset($option['cost'])?floatval($option['cost']):0,
+											'label'			=> isset($option['label'])?$option['label']:false,
+											'attaced'		=> isset($option['attaced'])?$option['attaced']:[],
+											'type'			=> $dataRow['type']
+										];
+										break;
+									default:
+										$option = $dataRow;
+										$_object[] = [
+											'product'		=> isset($option['product'])?$option['product']:false,
+											'cost'			=> isset($option['cost'])?floatval($option['cost']):0,
+											'label'			=> isset($option['label'])?$option['label']:false,
+											'attaced'		=> isset($option['attaced'])?$option['attaced']:[],
+											'infos'			=> isset($option['infos'])?$option['infos']:false,
+											'type'			=> $dataRow['type'],
+										];
+										break;
 								}
 							}
-							?>
-							<li class="fwp-outfit__items">
-								<?php if ($thumbnailImage): ?><img src="<?php echo esc_url($thumbnailImage); ?>" alt="<?php echo esc_attr($meta->value); ?>" class="fwp-outfit__image" data-product="<?php echo esc_attr($item_name); ?>" data-item="<?php echo esc_attr($meta->key); ?>" data-price="<?php echo esc_attr($meta->value); ?>"><?php endif; ?>
-								<span class="fwp-outfit__title"><?php echo esc_html($meta->key); ?></span>
-								<span class="fwp-outfit__price"><?php echo wp_kses_post($meta->value); ?></span>
-							</li>
-							<?php
-						}
-						
-						if ($teddy_Voices->should_exists_voices($order, $order_item)) {
-							if ($teddy_Voices->has_single_voices($order, $order_item)) {
-								foreach ($teddy_Voices->get_single_voices($order, $order_item) as $voiceURL) {
-									?>
-									<li class="fwp-outfit__items fwp-outfit__audio">
-										<div class="fwp-outfit__player" data-audio="<?php echo esc_url(site_url(str_replace([ABSPATH], [''], $voiceURL))); ?>" title="<?php esc_attr_e('Voice', 'teddybearsprompts'); ?>"></div>
-									</li>
-									<?php
+							foreach ($_object as $_index => $_row) {
+								if (empty(trim($_row['label']))) {
+									if (isset($_row['product']) && !empty($_row['product'])) {
+										$product = wc_get_product((int) $_row['product']);
+										$_object[$_index]['label'] = $_row['label'] = $product->get_title();
+									}
+									if ($_row['type'] == 'info') {
+										$_object[$_index]['label'] = $_row['label'] = __('Information', 'teddybearsprompts');
+									}
 								}
-							} else {
 								?>
-								<li class="fwp-outfit__items fwp-outfit__emailvoice">
-									<?php esc_html_e('User have to send their voices.', 'teddybearsprompts'); ?>
+								<li class="fwp-outfit__items fwp-outfit__<?php echo esc_attr($_row['type']); ?>">
+									<div class="fwp-outfit__thumb">
+										<?php
+										$_product_id = (int) $_row['product']; // is_int((int) $_row['product'])?wc_get_product_id((int) $_row['product']):false;
+										if ((int) $_row['product'] > 0 && $_product_id && !is_wp_error($_product_id)) : ?>
+											<img src="<?php echo esc_url(apply_filters('teddy/clean_url', wp_get_attachment_thumb_url(get_post_meta($_product_id, '_thumbnail_id', true)))); ?>" alt="" srcset="">
+										<?php endif ?>
+									</div>
+									<<?php echo esc_attr(
+										(isset($_row['product']) && $_row['product'] > 0)?'a':'span'
+									); ?> href="<?php echo esc_url(get_edit_post_link((int) $_row['product'])); ?>" target="_blank"><?php echo esc_html(sprintf(__('%s:', 'teddybearsprompts'), ucfirst($_row['label']))); ?></<?php echo esc_attr(
+										(isset($_row['product']) && $_row['product'] > 0)?'a':'span'
+									); ?>>
+									<?php
+									switch ($_row['type']) {
+										case 'voice':
+											if (isset($_row['attaced']) && is_array($_row['attaced'])) {
+												if (isset($_row['attaced']['later'])) {
+													?>
+													<span><?php echo esc_html(__('Voice will be sent through email.', 'teddybearsprompts')); ?></span>
+													<?php
+												} elseif (isset($_row['attaced']['skip'])) {
+													?>
+													<span><?php echo esc_html(__('Voice Skipped.', 'teddybearsprompts')); ?></span>
+													<?php
+												} elseif (isset($_row['attaced']['blob'])) {
+													$voicePath = TEDDY_BEAR_CUSTOMIZE_ADDON_UPLOAD_DIR . $_row['attaced']['blob'];
+													if (file_exists($voicePath) && !is_dir($voicePath)) {
+														$voiceInfo = (object) [
+															'path'			=> $voicePath,
+															'size'			=> filesize($voicePath),
+															'name'			=> basename($voicePath),
+															// 'exist'		=> file_exists($voicePath),
+															'type'        	=> mime_content_type($voicePath),
+															'url'			=> str_replace(ABSPATH, site_url('/'), $voicePath),
+															'alt'			=> sprintf(__('Voice Attachment: %s', 'teddybearsprompts'), basename($voicePath))
+														];
+														?>
+														<div class="voicegrid">
+															<span class="voicegrid__method"><?php echo esc_html(sprintf(__('Method: %s', 'teddybearsprompts'), ucfirst($_row['attaced']['method']))); ?></span>
+															<div class="voicegrid__block">
+																<div class="voicegrid__player" data-config="<?php echo esc_attr(wp_json_encode($voiceInfo)); ?>"></div>
+															</div>
+														</div>
+														<?php
+													}
+												} else {
+													?><span><?php echo esc_html(__('No voice attached for this item.', 'teddybearsprompts')); ?></span><?php
+												}
+											}
+											break;
+										case 'info':
+											// btn button 
+											?><a href="<?php echo esc_url(site_url(sprintf('/certificates/%d/%d/', $order_id, $order_item_id))); ?>" class="link" data-certificate="<?php echo esc_attr($order_item_id); ?>" target="_blank"><?php echo esc_html(__('Certificate', 'teddybearsprompts')); ?></a><?php
+											// 
+											// print_r($_row);
+											// 
+											if (isset($_row['infos']) && isset($_row['infos']['teddy_print']) && $_row['infos']['teddy_print']) {
+												?><span class="printout"><?php echo esc_html(__('Printout requested', 'teddybearsprompts')); ?></span><?php
+											}
+											break;
+										default:
+											?><span><?php echo wc_price($_row['cost']); ?></span><?php
+											break;
+									}
+									?>
 								</li>
 								<?php
 							}
-						}
-						?>
-						<?php $certificate_preview = site_url('/certificates/' . $order_id . '/' . $order_item_id . '/'); ?>
-						<?php if ($custom_dataset): ?>
-							<?php
-								$order_item_product = $order_item->get_product();
-								if (!$teddy_Plushies->is_accessory($order_item_product->get_id())): ?>
-									<li class="fwp-outfit__items <?php echo esc_attr((true)?'fwp-outfit__certificate':''); ?>">
-										<a href="<?php echo esc_url($certificate_preview); ?>" class="btn button link" data-certificate="<?php echo esc_attr($order_item_id); ?>" target="_blank"><?php esc_html_e('Certificate', 'teddybearsprompts'); ?></a>
-									</li>
-							<?php endif; ?>
-						<?php else: ?>
-							<li class="fwp-outfit__items <?php echo esc_attr((true)?'fwp-outfit__certificate':''); ?>">
-								<a href="<?php echo esc_url($certificate_preview); ?>" class="link" target="_blank"><?php esc_html_e('Necessery information missing on this item.', 'teddybearsprompts'); ?></a>
-							</li>
-						<?php endif; ?>
-						</ul>
+							$_canvas = ($_canvas == false)?[]:$_canvas;
+							foreach ((array) $_canvas as $_index => $_row) {
+								?>
+								<li class="fwp-outfit__items fwp-outfit__canvas">
+									<span class="fwp-outfit__title"><?php echo esc_html(__('Canvas preview', 'teddybearsprompts')); ?></span>
+									<img src="<?php echo esc_url(site_url($_row)); ?>" alt="<?php echo esc_attr(pathinfo($_row, PATHINFO_BASENAME)); ?>">
+								</li>
+								<?php
+							}
+							?>
+						</ol>
 						<?php
 					} else {
 						// echo '<p>No custom meta data found for this item.</p>';
 					}
 				}
 				if (count($teddyNameRequired) >= 1) {
+					global $teddy_Ajax;
 					?>
 					<script>window.teddyNameRequired = <?php echo json_encode($teddyNameRequired); ?>;</script>
+					<script>window.teddySuggestedNames = <?php echo json_encode($teddy_Ajax->suggested_names(true)); ?>;</script>
 					<?php
 				}
 				?>
@@ -191,7 +281,6 @@ class Order {
 		</div>
 		<?php
 	}
-
 
 
 
@@ -244,15 +333,69 @@ class Order {
 		/**
 		 * Here are the problem. Instead of handling Main product, it catched first product.
 		 */
-		$makeup = $cart_item['custom_makeup']??[];
-		if ($makeup && count($makeup) >= 1) {
-			foreach ($makeup as $meta) {
-				/**
-				 * Avoid product items from adding meta key & price.
-				 */
-				if (isset($meta['product']) && !empty($meta['product']) && is_numeric($meta['product'])) {continue;}
-				if (!empty($meta['item']) && !empty($meta['price']) && is_numeric($meta['price'])) {
-					$item->add_meta_data(esc_html($meta['item']), wc_price($meta['price']), true);
+		$_dataset = $cart_item['custom_dataset']??[];
+		if ($_dataset && count($_dataset) >= 1) {
+			foreach ($_dataset as $dataRow) {
+				if ($dataRow && is_array($dataRow)) {
+					try {
+						switch ($dataRow['type']) {
+							case 'radio':
+							case 'checkbox':
+							case 'select':
+								if (isset($dataRow['options'])) {
+									foreach ($dataRow['options'] as $index => $option) {
+										if (isset($option['cost'])) {
+											$option['label'] = empty($option['label'])?$dataRow['type']:$dataRow['label'];
+											$option['cost'] = is_string($option['cost'])?floatval($option['cost']):$option['cost'];
+											/* Avoid product items from adding meta key & price. */
+											if (isset($option['product']) && !empty($option['product']) && is_numeric($option['product'])) {
+												// 
+											} else if (!empty($option['label']) && !empty($option['cost']) && is_numeric($option['cost'])) {
+												$item->add_meta_data(esc_html($option['label']), wc_price($option['cost']), true);
+											} else {
+												// 
+											}
+										}
+									}
+								}
+								break;
+							case 'outfit':
+								if (isset($dataRow['groups'])) {
+									foreach ($dataRow['groups'] as $gIndex => $group) {
+										if (isset($group['options'])) {
+											foreach ($group['options'] as $oIndex => $option) {
+												if (isset($option['cost'])) {
+													$option['label'] = empty($option['label'])?$dataRow['type']:$dataRow['label'];
+													$option['cost'] = is_string($option['cost'])?floatval($option['cost']):$option['cost'];
+													/* Avoid product items from adding meta key & price. */
+													if (isset($option['product']) && !empty($option['product']) && is_numeric($option['product'])) {
+														// 
+													} else if (!empty($option['label']) && !empty($option['cost']) && is_numeric($option['cost'])) {
+														$item->add_meta_data(esc_html($option['label']), wc_price($option['cost']), true);
+													} else {
+														// 
+													}
+												}
+											}
+										}
+									}
+								}
+								break;
+							default:
+								$option = $dataRow;
+								if (isset($option['cost'])) {
+									$option['label'] = empty($option['label'])?$dataRow['type']:$dataRow['label'];
+									$option['cost'] = is_string($option['cost'])?floatval($option['cost']):$option['cost'];
+									/* Avoid product items from adding meta key & price. */
+									if (isset($option['product']) && !empty($option['product']) && is_numeric($option['product'])) {
+										// 
+									} else if (!empty($option['label']) && !empty($option['cost']) && is_numeric($option['cost'])) {
+										$item->add_meta_data(esc_html($option['label']), wc_price($option['cost']), true);
+									} else {}
+								}
+								break;
+						}
+					} catch (\Error $th) {}
 				}
 			}
 			$this->lastOrderItemMakeup[$cart_item_key] = $cart_item['custom_makeup']??[];
@@ -322,13 +465,9 @@ class Order {
 		global $teddy_Product;global $teddy_Certificate;
 		$order_id = $order->get_id();
 		// $order->get_status();
-		
 		$certificates = $teddy_Certificate->get_all_certificates($order, $preview);
 		$notFoundError = true;$errorMessage = false;
 		try {
-			// 
-			// print_r([$certificates, $preview]);wp_die('Hi');
-			// 
 			if (count($certificates) >= 1) {
 				$notFoundError = false;
 				do_action('teddybearpopupaddon_mail_certificates', $certificates, [
@@ -365,37 +504,34 @@ class Order {
 	}
 	public function is_name_required($order, $order_item) {
 		global $teddy_Product;global $teddy_Meta;
+		$requiredFields = ['teddy_name' => '', 'teddy_birth' => '', 'teddy_reciever' => '', 'teddy_sender' => ''];
 		$order_id = $order->get_id();
 		$item_id = $order_item->get_id();
 		$product_id = $order_item->get_product_id();
-		$popup_meta = $teddy_Product->get_order_pops_meta($order, $order_item, $product_id);
-		foreach ($popup_meta as $posI => $posRow) {
-			foreach ($posRow as $i => $field) {
-				if ($field['type'] == 'info') {
-					$item_meta_data = $teddy_Meta->get_order_item_dataset($order_item, $order);
-					if (!$item_meta_data || !isset($item_meta_data['field'])) {continue;}
-					foreach ($item_meta_data['field'] as $i => $iRow) {
-						foreach ($iRow as $j => $jRow) {
-							if ($field['steptitle'] == $jRow['title'] && $j == 0) {
-								return (
-									(isset($iRow[0]) && isset($iRow[0]['value']) && empty(trim($iRow[0]['value']))) || 
-									(isset($iRow[1]) && isset($iRow[1]['value']) && empty(trim($iRow[1]['value']))) || 
-									(isset($iRow[2]) && isset($iRow[2]['value']) && empty(trim($iRow[2]['value']))) || 
-									(isset($iRow[3]) && isset($iRow[3]['value']) && empty(trim($iRow[3]['value'])))
-								)?[
-									'teddyname'		=> ($iRow[0]??[])['value']??'',
-									'teddybirth'	=> empty(($iRow[1]??[])['value']??'')?'':date('Y-m-d', strtotime(
-										($iRow[1]??[])['value']??''
-									)),
-									'recievername'	=> ($iRow[2]??[])['value']??'',
-									'createdby'		=> ($iRow[3]??[])['value']??'',
-								]:false;
+		$_dataset = $teddy_Meta->get_order_item_dataset($order_item, $order);
+		// 
+		if ($_dataset && !empty($_dataset)) {
+			foreach ($_dataset as $index => $row) {
+				if (!isset($row['type'])) {continue;}
+				switch ($row['type']) {
+					case 'info':
+						if (!isset($row['infos'])) {return $requiredFields;}
+						foreach ($requiredFields as $rfield => $value) {
+							if (!isset($row['infos'][$rfield]) || empty(trim($row['infos'][$rfield]))) {
+								return [
+									...$requiredFields,
+									...$row['infos']
+								];
 							}
+							// $row = ['teddyname' => '', 'teddybirth' => '', 'recievername' => '', 'createdby' => ''];
 						}
-					}
+						break;
+					default:
+						break;
 				}
 			}
 		}
+
 		return false;
 	}
 	public function get_order_item_subtotal($order_item, $order_id, $additionalOnly = false) {
