@@ -35,7 +35,7 @@ const DOWNLOADS = {
                                     ${Object.keys(order_item.attached).map((key) => (
                                         order_item.attached[key] // && (order_item.attached[key]?.length >= 1)
                                     )?`
-                                        <span class="attachment__type">${key}</span>
+                                        <span class="attachment__type">${thisClass.i18n[key.toLowerCase()]??key}</span>
                                         <div class="attachment__row">
                                             ${
                                             (key == 'voices')?`
@@ -123,12 +123,15 @@ const DOWNLOADS = {
         })
     },
     get_merged_download_file_name: (link, type, order_item) => {
+        const extension = link.split('/').pop().split('.').pop();
+        const filename = link.split('/').pop().split('.')[0];
         switch (type) {
             case 'voices':
-                link = `recorded-${order_item.order_item_id}-${order_item.order_id}.${link.split('.').pop()}`;
+                // link = `recorded-${order_item.order_item_id}-${order_item.order_id}.${link.split('.').pop()}`;
+                link = `${order_item.order_id}.${extension}`;
                 break;
             default:
-                link = link.split('/').pop();
+                link = `${order_item.order_id}.${extension}`;
                 break;
         }
         return link;

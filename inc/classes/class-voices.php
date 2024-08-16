@@ -51,49 +51,22 @@ class Voices {
 	}
 	public function has_single_voices($order, $order_item, $args = []) {
 		global $teddy_Product;global $teddy_Order;global $teddy_Meta;
-		$order_id  = $order->get_id();
-		$item_id  = $order_item->get_id();
-		$product_id = $order_item->get_product_id();
-		$custom_popup = $teddy_Product->get_order_pops_meta($order, $order_item, $product_id);
-		if (!$custom_popup || empty($custom_popup)) {return false;}
 		$voiceFileExists = false;
-		
-		// $item_metas = $order_item->get_meta_data();
-		// foreach ($custom_popup as $posI => $posRow) {
-		// 	foreach ($posRow as $row) {
-		// 		if ($row['type'] == 'voice') {
-		// 			if ($this->should_exists_voices($order, $order_item)) {
-		// 				$meta_data = $teddy_Meta->get_order_item_dataset($order_item, $order);
-		// 				if (!$meta_data) {continue;}
-		// 				if (isset($meta_data['field'])) {
-		// 					if (!is_array($meta_data['field'])) {
-		// 						$meta_data = (array) $meta_data;
-		// 					}
-		// 					foreach ($meta_data['field'] as $field) {
-		// 						foreach ($field as $i => $row) {
-		// 							if (strtolower($row['title']) == 'voice') {
-		// 								$voiceFileExists = true;
-		// 							}
-		// 						}
-		// 					}
-		// 				}
-		// 			}
-		// 		}
-		// 	}
-		// }
-
+		// 
 		$custom_dataset = $teddy_Meta->get_order_item_dataset($order_item, $order);
-		if ($custom_dataset && isset($custom_dataset['field'])) {
-			foreach ($custom_dataset['field'] as $group) {
-				foreach ($group as $index => $row) {
-					if (isset($row['voice']) && !empty($row['voice'])) {
-						$voiceFileExists = true;
-					}
+		$_dataset = $teddy_Meta->get_order_item_dataset($order_item, $order);
+		if (!$_dataset) {return $voices;}
+		foreach ($_dataset as $row) {
+			if (!is_array($row) || !isset($row['type']) || $row['type'] != 'voice') {continue;}
+			if (!isset($row['attaced']) || empty($row['attaced'])) {$row['attaced'] = ['skip' => true];}
+			if (isset($row['attaced']['blob']) && !empty($row['attaced']['blob'])) {
+				$row['attaced']['blob'] = apply_filters('teddybear/project/slashes/fix', TEDDY_BEAR_CUSTOMIZE_ADDON_UPLOAD_DIR . $row['attaced']['blob']);
+				if (file_exists($row['attaced']['blob']) && !is_dir($row['attaced']['blob'])) {
+					return true;
 				}
 			}
 		}
-		
-		return $voiceFileExists;
+		return false;
 	}
 	public function should_exists_voices($order, $order_item, $args = []) {
 		global $teddy_Product;global $teddy_Order;global $teddy_Meta;
@@ -141,5 +114,20 @@ class Voices {
 		 * Return result.
 		 */
 		return $voiceShouldExists;
+	}
+	public function has_add_later($order, $order_item) {
+		global $teddy_Product;global $teddy_Meta;$_laters = false;
+		$order_id = $order->get_id();
+		$item_id = $order_item->get_id();
+		$product_id = $order_item->get_product_id();
+		
+		$_dataset = $teddy_Meta->get_order_item_dataset($order_item, $order);
+		if (!$_dataset) {return $_laters;}
+		foreach ($_dataset as $row) {
+			if (!is_array($row) || !isset($row['type']) || $row['type'] != 'voice') {continue;}
+			if (!isset($row['attaced']) || empty($row['attaced'])) {continue;}
+			if (isset($row['attaced']['later'])) {$_laters = true;break;}
+		}
+		return $_laters;
 	}
 }

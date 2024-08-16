@@ -42,6 +42,7 @@ class Cart {
 		// woocommerce_before_calculate_totals
 		add_action('woocommerce_calculate_totals', [$this, 'woocommerce_calculate_totals'], 10, 1);
 		// add_filter('woocommerce_cart_item_price', [$this, 'woocommerce_cart_item_price'], 10, 3);
+
 		add_filter('woocommerce_cart_item_subtotal', [$this, 'woocommerce_cart_item_subtotal'], 10, 3);
 		add_filter('woocommerce_cart_subtotal', [$this, 'woocommerce_cart_subtotal'], 10, 3);
 		add_filter('woocommerce_calculated_total', [$this, 'woocommerce_calculated_total'], 10, 2);
@@ -67,8 +68,11 @@ class Cart {
 		}
 		// 
 		try {
-			$dataset = json_decode(preg_replace('/[\x00-\x1F\x80-\xFF]/', '', stripslashes(html_entity_decode($_POST['dataset']??''))), true);
-			$charges = json_decode(preg_replace('/[\x00-\x1F\x80-\xFF]/', '', stripslashes(html_entity_decode($_POST['charges']??''))), true);
+			// $dataset = json_decode(preg_replace('/[\x00-\x1F\x80-\xFF]/', '', stripslashes(html_entity_decode($_POST['dataset']??''))), true);
+			// $charges = json_decode(preg_replace('/[\x00-\x1F\x80-\xFF]/', '', stripslashes(html_entity_decode($_POST['charges']??''))), true);
+			// 
+			$dataset = json_decode(stripslashes(html_entity_decode($_POST['dataset']??'{}')), true);
+			$charges = json_decode(stripslashes(html_entity_decode($_POST['charges']??'{}')), true);
 			if (isset($_FILES['_blobs'])) {
 				if (isset($_FILES['_blobs']['name'])) {
 					$_FILES['_blobs'] = [$_FILES['_blobs']];
@@ -104,28 +108,31 @@ class Cart {
 				switch ($_row['type']) {
 					case 'outfit':
 						if ($_row['groups']) {
-							foreach ((array) $_row['groups'] as $_group) {
-								foreach ((array) $_group['options'] as $_option) {
+							foreach ((array) $_row['groups'] as $_groupIndex => $_group) {
+								foreach ((array) $_group['options'] as $_gOptIndex => $_option) {
 									if (!isset($_option['product']) || empty($_option['product'])) {continue;}
                                     $_product = wc_get_product((int) $_option['product']);
                                     if ($_product && $_product->is_purchasable()) {
                                         // $_option['product'] = $_product->get_id();
                                         $_option['cart_item_key'] = WC()->cart->add_to_cart($_product->get_id(), $quantity);
                                     }
+									$_group['options'][$_gOptIndex] = $_option;
                                 }
+								$_row['groups'][$_groupIndex] = $group;
 							}
 						}
 						break;
 					case 'radio':
 					case 'select':
 					case 'checkbox':
-						foreach ((array) $_row['options'] as $_option) {
+						foreach ((array) $_row['options'] as $_option_index => $_option) {
 							if (!isset($_option['product']) || empty($_option['product'])) {continue;}
 							$_product = wc_get_product((int) $_option['product']);
 							if ($_product && $_product->is_purchasable()) {
 								// $_option['product'] = $_product->get_id();
 								$_option['cart_item_key'] = WC()->cart->add_to_cart($_product->get_id(), $quantity);
 							}
+							$_row['options'][$_option_index] = $_option;
 						}
 						break;
 					default:
@@ -136,9 +143,11 @@ class Cart {
 								// $_option['product'] = $_product->get_id();
 								$_option['cart_item_key'] = WC()->cart->add_to_cart($_product->get_id(), $quantity);
 							}
+							$_row = $_option;
 						}
 						break;
 				}
+				$dataset[$i] = $_row;
 			}
 			$this->charges = $charges;$this->dataset = $dataset;
 			$this->prod2AdAccessory = $product_id;
@@ -264,7 +273,9 @@ class Cart {
 								if (isset($dataRow['options'])) {
 									foreach ($dataRow['options'] as $index => $option) {
 										if (isset($option['cost'])) {
-											$option['label'] = empty($option['label'])?$dataRow['type']:$dataRow['label'];
+											$dataRow['type'] = $dataRow['type']??'';$dataRow['label'] = $dataRow['label']??'';
+											$option['label'] = (!isste($option['label']) || empty($option['label']))?$dataRow['type']:$dataRow['label'];
+											// $option['label'] = empty($option['label'])?$dataRow['type']:$dataRow['label'];
 											$option['cost'] = is_string($option['cost'])?floatval($option['cost']):$option['cost'];
 											// $option['product'] // means it's a product
 											$item_name .= '<br><small class="additional-charges">'.esc_html(
@@ -280,7 +291,8 @@ class Cart {
 										if (isset($group['options'])) {
 											foreach ($group['options'] as $oIndex => $option) {
 												if (isset($option['cost'])) {
-													$option['label'] = empty($option['label'])?$dataRow['type']:$dataRow['label'];
+													$dataRow['type'] = $dataRow['type']??'';$dataRow['label'] = $dataRow['label']??'';
+													$option['label'] = (!isste($option['label']) || empty($option['label']))?$dataRow['type']:$dataRow['label'];
 													$option['cost'] = is_string($option['cost'])?floatval($option['cost']):$option['cost'];
 													$item_name .= '<br><small class="additional-charges">'.esc_html(
 														apply_filters('teddybear/project/system/translate/string', $option['label'], 'teddybearsprompts', $option['label'] . ' - input field')
@@ -340,6 +352,7 @@ class Cart {
 							case 'select':
 								if (isset($dataRow['options'])) {
 									foreach ($dataRow['options'] as $index => $option) {
+										if (isset($option['product']) && !empty($option['product'])) {continue;} # Pass if product
 										if (isset($option['cost'])) {
 											$option['cost'] = is_string($option['cost'])?floatval($option['cost']):$option['cost'];
 											if ($option['cost'] && $option['cost'] > 0) {
@@ -354,6 +367,7 @@ class Cart {
 									foreach ($dataRow['groups'] as $gIndex => $group) {
 										if (isset($group['options'])) {
 											foreach ($group['options'] as $oIndex => $option) {
+												if (isset($option['product']) && !empty($option['product'])) {continue;} # Pass if product
 												if (isset($option['cost'])) {
 													$option['cost'] = is_string($option['cost'])?floatval($option['cost']):$option['cost'];
 													if ($option['cost'] && $option['cost'] > 0) {
@@ -366,6 +380,7 @@ class Cart {
 								}
 								break;
 							default:
+								// if (isset($option['product']) && !empty($option['product'])) {continue;} # Pass if product
 								if (isset($dataRow['cost'])) {
 									$dataRow['cost'] = is_string($dataRow['cost'])?floatval($dataRow['cost']):$dataRow['cost'];
 									if ($dataRow['cost'] && $dataRow['cost'] > 0) {

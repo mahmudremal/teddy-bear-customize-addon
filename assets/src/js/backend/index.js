@@ -356,14 +356,15 @@ import Ask from "./ask";
 			document.querySelectorAll('.fwp-outfit__voice').forEach(container => {
 				container.querySelectorAll('.voicegrid__player[data-config]').forEach(element => {
 					const config = JSON.parse(element.dataset?.config??'{}');
-					console.log(config);
+					// console.log(config);
 					const download = document.createElement('a');
 					const button = document.createElement('button');
 					const playingon = document.createElement('div');
 					// playingon.style.height = '40px';
 					container.classList.add('fwp-outfit__voice__enabled');
 					button.type = 'button';button.textContent = thisClass.i18n?.play??'Play';
-					download.target = '_blank';download.href = config.url;download.download = config.name;
+					download.target = '_blank';download.href = config.url;
+					download.download = `${thisClass.config?.product_id}.${config.name.split('.').pop()}`;
 					download.textContent = thisClass.i18n?.download??'Download';
 					const wave = WaveSurfer.create({
 						height: 80,

@@ -766,9 +766,12 @@
     padding: 10px 0;
   }
   &__header {
+    display: flex;
+    flex-wrap: wrap;
     padding: 5px 10px;
     text-transform: uppercase;
     border: 1px solid #dedede;
+    justify-content: space-between;
   }
   &__body {
     padding: 10px 5px;

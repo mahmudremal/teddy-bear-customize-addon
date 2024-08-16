@@ -150,7 +150,8 @@ class Icon_Library {
 		$icon_files = (array) $_FILES['_icon_file']??false;
 		$icon_infos = [];
 		foreach ($_POST['icon_info'] as $icon_info) {
-			$icon_infos[] = (array) json_decode(preg_replace('/[\x00-\x1F\x80-\xFF]/', '', stripslashes(html_entity_decode($icon_info))), true);
+			// $icon_infos[] = (array) json_decode(preg_replace('/[\x00-\x1F\x80-\xFF]/', '', stripslashes(html_entity_decode($icon_info))), true);
+			$icon_infos[] = (array) json_decode(stripslashes(html_entity_decode($icon_info)), true);
 		}
 		if ($icon_files) {
 			$icon_files_unsort = $icon_files;$icon_files = [];

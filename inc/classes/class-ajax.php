@@ -67,12 +67,36 @@ class Ajax {
 		do_action('teddybear/project/nonce/check', $_POST['_nonce']);
 		// $json = json_decode(file_get_contents(TEDDY_BEAR_CUSTOMIZE_ADDON_DIR_PATH . '/templates/sample.product.json'));
 		// wp_send_json($json);
-
-		global $wpdb;global  $woocommerce;global $teddy_Product;global $teddy_Plushies;
 		// check_ajax_referer('teddybear/project/teddybearpopupaddon/verify/nonce', '_nonce', true);
-		$dataset = $request = json_decode(preg_replace('/[\x00-\x1F\x80-\xFF]/', '', stripslashes(html_entity_decode(isset($_POST['dataset'])?$_POST['dataset']:'{}'))), true);
+		// $dataset = $request = json_decode(preg_replace('/[\x00-\x1F\x80-\xFF]/', '', stripslashes(html_entity_decode(isset($_POST['dataset'])?$_POST['dataset']:'{}'))), true);
+		$dataset = $request = json_decode(stripslashes(html_entity_decode($_POST['dataset']??'{}')), true);
+		$product_id = $request['product_id'];
 		
-		$_product = wc_get_product($request['product_id']);
+
+		$json = $this->get_catched_product_customizations((int) $product_id);
+		if ($json && !is_wp_error($json)) {
+			wp_send_json_success($json);
+		} else {
+			wp_send_json_error($json);
+		}
+	}
+	public function get_catched_product_customizations($product_id) {
+		$transient_key = sprintf("_product_custom_popup_%s", $product_id);
+		$_caches = get_transient($transient_key);
+		if ($_caches === false) {
+			$_caches = $this->get_product_customizations($product_id);
+
+			// Cache the retrieved data for 12 hours
+			// 12 * HOUR_IN_SECONDS | MINUTE_IN_SECONDS
+			set_transient($transient_key, $_caches, 12 * HOUR_IN_SECONDS);
+		}
+		return $_caches;
+	}
+	public function get_product_customizations($product_id) {
+		global $wpdb;global  $woocommerce;global $teddy_Product;global $teddy_Plushies;
+		
+		$_product = wc_get_product($product_id);
+		
 		$productData = ($_product && !is_wp_error($_product))?[
 			'id'		=> $_product->get_id(),
 			'type'		=> $_product->get_type(),
@@ -85,7 +109,7 @@ class Ajax {
 			'priceHtml'	=> $_product->get_price_html()
 		]:[];
 
-		$json = [
+		$result = [
 			'hooks' => ['gotproductpopupresult'],
 			'header' => [
 				'product_photo' => 'empty',
@@ -118,16 +142,18 @@ class Ajax {
 			],
 		];
 
-		if (!$json['product']['custom_fields'] || count($json['product']['custom_fields']) <= 0) {
-			$json['product']['empty_image'] = TEDDY_BEAR_CUSTOMIZE_ADDON_BUILD_URI . '/icons/Team meeting_Monochromatic.svg';
+		if (!$result['product']['custom_fields'] || count($result['product']['custom_fields']) <= 0) {
+			$result['product']['empty_image'] = TEDDY_BEAR_CUSTOMIZE_ADDON_BUILD_URI . '/icons/Team meeting_Monochromatic.svg';
 		}
 
-		wp_send_json_success( $json, 200 );
+		return $result;
 	}
 	public function submit_popup() {
 		do_action('teddybear/project/nonce/check', $_POST['_nonce']);
 		// check_ajax_referer('teddybear/project/teddybearpopupaddon/verify/nonce', '_nonce', true);
-		$request = json_decode(preg_replace('/[\x00-\x1F\x80-\xFF]/', '', stripslashes(html_entity_decode($_POST['dataset']))), true);
+		// $request = json_decode(preg_replace('/[\x00-\x1F\x80-\xFF]/', '', stripslashes(html_entity_decode($_POST['dataset']))), true);
+		$request = json_decode(stripslashes(html_entity_decode($_POST['dataset'])), true);
+
 		$json = [
 			'hooks' => ['popup_submitting_done'],
 			'message' => __( 'Popup submitted successfully. Hold on unil you\'re redirecting to searh results.', 'teddybearsprompts' )
@@ -174,17 +200,22 @@ class Ajax {
 		global $wpdb;
 		$json = ['hooks' => ['popup_searching_done']];
 		// check_ajax_referer('teddybear/project/teddybearpopupaddon/verify/nonce', '_nonce', true);
-		$request = json_decode(preg_replace('/[\x00-\x1F\x80-\xFF]/', '', stripslashes(html_entity_decode($_POST['formdata']))), true);
+		// $request = json_decode(preg_replace('/[\x00-\x1F\x80-\xFF]/', '', stripslashes(html_entity_decode($_POST['formdata']))), true);
+		$request = json_decode(stripslashes(html_entity_decode($_POST['formdata'])), true);
 		// 
 		wp_send_json_error($json);
 	}
 	public function save_product() {
 		do_action('teddybear/project/nonce/check', $_POST['_nonce']);
 		$result = [];$result['hooks'] = ['product_updated'];$result['message'] = __( 'Popup updated Successfully', 'teddybearsprompts' );
-		$request = json_decode(preg_replace('/[\x00-\x1F\x80-\xFF]/', '', stripslashes(html_entity_decode($_POST['dataset']))), true);
+		// $request = json_decode(preg_replace('/[\x00-\x1F\x80-\xFF]/', '', stripslashes(html_entity_decode($_POST['dataset']))), true);
+		$request = json_decode(stripslashes(html_entity_decode($_POST['dataset'])), true);
+
+		
 		$result['json'] = $request;
 		$product_id = $_POST['product_id'];
 		update_post_meta($product_id, '_product_custom_popup', $request);
+		delete_transient('_product_custom_popup_' . $product_id);
 		wp_send_json_success($result, 200);
 	}
 	public function edit_product() {

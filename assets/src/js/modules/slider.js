@@ -6,6 +6,9 @@
  * @license MIT License
  */
 import icons from "../frontend/icons";
+
+const CONFIG = {winWidth: window.innerWidth, mobileWidth: 450, visibleWidth: 300};
+
 /**
  * The Slider class is responsible for initializing and managing an image slider.
  * It takes an optional configuration object as a parameter, which can be used to customize the behavior and appearance of the slider.
@@ -41,14 +44,10 @@ class Slider {
         this.init_elements();
         this.init_resize();
         this.transition();
+        this.init_drag__();
+        this.autoplay();
         this.issues();
         this.update();
-        if (this.config.drag) {
-            this.init_drag();
-        }
-        if (this.config.autoplay) {
-            this.startAutoplay();
-        }
     }
 
     /**
@@ -205,6 +204,7 @@ class Slider {
     update() {
         return new Promise((resolve) => {
             setTimeout(() => {
+                CONFIG.winWidth = window.innerWidth;
                 let visibleWidth = this.config.wrap.clientWidth;
                 if (visibleWidth <= 0) {visibleWidth = 300;}
                 this.config.slides.style.gap = `${this.config.space}px`;
@@ -226,6 +226,12 @@ class Slider {
         });
     }
 
+    autoplay() {
+        if (this.config.autoplay) {
+            this.startAutoplay();
+        }
+    }
+    
     /**
      * The startAutoplay function is responsible for initiating the autoplay feature of the image slider.
      * It sets an interval that triggers the next slide function at the specified speed.
@@ -285,51 +291,181 @@ class Slider {
      * @returns {void} This function does not return any value. Its purpose is to enable the dragging feature of the image slider.
      */
     init_drag() {
+        if (!this.config.drag) return;
+    
+        let isDragging = false;
+        let startPos = 0;
+        let currentTranslate = 0;
+        let prevTranslate = 0;
+    
+        const touchStart = (event) => {
+            if (!this.is_allowed_width()) return;
+            isDragging = true;
+            startPos = event.type.includes('mouse') ? event.pageX : event.touches[0].clientX;
+            prevTranslate = this.currentIndex * -this.config.slides.children[0].offsetWidth;
+            this.config.slides.style.transition = 'none';
+            event.preventDefault();
+        };
+    
+        const touchMove = (event) => {
+            if (!this.is_allowed_width() || !isDragging) return;
+            const currentPosition = event.type.includes('mouse') ? event.pageX : event.touches[0].clientX;
+            currentTranslate = prevTranslate + (currentPosition - startPos);
+            this.config.slides.style.transform = `translateX(${currentTranslate}px)`;
+            event.preventDefault();
+        };
+    
+        const touchEnd = () => {
+            if (!this.is_allowed_width()) return;
+            isDragging = false;
+            const movedBy = currentTranslate - prevTranslate;
+            const slideWidth = this.config.slides.children[0].offsetWidth + this.config.space;
+            const movedSlides = Math.round(movedBy / slideWidth);
+            const movedNegative = movedBy < 0;
+    
+            this.currentIndex -= movedSlides;
+    
+            if (this.config.loop) {
+                if (this.currentIndex >= this.totalSlides) {
+                    this.currentIndex = 0;
+                } else if (this.currentIndex < 0) {
+                    this.currentIndex = this.totalSlides - 1;
+                }
+            } else {
+                if (this.currentIndex < 0) {
+                    this.currentIndex = 0;
+                } else if (this.currentIndex >= this.totalSlides - this.config.view + 1) {
+                    this.currentIndex = this.totalSlides - this.config.view;
+                }
+            }
+    
+            this.config.slides.style.transition = `transform ${this.config.transition}s ease`;
+            this.config.slides.style.transform = `translateX(${-this.currentIndex * slideWidth * (this.isRTL() ? -1 : 1)}px)`;
+            this.update();
+        };
+    
+        this.config.slides.addEventListener('mousedown', touchStart);
+        this.config.slides.addEventListener('mousemove', touchMove);
+        this.config.slides.addEventListener('mouseup', touchEnd);
+        this.config.slides.addEventListener('mouseleave', touchEnd);
+        this.config.slides.addEventListener('touchstart', touchStart);
+        this.config.slides.addEventListener('touchmove', touchMove);
+        this.config.slides.addEventListener('touchend', touchEnd);
+    }
+    
+    init_drag__() {
+        if (this.config.drag === false) {return;}
         let isDragging = false;
         let startPos = 0;
         let currentTranslate = 0;
         let prevTranslate = 0;
 
-        const touchStart = (index) => {
-            return (event) => {
-                isDragging = true;
-                startPos = event.type.includes('mouse') ? event.pageX : event.touches[0].clientX;
-                this.currentIndex = index;
-                this.config.slides.style.transition = 'none';
-            };
+        const touchStart = (event) => {
+            if (!this.is_allowed_width()) {return false;}
+            isDragging = true;
+            startPos = event.type.includes('mouse') ? event.pageX : event.touches[0].clientX;
+            this.config.slides.style.transition = 'none';
+            // return (event) => {};
         };
 
         const touchMove = (event) => {
-            if (isDragging) {
-                const currentPosition = event.type.includes('mouse') ? event.pageX : event.touches[0].clientX;
-                currentTranslate = prevTranslate + currentPosition - startPos;
-                this.config.slides.style.transform = `translateX(${currentTranslate}px)`;
+            if (!this.is_allowed_width()) {return false;}
+            if (isDragging === false) {return false;}
+            const currentPosition = event.type.includes('mouse') ? event.pageX : event.touches[0].clientX;
+            let movedBy = currentPosition - startPos;
+            const isNegative = movedBy < 0;
+            const toRight = !isNegative;
+            // 
+            // const movedSlides = Math.round(Math.abs(movedBy) / this.slide_width());
+            // this.currentIndex += (isNegative)?-movedSlides:movedSlides;
+            // 
+            currentTranslate = prevTranslate + movedBy;
+            // 
+            // console.log({currentTranslate, prevTranslate, movedBy, toRight});
+            // 
+            if (toRight) {
+                currentTranslate = Math.min((
+                    this.slides_width() - (
+                        this.slide_width_binded()
+                    ) * this.config.view
+                ), currentTranslate);
+            } else {
+                currentTranslate = Math.max(0, currentTranslate);
             }
+            // Sortout current translate to current slide index.
+            this.get_current_slide(currentTranslate);
+            this.config.slides.style.transform = `translateX(${currentTranslate}px)`;
+            // 
         };
 
-        const touchEnd = () => {
+        const touchEnd = (event) => {
+            if (!this.is_allowed_width()) {return false;}
             isDragging = false;
-            const movedBy = currentTranslate - prevTranslate;
-            if (!this.config.dragFree) {
-                if (movedBy < -100 && this.currentIndex < this.totalSlides - this.config.view) {
-                    this.next();
-                }
-                if (movedBy > 100 && this.currentIndex > 0) {
-                    this.prev();
-                }
-                this.config.slides.style.transition = `transform ${this.config.transition}s ease`;
-                this.config.slides.style.transform = `translateX(${-this.currentIndex * (this.config.slides.children[0].offsetWidth + this.config.space) * (this.isRTL() ? -1 : 1)}px)`;
-                prevTranslate = -this.currentIndex * (this.config.slides.children[0].offsetWidth + this.config.space) * (this.isRTL() ? -1 : 1);
-            }
+            this.config.slides.style.transition = `transform ${this.config.transition}s ease`;
+            prevTranslate = -this.currentIndex * this.slide_width_binded() * (this.isRTL() ? -1 : 1);
+            this.update();
+            // if (!this.config.dragFree) {}
+            // if (this.allow_slides2visible()) {
+            //     this.config.slides.style.transform = `translateX(${prevTranslate}px)`;
+            // }
+            // this.update();
+            // 
+            // const movedBy = currentTranslate - prevTranslate;
+            // const isNegative = movedBy < 0;
+            // const toRight = !isNegative;
+            // // 
+            // console.log({
+            //     movedBy: movedBy,
+            //     isNegative: isNegative,
+            //     currentIndex: this.currentIndex,
+            //     totalSlides: this.totalSlides
+            // });
+            // // 
+            // if (!this.config.dragFree) {
+            //     this.config.slides.style.transition = `transform ${this.config.transition}s ease`;
+            //     prevTranslate = -this.currentIndex * (slideWidth + this.config.space) * (this.isRTL() ? -1 : 1);
+            //     if (this.allow_slides2visible()) {
+            //         this.config.slides.style.transform = `translateX(${prevTranslate}px)`;
+            //     }
+            //     this.update();
+            // }
         };
-
-        this.config.slides.addEventListener('mousedown', touchStart(this.currentIndex));
+        // 
+        this.config.slides.addEventListener('mousedown', touchStart);
         this.config.slides.addEventListener('mousemove', touchMove);
         this.config.slides.addEventListener('mouseup', touchEnd);
         this.config.slides.addEventListener('mouseleave', touchEnd);
-        this.config.slides.addEventListener('touchstart', touchStart(this.currentIndex));
+        this.config.slides.addEventListener('touchstart', touchStart);
         this.config.slides.addEventListener('touchmove', touchMove);
         this.config.slides.addEventListener('touchend', touchEnd);
+    }
+    is_allowed_width() {
+        CONFIG.winWidth = window.innerWidth;
+        return CONFIG.winWidth <= CONFIG.mobileWidth;
+    }
+
+    slide_width_binded() {
+        return this.slide_width() + this.config.space;
+    }
+    slide_width() {
+        return this.config.slides.children[0]?.offsetWidth??100;
+    }
+    slides_width() {
+        return (
+            this.totalSlides * this.slide_width_binded()
+        );
+    }
+
+    allow_slides2visible() {
+        return (this.currentIndex + this.config.view) <= this.totalSlides;
+    }
+
+    get_current_slide(translate = false) {
+        let slideIndex = this.currentIndex;
+        if (translate) {
+            this.currentIndex = slideIndex = Math.round(translate / this.slide_width_binded());
+        }
+        return slideIndex;
     }
 
     /**

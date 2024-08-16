@@ -939,6 +939,9 @@ import KeenSlider from 'keen-slider';
 			formdata.append('_nonce', this.ajaxNonce);
 			this.sendToServer(formdata);
 		}
+		isMobile() {
+			return navigator.userAgentData?.mobile;
+		}
 	}
 	new FutureWordPress_Frontend();
 } )( jQuery );

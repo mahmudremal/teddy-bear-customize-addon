@@ -21,8 +21,9 @@ class Endpoint {
 		add_filter('template_include', [$this, 'template_include'], 10, 1);
 	} 
 	public function init_rewrite() {
-		add_rewrite_rule('certificates/([^/]*)/([^/]*)/?', 'index.php?certificate_preview=1&certificate_order_id=$matches[1]&order_item_id=$matches[2]', 'top');
-
+		// add_rewrite_rule('certificates/([^/]*)/([^/]*)/?', 'index.php?certificate_preview=1&certificate_order_id=$matches[1]&order_item_id=$matches[2]&certificate_bg_type=bg', 'top');
+		add_rewrite_rule('certificates/([^/]*)/([^/]*)/([^/]*)/?', 'index.php?certificate_preview=1&certificate_order_id=$matches[1]&order_item_id=$matches[2]&certificate_bg_type=$matches[3]', 'top');
+		// 
 		// $result = get_option('_transient_string-locator-search-overview' );
 		// print_r($result);
 		// $result->search = 'PayPal נבחרה לקופה';
@@ -34,6 +35,7 @@ class Endpoint {
 		$query_vars[] = 'order_item_id';
 		$query_vars[] = 'certificate_preview';
 		$query_vars[] = 'certificate_order_id';
+		$query_vars[] = 'certificate_bg_type';
     	return $query_vars;
 	}
 	public function template_include($template) {

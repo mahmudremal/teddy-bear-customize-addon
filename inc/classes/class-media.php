@@ -20,7 +20,8 @@ class Media {
 	}
 	public function import_images_from_data() {
 		do_action('teddybear/project/nonce/check', $_POST['_nonce']);
-		$data = json_decode(preg_replace('/[\x00-\x1F\x80-\xFF]/', '', stripslashes(html_entity_decode(isset($_POST['dataset'])?$_POST['dataset']:'{}'))), true);
+		// $data = json_decode(preg_replace('/[\x00-\x1F\x80-\xFF]/', '', stripslashes(html_entity_decode(isset($_POST['dataset'])?$_POST['dataset']:'{}'))), true);
+		$data = json_decode(stripslashes(html_entity_decode($_POST['dataset']??'{}')), true);
 		$imported_images = [];
 		foreach ($data as $i => $item) {
 			$image_url = $item['image'];

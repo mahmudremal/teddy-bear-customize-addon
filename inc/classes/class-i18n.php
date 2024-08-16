@@ -395,6 +395,8 @@ class I18n {
 			'removewrapping' => __('Remove Wrapping', 'teddybearsprompts'),
 			'delete_acc_confirmation' => __('Are you sure you want to delete all of your account information? This will permanently remove you account with all relateed informations.', 'teddybearsprompts'),
 			'next' => __('Next', 'teddybearsprompts'),
+			'confirm' => __('Confirm', 'teddybearsprompts'),
+			'cancel' => __('Cancel', 'teddybearsprompts'),
 			'pls_wait' => __('Please wait...', 'teddybearsprompts'),
 			'add_to_cart' => __('Add to cart', 'teddybearsprompts'),
 			'total' => __('Total', 'teddybearsprompts'),
@@ -464,6 +466,9 @@ class I18n {
 			'voicewillsend' => __('Voice will be send through email.', 'teddybearsprompts'),
 			'method_s' => __('Method: %s', 'teddybearsprompts'),
 			'printoutcerts' => __('Printout Certificates', 'teddybearsprompts'),
+			'info_required' => __('Information Required', 'teddybearsprompts'),
+			'certificates' => __('Certificates', 'teddybearsprompts'),
+			'voices' => __('Voices', 'teddybearsprompts'),
 
 
 			

@@ -30,6 +30,7 @@ class iconLibrary {
             submitBtnText: 'Add these icons',
         }, config);
         this.paged = 1;this.elements = {};
+        this._caches = [];
         // window.iconLibrary = this;
         this.setup_necessery_utilities();
     }
@@ -43,7 +44,7 @@ class iconLibrary {
         }
         this.render_library();
     }
-    load_icons() {
+    load_icons(_cache = true) {
         return new Promise((resolve, reject) => {
             // 
             this.elements.tabIcons.library.classList.add('loading');
@@ -51,12 +52,11 @@ class iconLibrary {
             // this.paged++;
             // 
             this.icons = [];this.iconsError = false;this.pagination = false;
-            var data = {action: 'teddy/library/icons', _nonce: fwpSiteConfig.ajax_nonce, paged: this.paged, per_page: this.config.icons_per_load};
+            var data = {action: 'teddy/library/icons', _nonce: fwpSiteConfig.ajax_nonce, paged: this.paged, per_page: this.config.icons_per_load, cache: _cache};
             if (!(this?.firstLoaded) && this.paged <= 1) {data.includings = this.config.selected.join(',');}
-            var formdata = new FormData();
-            Object.keys(data).forEach(key => formdata.append(key, data[key]));
-            axios.post(fwpSiteConfig.ajaxUrl, formdata)
-            .then(response => response?.data??response)
+            // 
+            this.get_icons(data)
+            // .then(response => response?.data??response)
             .then(async (response) => {
                 this.elements.tabIcons.library.classList.remove('loading');
                 if (response?.success) {
@@ -74,6 +74,45 @@ class iconLibrary {
             })
             .catch(error => reject(error))
             .finally(() => resolve(this.icons));
+        });
+    }
+    get_icons(data) {
+        // 
+        return new Promise((resolve, reject) => {
+            // 
+            if (data?.cache) {
+                const cache = this._caches.find(row => 
+                    row.payload.action == data.action &&
+                    row.payload.paged == data.paged &&
+                    row.payload.per_page == data.per_page &&
+                    (
+                        (
+                            !row.payload?.includings && !data?.includings
+                        )
+                        ||
+                        row.payload?.includings == data?.includings
+                    )
+                );
+                if (cache && cache?.response) {
+                    resolve(cache.response);
+                }
+            }
+            // 
+            const formdata = new FormData();
+            Object.keys(data).forEach(key => formdata.append(key, data[key]));
+            axios.post(fwpSiteConfig.ajaxUrl, formdata)
+            .then(response => response?.data??response)
+            .then(response => {
+                this._caches.push({
+                    type: 'icons',
+                    payload: data,
+                    response: response
+                });
+                resolve(response);
+            })
+            // .then(response => resolve(response))
+            .catch(error => reject(error))
+            // .finally(() => resolve(this.icons));
         });
     }
     /**
@@ -396,7 +435,7 @@ class iconLibrary {
                 });
             },
             success: (file, response) => {
-                console.log(response);
+                // console.log(response);
             }
         });
         // let mockFile = { name: "Filename", size: 12345 };

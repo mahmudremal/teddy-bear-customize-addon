@@ -73,6 +73,7 @@ class Email {
 	 * Add a customer reciew section after order summery
 	 */
 	public function woocommerce_email_order_meta($order, $sent_to_admin, $plain_text, $email) {
+		return; // paused this because client said not to attach this button on mail.
 		global $wpdb;
 		if ((bool) $sent_to_admin) {return;}
 		if(!in_array($order->get_status(), ['completed'])) {return;}

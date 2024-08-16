@@ -77,6 +77,25 @@ class Order {
 		<div class="fwp-outfit__container">
 			<div class="fwp-outfit__header">
 				<span class="fwp-outfit__title"><?php esc_html_e('Customized order', 'teddybearsprompts'); ?></span>
+				<span class="fwp-outfit__actions">
+					<div>
+						<?php
+							echo wp_kses(
+								sprintf(
+									__('Printout Certificates %s With BG %s or %s without BG %s', 'teddybearsprompts'),
+									sprintf('<a href="%s" target="_blank">', esc_url(site_url('certificates/'. $order_id .'/print/bg/'))), '</a>',
+									sprintf('<a href="%s" target="_blank">', esc_url(site_url('certificates/'. $order_id .'/print/nobg/'))), '</a>',
+								),
+								[
+									'a' => [
+                                        'href' => [],
+                                        'target' => '_blank',
+                                    ],
+								]
+							);
+						?>
+					</div>
+				</span>
 			</div>
 			<div class="fwp-outfit__body">
 				<?php
@@ -103,8 +122,8 @@ class Order {
 						];
 					}
 					$_dataset = $teddy_Meta->get_order_item_dataset($order_item, $order);
-					// echo '<pre style="display: n one;">';print_r($_dataset);echo '<pre>';
 					if (!empty($_dataset)) {
+						// echo '<pre style="display: none;">';print_r($_dataset);echo '</pre>';
 						?>
 						<span class="fwp-outfit__product"><?php echo esc_html(sprintf(__('Item: %s', 'teddybearsprompts'), $item_name)); ?></span>
 						<ol class="fwp-outfit__list">
@@ -236,7 +255,7 @@ class Order {
 											break;
 										case 'info':
 											// btn button 
-											?><a href="<?php echo esc_url(site_url(sprintf('/certificates/%d/%d/', $order_id, $order_item_id))); ?>" class="link" data-certificate="<?php echo esc_attr($order_item_id); ?>" target="_blank"><?php echo esc_html(__('Certificate', 'teddybearsprompts')); ?></a><?php
+											?><a href="<?php echo esc_url(site_url(sprintf('/certificates/%d/%d/bg/', $order_id, $order_item_id))); ?>" class="link" data-certificate="<?php echo esc_attr($order_item_id); ?>" target="_blank"><?php echo esc_html(__('Certificate', 'teddybearsprompts')); ?></a><?php
 											// 
 											// print_r($_row);
 											// 
@@ -308,9 +327,7 @@ class Order {
 		// if ($this->confirmMailTrack !== true) {return;}
 		
 		if (in_array($order->get_status(), explode(',', str_replace(' ', '', apply_filters('teddybear/project/system/getoption', 'order-avoid_askvoice', 'shipped, completed'))))) {return;}
-		// if (!in_array($order->get_status(), explode(',', str_replace(' ', '', apply_filters('teddybear/project/system/getoption', 'voice-reminder_orderstatuses', 'shipped, completed'))))) {return;}
-		if (!$teddy_Voices->should_exists_voices($order, $order_item)) {return;}
-		if (!$teddy_Voices->has_single_voices($order, $order_item)) {
+		if ($teddy_Voices->has_add_later($order, $order_item)) {
 			$to_email = apply_filters('teddybear/project/system/getoption', 'voice-reminder_reciever', get_option('admin_email'));
 			$uploadVoiceURL = 'mailto:' . $to_email . '?subject=' . urlencode(
 				str_replace(
@@ -319,6 +336,8 @@ class Order {
 					apply_filters('teddybear/project/system/getoption', 'voice-reminder_subject', sprintf(__('Order #%s', 'teddybearsprompts'), '{{order_id}}'))
 				)
 			) . '&body=' . esc_attr(sprintf(__('Order #%d, Cart Item: #%d, Item Subtotal: %s %s Product: %s', 'teddybearsprompts'), $order->get_id(), $order_item->get_id(), $teddy_Order->get_order_item_subtotal($order_item, $order->get_id()), '%0D%0A', get_the_title($order_item->get_product_id())));
+
+			// print_r($uploadVoiceURL);wp_die('Remal Mahmud (mahmudremal@yahoo.com)');
 
 			echo '<a href="' . esc_attr($uploadVoiceURL) . '" target="_blank" style="color: ' . esc_attr(apply_filters('teddybear/project/system/getoption', 'voice-reminder_color', '#fff')) . ';background: ' . esc_attr(apply_filters('teddybear/project/system/getoption', 'voice-reminder_bg', '#7f54b3')) . ';font-weight: normal;text-decoration: none;padding: 5px 10px;border-radius: 5px;line-height: 15px;display: block;width: fit-content;">' . esc_html(
 				apply_filters('teddybear/project/system/getoption', 'voice-reminder_label', __('Send Recorded voice', 'teddybearsprompts'))

@@ -12,19 +12,22 @@ class Certificate {
 	private $bgImages;
 	use Singleton;
 	protected function __construct() {
-		$this->bgImages = ['he' => 'hebrew-birth-certificate.png', 'en' => 'english-birth-certificate.png'];
+		$this->bgImages = ['he' => 'hebrew-birth-certificate.png', 'en' => 'english-birth-certificate.png', 'blank' => 'blank-birth-certificate.jpg'];
 		$this->setup_hooks();
 	}
 	public function setup_hooks() {
 		add_filter('teddybearpopupaddon_generate_certificate', [$this, 'teddybearpopupaddon_generate_certificate'], 1, 2);
 		add_action('teddybearpopupaddon_mail_certificates', [$this, 'teddybearpopupaddon_mail_certificates'], 1, 2);
 		add_action('init', [$this, 'teddybearpopupaddon_preview_certificate'], 10, 0);
-		add_action('woocommerce_order_status_completed', [$this, 'woocommerce_order_status_completed'], 10, 2);
+		/**
+		 * Removed autometic birth certificate on order completed on 29 July 2024
+		 */
+		// add_action('woocommerce_order_status_completed', [$this, 'woocommerce_order_status_completed'], 10, 2);
 		add_filter('woocommerce_email_attachments', [$this, 'woocommerce_email_attachments'], 10, 3);
 
 		add_filter('teddy/project/certificate/background', [$this, 'certificate_background'], 10, 2);
 
-		add_action('teddybear/project/certificate/preview', [$this, 'certificate_preview'], 10, 2);
+		add_action('teddybear/project/certificate/preview', [$this, 'certificate_preview'], 10, 3);
 	}
 	public function certificate_language() {
 		$siteLang = explode('-', get_locale())[0];
@@ -35,6 +38,7 @@ class Certificate {
 	public function certificate_background($img_file, $lang = false) {
 		global $birthCertificateType;
 		$images = $this->bgImages;
+		if ($lang == 'nobg') {$lang = 'blank';}
 		if ($lang && isset($images[$lang])) {
 			$_bg_path = TEDDY_BEAR_CUSTOMIZE_ADDON_BUILD_IMG_PATH . '/'. $images[$lang];
 			$_bg_path = apply_filters('teddybear/project/slashes/fix', $_bg_path);
@@ -70,9 +74,15 @@ class Certificate {
 				return $pdf_path;
 			}
 		}
+		global $certificate_args;$certificate_args = $args;
+		$pdf = new CertificatePDF('L', PDF_UNIT, 'A5', true, 'UTF-8', false);
 		// Create a new TCPDF instance with A4 page format
 		// $pdf = new \TCPDF('P', 'mm', 'A5', true, 'UTF-8', false);
-		$pdf = new CertificatePDF('L', PDF_UNIT, 'A5', true, 'UTF-8', false);
+		// if ($args->bg_type == 'nobg') {
+		// 	$pdf = new \TCPDF('L', PDF_UNIT, 'A5', true, 'UTF-8', false);
+		// } else {
+		// 	$pdf = new CertificatePDF('L', PDF_UNIT, 'A5', true, 'UTF-8', false);
+		// }
 	
 		// Set document information
 		$pdf->SetCreator('mahmud_remal');
@@ -111,6 +121,12 @@ class Certificate {
 		$pdf->SetFont('dejavusans', '', 10);
 		
 		$pages = ($args->multiple)?$args->pages:[$args];
+		// if (method_exists($args, 'bg_type')) {
+		// 	foreach ($pages as $pageI => $page) {
+		// 		if (!method_exists($page, 'bg_type')) {continue;}
+		// 		$pages[$pageI]->bg_type = $args->bg_type;
+		// 	}
+		// }
 		// 
 		if ($this->certificate_language() == 'he') {
 			global $l;
@@ -174,6 +190,7 @@ class Certificate {
 			'product_id'		=> false,
 			'multiple'			=> false,
 			'pages'				=> [],
+			'bg_type'			=> 'bg'
 		]);
 		if(empty($args->teddy_name)) {
 			if($args->debuggOn) {
@@ -241,140 +258,12 @@ class Certificate {
 		}
 	}
 	
-	public function certificate_writing_style_1($pdf, $args) {
-		// $fontSize = $pdf->GetStringWidth($text);
-
-		// Left Side
-		$stringX = 32;$stringY = 55.5;
-		
-		$text = sprintf(__('Belongs to: %s', 'teddybearsprompts'), $args->teddy_sender);
-		$pdf->SetXY($stringX, $stringY);$stringY += 13;
-		$pdf->Write(0, $text, '', 0, '', true, 0, false, false, 0);
-		$text = sprintf(__('ID number: %s', 'teddybearsprompts'), $args->id_num);
-		$pdf->SetXY($stringX, $stringY);$stringY += 13;
-		$pdf->Write(0, $text, '', 0, '', true, 0, false, false, 0);
-		$text = sprintf(__('Weight: %s', 'teddybearsprompts'), $args->weight);
-		$pdf->SetXY($stringX, $stringY);$stringY += 13;
-		$pdf->Write(0, $text, '', 0, '', true, 0, false, false, 0);
-		$text = sprintf(__('Fur color: %s', 'teddybearsprompts'), $args->brow);
-		$pdf->SetXY($stringX, $stringY);$stringY += 13;
-		$pdf->Write(0, $text, '', 0, '', true, 0, false, false, 0);
-		$text = __('Signature', 'teddybearsprompts');
-		$pdf->SetXY(($stringX + 25), $stringY);$stringY += 13;
-		$pdf->Write(0, $text, '', 0, '', true, 0, false, false, 0);
-
-		// Right Side
-		$stringX = 91;$stringY = 55.5;
-
-		$text = sprintf(__('Name: %s', 'teddybearsprompts'), $args->teddy_name);
-		$pdf->SetXY($stringX, $stringY);$stringY += 13;
-		$pdf->Write(0, $text, '', 0, '', true, 0, false, false, 0);
-		$text = sprintf(__('Date of birth: %s', 'teddybearsprompts'), $args->teddy_birth);
-		$pdf->SetXY($stringX, $stringY);$stringY += 13;
-		$pdf->Write(0, $text, '', 0, '', true, 0, false, false, 0);
-		$text = sprintf(__('Height: %s', 'teddybearsprompts'), $args->height);
-		$pdf->SetXY($stringX, $stringY);$stringY += 13;
-		$pdf->Write(0, $text, '', 0, '', true, 0, false, false, 0);
-		$text = sprintf(__('Eye color: %s', 'teddybearsprompts'), $args->eye);
-		$pdf->SetXY($stringX, $stringY);$stringY += 13;
-		$pdf->Write(0, $text, '', 0, '', true, 0, false, false, 0);
-		$text = sprintf(__('Created with love by: %s', 'teddybearsprompts'), $args->teddy_sender);
-		$pdf->SetXY($stringX, $stringY);$stringY += 13;
-		$pdf->Write(0, $text, '', 0, '', true, 0, false, false, 0);
-		
-	}
-	public function certificate_writing_style_2($pdf, $args) {
-		// $stringWidth = $pdf->GetStringWidth($text);
-
-		// Left Side
-		$stringX = 32;$stringY = 55.5;
-		
-		$text = __('Belongs to:', 'teddybearsprompts');$pdf->setFillColor(250, 0, 0);
-		$pdf->SetXY($stringX, ($stringY - 4.5));$pdf->SetFont('dejavusans', '', 8);
-		$pdf->Write(0, $text, '', 0, '', true, 0, false, false, 0);
-		$pdf->SetFont('dejavusans', '', 10);
-		$text = $args->teddy_sender;
-		$pdf->SetXY($stringX, $stringY);$stringY += 13;
-		$pdf->Write(0, $text, '', 0, '', true, 0, false, false, 0);
-
-		$text = __('ID number:', 'teddybearsprompts');$pdf->setFillColor(250, 0, 0);
-		$pdf->SetXY($stringX, ($stringY - 4.5));$pdf->SetFont('dejavusans', '', 8);
-		$pdf->Write(0, $text, '', 0, '', true, 0, false, false, 0);
-		$pdf->SetFont('dejavusans', '', 10);
-		$text = apply_filters('teddybear/project/system/translate/number', $args->id_num);
-		$pdf->SetXY($stringX, $stringY);$stringY += 13;
-		$pdf->Write(0, $text, '', 0, '', true, 0, false, false, 0);
-
-		$text = __('Weight:', 'teddybearsprompts');$pdf->setFillColor(250, 0, 0);
-		$pdf->SetXY($stringX, ($stringY - 4.5));$pdf->SetFont('dejavusans', '', 8);
-		$pdf->Write(0, $text, '', 0, '', true, 0, false, false, 0);
-		$pdf->SetFont('dejavusans', '', 10);
-		$text = apply_filters('teddybear/project/system/translate/string', $args->weight, 'teddybearsprompts', $args->weight . ' - input field');
-		$pdf->SetXY($stringX, $stringY);$stringY += 13;
-		$pdf->Write(0, $text, '', 0, '', true, 0, false, false, 0);
-
-		$text = __('Fur color:', 'teddybearsprompts');$pdf->setFillColor(250, 0, 0);
-		$pdf->SetXY($stringX, ($stringY - 4.5));$pdf->SetFont('dejavusans', '', 8);
-		$pdf->Write(0, $text, '', 0, '', true, 0, false, false, 0);
-		$pdf->SetFont('dejavusans', '', 10);
-		$text = apply_filters('teddybear/project/system/translate/string', $args->brow, 'teddybearsprompts', $args->brow . ' - input field');
-		$pdf->SetXY($stringX, $stringY);$stringY += 13;
-		$pdf->Write(0, $text, '', 0, '', true, 0, false, false, 0);
-		
-		$text = __('Signature', 'teddybearsprompts');
-		$pdf->SetXY(($stringX + 25), $stringY);$stringY += 13;
-		$pdf->Write(0, $text, '', 0, '', true, 0, false, false, 0);
-
-		// ===================================  Right Side =================================== //
-		$stringX = 91;$stringY = 55.5;
-
-		
-		$text = __('Name:', 'teddybearsprompts');$pdf->setFillColor(250, 0, 0);
-		$pdf->SetXY($stringX, ($stringY - 4.5));$pdf->SetFont('dejavusans', '', 8);
-		$pdf->Write(0, $text, '', 0, '', true, 0, false, false, 0);
-		$pdf->SetFont('dejavusans', '', 10);
-		$text = $args->teddy_name;
-		$pdf->SetXY($stringX, $stringY);$stringY += 13;
-		$pdf->Write(0, $text, '', 0, '', true, 0, false, false, 0);
-
-		$text = __('Date of birth:', 'teddybearsprompts');$pdf->setFillColor(250, 0, 0);
-		$pdf->SetXY($stringX, ($stringY - 4.5));$pdf->SetFont('dejavusans', '', 8);
-		$pdf->Write(0, $text, '', 0, '', true, 0, false, false, 0);
-		$pdf->SetFont('dejavusans', '', 10);
-		$text = $args->teddy_birth;
-		$pdf->SetXY($stringX, $stringY);$stringY += 13;
-		$pdf->Write(0, $text, '', 0, '', true, 0, false, false, 0);
-		
-		
-		$text = __('Height:', 'teddybearsprompts');$pdf->setFillColor(250, 0, 0);
-		$pdf->SetXY($stringX, ($stringY - 4.5));$pdf->SetFont('dejavusans', '', 8);
-		$pdf->Write(0, $text, '', 0, '', true, 0, false, false, 0);
-		$pdf->SetFont('dejavusans', '', 10);
-		$text = apply_filters('teddybear/project/system/translate/string', $args->height, 'teddybearsprompts', $args->height . ' - input field');
-		$pdf->SetXY($stringX, $stringY);$stringY += 13;
-		$pdf->Write(0, $text, '', 0, '', true, 0, false, false, 0);
-		
-		$text = __('Eye color:', 'teddybearsprompts');$pdf->setFillColor(250, 0, 0);
-		$pdf->SetXY($stringX, ($stringY - 4.5));$pdf->SetFont('dejavusans', '', 8);
-		$pdf->Write(0, $text, '', 0, '', true, 0, false, false, 0);
-		$pdf->SetFont('dejavusans', '', 10);
-		$text = apply_filters('teddybear/project/system/translate/string', $args->eye, 'teddybearsprompts', $args->eye . ' - input field');
-		$pdf->SetXY($stringX, $stringY);$stringY += 13;
-		$pdf->Write(0, $text, '', 0, '', true, 0, false, false, 0);
-		
-		$text = __('Created with love by:', 'teddybearsprompts');$pdf->setFillColor(250, 0, 0);
-		$pdf->SetXY($stringX, ($stringY - 4.5));$pdf->SetFont('dejavusans', '', 8);
-		$pdf->Write(0, $text, '', 0, '', true, 0, false, false, 0);
-		$pdf->SetFont('dejavusans', '', 10);
-		$text = $args->teddy_sender;
-		$pdf->SetXY($stringX, $stringY);$stringY += 13;
-		$pdf->Write(0, $text, '', 0, '', true, 0, false, false, 0);
-	}
 	public function stringX_position($stringX, $string, $pdf) {
 		$stringX -= $pdf->GetStringWidth($string);
 		return $stringX;
 	}
 	public function certificate_writing_style_he($pdf, $args) {
+		global $certificate_args;
 		// Add a page
 		$pdf->AddPage();
 		// $stringWidth = $pdf->GetStringWidth($text);
@@ -386,8 +275,8 @@ class Certificate {
 		$pdf->SetFont('dejavusans', '', 10);$pdf->setFillColor(250, 0, 0);
 		// $stringY += 15;$pdf->SetXY($stringX, $stringY);
 		// 
-		$stringY += 15;$pdf->SetXY($this->stringX_position($stringX + 40, $args->teddy_sender, $pdf), $stringY);
-		$pdf->Write(0, $args->teddy_sender, '', 0, '', true, 0, false, false, 0);
+		$stringY += 15;$pdf->SetXY($this->stringX_position($stringX + 40, $args->teddy_reciever, $pdf), $stringY);
+		$pdf->Write(0, $args->teddy_reciever, '', 0, '', true, 0, false, false, 0);
 
 		$text = apply_filters('teddybear/project/system/translate/number', $args->id_num);
 		$stringY += 15;$pdf->SetXY($this->stringX_position($stringX + 34, $text, $pdf), $stringY);
@@ -407,41 +296,45 @@ class Certificate {
 		$stringX = 90;$stringY = 39.0;
 
 		// Draw a QR Code for this certificate
-		if ($args->order_id && $args->item_id) {
-			$certificate_url = site_url(sprintf('/certificates/%s/%s/', $args->order_id, $args->item_id));
-			$pdf->write2DBarcode($certificate_url, 'QRCODE,Q', $stringX + 30, $stringY - 35, 20, 20, [
-				'border' => 2,
-				'vpadding' => 'auto',
-				'hpadding' => 'auto',
-				'fgcolor' => [230,90,93],
-				'bgcolor' => false, // [255,255,255],
-				'module_width' => 1,
-				'module_height' => 1,
-				'position'	=> 'S',
-				// 'padding' => 0,
-			], 'N');
-		}
-		// Draw Canvas frame
-		$_canvas = false;
-		foreach ($args->dataset as $key => $dataRow) {
-			if (isset($dataRow['_canvas']) && !$_canvas) {
-				$_canvas = (array) $dataRow['_canvas'];
+		if (false) {
+			if ($args->order_id && $args->item_id) {
+				$certificate_url = site_url(sprintf('/certificates/%s/%s/bg/', $args->order_id, $args->item_id));
+				$pdf->write2DBarcode($certificate_url, 'QRCODE,Q', $stringX + 30, $stringY - 35, 20, 20, [
+					'border' => 2,
+					'vpadding' => 'auto',
+					'hpadding' => 'auto',
+					'fgcolor' => [230,90,93],
+					'bgcolor' => false, // [255,255,255],
+					'module_width' => 1,
+					'module_height' => 1,
+					'position'	=> 'S',
+					// 'padding' => 0,
+				], 'N');
 			}
 		}
-		$_canvas = ($_canvas == false)?[]:$_canvas;
-		foreach ((array) $_canvas as $_index => $_path) {
-			$image_path = apply_filters('teddybear/project/slashes/fix', ABSPATH . $_path);
-			// $pdf->Error($image_path);
-			if (file_exists($image_path) && !is_dir($image_path)) {
-				$canvas_url = ($args->product_id)?get_the_permalink($args->product_id):'';
-				$pdf->Image($image_path, $stringX - 5, $stringY - 40, 25, 25, '', $canvas_url, 'T', false, 300, '', false, false, 1, false, false, false);
+		// Draw Canvas frame
+		if ($certificate_args->bg_type != 'nobg') {
+			$_canvas = false;
+			foreach ($args->dataset as $key => $dataRow) {
+				if (isset($dataRow['_canvas']) && !$_canvas) {
+					$_canvas = (array) $dataRow['_canvas'];
+				}
+			}
+			$_canvas = ($_canvas == false)?[]:$_canvas;
+			foreach ((array) $_canvas as $_index => $_path) {
+				$image_path = apply_filters('teddybear/project/slashes/fix', ABSPATH . $_path);
+				// $pdf->Error($image_path);
+				if (file_exists($image_path) && !is_dir($image_path)) {
+					$canvas_url = ($args->product_id)?get_the_permalink($args->product_id):'';
+					$pdf->Image($image_path, $stringX - 5, $stringY - 40, 25, 25, '', $canvas_url, 'T', false, 300, '', false, false, 1, false, false, false);
+				}
 			}
 		}
 		
 		$stringY += 15;$pdf->SetXY($this->stringX_position($stringX + 45, $args->teddy_name, $pdf), $stringY);
 		$pdf->Write(0, $args->teddy_name, '', 0, '', true, 0, false, false, 0);
 
-		$text = wp_date('M d, Y', strtotime($args->teddy_birth));
+		$text = wp_date('d/m/Y', strtotime($args->teddy_birth));
 		$stringY += 15;$pdf->SetXY($this->stringX_position($stringX + 34, $text, $pdf), $stringY);
 		$pdf->Write(0, $text, '', 0, '', true, 0, false, false, 0);
 		
@@ -460,6 +353,7 @@ class Certificate {
 		$pdf->Write(0, $args->teddy_sender, '', 0, '', true, 0, false, false, 0);
 	}
 	public function certificate_writing_style_en($pdf, $args) {
+		global $certificate_args;
 		// Add a page
 		$pdf->AddPage();
 		// $stringWidth = $pdf->GetStringWidth($text);
@@ -470,7 +364,7 @@ class Certificate {
 
 		$pdf->SetFont('dejavusans', '', 10);$pdf->setFillColor(250, 0, 0);
 		// 
-		$text = sprintf(__('Belongs to: %s', 'teddybearsprompts'), $args->teddy_sender);
+		$text = sprintf(__('Belongs to: %s', 'teddybearsprompts'), $args->teddy_reciever);
 		$stringY += 15;$pdf->SetXY($stringX, $stringY);
 		$pdf->Write(0, $text, '', 0, '', true, 0, false, false, 0);
 
@@ -494,34 +388,38 @@ class Certificate {
 		$stringX = 90;$stringY = 39.0;
 
 		// Draw a QR Code for this certificate
-		if ($args->order_id && $args->item_id) {
-			$certificate_url = site_url(sprintf('/certificates/%s/%s/', $args->order_id, $args->item_id));
-			$pdf->write2DBarcode($certificate_url, 'QRCODE,Q', $stringX + 30, $stringY - 35, 20, 20, [
-				'border' => 2,
-				'vpadding' => 'auto',
-				'hpadding' => 'auto',
-				'fgcolor' => [230,90,93],
-				'bgcolor' => false, // [255,255,255],
-				'module_width' => 1,
-				'module_height' => 1,
-				'position'	=> 'S',
-				// 'padding' => 0,
-			], 'N');
-		}
-		// Draw Canvas frame
-		$_canvas = false;
-		foreach ($args->dataset as $key => $dataRow) {
-			if (isset($dataRow['_canvas']) && !$_canvas) {
-				$_canvas = (array) $dataRow['_canvas'];
+		if (true) {
+			if ($args->order_id && $args->item_id) {
+				$certificate_url = site_url(sprintf('/certificates/%s/%s/bg/', $args->order_id, $args->item_id));
+				$pdf->write2DBarcode($certificate_url, 'QRCODE,Q', $stringX + 30, $stringY - 35, 20, 20, [
+					'border' => 2,
+					'vpadding' => 'auto',
+					'hpadding' => 'auto',
+					'fgcolor' => [230,90,93],
+					'bgcolor' => false, // [255,255,255],
+					'module_width' => 1,
+					'module_height' => 1,
+					'position'	=> 'S',
+					// 'padding' => 0,
+				], 'N');
 			}
 		}
-		$_canvas = ($_canvas == false)?[]:$_canvas;
-		foreach ((array) $_canvas as $_index => $_path) {
-			$image_path = apply_filters('teddybear/project/slashes/fix', ABSPATH . $_path);
-			// $pdf->Error($image_path);
-			if (file_exists($image_path) && !is_dir($image_path)) {
-				$canvas_url = ($args->product_id)?get_the_permalink($args->product_id):'';
-				$pdf->Image($image_path, $stringX - 5, $stringY - 40, 25, 25, '', $canvas_url, 'T', false, 300, '', false, false, 1, false, false, false);
+		// Draw Canvas frame
+		if ($certificate_args->bg_type != 'nobg') {
+			$_canvas = false;
+			foreach ($args->dataset as $key => $dataRow) {
+				if (isset($dataRow['_canvas']) && !$_canvas) {
+					$_canvas = (array) $dataRow['_canvas'];
+				}
+			}
+			$_canvas = ($_canvas == false)?[]:$_canvas;
+			foreach ((array) $_canvas as $_index => $_path) {
+				$image_path = apply_filters('teddybear/project/slashes/fix', ABSPATH . $_path);
+				// $pdf->Error($image_path);
+				if (file_exists($image_path) && !is_dir($image_path)) {
+					$canvas_url = ($args->product_id)?get_the_permalink($args->product_id):'';
+					$pdf->Image($image_path, $stringX - 5, $stringY - 40, 25, 25, '', $canvas_url, 'T', false, 300, '', false, false, 1, false, false, false);
+				}
 			}
 		}
 		
@@ -531,7 +429,7 @@ class Certificate {
 		$stringY += 15;$pdf->SetXY($stringX, $stringY);
 		$pdf->Write(0, $text, '', 0, '', true, 0, false, false, 0);
 
-		$text = sprintf(__('Date of birth: %s', 'teddybearsprompts'), $args->teddy_birth);
+		$text = sprintf(__('Date of birth: %s', 'teddybearsprompts'), wp_date('m/d/Y', strtotime($args->teddy_birth)));
 		$stringY += 15;$pdf->SetXY($stringX, $stringY);
 		$pdf->Write(0, $text, '', 0, '', true, 0, false, false, 0);
 		
@@ -575,8 +473,8 @@ class Certificate {
 		if(!in_array($order->get_status(), explode(',', str_replace([' '], [''], apply_filters('teddybear/project/system/getoption', 'order-attach_status', 'shipped'))))) {return $attachments;}
 		$email_ids = [
 			'completed' => 'customer_completed_order',
-			'shipped'	=> 'customer_shipped_order',
-			'invoice'	=> 'customer_invoice',
+			// 'shipped'	=> 'customer_shipped_order',
+			// 'invoice'	=> 'customer_invoice',
 		];
 		if (in_array($order->get_status(), array_keys($email_ids)) && !in_array($email_id, array_values($email_ids))) {return $attachments;}
 		// if (in_array($order->get_status(), ['completed', 'processing']) && !in_array($email_id, ['customer_invoice']) {}
@@ -644,8 +542,7 @@ class Certificate {
 		}
 		return $certificates;
 	}
-
-	public function certificate_preview($order_id, $order_item_id) {
+	public function certificate_preview($order_id, $order_item_id, $_certificate_type = 'bg') {
 		global $teddy_Order;global $teddy_Product;global $teddy_Certificate;
 		$abspath = apply_filters('teddybear/project/slashes/fix', ABSPATH);
 		if (empty($order_id) || empty($order_item_id)) {
@@ -667,8 +564,9 @@ class Certificate {
 				$args = [
 					'teddy_name'    => '1',
 					'multiple'      => true,
+					'bg_type'		=> $_certificate_type,
 					'pages'         => $certificates,
-					'pdf'           => sprintf('certificate-%d-%s.pdf', $order_id, $order_item_id)
+					'pdf'           => sprintf('certificate-%d-%s-%s.pdf', $order_id, $order_item_id, $_certificate_type)
 				];
 				$certificte_path = apply_filters('teddybearpopupaddon_generate_certificate', false, $args);
 				if ($certificte_path) {
@@ -681,10 +579,11 @@ class Certificate {
 		} else {
 			foreach($order->get_items() as $orderItem_id => $order_item) {
 				if ($orderItem_id != (int) $order_item_id) {continue;}
-				$singles = $teddy_Certificate->get_single_certificates($order, $order_item, false, true);
+				$singles = $teddy_Certificate->get_single_certificates($order, $order_item, false, false);
 				foreach($singles as $single) {$certificates[] = $single;}
 			}
 			if (count($certificates) >= 1 && isset($certificates[0]) && !empty($certificates[0])) {
+				// ptint_r($certificates);
 				$previewPDFUrl = str_replace([$abspath, DIRECTORY_SEPARATOR], [site_url('/'), '/'], $certificates[0]);
 			}
 		}

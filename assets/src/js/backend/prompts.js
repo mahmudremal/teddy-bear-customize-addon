@@ -1,10 +1,11 @@
 import iconLibrary from "./iconlibrary";
 import{ svgToDataURL } from "./svg-to-dataurl"
 import Awesomplete from "awesomplete";
+import autocomplete from 'autocompleter';
 
 
 const PROMPTS = {
-    iconLibrary: iconLibrary,
+    // iconLibrary: iconLibrary,
     i18n: {},
     get_template: (thisClass) => {
         var json, html;
@@ -269,7 +270,7 @@ const PROMPTS = {
             let selectedIcons = [parseInt(data?.stepicon_id??0)];
             button.addEventListener('click', (event) => {
                 event.preventDefault();
-                new iconLibrary({
+                PROMPTS.iconLibrary = new iconLibrary({
                     title: PROMPTS.i18n?.select_svg_icon??'Select SVG icon',
                     callback: (svg) => {
                         if (!svg) {return;}
@@ -832,9 +833,38 @@ const PROMPTS = {
                 input = document.createElement('input');input.classList.add('form-control');
                 input.placeholder = 'Input the Label here.';input.name = ((groupAt !== false)?`groups.${groupAt}.${optionKey}.`:`${optionKey}.`)+order+'.label';
                 input.setAttribute('value', row?.label??'');input.type = 'text';
+                // 
+                args.autocomplete = true;
+                // 
+                // var prodId = document.createElement('input');prodId.classList.add('form-control');
+                // prodId.name = ((groupAt !== false)?`groups.${groupAt}.${optionKey}.`:`${optionKey}.`)+order+'.product';
+                // prodId.setAttribute('value', row?.product??'');prodId.type = 'hidden';
+                // 
+                // group.appendChild(input);
+                // row.autocomInstance = autocomplete({
+                //     input: input,
+                //     fetch: (text, update) => {
+                //         text = text.toLowerCase();
+                //         var suggestions = itemsList.filter(n => n.label.toLowerCase().startsWith(text))
+                //         update(suggestions);
+                //     },
+                //     onSelect: (item) => {
+                //         console.log(item);
+                //         input.value = item.label;
+                //     },
+                //     render: function(item, currentValue) {
+                //         var div = document.createElement('div');
+                //         div.textContent = item.label;
+                //         return div;
+                //     },
+                // });
+                // group.appendChild(prodId);
+                // 
                 break;
         }
         // label
+        group.appendChild(input);
+        // AutoCompletion
         if (args?.autocomplete) {
             input.dataset.name = input.name;
             const hidden = document.createElement('input');hidden.type = 'hidden';
@@ -859,32 +889,36 @@ const PROMPTS = {
                 default:
                     break;
             }
-            row.autocomInstance = new Awesomplete(input, {
-                list: itemsList,
-                // item: (text, input) => {
-                //     var listItem = Awesomplete.ITEM(text, input.match(/[^,]*$/)[0]);
-                //     if (!listItem.querySelector('img')) {
-                //         var row = itemsList.find(row => row.ID == text?.value);
-                //         if (row?.thumbnail) {
-                //             var img = document.createElement("img");
-                //             img.src = row.thumbnail;
-                //             listItem.appendChild(img);
-                //         }
-                //     }
-                //     return listItem;
-                // },
-                // replace: (suggestion) => {
-                //     this.input.value = suggestion.label;
-                //     hidden.value = suggestion.value;
-                // }
+            var itemsList = PROMPTS.lastJson.accessories.map((row) => {
+                return {label: row.title, value: row.ID, thumbnail: row.thumbnail};
             });
-            input.addEventListener('input', (event) => {
-                hidden.value = input.value;
+            // row.autocomInstance = 
+            new Awesomplete(input, {
+                list: itemsList,
+                item: (text, input) => {
+                    // console.log(text, input);
+                    var listItem = Awesomplete.ITEM(text, input.match(/[^,]*$/)[0]);
+                    if (!listItem.querySelector('img')) {
+                        var row = itemsList.find(row => row.ID == text?.value);
+                        if (row?.thumbnail) {
+                            var img = document.createElement("img");
+                            img.src = row.thumbnail.replace('http://', 'https://');
+                            listItem.appendChild(img);
+                        }
+                    }
+                    return listItem;
+                },
+                replace: (suggestion) => {
+                    input.value = suggestion.label;
+                    hidden.value = suggestion.value;
+                }
             });
             // console.log(row.autocomInstance);
             group.appendChild(hidden);
         }
-        group.appendChild(input);
+        input.addEventListener('input', (event) => {
+            hidden.value = input.value;
+        });
         // 
         append = document.createElement('div');append.classList.add('input-group-append');
         text = document.createElement('div');text.classList.add('input-group-text');

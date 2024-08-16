@@ -1,5 +1,5 @@
 <?php
-if (!class_exists('CR_Local_Forms')) {wp_die(__('Something error happening', 'teddybearsprompts'));}
+// if (!class_exists('CR_Local_Forms')) {wp_die(__('Something error happening', 'teddybearsprompts'));}
 if ($plain_text) :
   echo esc_url($review_link);
 else:

@@ -4,6 +4,7 @@
  */
 
 $order_id = get_query_var('certificate_order_id');
+$_bg_type = get_query_var('certificate_bg_type');
 $item_id = get_query_var('order_item_id');
 $item_type = $item_id;
 // $order_id = $order->get_id();
@@ -14,7 +15,7 @@ try {
      * Print Header Section
      */
     // get_header();
-    do_action('teddybear/project/certificate/preview', $order_id, $item_id);
+    do_action('teddybear/project/certificate/preview', $order_id, $item_id, $_bg_type);
     /**
      * Print Footer Section
      */

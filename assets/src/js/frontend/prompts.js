@@ -349,8 +349,12 @@ const PROMPTS = {
             formdata.append('action', 'teddy/ajax/cart/add');
             formdata.append('_nonce', thisClass.ajaxNonce);
             PROMPTS.get_canvas(thisClass).then(async blob => {
-                formdata.append('_canvas', blob, `${blob?.name??`${Date.now()}`}`);
+                if (blob !== false) {
+                    formdata.append('_canvas', blob, `${blob?.name??`${Date.now()}`}`);
+                }
+                // 
                 await PROMPTS.get_formdata(thisClass, formdata);
+                // 
                 // var charges = PROMPTS.sortout_unnecessery_data(thisClass.additionalPrices);
                 // // formdata.append('charges', JSON.stringify(charges));
                 // formdata.append('dataset', JSON.stringify(generated));
@@ -361,7 +365,10 @@ const PROMPTS = {
                 // 
                 setTimeout(() => {btn.removeAttribute('disabled');}, 100000);
                 // 
-            }).catch(error => console.error(error));
+            }).catch(error => {
+                thisClass.toastify({text: error?.message,className: "info",style: {background: "linear-gradient(to right, rgb(222 66 75), rgb(249 144 150))"}}).showToast();
+                console.error(error);
+            });
         });
         footwrap.appendChild(btn);
         // 
@@ -466,9 +473,9 @@ const PROMPTS = {
                 input.value = field?.value??'';input.dataset.fieldId = field.fieldID;
                 if (['date', 'time', 'local'].includes(field.type)) {
                     if (thisClass?.flatpickr) {
-                        input.type = 'text';thisClass.flatpickr(input, {
-                            enableTime: false,
-                            dateFormat: "d M, Y"
+                        // input.type = 'text';
+                        thisClass.flatpickr(input, {
+                            enableTime: false, dateFormat: "d M, Y", disableMobile: true
                         });
                     }
                 }
@@ -552,8 +559,23 @@ const PROMPTS = {
                              * And Change event listner for defining selected
                              * and giving ability to change canvas frame
                              */
+                            opt.element.selected = false;
+                            option.addEventListener('click', (event) =>{
+                                console.log('clicked', option.checked)
+                                // event.preventDefault();event.stopPropagation();
+                                if (opt.element.selected) {
+                                    opt.selected = false;// delete opt.selected;
+                                    option.checked = opt.element.selected = false;// opt.element.level
+                                    level.classList.remove('selected');
+                                    // 
+                                    // console.log(level, opt, option);
+                                }
+                                // 
+                                thisClass.updateTotalPrice();
+                            });
                             option.addEventListener('change', (event) => {
-                                event.preventDefault();event.stopPropagation();
+                                console.log('change', option.checked)
+                                // event.preventDefault();event.stopPropagation();
                                 switch (field?.type) {
                                     case 'radio':
                                     case 'checkbox':
@@ -561,6 +583,7 @@ const PROMPTS = {
                                         field.options = field?.options??[];
                                         var selected = field.options.find(opt => opt.label == event.target.value);
                                         if (selected) {
+                                            opt.element.selected = event.target?.checked;
                                             if (field?.type == 'radio' && event.target?.checked) {
                                                 field.options.filter(opt => opt?.selected).map(opt => {
                                                     opt.element.level.classList.remove('selected');
@@ -684,7 +707,9 @@ const PROMPTS = {
                             perview: 3,
                             space: 5,
                             view: 3,
-                            row: field
+                            row: field,
+                            // autoplay: true,
+                            drag: {}
                         })
                     );
                     // 
@@ -734,6 +759,7 @@ const PROMPTS = {
                         dataset: {title: PROMPTS.i18n?.sendersname??'Created with love by'}
                     }
                 };
+                field.infos = field?.infos??{};
                 Object.keys(inputs).forEach((type, typeI) => {
                     inputsArgs = {
                         fieldID: (field?.fieldID??0)+'.'+(type?.fieldID??typeI),
@@ -764,11 +790,11 @@ const PROMPTS = {
                                 if (nameInput?.nodeType) {
                                     if (checkbox?.checked) {
                                         lastTeddyName = nameInput.value;
-                                        nameInput.value = PROMPTS.names[Math.floor(Math.random() * PROMPTS.names.length)];
+                                        field.infos.teddy_name = nameInput.value = PROMPTS.names[Math.floor(Math.random() * PROMPTS.names.length)];
                                     } else {
-                                        nameInput.value = lastTeddyName;
+                                        field.infos.teddy_name = nameInput.value = lastTeddyName;
                                     }
-                                    nameInput.dispatchEvent(new Event("change"));
+                                    // nameInput.dispatchEvent(new Event("change"));
                                 }
                             });
                         });
@@ -858,6 +884,14 @@ const PROMPTS = {
                 div.appendChild(PROMPTS.do_field(extra, true));
             });
         }
+        // console.log(level, div);
+        // if (level && level?.nodeType) {
+        //     level.addEventListener('click', (event) =>{
+        //         event.preventDefault();event.stopPropagation();
+        //         console.log(field, field?.input);
+        //         // field.input.dispatchEvent(new Event('deselectRadio'));
+        //     });
+        // }
         return div;
     },
     do_submit: async (thisClass, el) => {
@@ -1314,7 +1348,7 @@ const PROMPTS = {
                 layered.addLayer(dollImage, 0).then(res => {
                     var promises = [...PROMPTS.canvasFrame.children].map((image, index) => {
                         var args = {
-                            src: image.src,
+                            src: (image.getAttribute('src') !== '') ? image?.src : '',
                             order: parseInt(image.style.zIndex)
                         }
                         if (args.order === NaN) {args.order = index + 1;}
@@ -1322,6 +1356,9 @@ const PROMPTS = {
                     }).filter(args => args.src != '' && args.src).map(async args => await layered.addLayer(args.src, args.order));
                     Promise.all(promises).then(result => {
                         // console.log(result);
+                        if (layered.layers.length <= 1) {
+                            resolve(false);
+                        }
                         // thisClass.prompts.
                         layered.export().then(blob => {
                             // open(URL.createObjectURL(blob));

@@ -8,6 +8,8 @@ namespace TEDDYBEAR_CUSTOMIZE_ADDON\inc;
 class CertificatePDF extends \TCPDF {
 	//Page header
 	public function Header() {
+		global $certificate_args;
+		// echo '<pre/>';print_r($certificate_args);wp_die();
 		// get the current page break margin
 		$bMargin = $this->getBreakMargin();
 		// get current auto-page-break mode
@@ -15,7 +17,7 @@ class CertificatePDF extends \TCPDF {
 		// disable auto-page-break
 		$this->setAutoPageBreak(false, 0);
 		// set bacground image
-		$img_file = apply_filters('teddy/project/certificate/background', false);
+		$img_file = apply_filters('teddy/project/certificate/background', false, $certificate_args->bg_type);
 		if ($img_file) {
 			$this->Image($img_file, null, 0, $this->getPageWidth(), $this->getPageHeight(), '', '', '', false, 300, 'C', false, false, 0);
 		}

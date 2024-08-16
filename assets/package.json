@@ -70,6 +70,7 @@
 		"@glidejs/glide": "^3.6.0",
 		"@splidejs/splide": "^4.1.4",
 		"@sweetalert2/theme-wordpress-admin": "^5.0.15",
+		"autocompleter": "^9.3.0",
 		"awesomplete": "^1.1.5",
 		"axios": "^1.7.2",
 		"bootstrap": "^5.3.0",

@@ -1,0 +1,129 @@
+
+
+.sb {
+    display: flex;
+    width: 100%;
+    background: #000;
+    color: #fff;
+    max-height: 100vh;
+    height: 100vh;
+    min-height: 600px;
+    gap: 10px;
+    justify-content: space-between;
+    &-l, &-r {
+        width: 20%;
+        border: none;
+    }
+    &-l {
+        border-right: 1px solid #eee;
+    }
+    &-r {
+        border-left: 1px solid #eee;
+    }
+    &-c {
+        width: 60%;
+        padding: 20px;
+        position: relative;
+        &-wb {
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 7px;
+            &-pre {
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+            }
+            &-r {
+                gap: 20px;
+                display: flex;
+                flex-direction: column;
+            }
+            .ct {
+                &-rw {
+                    gap: 10px;
+                    display: flex;
+                    flex-wrap: nowrap;
+                    flex-direction: row;
+                }
+                &-av {
+                    width: 50px;
+                    height: auto;
+                    display: flex;
+                    min-width: 50px;
+                    align-items: center;
+                    justify-content: center;
+                    &-img {
+                        width: 100%;
+                        height: auto;
+                    }
+                }
+                &-msg {
+                    &-blk {
+                        font-size: 20px;
+                        width: calc(100% - 100px);
+                    }
+                    &-acts {
+                        gap: 7px;
+                        display: flex;
+                        justify-content: center;
+                        > * {
+                            width: 20px;
+                            height: 20px;
+                            display: block;
+                            background: #ddd;
+                        }
+                    }
+                }
+                &-blk {
+                    padding: 20px;
+                    transition: all .7s ease;
+                    &:hover {
+                        color: #333;
+                        background: #eee;
+                    }
+                    &-chunks {
+                        pointer-events: none;
+                        transition: all .7s ease;
+                        .ct {
+                            &-msg {
+                                &-blk {
+                                    position: relative;
+                                    &:after {
+                                        content: ".";
+                                        -webkit-animation: loading-dots 3s infinite;
+                                        animation: loading-dots 3s infinite;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        &-wf {
+            width: 100%;
+            padding: 20px;
+            &-b {
+                color: #eee;
+                background: none;
+                padding: 10px 20px;
+                border: 1px solid #eee;
+            }
+        }
+    }
+}
+
+/* Skeleton Text Effect */
+  
+@-webkit-keyframes loading-dots {
+    0% {content: ".";}
+    50% {content: "..";}
+    100% {content: "...";}
+}
+  
+@keyframes loading-dots {
+    0% {content: ".";}
+    50% {content: "..";}
+    100% {content: "...";}
+}

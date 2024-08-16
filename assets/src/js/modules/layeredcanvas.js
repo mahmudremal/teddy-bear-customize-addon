@@ -43,7 +43,7 @@ class LayeredCanvas {
                 resolve(img);
             };
             img.onerror = () => {
-                reject(new Error(`Failed to load image: ${img.src}`));
+                reject(new Error(`Failed to load image: ${src}`));
             };
         });
     }

@@ -35,21 +35,21 @@ class Ask {
 			});
 			
 		} else {
-			document.querySelectorAll('#teddybear_meta_data > .postbox-header > h2').forEach(boxHeaderH2 => {
-				var boxHeader = boxHeaderH2.parentElement;
-				var block = document.createElement('div');
-				block.appendChild(boxHeaderH2);
-				var printout = document.createElement('a');printout.target = '_blank';
-				printout.innerHTML = thisClass.i18n?.printoutcerts??'Printout Certificates';
-				printout.href = `${location.origin}/certificates/${fwpSiteConfig.config.product_id}/print/`;
-				block.appendChild(printout);block.style.display = 'flex';block.style.alignItems = 'center';
-				block.style.justifyContent = 'space-between';block.style.minWidth = '90%';
-				if (boxHeader.children[0]) {
-					boxHeader.insertBefore(block, boxHeader.children[0]);
-				} else {
-					boxHeader.appendChild(block);
-				}
-			});
+			// document.querySelectorAll('#teddybear_meta_data > .postbox-header > h2').forEach(boxHeaderH2 => {
+			// 	var boxHeader = boxHeaderH2.parentElement;
+			// 	var block = document.createElement('div');
+			// 	block.appendChild(boxHeaderH2);
+			// 	var printout = document.createElement('a');printout.target = '_blank';
+			// 	printout.innerHTML = thisClass.i18n?.printoutcerts??'Printout Certificates';
+			// 	printout.href = `${location.origin}/certificates/${fwpSiteConfig.config.product_id}/print/`;
+			// 	block.appendChild(printout);block.style.display = 'flex';block.style.alignItems = 'center';
+			// 	block.style.justifyContent = 'space-between';block.style.minWidth = '90%';
+			// 	if (boxHeader.children[0]) {
+			// 		boxHeader.insertBefore(block, boxHeader.children[0]);
+			// 	} else {
+			// 		boxHeader.appendChild(block);
+			// 	}
+			// });
 		}
 	}
 	askForTeddyInfo(items, thisClass) {
@@ -57,11 +57,12 @@ class Ask {
 		const updateBtn = document.querySelector('#poststuff #woocommerce-order-actions .inside button[type="submit"]');
 		if(updateBtn) {updateBtn.classList.add('disabled');updateBtn.disabled = true;}
 		thisClass.Swal.fire({
-			title: 'Information Required',
+			title: thisClass.i18n?.info_required??'Information Required',
 			// input: 'text',
 			// inputAttributes: {autocapitalize: 'off'},
 			showCancelButton: true,
-			confirmButtonText: 'Confirm',
+			confirmButtonText: thisClass.i18n?.confirm??'Confirm',
+			cancelButtonText: thisClass.i18n?.cancel??'Cancel',
 			showLoaderOnConfirm: true,
 			html: '<div class="askteddyinfo__popup"></div>',
 			didOpen: async () => {
@@ -97,11 +98,11 @@ class Ask {
 			const body = document.createElement('div');
 			body.classList.add('askteddyinfo__body');
 			const fields = [
-				{label: 'Teddy name', type: 'text', name: 'item-' + item.item_id + '[teddy_name]', default: item.info?.teddy_name??''},
-				{label: 'Birth date', type: 'date', name: 'item-' + item.item_id + '[teddy_birth]', default: item.info?.teddy_birth??''},
-				{label: 'Reciever\'s Name', type: 'text', name: 'item-' + item.item_id + '[teddy_reciever]', default: item.info?.teddy_reciever??''},
-				{label: 'Created with love by', type: 'text', name: 'item-' + item.item_id + '[teddy_sender]', default: item.info?.teddy_sender??''},
-				{label: 'Attached Printout', type: 'checkbox', name: 'item-' + item.item_id + '[teddy_print]', default: item.info?.teddy_print??false},
+				{label: thisClass.i18n?.teddy_name??'Teddy name', type: 'text', name: 'item-' + item.item_id + '[teddy_name]', default: item.info?.teddy_name??''},
+				{label: thisClass.i18n?.teddybirth??'Birth date', type: 'date', name: 'item-' + item.item_id + '[teddy_birth]', default: item.info?.teddy_birth??''},
+				{label: thisClass.i18n?.teddy_reciever??"Reciever's Name", type: 'text', name: 'item-' + item.item_id + '[teddy_reciever]', default: item.info?.teddy_reciever??''},
+				{label: thisClass.i18n?.sendersname??'Created with love by', type: 'text', name: 'item-' + item.item_id + '[teddy_sender]', default: item.info?.teddy_sender??''},
+				{label: thisClass.i18n?.printoutcerts??'Attached Printout', type: 'checkbox', name: 'item-' + item.item_id + '[teddy_print]', default: item.info?.teddy_print??false},
 			];
 			if(item?.prod_name != '') {
 				var heading = document.createElement('h3');
@@ -117,6 +118,8 @@ class Ask {
 				var input = document.createElement('input');input.type = row.type;
 				input.name = row.name;input.setAttribute('value', row.default);
 				input.classList.add('form-control');input.id = label.for;
+				// 
+				if (row.type == 'checkbox' && row?.teddy_print) {input.checked = true;}
 				// 
 				label.appendChild(input);
 				if (rowIndex == 0 && window?.teddySuggestedNames) {

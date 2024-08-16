@@ -56,14 +56,14 @@ class Columns {
 	}
 	public function post_row_actions($actions, $post) {
 		global $teddy_Plushies;
-		if($post->post_type =="product"){
+		if ($post->post_type =="product"){
 
-			if($teddy_Plushies->is_accessory($post->ID)) {return $actions;}
+			if ($teddy_Plushies->is_accessory($post->ID)) {return $actions;}
 			
 			$post_meta = (array) get_post_meta($post->ID, '_teddy_custom_data', true);
 			$global_key = (isset($post_meta['product_type']) && $post_meta['product_type'] == 'sitting')?'sitting-global':'standing-global';
 			$global_post_id = apply_filters('teddybear/project/system/getoption', $global_key, 0);
-			if(!(apply_filters('teddybear/project/system/isactive', 'standard-forceglobal') && $global_post_id != get_the_ID())) {
+			if (!(apply_filters('teddybear/project/system/isactive', 'standard-forceglobal') && $global_post_id != get_the_ID())) {
 				$config = ['id' => $post->ID];
 				$actions['pops_actions'] = '<a href="#" class="fwppopspopup-open" type="button" data-config="' . esc_attr(json_encode($config)) . '">' . esc_html__('Setup', 'teddybearsprompts') . '</a>';
 			}
@@ -77,31 +77,54 @@ class Columns {
 		return $columns;
 	}
 	public function manage_shop_order_custom_column($column, $post_id) {
-		global $teddy_Certificate;global $teddy_Voices;
+		global $teddy_Certificate;global $teddy_Voices;global $teddy_Meta;
 		switch($column) {
 			case 'teddy_attaches':
 				$json = ['order_id' => $post_id];
 				$voiceDefination = ['tooltip' => __('Voice Skipped', 'teddybearsprompts'), 'icon' => 'no-alt', 'defined' => 0];
-				$order = wc_get_order($post_id);
-				if($order && !is_wp_error($order)) {
-					foreach($order->get_items() as $order_item_id => $order_item) {
-						if($teddy_Voices->should_exists_voices($order, $order_item)) {
-							if($voiceDefination['defined'] == 0) {
-								$voiceDefination = ['tooltip' => __('Voice should be sent through email.', 'teddybearsprompts'), 'icon' => 'email-alt', 'defined' => 1];
-								// print_r("Should </br>");
+				$order = wc_get_order($post_id);$voices = [];
+				if ($order && !is_wp_error($order)) {
+					foreach ($order->get_items() as $order_item_id => $order_item) {
+						$_dataset = $teddy_Meta->get_order_item_dataset($order_item, $order);
+						if (!$_dataset) {continue;}
+						foreach ($_dataset as $row) {
+							if (!is_array($row) || !isset($row['type']) || $row['type'] != 'voice') {continue;}
+							if (!isset($row['attaced']) || empty($row['attaced'])) {continue;}
+							if (isset($row['attaced']['blob']) && !empty($row['attaced']['blob'])) {
+								// $row['attaced']['blob'] = apply_filters('teddybear/project/slashes/fix', TEDDY_BEAR_CUSTOMIZE_ADDON_UPLOAD_DIR . $row['attaced']['blob']);
+								// if (file_exists($row['attaced']['blob']) && !is_dir($row['attaced']['blob'])) {}
+								$voices[] = 'exists';
+							} else if (isset($row['attaced']['later']) && $row['attaced']['later']) {
+								$voices[] = 'later';
+							} else {
+								$voices[] = 'skipped';
 							}
-							if($teddy_Voices->has_single_voices($order, $order_item)) {
-								if($voiceDefination['defined'] != 2) {
-									$voiceDefination = ['tooltip' => __('Voice defined and is downloadable.', 'teddybearsprompts'), 'icon' => 'download', 'defined' => 2];
-									// print_r("Exists </br>");
-								}
-							}
-						// } else {
-							// print_r($order_item->get_meta_data());
 						}
-						// print_r("Ended </br>");
 					}
 				}
+				// 
+				$has_skipped = array_filter($voices, function($v, $k) {
+					return $v == 'skipped';
+				}, ARRAY_FILTER_USE_BOTH);
+				if ($has_skipped && count($has_skipped) >= 1) {
+					$voiceDefination = ['tooltip' => __('Voice Skipped', 'teddybearsprompts'), 'icon' => 'no-alt', 'defined' => 0];
+				}
+				// 
+				$has_voice = array_filter($voices, function($v, $k) {
+					return $v == 'exists';
+				}, ARRAY_FILTER_USE_BOTH);
+				if ($has_voice && count($has_voice) >= 1) {
+					$voiceDefination = ['tooltip' => __('Voice defined and is downloadable.', 'teddybearsprompts'), 'icon' => 'download', 'defined' => 2];
+				}
+				// 
+				$has_later = array_filter($voices, function($v, $k) {
+					return $v == 'later';
+				}, ARRAY_FILTER_USE_BOTH);
+				if ($has_later && count($has_later) >= 1) {
+					$voiceDefination = ['tooltip' => __('Voice should be sent through email.', 'teddybearsprompts'), 'icon' => 'email-alt', 'defined' => 1];
+				}
+				// 
+				// print_r($has_skipped);
 				?>
 				<button type="button" class="btn launch_orderd_arrachments tippy-tooltip" data-config="<?php echo esc_attr(json_encode($json)); ?>" data-tippy-content="<?php echo esc_attr($voiceDefination['tooltip']); ?>">
 					<span class="dashicons-before dashicons-<?php echo esc_attr($voiceDefination['icon']); ?>"></span>
@@ -117,18 +140,18 @@ class Columns {
 		global $teddy_Certificate;global $teddy_Voices;
 		$json = ['hooks' => ['order_downloads_failed'], 'attached' => []];
 		$abspath = apply_filters('teddybear/project/slashes/fix', ABSPATH);
-		if(isset($_POST['order_id'])) {
+		if (isset($_POST['order_id'])) {
 			$order = wc_get_order((int) $_POST['order_id']);
-			if($order && !is_wp_error($order)) {
-				foreach($order->get_items() as $order_item_id => $order_item) {
+			if ($order && !is_wp_error($order)) {
+				foreach ($order->get_items() as $order_item_id => $order_item) {
 					$voices = (array) $teddy_Voices->get_single_voices($order, $order_item, true);
-					// foreach($voices as $i => $voice_path) {
-					// 	$voices[$i] = str_replace([$abspath], [home_url('/')], $voice_path);
-					// 	$voices[$i] = str_replace([DIRECTORY_SEPARATOR], ['/'], $voices[$i]);
-					// }
+					foreach ($voices as $i => $voice_path) {
+						$voices[$i] = str_replace([$abspath], [home_url('/')], $voice_path);
+						$voices[$i] = str_replace([DIRECTORY_SEPARATOR], ['/'], $voices[$i]);
+					}
 					$certificates = [];
 					$certificate_paths = (array) $teddy_Certificate->get_single_certificates($order, $order_item);
-					foreach($certificate_paths as $i => $pdf_path) {
+					foreach ($certificate_paths as $i => $pdf_path) {
 						if (empty(trim($pdf_path))) {continue;}
 						$pdf_path = str_replace([$abspath], [home_url('/')], $pdf_path);
 						$certificates[] = str_replace([DIRECTORY_SEPARATOR], ['/'], $pdf_path);
@@ -149,7 +172,7 @@ class Columns {
 						// 
 					];
 				}
-				if(count($json['attached']) <= 0) {
+				if (count($json['attached']) <= 0) {
 					$json['errorSVG'] = esc_url(TEDDY_BEAR_CUSTOMIZE_ADDON_BUILD_URI . '/icons/Information carousel_Monochromatic.svg');
 				}
 				$json['hooks'] = ['order_downloads_success'];

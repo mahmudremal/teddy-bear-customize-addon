@@ -21,6 +21,7 @@ const entry = {
 	public		: JS_DIR + '/public.js',
 	admin		: JS_DIR + '/admin.js',
 	recorder	: JS_DIR + '/recorder.js',
+	chat		: JS_DIR + '/chat.js',
 };
 const output = {
 	path: BUILD_DIR,
