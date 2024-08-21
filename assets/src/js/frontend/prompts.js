@@ -525,7 +525,9 @@ const PROMPTS = {
                                 image.src = opt.thumbUrl;image.dataset.outfit = opt.imageUrl;
                             }
                             if (image?.alt != '') {
-                                thisClass.tippy(imgwrap, {content: `${image?.alt??''}`});
+                                if (thisClass.config?.tooltip && thisClass.config.tooltip != '') {
+                                    thisClass.tippy(imgwrap, {content: `${image?.alt??''}`});
+                                }
                             }
                             imgwrap.appendChild(image);level.appendChild(imgwrap);
                         }
@@ -561,12 +563,12 @@ const PROMPTS = {
                              */
                             opt.element.selected = false;
                             option.addEventListener('click', (event) =>{
-                                console.log('clicked', option.checked)
-                                // event.preventDefault();event.stopPropagation();
+                                event.stopPropagation();
+                                // event.preventDefault();
                                 if (opt.element.selected) {
                                     opt.selected = false;// delete opt.selected;
                                     option.checked = opt.element.selected = false;// opt.element.level
-                                    level.classList.remove('selected');
+                                    PROMPTS.update_pop_n_canvas();
                                     // 
                                     // console.log(level, opt, option);
                                 }
@@ -574,29 +576,14 @@ const PROMPTS = {
                                 thisClass.updateTotalPrice();
                             });
                             option.addEventListener('change', (event) => {
-                                console.log('change', option.checked)
-                                // event.preventDefault();event.stopPropagation();
+                                event.stopPropagation();
+                                // event.preventDefault();
                                 switch (field?.type) {
-                                    case 'radio':
-                                    case 'checkbox':
-                                    case 'select':
-                                        field.options = field?.options??[];
-                                        var selected = field.options.find(opt => opt.label == event.target.value);
-                                        if (selected) {
-                                            opt.element.selected = event.target?.checked;
-                                            if (field?.type == 'radio' && event.target?.checked) {
-                                                field.options.filter(opt => opt?.selected).map(opt => {
-                                                    opt.element.level.classList.remove('selected');
-                                                    delete opt.selected;return opt;
-                                                });
-                                            }
-                                            selected.element.level.classList.add('selected');
-                                            selected.selected = event.target.checked;
-                                            if (field?.canvasLayer && selected?.imageUrl && selected?.label) {
-                                                field.canvasLayer.src = selected?.imageUrl??'';
-                                                field.canvasLayer.label = selected?.label??'';
-                                            }
-                                        }
+                                    case 'radio':case 'checkbox':case 'select':
+                                        var isRadio = field.type == 'radio';
+                                        if (opt?.skip || isRadio) {field.options.filter(option => option?.selected).map(option => {option.selected = false;return option;});}
+                                        opt.selected = event.target.checked;
+                                        PROMPTS.update_pop_n_canvas();
                                         break;
                                     case 'text':case 'number':case 'date':case 'time':case 'datetime':case 'range':case 'color':
                                         field.textContent = event.target.value;
@@ -958,9 +945,13 @@ const PROMPTS = {
                 field = PROMPTS.get_data(thisClass).find((row)=>row.orderAt==PROMPTS.currentStep);
                 header = document.querySelector('.header_image');
                 if(header) {
-                    if(field && field?.headerbgurl && field.headerbgurl != '') {
-                        jQuery(header).css('background-image', 'url('+field.headerbgurl+')');
+                    var headerbgurl = PROMPTS.get_custom_data();
+                    if (headerbgurl && headerbgurl?._canvas) {
+                        jQuery(header).css('background-image', 'url('+ headerbgurl?._canvas??'' +')');
                     }
+                    // if(field && field?.headerbgurl && field.headerbgurl != '') {
+                    //     jQuery(header).css('background-image', 'url('+field.headerbgurl+')');
+                    // }
                 }
                 document.querySelectorAll(root+'.step_visible').forEach((el) => {el.classList.add('d-none');el.classList.remove('step_visible');});
                 step = document.querySelector(root+'[data-step="'+(field?.fieldID??PROMPTS.currentStep)+'"]');
@@ -1237,9 +1228,13 @@ const PROMPTS = {
                             var field = PROMPTS.get_data(thisClass).find((row)=>row.orderAt==PROMPTS.currentStep);
                             var header = document.querySelector('.header_image');
                             if(header) {
-                                if(field && field.headerbgurl != '') {
-                                    jQuery(header).css('background-image', 'url('+field.headerbgurl+')');
+                                var headerbgurl = PROMPTS.get_custom_data();
+                                if (headerbgurl && headerbgurl?._canvas) {
+                                    jQuery(header).css('background-image', 'url('+headerbgurl?._canvas??''+')');
                                 }
+                                // if(field && field.headerbgurl != '') {
+                                //     jQuery(header).css('background-image', 'url('+field.headerbgurl+')');
+                                // }
                             }
                             document.querySelector('.popup_foot__wrap')?.classList.add('d-none');
                         }
@@ -1326,19 +1321,30 @@ const PROMPTS = {
             });
             return;
         }
-        var img = document.createElement('img');
-        img.height = 400;img.width = 350;
-        img.src = '';img.alt = '';
-        row.canvasLayer = img;
-        if (row?.options) {
-            var option = Object.values(row.options).find(option => option?.image && option?.imageUrl && option?.selected);
-            if (option) {
-                img.src = option.imageUrl;img.alt = option.label;
+        var get_frame_image = () => {
+            var img = document.createElement('img');
+            img.height = 400;img.width = 350;
+            img.src = '';img.alt = '';
+            return img;
+        }
+        if (row.type == 'checkbox') {
+            Object.values(row.options).forEach(option => {
+                option.canvasLayer = get_frame_image();
+                if (option?.image && option?.imageUrl && option?.selected) {
+                    option.canvasLayer.src = option.imageUrl;option.canvasLayer.alt = option.label;
+                }
+                if (PROMPTS?.canvasFrame) {PROMPTS.canvasFrame.appendChild(option.canvasLayer);}
+            });
+        } else {
+            row.canvasLayer = get_frame_image();
+            if (row?.options) {
+                var option = Object.values(row.options).find(option => option?.image && option?.imageUrl && option?.selected);
+                if (option) {row.canvasLayer.src = option.imageUrl;row.canvasLayer.alt = option.label;}
             }
+            if (PROMPTS?.canvasFrame) {PROMPTS.canvasFrame.appendChild(row.canvasLayer);}
         }
-        if (PROMPTS?.canvasFrame) {
-            PROMPTS.canvasFrame.appendChild(img);
-        }
+        
+        
     },
     get_canvas: (thisClass) => {
         return new Promise((resolve, reject) => {
@@ -1369,6 +1375,50 @@ const PROMPTS = {
             }
             // resolve(layered);
         });
+    },
+    update_pop_n_canvas: () => {
+        // 
+        var _pop_n_canvas_options = (row) => {
+            if (row?.canvasLayer) {
+                row.canvasLayer.src = row.canvasLayer.alt = '';
+            }
+            Object.values(row.options).map(option => {
+                if (option?.canvasLayer) {
+                    option.canvasLayer.src = option.canvasLayer.alt = '';
+                }
+                if (option?.selected) {
+                    option.element.input.checked = true;
+                    option.element.level.classList.add('selected');
+                    if (option?.imageUrl) {
+                        if (row?.canvasLayer) {
+                            row.canvasLayer.src = option.imageUrl;
+                            row.canvasLayer.alt = option.label;
+                        }
+                        if (option?.canvasLayer) {
+                            option.canvasLayer.src = option.imageUrl;
+                            option.canvasLayer.alt = option.label;
+                        }
+                    }
+                } else {
+                    option.element.input.checked = false;
+                    option.element.level.classList.remove('selected');
+                }
+            });
+        };
+        // 
+        PROMPTS.get_data().map(row => {
+            if (row.type === 'radio' || row.type === 'checkbox' || row.type === 'select') {
+                _pop_n_canvas_options(row);
+            } else if (row.type == 'outfit') {
+                Object.values(row.groups).map(group => {
+                    _pop_n_canvas_options(group);
+                })
+            } else {}
+        })
+    },
+    get_custom_data: () => {
+        var data = (PROMPTS.lastJson?.product)?.custom_data??{};
+        return data;
     }
     
 };

@@ -145,6 +145,18 @@ class Meta_Boxes {
 									]
 								],
 								[
+									'id' 					=> '_canvas',
+									'label'					=> __('Canvas image', 'teddybearsprompts'),
+									'description'			=> __('Canvas image for customization screen.', 'teddybearsprompts'),
+									'type'					=> 'button',
+									'text'					=> __('Select Image', 'teddybearsprompts'),
+									'default'				=> false,
+									'attr'					=> [
+										'data-image-select'		=> true,
+										'data-selected-image'	=> false, // get_post_meta($post_id, '_canvas', true)
+									]
+								],
+								[
 									'id' 					=> 'eye',
 									'label'					=> __('Eye color', 'teddybearsprompts'),
 									'description'			=> __('Teddy\'s eye color', 'teddybearsprompts'),
@@ -278,20 +290,20 @@ class Meta_Boxes {
 		switch($field['type']) {
 			case 'text':case 'email':case 'password':case 'number':case 'date':case 'time':case 'color':case 'url':
 				$html .= '<input id="' . esc_attr($field['id']) . '" type="' . $field['type'] . '" name="' . esc_attr($option_name) . '" placeholder="' . esc_attr($field['placeholder']) . '" value="' . esc_attr($data) . '"' . $this->attributes($field) . '/>' . "\n";
-			break;
+				break;
 			case 'text_secret':
 				$html .= '<input id="' . esc_attr($field['id']) . '" type="text" name="' . esc_attr($option_name) . '" placeholder="' . esc_attr($field['placeholder']) . '" value="" ' . $this->attributes($field) . '/>' . "\n";
-			break;
+				break;
 			case 'textarea':
 				$html .= '<textarea id="' . esc_attr($field['id']) . '" rows="5" cols="50" name="' . esc_attr($option_name) . '" placeholder="' . esc_attr($field['placeholder']) . '" ' . $this->attributes($field) . '>' . $data . '</textarea><br/>'. "\n";
-			break;
+				break;
 			case 'checkbox':
 				$checked = '';
 				if(($data && 'on' == $data) || $field['default'] == true) {
 					$checked = 'checked="checked"';
 				}
 				$html .= '<input id="' . esc_attr($field['id']) . '" type="' . $field['type'] . '" name="' . esc_attr($option_name) . '" ' . $checked . ' ' . $this->attributes($field) . '/>' . "\n";
-			break;
+				break;
 			case 'checkbox_multi':
 				foreach($field['options'] as $k => $v) {
 					$checked = false;
@@ -300,7 +312,7 @@ class Meta_Boxes {
 					}
 					$html .= '<label for="' . esc_attr($field['id'] . '_' . $k) . '"><input type="checkbox" ' . checked($checked, true, false) . ' name="' . esc_attr($option_name) . '[]" value="' . esc_attr($k) . '" id="' . esc_attr($field['id'] . '_' . $k) . '" /> ' . $v . '</label> ';
 				}
-			break;
+				break;
 			case 'radio':
 				$html .= ($field['label'] && !empty($field['label']))?'<span style="display: block;">' . $field['label'] . '</span>':'';
 				foreach($field['options'] as $k => $v) {
@@ -309,7 +321,7 @@ class Meta_Boxes {
 					if(! $checked && $k == $field['default']) {$checked = true;}
 					$html .= '<label for="' . esc_attr($field['id'] . '_' . $k) . '"><input type="radio" ' . checked($checked, true, false) . ' name="' . esc_attr($option_name) . '" value="' . esc_attr($k) . '" id="' . esc_attr($field['id'] . '_' . $k) . '" ' . $this->attributes($field) . '/> ' . $v . '</label> ';
 				}
-			break;
+				break;
 			case 'select':
 				$html .= '<select name="' . esc_attr($option_name) . '" id="' . esc_attr($field['id']) . '" ' . $this->attributes($field) . '>';
 				foreach($field['options'] as $k => $v) {
@@ -318,7 +330,7 @@ class Meta_Boxes {
 					$html .= '<option ' . selected($selected, true, false) . ' value="' . esc_attr($k) . '">' . $v . '</option>';
 				}
 				$html .= '</select> ';
-			break;
+				break;
 			case 'select_multi':
 				$html .= '<select name="' . esc_attr($option_name) . '[]" id="' . esc_attr($field['id']) . '" multiple="multiple" ' . $this->attributes($field) . '>';
 				foreach($field['options'] as $k => $v) {
@@ -329,33 +341,33 @@ class Meta_Boxes {
 					$html .= '<option ' . selected($selected, true, false) . ' value="' . esc_attr($k) . '">' . $v . '</option> ';
 				}
 				$html .= '</select> ';
-			break;
+				break;
 			case 'button':
 				$html .= '<button id="' . esc_attr($field['id']) . '" type="button" data-name="' . esc_attr($option_name) . '" data-value="' . esc_attr($data) . '"' . $this->attributes($field) . '>' . $field['text'] . '</button>' . "\n";
-			break;
+				break;
 			default:
-			break;
+				break;
 		}
 		switch($field['type']) {
 			case 'checkbox_multi':
 			case 'radio':
 			case 'select_multi':
 				$html .= '<br/><span class="description">' . $field['description'] . '</span>';
-			break;
+				break;
 			case 'button':
-				$thumbUrl = wp_get_attachment_image_url($data);
+				$thumbUrl = ($data)?wp_get_attachment_image_url($data):false;
 				$html .= '<label for="' . esc_attr($field['id']) . '">
 					<span class="description">' . $field['description'] . '</span>
 					<div class="imgpreview">
 						<input type="hidden" value="' . esc_attr($data) . '" name="' . esc_attr($option_name) . '" />
-						<img src="' . esc_url($thumbUrl) . '" alt="" />
+						<img src="' . esc_url($thumbUrl) . '" alt="' . esc_attr(__('Image', 'teddybearsprompts')) . '" />
 						<div class="dashicons-before dashicons-dismiss" title="Remove"></div>
 					</div>
 				</label>';
-			break;
+				break;
 			default:
 				$html .= '<label for="' . esc_attr($field['id']) . '"><span class="description">' . $field['description'] . '</span></label>';
-			break;
+				break;
 		}
 		echo '<div class="fwp-form__field fwp-form__field__' . esc_attr($field['type']) . '" data-condition="' . esc_attr(
 			json_encode(isset($field['conditions'])?$field['conditions']:[])

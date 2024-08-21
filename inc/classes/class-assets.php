@@ -109,7 +109,8 @@ class Assets {
 				'pls_wait'			=> __('Please wait...', 'teddybearsprompts'),
 			],
 			'currencySign'		=> get_woocommerce_currency_symbol(),
-			'local'				=> apply_filters('teddybear/project/system/get_locale', get_user_locale())
+			'local'				=> apply_filters('teddybear/project/system/get_locale', get_user_locale()),
+			'tooltip'			=> apply_filters('teddybear/project/system/isactive', 'addons-tooltip', false),
 			
 		], (array) $args);
 		

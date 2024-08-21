@@ -73,24 +73,12 @@ class Ajax {
 		$product_id = $request['product_id'];
 		
 
-		$json = $this->get_catched_product_customizations((int) $product_id);
+		$json = $this->get_product_customizations((int) $product_id);
 		if ($json && !is_wp_error($json)) {
 			wp_send_json_success($json);
 		} else {
 			wp_send_json_error($json);
 		}
-	}
-	public function get_catched_product_customizations($product_id) {
-		$transient_key = sprintf("_product_custom_popup_%s", $product_id);
-		$_caches = get_transient($transient_key);
-		if ($_caches === false) {
-			$_caches = $this->get_product_customizations($product_id);
-
-			// Cache the retrieved data for 12 hours
-			// 12 * HOUR_IN_SECONDS | MINUTE_IN_SECONDS
-			set_transient($transient_key, $_caches, 12 * HOUR_IN_SECONDS);
-		}
-		return $_caches;
 	}
 	public function get_product_customizations($product_id) {
 		global $wpdb;global  $woocommerce;global $teddy_Product;global $teddy_Plushies;
@@ -138,10 +126,13 @@ class Ajax {
 				'toast'		=> false, // '<strong>' . count($requested) . '</strong> people requested this service in the last 10 minutes!',
 				'thumbnail'	=> ['1x' => '', '2x' => ''],
 				'custom_data'	=> get_post_meta($productData['id'], '_teddy_custom_data', true),
-				'custom_fields' => $teddy_Product->get_frontend_product_json($dataset['product_id'])
+				'custom_fields' => $teddy_Product->get_catched_product_customizations($product_id)
 			],
 		];
 
+		if (isset($result['product']['custom_data']['_canvas']) && !empty($result['product']['custom_data']['_canvas'])) {
+			$result['product']['custom_data']['_canvas'] = wp_get_attachment_image_url($result['product']['custom_data']['_canvas'], 'full');
+		}
 		if (!$result['product']['custom_fields'] || count($result['product']['custom_fields']) <= 0) {
 			$result['product']['empty_image'] = TEDDY_BEAR_CUSTOMIZE_ADDON_BUILD_URI . '/icons/Team meeting_Monochromatic.svg';
 		}
@@ -210,12 +201,14 @@ class Ajax {
 		$result = [];$result['hooks'] = ['product_updated'];$result['message'] = __( 'Popup updated Successfully', 'teddybearsprompts' );
 		// $request = json_decode(preg_replace('/[\x00-\x1F\x80-\xFF]/', '', stripslashes(html_entity_decode($_POST['dataset']))), true);
 		$request = json_decode(stripslashes(html_entity_decode($_POST['dataset'])), true);
-
 		
 		$result['json'] = $request;
 		$product_id = $_POST['product_id'];
 		update_post_meta($product_id, '_product_custom_popup', $request);
-		delete_transient('_product_custom_popup_' . $product_id);
+
+		$transient_key = sprintf("_product_custom_popup_%s", $product_id);
+		delete_transient($transient_key);
+		
 		wp_send_json_success($result, 200);
 	}
 	public function edit_product() {

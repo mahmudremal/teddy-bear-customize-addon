@@ -303,6 +303,13 @@ class Menus {
 					'type'					=> 'text',
 					'default'				=> false
 				],
+				[
+					'id' 					=> 'addons-tooltip',
+					'label'					=> __('Tooltip', 'teddybearsprompts'),
+					'description'			=> __('Allow tooltip on popup outfit items.', 'teddybearsprompts'),
+					'type'					=> 'checkbox',
+					'default'				=> false
+				],
 			]
 		];
 		$args['badges']			= [
@@ -701,6 +708,29 @@ class Menus {
 				
 			]
 		];
+		$args['cache']			= [
+			'title'							=> __('Cache', 'teddybearsprompts'),
+			'description'					=> __('Setup servers side cache functionality to improve loading time and user experiance and to reduce server pressures.', 'teddybearsprompts'),
+			'fields'						=> [
+				[
+					'id' 					=> 'cache-enable',
+					'label'					=> __('Enable', 'teddybearsprompts'),
+					'description'			=> __('Mark to enable Cache features on server side.', 'teddybearsprompts'),
+					'type'					=> 'checkbox',
+					'default'				=> false
+				],
+				[
+					'id' 					=> 'cache-interval',
+					'label'					=> __('Interval time', 'teddybearsprompts'),
+					'description'			=> __('Give here a number of hours you would like to refresh caches.', 'teddybearsprompts'),
+					'type'					=> 'number',
+					'attr'					=> [
+						'step'				=> 'any'
+					],
+					'default'				=> 12
+				],
+			]
+		];
 
 		unset($args['email']);
 		return $args;
@@ -727,17 +757,6 @@ class Menus {
 			foreach($query as $_post) {
 				if($args->noaccessory && $teddy_Plushies->is_accessory($_post->ID)) {continue;}
 				$options[$_post->ID] = get_the_title($_post->ID);
-
-				// Function to remove popup customization meta.
-				// _product_custom_popup || _teddy_custom_data
-				// $meta = get_post_meta($_post->ID, '_product_custom_popup', true);
-				// $exists = get_post_meta($_post->ID, '_product_custom_popup_stagged', true);
-				// if(! $meta && $exists) {
-				// 	update_post_meta($_post->ID, '_product_custom_popup', $exists);
-				// 	$updated = delete_post_meta($_post->ID, '_product_custom_popup_stagged');
-				// 	if(!$updated) {echo 'post meta failed to removed';}
-				// }
-				
 			}
 		} else if($args->queryType == 'term') {
 			$query = get_categories('taxonomy=product_cat&post_type=product');

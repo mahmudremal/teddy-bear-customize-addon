@@ -248,7 +248,7 @@ class Voice {
         // this.skipButton.classList.remove('do_recorder__skipped');
         this.switchActive('record');
         // this.releaseButton.classList.remove('do_recorder__released');
-        this.audioInstructPreview.innerHTML = this.nl2br(wp.i18n.sprintf(thisClass.i18n?.audiorecord_instuction??'Please record your voice upto %s seconds.', this.duration));
+        this.audioInstructPreview.innerHTML = this.nl2br(this.sprintf(thisClass.i18n?.audiorecord_instuction??'Please record your voice upto %s seconds.', this.duration));
         this.audioInstructPreview.classList.remove('d-none');
       }).catch(error => console.error(error));
     });
@@ -365,7 +365,7 @@ class Voice {
          */
         this.recordedBlob = null;
         this.do_store('sizeExceed', false, thisClass);
-        throw new Error(wp.i18n.sprintf(thisClass.i18n?.maxuploadmb??'Oh! The file you are trying to upload is too heavy. Put ♥ - the file must be up to %sMb', 20));
+        throw new Error(this.sprintf(thisClass.i18n?.maxuploadmb??'Oh! The file you are trying to upload is too heavy. Put ♥ - the file must be up to %sMb', 20));
       }
       /**
        * Check if file is invalid or something error happens.
@@ -412,7 +412,7 @@ class Voice {
            */
           // thisClass.removeAdditionalPrice(this.meta_tag, parseFloat(this.recordButton.dataset.cost), false, this.product_id);
           this.do_store('durExceed', false, thisClass);
-          throw new Error(wp.i18n.sprintf(thisClass.i18n?.audioexcedduration??'Office! The file I uploaded is too long. Note ♥ The length of the recording does not exceed %s seconds.', this.duration));
+          throw new Error(this.sprintf(thisClass.i18n?.audioexcedduration??'Office! The file I uploaded is too long. Note ♥ The length of the recording does not exceed %s seconds.', this.duration));
         }
         /**
          * Add prices on upload voice
@@ -424,11 +424,11 @@ class Voice {
         this.waveAudioPreview.classList.remove('loading-file');
       });
     } catch (err) {
-      console.log('Hi there😒😒')
+      // console.log('Hi there😒😒')
       var errorText = err?.message??'';// console.error(err);// err.message is text print
       if (errorText.trim() == '') {
         errorText = thisClass.i18n?.audiofile_invalid??"Invalid file selected. It seems you didn't select a valid audio file or file is not in these following format (%s).";
-        errorText = wp.i18n.sprintf(errorText, this.audioExtensions.join(', '));
+        errorText = this.sprintf(errorText, this.audioExtensions.join(', '));
       }
       this.showError({text: errorText, duration: 45000, close: true, gravity: "top", position: "right", stopOnFocus: true, style: {background: 'linear-gradient(to right, rgb(255 180 117), rgb(251, 122, 72))'}});
       this.waveAudioPreview.classList.remove('loading-file');
@@ -527,6 +527,18 @@ class Voice {
     // 
     // console.log(this, args);
     // 
+  }
+  sprintf(format, ...args) {
+    let i = 0;
+    return format.replace(/%([sd])/g, function(match, type) {
+      let arg = args[i++];
+      if (type === 's') {
+        return String(arg);
+      } else if (type === 'd') {
+        return Number(arg);
+      }
+      return match;
+    });
   }
 }
 

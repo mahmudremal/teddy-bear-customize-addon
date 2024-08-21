@@ -19,7 +19,7 @@ class Email {
 		// add_action('woocommerce_order_status_completed', [$this, 'woocommerce_order_status_completed'], 10, 2);
 		// add_filter('woocommerce_email_classes', [$this, 'woocommerce_email_classes'], 10, 1);
 
-		add_action('woocommerce_email_order_meta', [$this, 'woocommerce_email_order_meta'], 10, 4);
+		add_action('woocommerce_email_order_details', [$this, 'woocommerce_email_order_meta'], 10, 4);
 		
 		// add_action('admin_init', function() {
 		// 	// echo $this->get_review_link_from_order_id(2888);
@@ -73,7 +73,7 @@ class Email {
 	 * Add a customer reciew section after order summery
 	 */
 	public function woocommerce_email_order_meta($order, $sent_to_admin, $plain_text, $email) {
-		return; // paused this because client said not to attach this button on mail.
+		// return; // paused this because client said not to attach this button on mail.
 		global $wpdb;
 		if ((bool) $sent_to_admin) {return;}
 		if(!in_array($order->get_status(), ['completed'])) {return;}

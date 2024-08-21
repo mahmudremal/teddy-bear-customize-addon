@@ -521,6 +521,7 @@ $frameHeight: 600px;
                 border-bottom: 4px solid #dedede;
               }
               label {
+                gap: 10px;
                 display: block;
                 font-size: 16px;
                 padding: 7px 0px;
@@ -537,6 +538,15 @@ $frameHeight: 600px;
               }
               input {
                 width: 100%;
+                & + span {
+                  justify-content: start !important;
+                  > span[title] {
+                    min-width: 100%;
+                    font-size: 14px;
+                    max-width: 100%;
+                    display: flex !important;
+                  }
+                }
               }
             }
             & > div {
@@ -711,8 +721,7 @@ $frameHeight: 600px;
                       &::after {
                         top: 50%;
                         width: 8px;
-                        left: 21px;
-                        right: 4px;
+                        left: 22px;
                         content: '';
                         height: 8px;
                         position: absolute;
@@ -747,6 +756,12 @@ $frameHeight: 600px;
   
                     width: 70px;
                     height: auto;
+                    
+                    &.selected {
+                      img {
+                        border-color: $primaryColor;
+                      }
+                    }
   
                     &.checked_currently {
                       .form-control-radio, .form-control-radio {
@@ -915,10 +930,14 @@ $frameHeight: 600px;
                       .form-control-radio, .form-control-checkbox {
                         &__imgwrap {
                           padding: 10px;
+                          margin-bottom: 0;
+                          padding-bottom: 0;
                           border-radius: $border-radius;
-                          margin-bottom: 10px;
-                          // background: #efefef;
-                          border: 1px solid #ddd;
+                          img {
+                            margin-bottom: 10px;
+                            // background: #efefef;
+                            border: 1px solid #ddd;
+                          }
                           + span {
                             > span {
                               margin-left: unset !important;
@@ -1464,7 +1483,9 @@ $frameHeight: 600px;
                   &__image {
                     &.selected {
                       & > div {
-                        border-color: $primaryColor;
+                        img {
+                          border-color: $primaryColor;
+                        }
                       }
                     }
                   }

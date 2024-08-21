@@ -135,6 +135,21 @@ class Cart {
 							$_row['options'][$_option_index] = $_option;
 						}
 						break;
+					case 'voice':
+						$_option = $_row;
+						if (
+							isset($_option['attaced']) && !isset($_option['attaced']['skip'])
+														&&
+							isset($_option['product']) && !empty($_option['product'])
+						) {
+							$_product = wc_get_product((int) $_option['product']);
+							if ($_product && $_product->is_purchasable()) {
+								// $_option['product'] = $_product->get_id();
+								$_option['cart_item_key'] = WC()->cart->add_to_cart($_product->get_id(), $quantity);
+							}
+							$_row = $_option;
+						}
+						break;
 					default:
 						$_option = $_row;
 						if (isset($_option['product']) && !empty($_option['product'])) {
@@ -303,6 +318,23 @@ class Cart {
 									}
 								}
 								break;
+							case 'voice':
+								if (
+									isset($dataRow['attaced']) && count($dataRow['attaced']) >= 1 && !isset($dataRow['attaced']['skip']) && $dataRow['cost']
+								) {
+									$option = $dataRow;
+									if (!isset($option['product']) || empty($option['product'])) {
+										$dataRow['cost'] = is_string($dataRow['cost'])?floatval($dataRow['cost']):$dataRow['cost'];
+										if (isset($option['cost'])) {
+											$option['label'] = empty($option['label'])?$dataRow['type']:$dataRow['label'];
+											$option['cost'] = is_string($option['cost'])?floatval($option['cost']):$option['cost'];
+											$item_name .= '<br><small class="additional-charges">'.esc_html(
+												apply_filters('teddybear/project/system/translate/string', $option['label'], 'teddybearsprompts', $option['label'] . ' - input field')
+											).': '.wc_price($option['cost']).' x '.esc_html(number_format_i18n($cart_item['quantity'], 0)).'</small>';
+										}
+									}
+								}
+								break;
 							default:
 								$option = $dataRow;
 								if (isset($option['cost'])) {
@@ -376,6 +408,19 @@ class Cart {
 												}
 											}
 										}
+									}
+								}
+								break;
+							case 'voice':
+								if (
+									isset($dataRow['attaced']) && count($dataRow['attaced']) >= 1 && !isset($dataRow['attaced']['skip']) && $dataRow['cost']
+									&& (
+										!isset($dataRow['product']) || empty($dataRow['product'])
+									)
+								) {
+									$dataRow['cost'] = is_string($dataRow['cost'])?floatval($dataRow['cost']):$dataRow['cost'];
+									if ($dataRow['cost'] && $dataRow['cost'] > 0) {
+										$additional_cost += $dataRow['cost'];
 									}
 								}
 								break;

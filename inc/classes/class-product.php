@@ -99,18 +99,36 @@ class Product {
 		}
 		return $value;
 	}
+
+	public function get_catched_product_customizations($product_id) {
+		$transient_key = sprintf("_product_custom_popup_%s", $product_id);
+		if (!apply_filters('teddybear/project/system/isactive', 'cache-enable')) {
+			$_caches = $this->get_frontend_product_json($product_id);
+		} else {
+			$_caches = get_transient($transient_key);
+			if ($_caches === false) {
+				$_caches = $this->get_frontend_product_json($product_id);
+
+				// Cache the retrieved data for 12 hours
+				// 12 * HOUR_IN_SECONDS | MINUTE_IN_SECONDS
+				$hours = apply_filters('teddybear/project/system/getoption', 'cache-enable', 12);
+				$hours = floatval($hours);$hours = ($hours <= 0)?12:$hours;
+				
+				set_transient($transient_key, $_caches, $hours * HOUR_IN_SECONDS);
+			}
+		}
+		return $_caches;
+	}
 	public function get_frontend_product_json($product_id) {
 		global $teddy_Plushies;$product_meta = get_post_meta($product_id, '_teddy_custom_data', true);
 		$product_type = (isset($product_meta['product_type']) && $product_meta['product_type'] == 'sitting')?'sitting':'standing';
 		$request = ['product_id' => $product_id];
-
+		// 
 		$json = $this->get_post_meta($product_id, '_product_custom_popup', true);
 		$json = ($json && !empty($json))?(array)$json:[];
 		foreach ($json as $_posI => $_pos) {
 			foreach ($json[$_posI] as $i => $_prod) {
-				/**
-				 * Translation operations.
-				 */
+				/* Translation operations. */
 				$field2Translate = ['label', 'heading', 'placeholder', 'steptitle', 'subtitle', 'product_title', 'description'];
 				foreach($field2Translate as $toTrans) {
 					if (isset($_prod[$toTrans])) {

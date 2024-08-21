@@ -128,4 +128,18 @@ class Project {
 			// wp_die($errorMessage);
 		}
 	}
+
+	public function delete_all_transient() {
+		global $wpdb;
+		$transient_key_prefix = '_product_custom_popup_';
+		$query = $wpdb->prepare(
+			"DELETE FROM {$wpdb->options} 
+			WHERE option_name LIKE %s 
+			OR option_name LIKE %s",
+			$wpdb->esc_like('_transient_' . $transient_key_prefix) . '%',
+			$wpdb->esc_like('_transient_timeout_' . $transient_key_prefix) . '%'
+		);
+
+		$wpdb->query($query);
+	}
 }

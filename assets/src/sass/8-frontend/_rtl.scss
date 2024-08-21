@@ -26,10 +26,30 @@ html {
           fieldset .form-wrap .form-control-label.form-control-checkbox {
             flex-direction: row-reverse;
           }
+          &__info {
+            fieldset .form-wrap .form-control-label.form-control-checkbox {
+              flex-direction: row;
+            }
+          }
+          
+          fieldset .form-wrap .form-control-label {
+            input[type=radio] + span::before, input[type=checkbox] + span::before {
+              right: 0;
+              left: unset;
+            }
+            input[type=radio]:checked + span::after, input[type=checkbox]:checked + span::after {
+              left: unset;
+              right: 6px;
+            }
+          }
         }
+
 
       }
     }
+    
+
+    
     
   }
 }
