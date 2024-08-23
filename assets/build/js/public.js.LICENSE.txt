@@ -1,0 +1,24 @@
+/*!
+ * Splide.js
+ * Version  : 4.1.4
+ * License  : MIT
+ * Copyright: 2022 Naotoshi Fujita
+ */
+
+/*!
+ * Toastify js 1.12.0
+ * https://github.com/apvarun/toastify-js
+ * @license MIT licensed
+ *
+ * Copyright (C) 2018 Varun A P
+ */
+
+/*! regenerator-runtime -- Copyright (c) 2014-present, Facebook, Inc. -- license (MIT): https://github.com/facebook/regenerator/blob/main/LICENSE */
+
+/**
+ * SliderJS class made by Remal Mahmud
+ * 
+ * Copyright (c) 2024 - 2025 (https://github.com/mahmudremal/)
+ * Author: @mahmudremal
+ * @license MIT License
+ */
