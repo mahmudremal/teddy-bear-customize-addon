@@ -111,7 +111,7 @@ class Assets {
 			'currencySign'		=> get_woocommerce_currency_symbol(),
 			'local'				=> apply_filters('teddybear/project/system/get_locale', get_user_locale()),
 			'tooltip'			=> apply_filters('teddybear/project/system/isactive', 'addons-tooltip', false),
-			
+			'print_request'		=> apply_filters('teddybear/project/system/isactive', 'addons-printcert', false),
 		], (array) $args);
 		
 		if ($is_admin) {

@@ -451,6 +451,7 @@ $frameHeight: 600px;
             position: relative;
             margin-bottom: 10px;
             align-items: flex-start;
+            flex-direction: row-reverse;
             justify-content: space-between;
             h2 {
               font-size: 16px;

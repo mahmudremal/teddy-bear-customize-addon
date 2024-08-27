@@ -49,6 +49,9 @@ import KeenSlider from 'keen-slider';
 		setup_hooks() {
 			window.thisClass = this;
 			this.prompts = PROMPTS;
+			if (this.config.print_request) {
+				PROMPTS._reqs_print = true;
+			}
 			// this.Twig = Twig;
 			this.config.local = this.config?.local??'en-US';
 			this.popupCart = new popupCart();

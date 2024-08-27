@@ -186,7 +186,7 @@ class Cart {
 			$json['message'] = false;
 			$json['confirmation'] = [
 				'title'				=> sprintf(__('Added successfully %s', 'teddybearsprompts'), get_the_title($product_id)),
-				'accessoriesUrl'	=> get_the_permalink(apply_filters('teddybear/project/system/getoption', 'standard-accessory', 2115)), // (isset($custom_data['accessoriesUrl']) && !empty($custom_data['accessoriesUrl']))?esc_url($custom_data['accessoriesUrl']):get_the_permalink(2115),
+				'accessoriesUrl'	=> apply_filters('teddybear/project/system/getoption', 'standard-accessory', false), // get_the_permalink(apply_filters('teddybear/project/system/getoption', 'standard-accessory', 2115)), // (isset($custom_data['accessoriesUrl']) && !empty($custom_data['accessoriesUrl']))?esc_url($custom_data['accessoriesUrl']):get_the_permalink(2115),
 				'suggestion'		=> $this->get_products_by_category_id(),
 				'checkoutUrl'		=> wc_get_checkout_url(),
 				'cartItemKey'		=> $cart_item_key
@@ -207,6 +207,7 @@ class Cart {
 					$cart_item_key = WC()->cart->add_to_cart((int) $_POST['_product'], 1);
 					$json['cartItemKey'] = $cart_item_key;
 					$json['message'] = __('Accessories added to cart successfully.', 'teddybearsprompts');
+					$json['hooks'] = ['popup_submitting_done'];
 					wp_send_json_success($json);
 					break;
 				case 'inc':
@@ -215,6 +216,7 @@ class Cart {
 					$cart_item_key = WC()->cart->set_quantity($cart_item_key, $new_quantity);
 					$json['cartItemKey'] = $cart_item_key;
 					$json['message'] = __('Accessories added to cart successfully.', 'teddybearsprompts');
+					$json['hooks'] = ['popup_submitting_done'];
 					wp_send_json_success($json);
 					break;
 				case 'del':

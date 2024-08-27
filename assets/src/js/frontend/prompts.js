@@ -838,25 +838,27 @@ const PROMPTS = {
                 });
                 fields.appendChild(btn_skip);
                 // 
-                inputsArgs = {
-                    type: 'checkbox',
-                    label: PROMPTS.i18n?.plsprint4me??'Please print for me',
-                    dataset: {title: PROMPTS.i18n?.plsprint4me??'Please print for me'},
-                    options: [{value: 'teddy_print', label: PROMPTS.i18n?.plsprint4me??'Please print for me'}]
-                };
-                var teddy_print = PROMPTS.do_field(inputsArgs, true);
-                teddy_print.querySelector('input[type="checkbox"]').addEventListener('change', (event) => {
-                    event.preventDefault();event.stopPropagation();
-                    if (typeof field.infos !== 'object') {field.infos = {};}
-                    if (event.target?.checked) {
-                        field.infos.teddy_print = true;
-                    } else if (field.infos?.teddy_print) {
-                        delete field.infos.teddy_print;
-                    } else {
-                        // 
-                    }
-                });
-                fields.appendChild(teddy_print);
+                if (PROMPTS?._reqs_print) {
+                    inputsArgs = {
+                        type: 'checkbox',
+                        label: PROMPTS.i18n?.plsprint4me??'Please print for me',
+                        dataset: {title: PROMPTS.i18n?.plsprint4me??'Please print for me'},
+                        options: [{value: 'teddy_print', label: PROMPTS.i18n?.plsprint4me??'Please print for me'}]
+                    };
+                    var teddy_print = PROMPTS.do_field(inputsArgs, true);
+                    teddy_print.querySelector('input[type="checkbox"]').addEventListener('change', (event) => {
+                        event.preventDefault();event.stopPropagation();
+                        if (typeof field.infos !== 'object') {field.infos = {};}
+                        if (event.target?.checked) {
+                            field.infos.teddy_print = true;
+                        } else if (field.infos?.teddy_print) {
+                            delete field.infos.teddy_print;
+                        } else {
+                            // 
+                        }
+                    });
+                    fields.appendChild(teddy_print);
+                }
 
                 fieldset.appendChild(fields);div.appendChild(fieldset);
                 break;

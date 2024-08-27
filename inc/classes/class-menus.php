@@ -175,9 +175,9 @@ class Menus {
 					'id' 					=> 'standard-accessory',
 					'label'					=> __('Default accessory', 'teddybearsprompts'),
 					'description'			=> __('Select a default accessoty that will be effective on customization confirmation.', 'teddybearsprompts'),
-					'type'					=> 'select',
-					'options'				=> $this->get_query(['post_type' => 'page', 'type' => 'option', 'limit' => 500]),
-					'default'				=> false
+					'type'					=> 'text',
+					// 'options'				=> $this->get_query(['post_type' => 'page', 'type' => 'option', 'limit' => 500]),
+					'default'				=> ''
 				],
 			]
 		];
@@ -307,6 +307,13 @@ class Menus {
 					'id' 					=> 'addons-tooltip',
 					'label'					=> __('Tooltip', 'teddybearsprompts'),
 					'description'			=> __('Allow tooltip on popup outfit items.', 'teddybearsprompts'),
+					'type'					=> 'checkbox',
+					'default'				=> false
+				],
+				[
+					'id' 					=> 'addons-printcert',
+					'label'					=> __('Print certificate', 'teddybearsprompts'),
+					'description'			=> __('Allow user to request a print of certificate.', 'teddybearsprompts'),
 					'type'					=> 'checkbox',
 					'default'				=> false
 				],
