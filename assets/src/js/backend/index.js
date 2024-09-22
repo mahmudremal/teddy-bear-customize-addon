@@ -14,6 +14,7 @@ import FWProject_Forms from "./forms";
 import DOWNLOADS from "./downloads"
 import i18nForm from "./i18n";
 import Ask from "./ask";
+import axios from "axios";
 
 (function ($) {
 	class FWPListivoBackendJS {
@@ -287,10 +288,30 @@ import Ask from "./ask";
 					thisClass.init_popup(element);
 				});
 			});
+			document.querySelectorAll('#remove-configs').forEach(removeInput => {
+				var removeBtn = document.createElement('button');
+				removeBtn.type = 'button';removeBtn.dataset.i = 0;
+				removeBtn.addEventListener('click', (event) => {
+					event.preventDefault();event.stopPropagation();
+					const post_id = thisClass.config.product_id;
+					const isConfirmed = confirm(`Are you sure you want to delete configuration settings on tis product?`);
+					if (isConfirmed) {
+						var formdata = new FormData();
+						formdata.append('action', 'teddybear/project/ajax/edit/product');
+						formdata.append('_nonce', thisClass.ajaxNonce);
+						formdata.append('product_id', product_id);
+
+						axios(thisClass.ajaxUrl, formdata).then(result => result.json()).then(result => 
+							console.log(result)
+						).catch(err => console.log(err));
+					}
+				});
+				removeInput.parentElement.insertBefore(removeBtn, removeInput);
+				removeInput.remove();
+			});
 		}
 		init_popup(el) {
 			const thisClass = this;var html, product_id, config = false;
-
 			if((el?.dataset)?.config) {
 				try {
 					config = JSON.parse((el?.dataset)?.config);

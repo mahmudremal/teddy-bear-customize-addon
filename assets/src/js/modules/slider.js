@@ -375,14 +375,7 @@ class Slider {
             let movedBy = currentPosition - startPos;
             const isNegative = movedBy < 0;
             const toRight = !isNegative;
-            // 
-            // const movedSlides = Math.round(Math.abs(movedBy) / this.slide_width());
-            // this.currentIndex += (isNegative)?-movedSlides:movedSlides;
-            // 
             currentTranslate = prevTranslate + movedBy;
-            // 
-            // console.log({currentTranslate, prevTranslate, movedBy, toRight});
-            // 
             if (toRight) {
                 currentTranslate = Math.min((
                     this.slides_width() - (
@@ -392,10 +385,8 @@ class Slider {
             } else {
                 currentTranslate = Math.max(0, currentTranslate);
             }
-            // Sortout current translate to current slide index.
             this.get_current_slide(currentTranslate);
             this.config.slides.style.transform = `translateX(${currentTranslate}px)`;
-            // 
         };
 
         const touchEnd = (event) => {
@@ -496,6 +487,7 @@ class Slider {
             }, 1000);
         }
     }
+    
 }
 // 
 export default Slider;

@@ -191,7 +191,7 @@ class Meta_Boxes {
 									'type'					=> 'text',
 									'default'				=> apply_filters('teddybear/project/system/getoption', 'default-accessoriesUrl', '')
 								],
-								...$this->get_available_badges(),
+								...$this->get_available_badges($post),
 								// [
 								// 	'id' 					=> 'isFeatured',
 								// 	'label'					=> __('Featured', 'teddybearsprompts'),
@@ -381,7 +381,7 @@ class Meta_Boxes {
 		}
 		return $html;
 	}
-	public function get_available_badges() {
+	public function get_available_badges($post) {
 		$args = [];$filteredData = [];$filteredRow = [];
 		foreach((array) TEDDY_BEAR_CUSTOMIZE_ADDON_OPTIONS as $key => $value) {
 			if(strpos($key, 'teddy-badge-') !== false) {
@@ -401,6 +401,16 @@ class Meta_Boxes {
 				'description'			=> sprintf(__('Mark to make this (%s) badge visible to the product card.', 'teddybearsprompts'), '<b>' . $badge['label'] . '</b>'),
 				'type'					=> 'checkbox',
 				'value'					=> (isset($this->options['badge-' . $i]) && $this->options['badge-' . $i]),
+				'default'				=> false // $badge['enable']
+			];
+		}
+		if (get_post_meta($post->ID, '_product_custom_popup', true)) {
+			$args[] = [
+				'id' 					=> 'remove-configs',
+				'label'					=> __('Remove Customizations', 'teddybearsprompts'),
+				'description'			=> __('Remove customization data of this product. this will remove popup customization data only.', 'teddybearsprompts'),
+				'type'					=> 'text',
+				'value'					=> __('Remove', 'teddybearsprompts'),
 				'default'				=> false // $badge['enable']
 			];
 		}
