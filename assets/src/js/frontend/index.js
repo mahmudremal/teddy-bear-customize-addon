@@ -24,14 +24,13 @@ import flatpickr from "flatpickr";
 import tippy from 'tippy.js';
 import WaveSurfer from 'wavesurfer.js';
 import Swal from "sweetalert2";
-import Awesomplete from "awesomplete";
+// import Awesomplete from "awesomplete";
 import Toastify from 'toastify-js';
 import RecordPlugin from 'wavesurfer.js/dist/plugins/record.esm.js';
-import Splide from '@splidejs/splide';
-
-
-
+// import Splide from '@splidejs/splide';
 import KeenSlider from 'keen-slider';
+
+
 
 ( function ( $ ) {
 	class FutureWordPress_Frontend extends popupCart {

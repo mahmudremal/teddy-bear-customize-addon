@@ -101,18 +101,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _dom_utils_getLayoutRect_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./dom-utils/getLayoutRect.js */ "./node_modules/@popperjs/core/lib/dom-utils/getLayoutRect.js");
 /* harmony import */ var _dom_utils_listScrollParents_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./dom-utils/listScrollParents.js */ "./node_modules/@popperjs/core/lib/dom-utils/listScrollParents.js");
 /* harmony import */ var _dom_utils_getOffsetParent_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./dom-utils/getOffsetParent.js */ "./node_modules/@popperjs/core/lib/dom-utils/getOffsetParent.js");
-/* harmony import */ var _dom_utils_getComputedStyle_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./dom-utils/getComputedStyle.js */ "./node_modules/@popperjs/core/lib/dom-utils/getComputedStyle.js");
-/* harmony import */ var _utils_orderModifiers_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./utils/orderModifiers.js */ "./node_modules/@popperjs/core/lib/utils/orderModifiers.js");
-/* harmony import */ var _utils_debounce_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./utils/debounce.js */ "./node_modules/@popperjs/core/lib/utils/debounce.js");
-/* harmony import */ var _utils_validateModifiers_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./utils/validateModifiers.js */ "./node_modules/@popperjs/core/lib/utils/validateModifiers.js");
-/* harmony import */ var _utils_uniqueBy_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./utils/uniqueBy.js */ "./node_modules/@popperjs/core/lib/utils/uniqueBy.js");
-/* harmony import */ var _utils_getBasePlacement_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./utils/getBasePlacement.js */ "./node_modules/@popperjs/core/lib/utils/getBasePlacement.js");
-/* harmony import */ var _utils_mergeByName_js__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./utils/mergeByName.js */ "./node_modules/@popperjs/core/lib/utils/mergeByName.js");
-/* harmony import */ var _utils_detectOverflow_js__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./utils/detectOverflow.js */ "./node_modules/@popperjs/core/lib/utils/detectOverflow.js");
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "detectOverflow", function() { return _utils_detectOverflow_js__WEBPACK_IMPORTED_MODULE_11__["default"]; });
+/* harmony import */ var _utils_orderModifiers_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./utils/orderModifiers.js */ "./node_modules/@popperjs/core/lib/utils/orderModifiers.js");
+/* harmony import */ var _utils_debounce_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./utils/debounce.js */ "./node_modules/@popperjs/core/lib/utils/debounce.js");
+/* harmony import */ var _utils_mergeByName_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./utils/mergeByName.js */ "./node_modules/@popperjs/core/lib/utils/mergeByName.js");
+/* harmony import */ var _utils_detectOverflow_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./utils/detectOverflow.js */ "./node_modules/@popperjs/core/lib/utils/detectOverflow.js");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "detectOverflow", function() { return _utils_detectOverflow_js__WEBPACK_IMPORTED_MODULE_7__["default"]; });
 
-/* harmony import */ var _dom_utils_instanceOf_js__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./dom-utils/instanceOf.js */ "./node_modules/@popperjs/core/lib/dom-utils/instanceOf.js");
-/* harmony import */ var _enums_js__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./enums.js */ "./node_modules/@popperjs/core/lib/enums.js");
+/* harmony import */ var _dom_utils_instanceOf_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./dom-utils/instanceOf.js */ "./node_modules/@popperjs/core/lib/dom-utils/instanceOf.js");
 
 
 
@@ -122,13 +117,6 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-
-
-
-
-
-var INVALID_ELEMENT_ERROR = 'Popper: Invalid reference or popper argument provided. They must be either a DOM element or virtual element.';
-var INFINITE_LOOP_ERROR = 'Popper: An infinite loop in the modifiers cycle has been detected! The cycle has been interrupted to prevent a browser crash.';
 var DEFAULT_OPTIONS = {
   placement: 'bottom',
   modifiers: [],
@@ -181,51 +169,16 @@ function popperGenerator(generatorOptions) {
         cleanupModifierEffects();
         state.options = Object.assign({}, defaultOptions, state.options, options);
         state.scrollParents = {
-          reference: Object(_dom_utils_instanceOf_js__WEBPACK_IMPORTED_MODULE_12__["isElement"])(reference) ? Object(_dom_utils_listScrollParents_js__WEBPACK_IMPORTED_MODULE_2__["default"])(reference) : reference.contextElement ? Object(_dom_utils_listScrollParents_js__WEBPACK_IMPORTED_MODULE_2__["default"])(reference.contextElement) : [],
+          reference: Object(_dom_utils_instanceOf_js__WEBPACK_IMPORTED_MODULE_8__["isElement"])(reference) ? Object(_dom_utils_listScrollParents_js__WEBPACK_IMPORTED_MODULE_2__["default"])(reference) : reference.contextElement ? Object(_dom_utils_listScrollParents_js__WEBPACK_IMPORTED_MODULE_2__["default"])(reference.contextElement) : [],
           popper: Object(_dom_utils_listScrollParents_js__WEBPACK_IMPORTED_MODULE_2__["default"])(popper)
         }; // Orders the modifiers based on their dependencies and `phase`
         // properties
 
-        var orderedModifiers = Object(_utils_orderModifiers_js__WEBPACK_IMPORTED_MODULE_5__["default"])(Object(_utils_mergeByName_js__WEBPACK_IMPORTED_MODULE_10__["default"])([].concat(defaultModifiers, state.options.modifiers))); // Strip out disabled modifiers
+        var orderedModifiers = Object(_utils_orderModifiers_js__WEBPACK_IMPORTED_MODULE_4__["default"])(Object(_utils_mergeByName_js__WEBPACK_IMPORTED_MODULE_6__["default"])([].concat(defaultModifiers, state.options.modifiers))); // Strip out disabled modifiers
 
         state.orderedModifiers = orderedModifiers.filter(function (m) {
           return m.enabled;
-        }); // Validate the provided modifiers so that the consumer will get warned
-        // if one of the modifiers is invalid for any reason
-
-        if (true) {
-          var modifiers = Object(_utils_uniqueBy_js__WEBPACK_IMPORTED_MODULE_8__["default"])([].concat(orderedModifiers, state.options.modifiers), function (_ref) {
-            var name = _ref.name;
-            return name;
-          });
-          Object(_utils_validateModifiers_js__WEBPACK_IMPORTED_MODULE_7__["default"])(modifiers);
-
-          if (Object(_utils_getBasePlacement_js__WEBPACK_IMPORTED_MODULE_9__["default"])(state.options.placement) === _enums_js__WEBPACK_IMPORTED_MODULE_13__["auto"]) {
-            var flipModifier = state.orderedModifiers.find(function (_ref2) {
-              var name = _ref2.name;
-              return name === 'flip';
-            });
-
-            if (!flipModifier) {
-              console.error(['Popper: "auto" placements require the "flip" modifier be', 'present and enabled to work.'].join(' '));
-            }
-          }
-
-          var _getComputedStyle = Object(_dom_utils_getComputedStyle_js__WEBPACK_IMPORTED_MODULE_4__["default"])(popper),
-              marginTop = _getComputedStyle.marginTop,
-              marginRight = _getComputedStyle.marginRight,
-              marginBottom = _getComputedStyle.marginBottom,
-              marginLeft = _getComputedStyle.marginLeft; // We no longer take into account `margins` on the popper, and it can
-          // cause bugs with positioning, so we'll warn the consumer
-
-
-          if ([marginTop, marginRight, marginBottom, marginLeft].some(function (margin) {
-            return parseFloat(margin);
-          })) {
-            console.warn(['Popper: CSS "margin" styles cannot be used to apply padding', 'between the popper and its reference element or boundary.', 'To replicate margin, use the `offset` modifier, as well as', 'the `padding` option in the `preventOverflow` and `flip`', 'modifiers.'].join(' '));
-          }
-        }
-
+        });
         runModifierEffects();
         return instance.update();
       },
@@ -245,10 +198,6 @@ function popperGenerator(generatorOptions) {
         // anymore
 
         if (!areValidElements(reference, popper)) {
-          if (true) {
-            console.error(INVALID_ELEMENT_ERROR);
-          }
-
           return;
         } // Store the reference and popper rects to be read by modifiers
 
@@ -271,18 +220,8 @@ function popperGenerator(generatorOptions) {
         state.orderedModifiers.forEach(function (modifier) {
           return state.modifiersData[modifier.name] = Object.assign({}, modifier.data);
         });
-        var __debug_loops__ = 0;
 
         for (var index = 0; index < state.orderedModifiers.length; index++) {
-          if (true) {
-            __debug_loops__ += 1;
-
-            if (__debug_loops__ > 100) {
-              console.error(INFINITE_LOOP_ERROR);
-              break;
-            }
-          }
-
           if (state.reset === true) {
             state.reset = false;
             index = -1;
@@ -307,7 +246,7 @@ function popperGenerator(generatorOptions) {
       },
       // Async and optimistically optimized update – it will not be executed if
       // not necessary (debounced to run at most once-per-tick)
-      update: Object(_utils_debounce_js__WEBPACK_IMPORTED_MODULE_6__["default"])(function () {
+      update: Object(_utils_debounce_js__WEBPACK_IMPORTED_MODULE_5__["default"])(function () {
         return new Promise(function (resolve) {
           instance.forceUpdate();
           resolve(state);
@@ -320,10 +259,6 @@ function popperGenerator(generatorOptions) {
     };
 
     if (!areValidElements(reference, popper)) {
-      if (true) {
-        console.error(INVALID_ELEMENT_ERROR);
-      }
-
       return instance;
     }
 
@@ -338,11 +273,11 @@ function popperGenerator(generatorOptions) {
     // one.
 
     function runModifierEffects() {
-      state.orderedModifiers.forEach(function (_ref3) {
-        var name = _ref3.name,
-            _ref3$options = _ref3.options,
-            options = _ref3$options === void 0 ? {} : _ref3$options,
-            effect = _ref3.effect;
+      state.orderedModifiers.forEach(function (_ref) {
+        var name = _ref.name,
+            _ref$options = _ref.options,
+            options = _ref$options === void 0 ? {} : _ref$options,
+            effect = _ref.effect;
 
         if (typeof effect === 'function') {
           var cleanupFn = effect({
@@ -1542,8 +1477,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _utils_mergePaddingObject_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../utils/mergePaddingObject.js */ "./node_modules/@popperjs/core/lib/utils/mergePaddingObject.js");
 /* harmony import */ var _utils_expandToHashMap_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../utils/expandToHashMap.js */ "./node_modules/@popperjs/core/lib/utils/expandToHashMap.js");
 /* harmony import */ var _enums_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../enums.js */ "./node_modules/@popperjs/core/lib/enums.js");
-/* harmony import */ var _dom_utils_instanceOf_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../dom-utils/instanceOf.js */ "./node_modules/@popperjs/core/lib/dom-utils/instanceOf.js");
-
 
 
 
@@ -1617,17 +1550,7 @@ function effect(_ref2) {
     }
   }
 
-  if (true) {
-    if (!Object(_dom_utils_instanceOf_js__WEBPACK_IMPORTED_MODULE_9__["isHTMLElement"])(arrowElement)) {
-      console.error(['Popper: "arrow" element must be an HTMLElement (not an SVGElement).', 'To use an SVG arrow, wrap it in an HTMLElement that will be used as', 'the arrow.'].join(' '));
-    }
-  }
-
   if (!Object(_dom_utils_contains_js__WEBPACK_IMPORTED_MODULE_2__["default"])(state.elements.popper, arrowElement)) {
-    if (true) {
-      console.error(['Popper: "arrow" modifier\'s `element` must be a child of the popper', 'element.'].join(' '));
-    }
-
     return;
   }
 
@@ -1683,10 +1606,9 @@ var unsetSides = {
 // Zooming can change the DPR, but it seems to report a value that will
 // cleanly divide the values into the appropriate subpixels.
 
-function roundOffsetsByDPR(_ref) {
+function roundOffsetsByDPR(_ref, win) {
   var x = _ref.x,
       y = _ref.y;
-  var win = window;
   var dpr = win.devicePixelRatio || 1;
   return {
     x: Object(_utils_math_js__WEBPACK_IMPORTED_MODULE_7__["round"])(x * dpr) / dpr || 0,
@@ -1769,7 +1691,7 @@ function mapToStyles(_ref2) {
   var _ref4 = roundOffsets === true ? roundOffsetsByDPR({
     x: x,
     y: y
-  }) : {
+  }, Object(_dom_utils_getWindow_js__WEBPACK_IMPORTED_MODULE_2__["default"])(popper)) : {
     x: x,
     y: y
   };
@@ -1795,17 +1717,6 @@ function computeStyles(_ref5) {
       adaptive = _options$adaptive === void 0 ? true : _options$adaptive,
       _options$roundOffsets = options.roundOffsets,
       roundOffsets = _options$roundOffsets === void 0 ? true : _options$roundOffsets;
-
-  if (true) {
-    var transitionProperty = Object(_dom_utils_getComputedStyle_js__WEBPACK_IMPORTED_MODULE_4__["default"])(state.elements.popper).transitionProperty || '';
-
-    if (adaptive && ['transform', 'top', 'right', 'bottom', 'left'].some(function (property) {
-      return transitionProperty.indexOf(property) >= 0;
-    })) {
-      console.warn(['Popper: Detected CSS transitions on at least one of the following', 'CSS properties: "transform", "top", "right", "bottom", "left".', '\n\n', 'Disable the "computeStyles" modifier\'s `adaptive` option to allow', 'for smooth transitions, or remove these properties from the CSS', 'transition declaration on the popper element if only transitioning', 'opacity or background-color for example.', '\n\n', 'We recommend using the popper element as a wrapper around an inner', 'element that can have any CSS property transitioned for animations.'].join(' '));
-    }
-  }
-
   var commonStyles = {
     placement: Object(_utils_getBasePlacement_js__WEBPACK_IMPORTED_MODULE_5__["default"])(state.placement),
     variation: Object(_utils_getVariation_js__WEBPACK_IMPORTED_MODULE_6__["default"])(state.placement),
@@ -2617,10 +2528,6 @@ function computeAutoPlacement(state, options) {
 
   if (allowedPlacements.length === 0) {
     allowedPlacements = placements;
-
-    if (true) {
-      console.error(['Popper: The `allowedAutoPlacements` option did not allow any', 'placements. Ensure the `placement` option matches the variation', 'of the allowed placements.', 'For example, "auto" cannot be used to allow "bottom-start".', 'Use "auto-start" instead.'].join(' '));
-    }
   } // $FlowFixMe[incompatible-type]: Flow seems to have problems with two array unions...
 
 
@@ -2857,28 +2764,6 @@ function expandToHashMap(value, keys) {
     hashMap[key] = value;
     return hashMap;
   }, {});
-}
-
-/***/ }),
-
-/***/ "./node_modules/@popperjs/core/lib/utils/format.js":
-/*!*********************************************************!*\
-  !*** ./node_modules/@popperjs/core/lib/utils/format.js ***!
-  \*********************************************************/
-/*! exports provided: default */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return format; });
-function format(str) {
-  for (var _len = arguments.length, args = new Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
-    args[_key - 1] = arguments[_key];
-  }
-
-  return [].concat(args).reduce(function (p, c) {
-    return p.replace(/%s/, c);
-  }, str);
 }
 
 /***/ }),
@@ -3158,30 +3043,6 @@ function rectToClientRect(rect) {
 
 /***/ }),
 
-/***/ "./node_modules/@popperjs/core/lib/utils/uniqueBy.js":
-/*!***********************************************************!*\
-  !*** ./node_modules/@popperjs/core/lib/utils/uniqueBy.js ***!
-  \***********************************************************/
-/*! exports provided: default */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return uniqueBy; });
-function uniqueBy(arr, fn) {
-  var identifiers = new Set();
-  return arr.filter(function (item) {
-    var identifier = fn(item);
-
-    if (!identifiers.has(identifier)) {
-      identifiers.add(identifier);
-      return true;
-    }
-  });
-}
-
-/***/ }),
-
 /***/ "./node_modules/@popperjs/core/lib/utils/userAgent.js":
 /*!************************************************************!*\
   !*** ./node_modules/@popperjs/core/lib/utils/userAgent.js ***!
@@ -3195,109 +3056,13 @@ __webpack_require__.r(__webpack_exports__);
 function getUAString() {
   var uaData = navigator.userAgentData;
 
-  if (uaData != null && uaData.brands) {
+  if (uaData != null && uaData.brands && Array.isArray(uaData.brands)) {
     return uaData.brands.map(function (item) {
       return item.brand + "/" + item.version;
     }).join(' ');
   }
 
   return navigator.userAgent;
-}
-
-/***/ }),
-
-/***/ "./node_modules/@popperjs/core/lib/utils/validateModifiers.js":
-/*!********************************************************************!*\
-  !*** ./node_modules/@popperjs/core/lib/utils/validateModifiers.js ***!
-  \********************************************************************/
-/*! exports provided: default */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return validateModifiers; });
-/* harmony import */ var _format_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./format.js */ "./node_modules/@popperjs/core/lib/utils/format.js");
-/* harmony import */ var _enums_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../enums.js */ "./node_modules/@popperjs/core/lib/enums.js");
-
-
-var INVALID_MODIFIER_ERROR = 'Popper: modifier "%s" provided an invalid %s property, expected %s but got %s';
-var MISSING_DEPENDENCY_ERROR = 'Popper: modifier "%s" requires "%s", but "%s" modifier is not available';
-var VALID_PROPERTIES = ['name', 'enabled', 'phase', 'fn', 'effect', 'requires', 'options'];
-function validateModifiers(modifiers) {
-  modifiers.forEach(function (modifier) {
-    [].concat(Object.keys(modifier), VALID_PROPERTIES) // IE11-compatible replacement for `new Set(iterable)`
-    .filter(function (value, index, self) {
-      return self.indexOf(value) === index;
-    }).forEach(function (key) {
-      switch (key) {
-        case 'name':
-          if (typeof modifier.name !== 'string') {
-            console.error(Object(_format_js__WEBPACK_IMPORTED_MODULE_0__["default"])(INVALID_MODIFIER_ERROR, String(modifier.name), '"name"', '"string"', "\"" + String(modifier.name) + "\""));
-          }
-
-          break;
-
-        case 'enabled':
-          if (typeof modifier.enabled !== 'boolean') {
-            console.error(Object(_format_js__WEBPACK_IMPORTED_MODULE_0__["default"])(INVALID_MODIFIER_ERROR, modifier.name, '"enabled"', '"boolean"', "\"" + String(modifier.enabled) + "\""));
-          }
-
-          break;
-
-        case 'phase':
-          if (_enums_js__WEBPACK_IMPORTED_MODULE_1__["modifierPhases"].indexOf(modifier.phase) < 0) {
-            console.error(Object(_format_js__WEBPACK_IMPORTED_MODULE_0__["default"])(INVALID_MODIFIER_ERROR, modifier.name, '"phase"', "either " + _enums_js__WEBPACK_IMPORTED_MODULE_1__["modifierPhases"].join(', '), "\"" + String(modifier.phase) + "\""));
-          }
-
-          break;
-
-        case 'fn':
-          if (typeof modifier.fn !== 'function') {
-            console.error(Object(_format_js__WEBPACK_IMPORTED_MODULE_0__["default"])(INVALID_MODIFIER_ERROR, modifier.name, '"fn"', '"function"', "\"" + String(modifier.fn) + "\""));
-          }
-
-          break;
-
-        case 'effect':
-          if (modifier.effect != null && typeof modifier.effect !== 'function') {
-            console.error(Object(_format_js__WEBPACK_IMPORTED_MODULE_0__["default"])(INVALID_MODIFIER_ERROR, modifier.name, '"effect"', '"function"', "\"" + String(modifier.fn) + "\""));
-          }
-
-          break;
-
-        case 'requires':
-          if (modifier.requires != null && !Array.isArray(modifier.requires)) {
-            console.error(Object(_format_js__WEBPACK_IMPORTED_MODULE_0__["default"])(INVALID_MODIFIER_ERROR, modifier.name, '"requires"', '"array"', "\"" + String(modifier.requires) + "\""));
-          }
-
-          break;
-
-        case 'requiresIfExists':
-          if (!Array.isArray(modifier.requiresIfExists)) {
-            console.error(Object(_format_js__WEBPACK_IMPORTED_MODULE_0__["default"])(INVALID_MODIFIER_ERROR, modifier.name, '"requiresIfExists"', '"array"', "\"" + String(modifier.requiresIfExists) + "\""));
-          }
-
-          break;
-
-        case 'options':
-        case 'data':
-          break;
-
-        default:
-          console.error("PopperJS: an invalid property has been provided to the \"" + modifier.name + "\" modifier, valid properties are " + VALID_PROPERTIES.map(function (s) {
-            return "\"" + s + "\"";
-          }).join(', ') + "; but \"" + key + "\" was provided.");
-      }
-
-      modifier.requires && modifier.requires.forEach(function (requirement) {
-        if (modifiers.find(function (mod) {
-          return mod.name === requirement;
-        }) == null) {
-          console.error(Object(_format_js__WEBPACK_IMPORTED_MODULE_0__["default"])(MISSING_DEPENDENCY_ERROR, String(modifier.name), requirement, requirement));
-        }
-      });
-    });
-  });
 }
 
 /***/ }),
@@ -3325,4334 +3090,6 @@ function withinMaxClamp(min, value, max) {
 
 /***/ }),
 
-/***/ "./node_modules/@splidejs/splide/dist/js/splide.esm.js":
-/*!*************************************************************!*\
-  !*** ./node_modules/@splidejs/splide/dist/js/splide.esm.js ***!
-  \*************************************************************/
-/*! exports provided: CLASSES, CLASS_ACTIVE, CLASS_ARROW, CLASS_ARROWS, CLASS_ARROW_NEXT, CLASS_ARROW_PREV, CLASS_CLONE, CLASS_CONTAINER, CLASS_FOCUS_IN, CLASS_INITIALIZED, CLASS_LIST, CLASS_LOADING, CLASS_NEXT, CLASS_OVERFLOW, CLASS_PAGINATION, CLASS_PAGINATION_PAGE, CLASS_PREV, CLASS_PROGRESS, CLASS_PROGRESS_BAR, CLASS_ROOT, CLASS_SLIDE, CLASS_SPINNER, CLASS_SR, CLASS_TOGGLE, CLASS_TOGGLE_PAUSE, CLASS_TOGGLE_PLAY, CLASS_TRACK, CLASS_VISIBLE, DEFAULTS, EVENT_ACTIVE, EVENT_ARROWS_MOUNTED, EVENT_ARROWS_UPDATED, EVENT_AUTOPLAY_PAUSE, EVENT_AUTOPLAY_PLAY, EVENT_AUTOPLAY_PLAYING, EVENT_CLICK, EVENT_DESTROY, EVENT_DRAG, EVENT_DRAGGED, EVENT_DRAGGING, EVENT_END_INDEX_CHANGED, EVENT_HIDDEN, EVENT_INACTIVE, EVENT_LAZYLOAD_LOADED, EVENT_MOUNTED, EVENT_MOVE, EVENT_MOVED, EVENT_NAVIGATION_MOUNTED, EVENT_OVERFLOW, EVENT_PAGINATION_MOUNTED, EVENT_PAGINATION_UPDATED, EVENT_READY, EVENT_REFRESH, EVENT_RESIZE, EVENT_RESIZED, EVENT_SCROLL, EVENT_SCROLLED, EVENT_SHIFTED, EVENT_SLIDE_KEYDOWN, EVENT_UPDATED, EVENT_VISIBLE, EventBinder, EventInterface, FADE, LOOP, LTR, RTL, RequestInterval, SLIDE, STATUS_CLASSES, Splide, SplideRenderer, State, TTB, Throttle, default */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CLASSES", function() { return CLASSES; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CLASS_ACTIVE", function() { return CLASS_ACTIVE; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CLASS_ARROW", function() { return CLASS_ARROW; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CLASS_ARROWS", function() { return CLASS_ARROWS; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CLASS_ARROW_NEXT", function() { return CLASS_ARROW_NEXT; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CLASS_ARROW_PREV", function() { return CLASS_ARROW_PREV; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CLASS_CLONE", function() { return CLASS_CLONE; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CLASS_CONTAINER", function() { return CLASS_CONTAINER; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CLASS_FOCUS_IN", function() { return CLASS_FOCUS_IN; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CLASS_INITIALIZED", function() { return CLASS_INITIALIZED; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CLASS_LIST", function() { return CLASS_LIST; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CLASS_LOADING", function() { return CLASS_LOADING; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CLASS_NEXT", function() { return CLASS_NEXT; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CLASS_OVERFLOW", function() { return CLASS_OVERFLOW; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CLASS_PAGINATION", function() { return CLASS_PAGINATION; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CLASS_PAGINATION_PAGE", function() { return CLASS_PAGINATION_PAGE; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CLASS_PREV", function() { return CLASS_PREV; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CLASS_PROGRESS", function() { return CLASS_PROGRESS; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CLASS_PROGRESS_BAR", function() { return CLASS_PROGRESS_BAR; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CLASS_ROOT", function() { return CLASS_ROOT; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CLASS_SLIDE", function() { return CLASS_SLIDE; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CLASS_SPINNER", function() { return CLASS_SPINNER; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CLASS_SR", function() { return CLASS_SR; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CLASS_TOGGLE", function() { return CLASS_TOGGLE; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CLASS_TOGGLE_PAUSE", function() { return CLASS_TOGGLE_PAUSE; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CLASS_TOGGLE_PLAY", function() { return CLASS_TOGGLE_PLAY; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CLASS_TRACK", function() { return CLASS_TRACK; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CLASS_VISIBLE", function() { return CLASS_VISIBLE; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "DEFAULTS", function() { return DEFAULTS; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "EVENT_ACTIVE", function() { return EVENT_ACTIVE; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "EVENT_ARROWS_MOUNTED", function() { return EVENT_ARROWS_MOUNTED; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "EVENT_ARROWS_UPDATED", function() { return EVENT_ARROWS_UPDATED; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "EVENT_AUTOPLAY_PAUSE", function() { return EVENT_AUTOPLAY_PAUSE; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "EVENT_AUTOPLAY_PLAY", function() { return EVENT_AUTOPLAY_PLAY; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "EVENT_AUTOPLAY_PLAYING", function() { return EVENT_AUTOPLAY_PLAYING; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "EVENT_CLICK", function() { return EVENT_CLICK; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "EVENT_DESTROY", function() { return EVENT_DESTROY; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "EVENT_DRAG", function() { return EVENT_DRAG; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "EVENT_DRAGGED", function() { return EVENT_DRAGGED; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "EVENT_DRAGGING", function() { return EVENT_DRAGGING; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "EVENT_END_INDEX_CHANGED", function() { return EVENT_END_INDEX_CHANGED; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "EVENT_HIDDEN", function() { return EVENT_HIDDEN; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "EVENT_INACTIVE", function() { return EVENT_INACTIVE; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "EVENT_LAZYLOAD_LOADED", function() { return EVENT_LAZYLOAD_LOADED; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "EVENT_MOUNTED", function() { return EVENT_MOUNTED; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "EVENT_MOVE", function() { return EVENT_MOVE; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "EVENT_MOVED", function() { return EVENT_MOVED; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "EVENT_NAVIGATION_MOUNTED", function() { return EVENT_NAVIGATION_MOUNTED; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "EVENT_OVERFLOW", function() { return EVENT_OVERFLOW; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "EVENT_PAGINATION_MOUNTED", function() { return EVENT_PAGINATION_MOUNTED; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "EVENT_PAGINATION_UPDATED", function() { return EVENT_PAGINATION_UPDATED; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "EVENT_READY", function() { return EVENT_READY; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "EVENT_REFRESH", function() { return EVENT_REFRESH; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "EVENT_RESIZE", function() { return EVENT_RESIZE; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "EVENT_RESIZED", function() { return EVENT_RESIZED; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "EVENT_SCROLL", function() { return EVENT_SCROLL; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "EVENT_SCROLLED", function() { return EVENT_SCROLLED; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "EVENT_SHIFTED", function() { return EVENT_SHIFTED; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "EVENT_SLIDE_KEYDOWN", function() { return EVENT_SLIDE_KEYDOWN; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "EVENT_UPDATED", function() { return EVENT_UPDATED; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "EVENT_VISIBLE", function() { return EVENT_VISIBLE; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "EventBinder", function() { return EventBinder; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "EventInterface", function() { return EventInterface; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "FADE", function() { return FADE; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "LOOP", function() { return LOOP; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "LTR", function() { return LTR; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "RTL", function() { return RTL; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "RequestInterval", function() { return RequestInterval; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "SLIDE", function() { return SLIDE; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "STATUS_CLASSES", function() { return STATUS_CLASSES; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Splide", function() { return Splide; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "SplideRenderer", function() { return SplideRenderer; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "State", function() { return State; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "TTB", function() { return TTB; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Throttle", function() { return Throttle; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return Splide; });
-function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
-
-function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); Object.defineProperty(Constructor, "prototype", { writable: false }); return Constructor; }
-
-/*!
- * Splide.js
- * Version  : 4.1.4
- * License  : MIT
- * Copyright: 2022 Naotoshi Fujita
- */
-var MEDIA_PREFERS_REDUCED_MOTION = "(prefers-reduced-motion: reduce)";
-var CREATED = 1;
-var MOUNTED = 2;
-var IDLE = 3;
-var MOVING = 4;
-var SCROLLING = 5;
-var DRAGGING = 6;
-var DESTROYED = 7;
-var STATES = {
-  CREATED: CREATED,
-  MOUNTED: MOUNTED,
-  IDLE: IDLE,
-  MOVING: MOVING,
-  SCROLLING: SCROLLING,
-  DRAGGING: DRAGGING,
-  DESTROYED: DESTROYED
-};
-
-function empty(array) {
-  array.length = 0;
-}
-
-function slice(arrayLike, start, end) {
-  return Array.prototype.slice.call(arrayLike, start, end);
-}
-
-function apply(func) {
-  return func.bind.apply(func, [null].concat(slice(arguments, 1)));
-}
-
-var nextTick = setTimeout;
-
-var noop = function noop() {};
-
-function raf(func) {
-  return requestAnimationFrame(func);
-}
-
-function typeOf(type, subject) {
-  return typeof subject === type;
-}
-
-function isObject(subject) {
-  return !isNull(subject) && typeOf("object", subject);
-}
-
-var isArray = Array.isArray;
-var isFunction = apply(typeOf, "function");
-var isString = apply(typeOf, "string");
-var isUndefined = apply(typeOf, "undefined");
-
-function isNull(subject) {
-  return subject === null;
-}
-
-function isHTMLElement(subject) {
-  try {
-    return subject instanceof (subject.ownerDocument.defaultView || window).HTMLElement;
-  } catch (e) {
-    return false;
-  }
-}
-
-function toArray(value) {
-  return isArray(value) ? value : [value];
-}
-
-function forEach(values, iteratee) {
-  toArray(values).forEach(iteratee);
-}
-
-function includes(array, value) {
-  return array.indexOf(value) > -1;
-}
-
-function push(array, items) {
-  array.push.apply(array, toArray(items));
-  return array;
-}
-
-function toggleClass(elm, classes, add) {
-  if (elm) {
-    forEach(classes, function (name) {
-      if (name) {
-        elm.classList[add ? "add" : "remove"](name);
-      }
-    });
-  }
-}
-
-function addClass(elm, classes) {
-  toggleClass(elm, isString(classes) ? classes.split(" ") : classes, true);
-}
-
-function append(parent, children) {
-  forEach(children, parent.appendChild.bind(parent));
-}
-
-function before(nodes, ref) {
-  forEach(nodes, function (node) {
-    var parent = (ref || node).parentNode;
-
-    if (parent) {
-      parent.insertBefore(node, ref);
-    }
-  });
-}
-
-function matches(elm, selector) {
-  return isHTMLElement(elm) && (elm["msMatchesSelector"] || elm.matches).call(elm, selector);
-}
-
-function children(parent, selector) {
-  var children2 = parent ? slice(parent.children) : [];
-  return selector ? children2.filter(function (child) {
-    return matches(child, selector);
-  }) : children2;
-}
-
-function child(parent, selector) {
-  return selector ? children(parent, selector)[0] : parent.firstElementChild;
-}
-
-var ownKeys = Object.keys;
-
-function forOwn(object, iteratee, right) {
-  if (object) {
-    (right ? ownKeys(object).reverse() : ownKeys(object)).forEach(function (key) {
-      key !== "__proto__" && iteratee(object[key], key);
-    });
-  }
-
-  return object;
-}
-
-function assign(object) {
-  slice(arguments, 1).forEach(function (source) {
-    forOwn(source, function (value, key) {
-      object[key] = source[key];
-    });
-  });
-  return object;
-}
-
-function merge(object) {
-  slice(arguments, 1).forEach(function (source) {
-    forOwn(source, function (value, key) {
-      if (isArray(value)) {
-        object[key] = value.slice();
-      } else if (isObject(value)) {
-        object[key] = merge({}, isObject(object[key]) ? object[key] : {}, value);
-      } else {
-        object[key] = value;
-      }
-    });
-  });
-  return object;
-}
-
-function omit(object, keys) {
-  forEach(keys || ownKeys(object), function (key) {
-    delete object[key];
-  });
-}
-
-function removeAttribute(elms, attrs) {
-  forEach(elms, function (elm) {
-    forEach(attrs, function (attr) {
-      elm && elm.removeAttribute(attr);
-    });
-  });
-}
-
-function setAttribute(elms, attrs, value) {
-  if (isObject(attrs)) {
-    forOwn(attrs, function (value2, name) {
-      setAttribute(elms, name, value2);
-    });
-  } else {
-    forEach(elms, function (elm) {
-      isNull(value) || value === "" ? removeAttribute(elm, attrs) : elm.setAttribute(attrs, String(value));
-    });
-  }
-}
-
-function create(tag, attrs, parent) {
-  var elm = document.createElement(tag);
-
-  if (attrs) {
-    isString(attrs) ? addClass(elm, attrs) : setAttribute(elm, attrs);
-  }
-
-  parent && append(parent, elm);
-  return elm;
-}
-
-function style(elm, prop, value) {
-  if (isUndefined(value)) {
-    return getComputedStyle(elm)[prop];
-  }
-
-  if (!isNull(value)) {
-    elm.style[prop] = "" + value;
-  }
-}
-
-function display(elm, display2) {
-  style(elm, "display", display2);
-}
-
-function focus(elm) {
-  elm["setActive"] && elm["setActive"]() || elm.focus({
-    preventScroll: true
-  });
-}
-
-function getAttribute(elm, attr) {
-  return elm.getAttribute(attr);
-}
-
-function hasClass(elm, className) {
-  return elm && elm.classList.contains(className);
-}
-
-function rect(target) {
-  return target.getBoundingClientRect();
-}
-
-function remove(nodes) {
-  forEach(nodes, function (node) {
-    if (node && node.parentNode) {
-      node.parentNode.removeChild(node);
-    }
-  });
-}
-
-function parseHtml(html) {
-  return child(new DOMParser().parseFromString(html, "text/html").body);
-}
-
-function prevent(e, stopPropagation) {
-  e.preventDefault();
-
-  if (stopPropagation) {
-    e.stopPropagation();
-    e.stopImmediatePropagation();
-  }
-}
-
-function query(parent, selector) {
-  return parent && parent.querySelector(selector);
-}
-
-function queryAll(parent, selector) {
-  return selector ? slice(parent.querySelectorAll(selector)) : [];
-}
-
-function removeClass(elm, classes) {
-  toggleClass(elm, classes, false);
-}
-
-function timeOf(e) {
-  return e.timeStamp;
-}
-
-function unit(value) {
-  return isString(value) ? value : value ? value + "px" : "";
-}
-
-var PROJECT_CODE = "splide";
-var DATA_ATTRIBUTE = "data-" + PROJECT_CODE;
-
-function assert(condition, message) {
-  if (!condition) {
-    throw new Error("[" + PROJECT_CODE + "] " + (message || ""));
-  }
-}
-
-var min = Math.min,
-    max = Math.max,
-    floor = Math.floor,
-    ceil = Math.ceil,
-    abs = Math.abs;
-
-function approximatelyEqual(x, y, epsilon) {
-  return abs(x - y) < epsilon;
-}
-
-function between(number, x, y, exclusive) {
-  var minimum = min(x, y);
-  var maximum = max(x, y);
-  return exclusive ? minimum < number && number < maximum : minimum <= number && number <= maximum;
-}
-
-function clamp(number, x, y) {
-  var minimum = min(x, y);
-  var maximum = max(x, y);
-  return min(max(minimum, number), maximum);
-}
-
-function sign(x) {
-  return +(x > 0) - +(x < 0);
-}
-
-function camelToKebab(string) {
-  return string.replace(/([a-z0-9])([A-Z])/g, "$1-$2").toLowerCase();
-}
-
-function format(string, replacements) {
-  forEach(replacements, function (replacement) {
-    string = string.replace("%s", "" + replacement);
-  });
-  return string;
-}
-
-function pad(number) {
-  return number < 10 ? "0" + number : "" + number;
-}
-
-var ids = {};
-
-function uniqueId(prefix) {
-  return "" + prefix + pad(ids[prefix] = (ids[prefix] || 0) + 1);
-}
-
-function EventBinder() {
-  var listeners = [];
-
-  function bind(targets, events, callback, options) {
-    forEachEvent(targets, events, function (target, event, namespace) {
-      var isEventTarget = ("addEventListener" in target);
-      var remover = isEventTarget ? target.removeEventListener.bind(target, event, callback, options) : target["removeListener"].bind(target, callback);
-      isEventTarget ? target.addEventListener(event, callback, options) : target["addListener"](callback);
-      listeners.push([target, event, namespace, callback, remover]);
-    });
-  }
-
-  function unbind(targets, events, callback) {
-    forEachEvent(targets, events, function (target, event, namespace) {
-      listeners = listeners.filter(function (listener) {
-        if (listener[0] === target && listener[1] === event && listener[2] === namespace && (!callback || listener[3] === callback)) {
-          listener[4]();
-          return false;
-        }
-
-        return true;
-      });
-    });
-  }
-
-  function dispatch(target, type, detail) {
-    var e;
-    var bubbles = true;
-
-    if (typeof CustomEvent === "function") {
-      e = new CustomEvent(type, {
-        bubbles: bubbles,
-        detail: detail
-      });
-    } else {
-      e = document.createEvent("CustomEvent");
-      e.initCustomEvent(type, bubbles, false, detail);
-    }
-
-    target.dispatchEvent(e);
-    return e;
-  }
-
-  function forEachEvent(targets, events, iteratee) {
-    forEach(targets, function (target) {
-      target && forEach(events, function (events2) {
-        events2.split(" ").forEach(function (eventNS) {
-          var fragment = eventNS.split(".");
-          iteratee(target, fragment[0], fragment[1]);
-        });
-      });
-    });
-  }
-
-  function destroy() {
-    listeners.forEach(function (data) {
-      data[4]();
-    });
-    empty(listeners);
-  }
-
-  return {
-    bind: bind,
-    unbind: unbind,
-    dispatch: dispatch,
-    destroy: destroy
-  };
-}
-
-var EVENT_MOUNTED = "mounted";
-var EVENT_READY = "ready";
-var EVENT_MOVE = "move";
-var EVENT_MOVED = "moved";
-var EVENT_CLICK = "click";
-var EVENT_ACTIVE = "active";
-var EVENT_INACTIVE = "inactive";
-var EVENT_VISIBLE = "visible";
-var EVENT_HIDDEN = "hidden";
-var EVENT_REFRESH = "refresh";
-var EVENT_UPDATED = "updated";
-var EVENT_RESIZE = "resize";
-var EVENT_RESIZED = "resized";
-var EVENT_DRAG = "drag";
-var EVENT_DRAGGING = "dragging";
-var EVENT_DRAGGED = "dragged";
-var EVENT_SCROLL = "scroll";
-var EVENT_SCROLLED = "scrolled";
-var EVENT_OVERFLOW = "overflow";
-var EVENT_DESTROY = "destroy";
-var EVENT_ARROWS_MOUNTED = "arrows:mounted";
-var EVENT_ARROWS_UPDATED = "arrows:updated";
-var EVENT_PAGINATION_MOUNTED = "pagination:mounted";
-var EVENT_PAGINATION_UPDATED = "pagination:updated";
-var EVENT_NAVIGATION_MOUNTED = "navigation:mounted";
-var EVENT_AUTOPLAY_PLAY = "autoplay:play";
-var EVENT_AUTOPLAY_PLAYING = "autoplay:playing";
-var EVENT_AUTOPLAY_PAUSE = "autoplay:pause";
-var EVENT_LAZYLOAD_LOADED = "lazyload:loaded";
-var EVENT_SLIDE_KEYDOWN = "sk";
-var EVENT_SHIFTED = "sh";
-var EVENT_END_INDEX_CHANGED = "ei";
-
-function EventInterface(Splide2) {
-  var bus = Splide2 ? Splide2.event.bus : document.createDocumentFragment();
-  var binder = EventBinder();
-
-  function on(events, callback) {
-    binder.bind(bus, toArray(events).join(" "), function (e) {
-      callback.apply(callback, isArray(e.detail) ? e.detail : []);
-    });
-  }
-
-  function emit(event) {
-    binder.dispatch(bus, event, slice(arguments, 1));
-  }
-
-  if (Splide2) {
-    Splide2.event.on(EVENT_DESTROY, binder.destroy);
-  }
-
-  return assign(binder, {
-    bus: bus,
-    on: on,
-    off: apply(binder.unbind, bus),
-    emit: emit
-  });
-}
-
-function RequestInterval(interval, onInterval, onUpdate, limit) {
-  var now = Date.now;
-  var startTime;
-  var rate = 0;
-  var id;
-  var paused = true;
-  var count = 0;
-
-  function update() {
-    if (!paused) {
-      rate = interval ? min((now() - startTime) / interval, 1) : 1;
-      onUpdate && onUpdate(rate);
-
-      if (rate >= 1) {
-        onInterval();
-        startTime = now();
-
-        if (limit && ++count >= limit) {
-          return pause();
-        }
-      }
-
-      id = raf(update);
-    }
-  }
-
-  function start(resume) {
-    resume || cancel();
-    startTime = now() - (resume ? rate * interval : 0);
-    paused = false;
-    id = raf(update);
-  }
-
-  function pause() {
-    paused = true;
-  }
-
-  function rewind() {
-    startTime = now();
-    rate = 0;
-
-    if (onUpdate) {
-      onUpdate(rate);
-    }
-  }
-
-  function cancel() {
-    id && cancelAnimationFrame(id);
-    rate = 0;
-    id = 0;
-    paused = true;
-  }
-
-  function set(time) {
-    interval = time;
-  }
-
-  function isPaused() {
-    return paused;
-  }
-
-  return {
-    start: start,
-    rewind: rewind,
-    pause: pause,
-    cancel: cancel,
-    set: set,
-    isPaused: isPaused
-  };
-}
-
-function State(initialState) {
-  var state = initialState;
-
-  function set(value) {
-    state = value;
-  }
-
-  function is(states) {
-    return includes(toArray(states), state);
-  }
-
-  return {
-    set: set,
-    is: is
-  };
-}
-
-function Throttle(func, duration) {
-  var interval = RequestInterval(duration || 0, func, null, 1);
-  return function () {
-    interval.isPaused() && interval.start();
-  };
-}
-
-function Media(Splide2, Components2, options) {
-  var state = Splide2.state;
-  var breakpoints = options.breakpoints || {};
-  var reducedMotion = options.reducedMotion || {};
-  var binder = EventBinder();
-  var queries = [];
-
-  function setup() {
-    var isMin = options.mediaQuery === "min";
-    ownKeys(breakpoints).sort(function (n, m) {
-      return isMin ? +n - +m : +m - +n;
-    }).forEach(function (key) {
-      register(breakpoints[key], "(" + (isMin ? "min" : "max") + "-width:" + key + "px)");
-    });
-    register(reducedMotion, MEDIA_PREFERS_REDUCED_MOTION);
-    update();
-  }
-
-  function destroy(completely) {
-    if (completely) {
-      binder.destroy();
-    }
-  }
-
-  function register(options2, query) {
-    var queryList = matchMedia(query);
-    binder.bind(queryList, "change", update);
-    queries.push([options2, queryList]);
-  }
-
-  function update() {
-    var destroyed = state.is(DESTROYED);
-    var direction = options.direction;
-    var merged = queries.reduce(function (merged2, entry) {
-      return merge(merged2, entry[1].matches ? entry[0] : {});
-    }, {});
-    omit(options);
-    set(merged);
-
-    if (options.destroy) {
-      Splide2.destroy(options.destroy === "completely");
-    } else if (destroyed) {
-      destroy(true);
-      Splide2.mount();
-    } else {
-      direction !== options.direction && Splide2.refresh();
-    }
-  }
-
-  function reduce(enable) {
-    if (matchMedia(MEDIA_PREFERS_REDUCED_MOTION).matches) {
-      enable ? merge(options, reducedMotion) : omit(options, ownKeys(reducedMotion));
-    }
-  }
-
-  function set(opts, base, notify) {
-    merge(options, opts);
-    base && merge(Object.getPrototypeOf(options), opts);
-
-    if (notify || !state.is(CREATED)) {
-      Splide2.emit(EVENT_UPDATED, options);
-    }
-  }
-
-  return {
-    setup: setup,
-    destroy: destroy,
-    reduce: reduce,
-    set: set
-  };
-}
-
-var ARROW = "Arrow";
-var ARROW_LEFT = ARROW + "Left";
-var ARROW_RIGHT = ARROW + "Right";
-var ARROW_UP = ARROW + "Up";
-var ARROW_DOWN = ARROW + "Down";
-var LTR = "ltr";
-var RTL = "rtl";
-var TTB = "ttb";
-var ORIENTATION_MAP = {
-  width: ["height"],
-  left: ["top", "right"],
-  right: ["bottom", "left"],
-  x: ["y"],
-  X: ["Y"],
-  Y: ["X"],
-  ArrowLeft: [ARROW_UP, ARROW_RIGHT],
-  ArrowRight: [ARROW_DOWN, ARROW_LEFT]
-};
-
-function Direction(Splide2, Components2, options) {
-  function resolve(prop, axisOnly, direction) {
-    direction = direction || options.direction;
-    var index = direction === RTL && !axisOnly ? 1 : direction === TTB ? 0 : -1;
-    return ORIENTATION_MAP[prop] && ORIENTATION_MAP[prop][index] || prop.replace(/width|left|right/i, function (match, offset) {
-      var replacement = ORIENTATION_MAP[match.toLowerCase()][index] || match;
-      return offset > 0 ? replacement.charAt(0).toUpperCase() + replacement.slice(1) : replacement;
-    });
-  }
-
-  function orient(value) {
-    return value * (options.direction === RTL ? 1 : -1);
-  }
-
-  return {
-    resolve: resolve,
-    orient: orient
-  };
-}
-
-var ROLE = "role";
-var TAB_INDEX = "tabindex";
-var DISABLED = "disabled";
-var ARIA_PREFIX = "aria-";
-var ARIA_CONTROLS = ARIA_PREFIX + "controls";
-var ARIA_CURRENT = ARIA_PREFIX + "current";
-var ARIA_SELECTED = ARIA_PREFIX + "selected";
-var ARIA_LABEL = ARIA_PREFIX + "label";
-var ARIA_LABELLEDBY = ARIA_PREFIX + "labelledby";
-var ARIA_HIDDEN = ARIA_PREFIX + "hidden";
-var ARIA_ORIENTATION = ARIA_PREFIX + "orientation";
-var ARIA_ROLEDESCRIPTION = ARIA_PREFIX + "roledescription";
-var ARIA_LIVE = ARIA_PREFIX + "live";
-var ARIA_BUSY = ARIA_PREFIX + "busy";
-var ARIA_ATOMIC = ARIA_PREFIX + "atomic";
-var ALL_ATTRIBUTES = [ROLE, TAB_INDEX, DISABLED, ARIA_CONTROLS, ARIA_CURRENT, ARIA_LABEL, ARIA_LABELLEDBY, ARIA_HIDDEN, ARIA_ORIENTATION, ARIA_ROLEDESCRIPTION];
-var CLASS_PREFIX = PROJECT_CODE + "__";
-var STATUS_CLASS_PREFIX = "is-";
-var CLASS_ROOT = PROJECT_CODE;
-var CLASS_TRACK = CLASS_PREFIX + "track";
-var CLASS_LIST = CLASS_PREFIX + "list";
-var CLASS_SLIDE = CLASS_PREFIX + "slide";
-var CLASS_CLONE = CLASS_SLIDE + "--clone";
-var CLASS_CONTAINER = CLASS_SLIDE + "__container";
-var CLASS_ARROWS = CLASS_PREFIX + "arrows";
-var CLASS_ARROW = CLASS_PREFIX + "arrow";
-var CLASS_ARROW_PREV = CLASS_ARROW + "--prev";
-var CLASS_ARROW_NEXT = CLASS_ARROW + "--next";
-var CLASS_PAGINATION = CLASS_PREFIX + "pagination";
-var CLASS_PAGINATION_PAGE = CLASS_PAGINATION + "__page";
-var CLASS_PROGRESS = CLASS_PREFIX + "progress";
-var CLASS_PROGRESS_BAR = CLASS_PROGRESS + "__bar";
-var CLASS_TOGGLE = CLASS_PREFIX + "toggle";
-var CLASS_TOGGLE_PLAY = CLASS_TOGGLE + "__play";
-var CLASS_TOGGLE_PAUSE = CLASS_TOGGLE + "__pause";
-var CLASS_SPINNER = CLASS_PREFIX + "spinner";
-var CLASS_SR = CLASS_PREFIX + "sr";
-var CLASS_INITIALIZED = STATUS_CLASS_PREFIX + "initialized";
-var CLASS_ACTIVE = STATUS_CLASS_PREFIX + "active";
-var CLASS_PREV = STATUS_CLASS_PREFIX + "prev";
-var CLASS_NEXT = STATUS_CLASS_PREFIX + "next";
-var CLASS_VISIBLE = STATUS_CLASS_PREFIX + "visible";
-var CLASS_LOADING = STATUS_CLASS_PREFIX + "loading";
-var CLASS_FOCUS_IN = STATUS_CLASS_PREFIX + "focus-in";
-var CLASS_OVERFLOW = STATUS_CLASS_PREFIX + "overflow";
-var STATUS_CLASSES = [CLASS_ACTIVE, CLASS_VISIBLE, CLASS_PREV, CLASS_NEXT, CLASS_LOADING, CLASS_FOCUS_IN, CLASS_OVERFLOW];
-var CLASSES = {
-  slide: CLASS_SLIDE,
-  clone: CLASS_CLONE,
-  arrows: CLASS_ARROWS,
-  arrow: CLASS_ARROW,
-  prev: CLASS_ARROW_PREV,
-  next: CLASS_ARROW_NEXT,
-  pagination: CLASS_PAGINATION,
-  page: CLASS_PAGINATION_PAGE,
-  spinner: CLASS_SPINNER
-};
-
-function closest(from, selector) {
-  if (isFunction(from.closest)) {
-    return from.closest(selector);
-  }
-
-  var elm = from;
-
-  while (elm && elm.nodeType === 1) {
-    if (matches(elm, selector)) {
-      break;
-    }
-
-    elm = elm.parentElement;
-  }
-
-  return elm;
-}
-
-var FRICTION = 5;
-var LOG_INTERVAL = 200;
-var POINTER_DOWN_EVENTS = "touchstart mousedown";
-var POINTER_MOVE_EVENTS = "touchmove mousemove";
-var POINTER_UP_EVENTS = "touchend touchcancel mouseup click";
-
-function Elements(Splide2, Components2, options) {
-  var _EventInterface = EventInterface(Splide2),
-      on = _EventInterface.on,
-      bind = _EventInterface.bind;
-
-  var root = Splide2.root;
-  var i18n = options.i18n;
-  var elements = {};
-  var slides = [];
-  var rootClasses = [];
-  var trackClasses = [];
-  var track;
-  var list;
-  var isUsingKey;
-
-  function setup() {
-    collect();
-    init();
-    update();
-  }
-
-  function mount() {
-    on(EVENT_REFRESH, destroy);
-    on(EVENT_REFRESH, setup);
-    on(EVENT_UPDATED, update);
-    bind(document, POINTER_DOWN_EVENTS + " keydown", function (e) {
-      isUsingKey = e.type === "keydown";
-    }, {
-      capture: true
-    });
-    bind(root, "focusin", function () {
-      toggleClass(root, CLASS_FOCUS_IN, !!isUsingKey);
-    });
-  }
-
-  function destroy(completely) {
-    var attrs = ALL_ATTRIBUTES.concat("style");
-    empty(slides);
-    removeClass(root, rootClasses);
-    removeClass(track, trackClasses);
-    removeAttribute([track, list], attrs);
-    removeAttribute(root, completely ? attrs : ["style", ARIA_ROLEDESCRIPTION]);
-  }
-
-  function update() {
-    removeClass(root, rootClasses);
-    removeClass(track, trackClasses);
-    rootClasses = getClasses(CLASS_ROOT);
-    trackClasses = getClasses(CLASS_TRACK);
-    addClass(root, rootClasses);
-    addClass(track, trackClasses);
-    setAttribute(root, ARIA_LABEL, options.label);
-    setAttribute(root, ARIA_LABELLEDBY, options.labelledby);
-  }
-
-  function collect() {
-    track = find("." + CLASS_TRACK);
-    list = child(track, "." + CLASS_LIST);
-    assert(track && list, "A track/list element is missing.");
-    push(slides, children(list, "." + CLASS_SLIDE + ":not(." + CLASS_CLONE + ")"));
-    forOwn({
-      arrows: CLASS_ARROWS,
-      pagination: CLASS_PAGINATION,
-      prev: CLASS_ARROW_PREV,
-      next: CLASS_ARROW_NEXT,
-      bar: CLASS_PROGRESS_BAR,
-      toggle: CLASS_TOGGLE
-    }, function (className, key) {
-      elements[key] = find("." + className);
-    });
-    assign(elements, {
-      root: root,
-      track: track,
-      list: list,
-      slides: slides
-    });
-  }
-
-  function init() {
-    var id = root.id || uniqueId(PROJECT_CODE);
-    var role = options.role;
-    root.id = id;
-    track.id = track.id || id + "-track";
-    list.id = list.id || id + "-list";
-
-    if (!getAttribute(root, ROLE) && root.tagName !== "SECTION" && role) {
-      setAttribute(root, ROLE, role);
-    }
-
-    setAttribute(root, ARIA_ROLEDESCRIPTION, i18n.carousel);
-    setAttribute(list, ROLE, "presentation");
-  }
-
-  function find(selector) {
-    var elm = query(root, selector);
-    return elm && closest(elm, "." + CLASS_ROOT) === root ? elm : void 0;
-  }
-
-  function getClasses(base) {
-    return [base + "--" + options.type, base + "--" + options.direction, options.drag && base + "--draggable", options.isNavigation && base + "--nav", base === CLASS_ROOT && CLASS_ACTIVE];
-  }
-
-  return assign(elements, {
-    setup: setup,
-    mount: mount,
-    destroy: destroy
-  });
-}
-
-var SLIDE = "slide";
-var LOOP = "loop";
-var FADE = "fade";
-
-function Slide$1(Splide2, index, slideIndex, slide) {
-  var event = EventInterface(Splide2);
-  var on = event.on,
-      emit = event.emit,
-      bind = event.bind;
-  var Components = Splide2.Components,
-      root = Splide2.root,
-      options = Splide2.options;
-  var isNavigation = options.isNavigation,
-      updateOnMove = options.updateOnMove,
-      i18n = options.i18n,
-      pagination = options.pagination,
-      slideFocus = options.slideFocus;
-  var resolve = Components.Direction.resolve;
-  var styles = getAttribute(slide, "style");
-  var label = getAttribute(slide, ARIA_LABEL);
-  var isClone = slideIndex > -1;
-  var container = child(slide, "." + CLASS_CONTAINER);
-  var destroyed;
-
-  function mount() {
-    if (!isClone) {
-      slide.id = root.id + "-slide" + pad(index + 1);
-      setAttribute(slide, ROLE, pagination ? "tabpanel" : "group");
-      setAttribute(slide, ARIA_ROLEDESCRIPTION, i18n.slide);
-      setAttribute(slide, ARIA_LABEL, label || format(i18n.slideLabel, [index + 1, Splide2.length]));
-    }
-
-    listen();
-  }
-
-  function listen() {
-    bind(slide, "click", apply(emit, EVENT_CLICK, self));
-    bind(slide, "keydown", apply(emit, EVENT_SLIDE_KEYDOWN, self));
-    on([EVENT_MOVED, EVENT_SHIFTED, EVENT_SCROLLED], update);
-    on(EVENT_NAVIGATION_MOUNTED, initNavigation);
-
-    if (updateOnMove) {
-      on(EVENT_MOVE, onMove);
-    }
-  }
-
-  function destroy() {
-    destroyed = true;
-    event.destroy();
-    removeClass(slide, STATUS_CLASSES);
-    removeAttribute(slide, ALL_ATTRIBUTES);
-    setAttribute(slide, "style", styles);
-    setAttribute(slide, ARIA_LABEL, label || "");
-  }
-
-  function initNavigation() {
-    var controls = Splide2.splides.map(function (target) {
-      var Slide2 = target.splide.Components.Slides.getAt(index);
-      return Slide2 ? Slide2.slide.id : "";
-    }).join(" ");
-    setAttribute(slide, ARIA_LABEL, format(i18n.slideX, (isClone ? slideIndex : index) + 1));
-    setAttribute(slide, ARIA_CONTROLS, controls);
-    setAttribute(slide, ROLE, slideFocus ? "button" : "");
-    slideFocus && removeAttribute(slide, ARIA_ROLEDESCRIPTION);
-  }
-
-  function onMove() {
-    if (!destroyed) {
-      update();
-    }
-  }
-
-  function update() {
-    if (!destroyed) {
-      var curr = Splide2.index;
-      updateActivity();
-      updateVisibility();
-      toggleClass(slide, CLASS_PREV, index === curr - 1);
-      toggleClass(slide, CLASS_NEXT, index === curr + 1);
-    }
-  }
-
-  function updateActivity() {
-    var active = isActive();
-
-    if (active !== hasClass(slide, CLASS_ACTIVE)) {
-      toggleClass(slide, CLASS_ACTIVE, active);
-      setAttribute(slide, ARIA_CURRENT, isNavigation && active || "");
-      emit(active ? EVENT_ACTIVE : EVENT_INACTIVE, self);
-    }
-  }
-
-  function updateVisibility() {
-    var visible = isVisible();
-    var hidden = !visible && (!isActive() || isClone);
-
-    if (!Splide2.state.is([MOVING, SCROLLING])) {
-      setAttribute(slide, ARIA_HIDDEN, hidden || "");
-    }
-
-    setAttribute(queryAll(slide, options.focusableNodes || ""), TAB_INDEX, hidden ? -1 : "");
-
-    if (slideFocus) {
-      setAttribute(slide, TAB_INDEX, hidden ? -1 : 0);
-    }
-
-    if (visible !== hasClass(slide, CLASS_VISIBLE)) {
-      toggleClass(slide, CLASS_VISIBLE, visible);
-      emit(visible ? EVENT_VISIBLE : EVENT_HIDDEN, self);
-    }
-
-    if (!visible && document.activeElement === slide) {
-      var Slide2 = Components.Slides.getAt(Splide2.index);
-      Slide2 && focus(Slide2.slide);
-    }
-  }
-
-  function style$1(prop, value, useContainer) {
-    style(useContainer && container || slide, prop, value);
-  }
-
-  function isActive() {
-    var curr = Splide2.index;
-    return curr === index || options.cloneStatus && curr === slideIndex;
-  }
-
-  function isVisible() {
-    if (Splide2.is(FADE)) {
-      return isActive();
-    }
-
-    var trackRect = rect(Components.Elements.track);
-    var slideRect = rect(slide);
-    var left = resolve("left", true);
-    var right = resolve("right", true);
-    return floor(trackRect[left]) <= ceil(slideRect[left]) && floor(slideRect[right]) <= ceil(trackRect[right]);
-  }
-
-  function isWithin(from, distance) {
-    var diff = abs(from - index);
-
-    if (!isClone && (options.rewind || Splide2.is(LOOP))) {
-      diff = min(diff, Splide2.length - diff);
-    }
-
-    return diff <= distance;
-  }
-
-  var self = {
-    index: index,
-    slideIndex: slideIndex,
-    slide: slide,
-    container: container,
-    isClone: isClone,
-    mount: mount,
-    destroy: destroy,
-    update: update,
-    style: style$1,
-    isWithin: isWithin
-  };
-  return self;
-}
-
-function Slides(Splide2, Components2, options) {
-  var _EventInterface2 = EventInterface(Splide2),
-      on = _EventInterface2.on,
-      emit = _EventInterface2.emit,
-      bind = _EventInterface2.bind;
-
-  var _Components2$Elements = Components2.Elements,
-      slides = _Components2$Elements.slides,
-      list = _Components2$Elements.list;
-  var Slides2 = [];
-
-  function mount() {
-    init();
-    on(EVENT_REFRESH, destroy);
-    on(EVENT_REFRESH, init);
-  }
-
-  function init() {
-    slides.forEach(function (slide, index) {
-      register(slide, index, -1);
-    });
-  }
-
-  function destroy() {
-    forEach$1(function (Slide2) {
-      Slide2.destroy();
-    });
-    empty(Slides2);
-  }
-
-  function update() {
-    forEach$1(function (Slide2) {
-      Slide2.update();
-    });
-  }
-
-  function register(slide, index, slideIndex) {
-    var object = Slide$1(Splide2, index, slideIndex, slide);
-    object.mount();
-    Slides2.push(object);
-    Slides2.sort(function (Slide1, Slide2) {
-      return Slide1.index - Slide2.index;
-    });
-  }
-
-  function get(excludeClones) {
-    return excludeClones ? filter(function (Slide2) {
-      return !Slide2.isClone;
-    }) : Slides2;
-  }
-
-  function getIn(page) {
-    var Controller = Components2.Controller;
-    var index = Controller.toIndex(page);
-    var max = Controller.hasFocus() ? 1 : options.perPage;
-    return filter(function (Slide2) {
-      return between(Slide2.index, index, index + max - 1);
-    });
-  }
-
-  function getAt(index) {
-    return filter(index)[0];
-  }
-
-  function add(items, index) {
-    forEach(items, function (slide) {
-      if (isString(slide)) {
-        slide = parseHtml(slide);
-      }
-
-      if (isHTMLElement(slide)) {
-        var ref = slides[index];
-        ref ? before(slide, ref) : append(list, slide);
-        addClass(slide, options.classes.slide);
-        observeImages(slide, apply(emit, EVENT_RESIZE));
-      }
-    });
-    emit(EVENT_REFRESH);
-  }
-
-  function remove$1(matcher) {
-    remove(filter(matcher).map(function (Slide2) {
-      return Slide2.slide;
-    }));
-    emit(EVENT_REFRESH);
-  }
-
-  function forEach$1(iteratee, excludeClones) {
-    get(excludeClones).forEach(iteratee);
-  }
-
-  function filter(matcher) {
-    return Slides2.filter(isFunction(matcher) ? matcher : function (Slide2) {
-      return isString(matcher) ? matches(Slide2.slide, matcher) : includes(toArray(matcher), Slide2.index);
-    });
-  }
-
-  function style(prop, value, useContainer) {
-    forEach$1(function (Slide2) {
-      Slide2.style(prop, value, useContainer);
-    });
-  }
-
-  function observeImages(elm, callback) {
-    var images = queryAll(elm, "img");
-    var length = images.length;
-
-    if (length) {
-      images.forEach(function (img) {
-        bind(img, "load error", function () {
-          if (! --length) {
-            callback();
-          }
-        });
-      });
-    } else {
-      callback();
-    }
-  }
-
-  function getLength(excludeClones) {
-    return excludeClones ? slides.length : Slides2.length;
-  }
-
-  function isEnough() {
-    return Slides2.length > options.perPage;
-  }
-
-  return {
-    mount: mount,
-    destroy: destroy,
-    update: update,
-    register: register,
-    get: get,
-    getIn: getIn,
-    getAt: getAt,
-    add: add,
-    remove: remove$1,
-    forEach: forEach$1,
-    filter: filter,
-    style: style,
-    getLength: getLength,
-    isEnough: isEnough
-  };
-}
-
-function Layout(Splide2, Components2, options) {
-  var _EventInterface3 = EventInterface(Splide2),
-      on = _EventInterface3.on,
-      bind = _EventInterface3.bind,
-      emit = _EventInterface3.emit;
-
-  var Slides = Components2.Slides;
-  var resolve = Components2.Direction.resolve;
-  var _Components2$Elements2 = Components2.Elements,
-      root = _Components2$Elements2.root,
-      track = _Components2$Elements2.track,
-      list = _Components2$Elements2.list;
-  var getAt = Slides.getAt,
-      styleSlides = Slides.style;
-  var vertical;
-  var rootRect;
-  var overflow;
-
-  function mount() {
-    init();
-    bind(window, "resize load", Throttle(apply(emit, EVENT_RESIZE)));
-    on([EVENT_UPDATED, EVENT_REFRESH], init);
-    on(EVENT_RESIZE, resize);
-  }
-
-  function init() {
-    vertical = options.direction === TTB;
-    style(root, "maxWidth", unit(options.width));
-    style(track, resolve("paddingLeft"), cssPadding(false));
-    style(track, resolve("paddingRight"), cssPadding(true));
-    resize(true);
-  }
-
-  function resize(force) {
-    var newRect = rect(root);
-
-    if (force || rootRect.width !== newRect.width || rootRect.height !== newRect.height) {
-      style(track, "height", cssTrackHeight());
-      styleSlides(resolve("marginRight"), unit(options.gap));
-      styleSlides("width", cssSlideWidth());
-      styleSlides("height", cssSlideHeight(), true);
-      rootRect = newRect;
-      emit(EVENT_RESIZED);
-
-      if (overflow !== (overflow = isOverflow())) {
-        toggleClass(root, CLASS_OVERFLOW, overflow);
-        emit(EVENT_OVERFLOW, overflow);
-      }
-    }
-  }
-
-  function cssPadding(right) {
-    var padding = options.padding;
-    var prop = resolve(right ? "right" : "left");
-    return padding && unit(padding[prop] || (isObject(padding) ? 0 : padding)) || "0px";
-  }
-
-  function cssTrackHeight() {
-    var height = "";
-
-    if (vertical) {
-      height = cssHeight();
-      assert(height, "height or heightRatio is missing.");
-      height = "calc(" + height + " - " + cssPadding(false) + " - " + cssPadding(true) + ")";
-    }
-
-    return height;
-  }
-
-  function cssHeight() {
-    return unit(options.height || rect(list).width * options.heightRatio);
-  }
-
-  function cssSlideWidth() {
-    return options.autoWidth ? null : unit(options.fixedWidth) || (vertical ? "" : cssSlideSize());
-  }
-
-  function cssSlideHeight() {
-    return unit(options.fixedHeight) || (vertical ? options.autoHeight ? null : cssSlideSize() : cssHeight());
-  }
-
-  function cssSlideSize() {
-    var gap = unit(options.gap);
-    return "calc((100%" + (gap && " + " + gap) + ")/" + (options.perPage || 1) + (gap && " - " + gap) + ")";
-  }
-
-  function listSize() {
-    return rect(list)[resolve("width")];
-  }
-
-  function slideSize(index, withoutGap) {
-    var Slide = getAt(index || 0);
-    return Slide ? rect(Slide.slide)[resolve("width")] + (withoutGap ? 0 : getGap()) : 0;
-  }
-
-  function totalSize(index, withoutGap) {
-    var Slide = getAt(index);
-
-    if (Slide) {
-      var right = rect(Slide.slide)[resolve("right")];
-      var left = rect(list)[resolve("left")];
-      return abs(right - left) + (withoutGap ? 0 : getGap());
-    }
-
-    return 0;
-  }
-
-  function sliderSize(withoutGap) {
-    return totalSize(Splide2.length - 1) - totalSize(0) + slideSize(0, withoutGap);
-  }
-
-  function getGap() {
-    var Slide = getAt(0);
-    return Slide && parseFloat(style(Slide.slide, resolve("marginRight"))) || 0;
-  }
-
-  function getPadding(right) {
-    return parseFloat(style(track, resolve("padding" + (right ? "Right" : "Left")))) || 0;
-  }
-
-  function isOverflow() {
-    return Splide2.is(FADE) || sliderSize(true) > listSize();
-  }
-
-  return {
-    mount: mount,
-    resize: resize,
-    listSize: listSize,
-    slideSize: slideSize,
-    sliderSize: sliderSize,
-    totalSize: totalSize,
-    getPadding: getPadding,
-    isOverflow: isOverflow
-  };
-}
-
-var MULTIPLIER = 2;
-
-function Clones(Splide2, Components2, options) {
-  var event = EventInterface(Splide2);
-  var on = event.on;
-  var Elements = Components2.Elements,
-      Slides = Components2.Slides;
-  var resolve = Components2.Direction.resolve;
-  var clones = [];
-  var cloneCount;
-
-  function mount() {
-    on(EVENT_REFRESH, remount);
-    on([EVENT_UPDATED, EVENT_RESIZE], observe);
-
-    if (cloneCount = computeCloneCount()) {
-      generate(cloneCount);
-      Components2.Layout.resize(true);
-    }
-  }
-
-  function remount() {
-    destroy();
-    mount();
-  }
-
-  function destroy() {
-    remove(clones);
-    empty(clones);
-    event.destroy();
-  }
-
-  function observe() {
-    var count = computeCloneCount();
-
-    if (cloneCount !== count) {
-      if (cloneCount < count || !count) {
-        event.emit(EVENT_REFRESH);
-      }
-    }
-  }
-
-  function generate(count) {
-    var slides = Slides.get().slice();
-    var length = slides.length;
-
-    if (length) {
-      while (slides.length < count) {
-        push(slides, slides);
-      }
-
-      push(slides.slice(-count), slides.slice(0, count)).forEach(function (Slide, index) {
-        var isHead = index < count;
-        var clone = cloneDeep(Slide.slide, index);
-        isHead ? before(clone, slides[0].slide) : append(Elements.list, clone);
-        push(clones, clone);
-        Slides.register(clone, index - count + (isHead ? 0 : length), Slide.index);
-      });
-    }
-  }
-
-  function cloneDeep(elm, index) {
-    var clone = elm.cloneNode(true);
-    addClass(clone, options.classes.clone);
-    clone.id = Splide2.root.id + "-clone" + pad(index + 1);
-    return clone;
-  }
-
-  function computeCloneCount() {
-    var clones2 = options.clones;
-
-    if (!Splide2.is(LOOP)) {
-      clones2 = 0;
-    } else if (isUndefined(clones2)) {
-      var fixedSize = options[resolve("fixedWidth")] && Components2.Layout.slideSize(0);
-      var fixedCount = fixedSize && ceil(rect(Elements.track)[resolve("width")] / fixedSize);
-      clones2 = fixedCount || options[resolve("autoWidth")] && Splide2.length || options.perPage * MULTIPLIER;
-    }
-
-    return clones2;
-  }
-
-  return {
-    mount: mount,
-    destroy: destroy
-  };
-}
-
-function Move(Splide2, Components2, options) {
-  var _EventInterface4 = EventInterface(Splide2),
-      on = _EventInterface4.on,
-      emit = _EventInterface4.emit;
-
-  var set = Splide2.state.set;
-  var _Components2$Layout = Components2.Layout,
-      slideSize = _Components2$Layout.slideSize,
-      getPadding = _Components2$Layout.getPadding,
-      totalSize = _Components2$Layout.totalSize,
-      listSize = _Components2$Layout.listSize,
-      sliderSize = _Components2$Layout.sliderSize;
-  var _Components2$Directio = Components2.Direction,
-      resolve = _Components2$Directio.resolve,
-      orient = _Components2$Directio.orient;
-  var _Components2$Elements3 = Components2.Elements,
-      list = _Components2$Elements3.list,
-      track = _Components2$Elements3.track;
-  var Transition;
-
-  function mount() {
-    Transition = Components2.Transition;
-    on([EVENT_MOUNTED, EVENT_RESIZED, EVENT_UPDATED, EVENT_REFRESH], reposition);
-  }
-
-  function reposition() {
-    if (!Components2.Controller.isBusy()) {
-      Components2.Scroll.cancel();
-      jump(Splide2.index);
-      Components2.Slides.update();
-    }
-  }
-
-  function move(dest, index, prev, callback) {
-    if (dest !== index && canShift(dest > prev)) {
-      cancel();
-      translate(shift(getPosition(), dest > prev), true);
-    }
-
-    set(MOVING);
-    emit(EVENT_MOVE, index, prev, dest);
-    Transition.start(index, function () {
-      set(IDLE);
-      emit(EVENT_MOVED, index, prev, dest);
-      callback && callback();
-    });
-  }
-
-  function jump(index) {
-    translate(toPosition(index, true));
-  }
-
-  function translate(position, preventLoop) {
-    if (!Splide2.is(FADE)) {
-      var destination = preventLoop ? position : loop(position);
-      style(list, "transform", "translate" + resolve("X") + "(" + destination + "px)");
-      position !== destination && emit(EVENT_SHIFTED);
-    }
-  }
-
-  function loop(position) {
-    if (Splide2.is(LOOP)) {
-      var index = toIndex(position);
-      var exceededMax = index > Components2.Controller.getEnd();
-      var exceededMin = index < 0;
-
-      if (exceededMin || exceededMax) {
-        position = shift(position, exceededMax);
-      }
-    }
-
-    return position;
-  }
-
-  function shift(position, backwards) {
-    var excess = position - getLimit(backwards);
-    var size = sliderSize();
-    position -= orient(size * (ceil(abs(excess) / size) || 1)) * (backwards ? 1 : -1);
-    return position;
-  }
-
-  function cancel() {
-    translate(getPosition(), true);
-    Transition.cancel();
-  }
-
-  function toIndex(position) {
-    var Slides = Components2.Slides.get();
-    var index = 0;
-    var minDistance = Infinity;
-
-    for (var i = 0; i < Slides.length; i++) {
-      var slideIndex = Slides[i].index;
-      var distance = abs(toPosition(slideIndex, true) - position);
-
-      if (distance <= minDistance) {
-        minDistance = distance;
-        index = slideIndex;
-      } else {
-        break;
-      }
-    }
-
-    return index;
-  }
-
-  function toPosition(index, trimming) {
-    var position = orient(totalSize(index - 1) - offset(index));
-    return trimming ? trim(position) : position;
-  }
-
-  function getPosition() {
-    var left = resolve("left");
-    return rect(list)[left] - rect(track)[left] + orient(getPadding(false));
-  }
-
-  function trim(position) {
-    if (options.trimSpace && Splide2.is(SLIDE)) {
-      position = clamp(position, 0, orient(sliderSize(true) - listSize()));
-    }
-
-    return position;
-  }
-
-  function offset(index) {
-    var focus = options.focus;
-    return focus === "center" ? (listSize() - slideSize(index, true)) / 2 : +focus * slideSize(index) || 0;
-  }
-
-  function getLimit(max) {
-    return toPosition(max ? Components2.Controller.getEnd() : 0, !!options.trimSpace);
-  }
-
-  function canShift(backwards) {
-    var shifted = orient(shift(getPosition(), backwards));
-    return backwards ? shifted >= 0 : shifted <= list[resolve("scrollWidth")] - rect(track)[resolve("width")];
-  }
-
-  function exceededLimit(max, position) {
-    position = isUndefined(position) ? getPosition() : position;
-    var exceededMin = max !== true && orient(position) < orient(getLimit(false));
-    var exceededMax = max !== false && orient(position) > orient(getLimit(true));
-    return exceededMin || exceededMax;
-  }
-
-  return {
-    mount: mount,
-    move: move,
-    jump: jump,
-    translate: translate,
-    shift: shift,
-    cancel: cancel,
-    toIndex: toIndex,
-    toPosition: toPosition,
-    getPosition: getPosition,
-    getLimit: getLimit,
-    exceededLimit: exceededLimit,
-    reposition: reposition
-  };
-}
-
-function Controller(Splide2, Components2, options) {
-  var _EventInterface5 = EventInterface(Splide2),
-      on = _EventInterface5.on,
-      emit = _EventInterface5.emit;
-
-  var Move = Components2.Move;
-  var getPosition = Move.getPosition,
-      getLimit = Move.getLimit,
-      toPosition = Move.toPosition;
-  var _Components2$Slides = Components2.Slides,
-      isEnough = _Components2$Slides.isEnough,
-      getLength = _Components2$Slides.getLength;
-  var omitEnd = options.omitEnd;
-  var isLoop = Splide2.is(LOOP);
-  var isSlide = Splide2.is(SLIDE);
-  var getNext = apply(getAdjacent, false);
-  var getPrev = apply(getAdjacent, true);
-  var currIndex = options.start || 0;
-  var endIndex;
-  var prevIndex = currIndex;
-  var slideCount;
-  var perMove;
-  var perPage;
-
-  function mount() {
-    init();
-    on([EVENT_UPDATED, EVENT_REFRESH, EVENT_END_INDEX_CHANGED], init);
-    on(EVENT_RESIZED, onResized);
-  }
-
-  function init() {
-    slideCount = getLength(true);
-    perMove = options.perMove;
-    perPage = options.perPage;
-    endIndex = getEnd();
-    var index = clamp(currIndex, 0, omitEnd ? endIndex : slideCount - 1);
-
-    if (index !== currIndex) {
-      currIndex = index;
-      Move.reposition();
-    }
-  }
-
-  function onResized() {
-    if (endIndex !== getEnd()) {
-      emit(EVENT_END_INDEX_CHANGED);
-    }
-  }
-
-  function go(control, allowSameIndex, callback) {
-    if (!isBusy()) {
-      var dest = parse(control);
-      var index = loop(dest);
-
-      if (index > -1 && (allowSameIndex || index !== currIndex)) {
-        setIndex(index);
-        Move.move(dest, index, prevIndex, callback);
-      }
-    }
-  }
-
-  function scroll(destination, duration, snap, callback) {
-    Components2.Scroll.scroll(destination, duration, snap, function () {
-      var index = loop(Move.toIndex(getPosition()));
-      setIndex(omitEnd ? min(index, endIndex) : index);
-      callback && callback();
-    });
-  }
-
-  function parse(control) {
-    var index = currIndex;
-
-    if (isString(control)) {
-      var _ref = control.match(/([+\-<>])(\d+)?/) || [],
-          indicator = _ref[1],
-          number = _ref[2];
-
-      if (indicator === "+" || indicator === "-") {
-        index = computeDestIndex(currIndex + +("" + indicator + (+number || 1)), currIndex);
-      } else if (indicator === ">") {
-        index = number ? toIndex(+number) : getNext(true);
-      } else if (indicator === "<") {
-        index = getPrev(true);
-      }
-    } else {
-      index = isLoop ? control : clamp(control, 0, endIndex);
-    }
-
-    return index;
-  }
-
-  function getAdjacent(prev, destination) {
-    var number = perMove || (hasFocus() ? 1 : perPage);
-    var dest = computeDestIndex(currIndex + number * (prev ? -1 : 1), currIndex, !(perMove || hasFocus()));
-
-    if (dest === -1 && isSlide) {
-      if (!approximatelyEqual(getPosition(), getLimit(!prev), 1)) {
-        return prev ? 0 : endIndex;
-      }
-    }
-
-    return destination ? dest : loop(dest);
-  }
-
-  function computeDestIndex(dest, from, snapPage) {
-    if (isEnough() || hasFocus()) {
-      var index = computeMovableDestIndex(dest);
-
-      if (index !== dest) {
-        from = dest;
-        dest = index;
-        snapPage = false;
-      }
-
-      if (dest < 0 || dest > endIndex) {
-        if (!perMove && (between(0, dest, from, true) || between(endIndex, from, dest, true))) {
-          dest = toIndex(toPage(dest));
-        } else {
-          if (isLoop) {
-            dest = snapPage ? dest < 0 ? -(slideCount % perPage || perPage) : slideCount : dest;
-          } else if (options.rewind) {
-            dest = dest < 0 ? endIndex : 0;
-          } else {
-            dest = -1;
-          }
-        }
-      } else {
-        if (snapPage && dest !== from) {
-          dest = toIndex(toPage(from) + (dest < from ? -1 : 1));
-        }
-      }
-    } else {
-      dest = -1;
-    }
-
-    return dest;
-  }
-
-  function computeMovableDestIndex(dest) {
-    if (isSlide && options.trimSpace === "move" && dest !== currIndex) {
-      var position = getPosition();
-
-      while (position === toPosition(dest, true) && between(dest, 0, Splide2.length - 1, !options.rewind)) {
-        dest < currIndex ? --dest : ++dest;
-      }
-    }
-
-    return dest;
-  }
-
-  function loop(index) {
-    return isLoop ? (index + slideCount) % slideCount || 0 : index;
-  }
-
-  function getEnd() {
-    var end = slideCount - (hasFocus() || isLoop && perMove ? 1 : perPage);
-
-    while (omitEnd && end-- > 0) {
-      if (toPosition(slideCount - 1, true) !== toPosition(end, true)) {
-        end++;
-        break;
-      }
-    }
-
-    return clamp(end, 0, slideCount - 1);
-  }
-
-  function toIndex(page) {
-    return clamp(hasFocus() ? page : perPage * page, 0, endIndex);
-  }
-
-  function toPage(index) {
-    return hasFocus() ? min(index, endIndex) : floor((index >= endIndex ? slideCount - 1 : index) / perPage);
-  }
-
-  function toDest(destination) {
-    var closest = Move.toIndex(destination);
-    return isSlide ? clamp(closest, 0, endIndex) : closest;
-  }
-
-  function setIndex(index) {
-    if (index !== currIndex) {
-      prevIndex = currIndex;
-      currIndex = index;
-    }
-  }
-
-  function getIndex(prev) {
-    return prev ? prevIndex : currIndex;
-  }
-
-  function hasFocus() {
-    return !isUndefined(options.focus) || options.isNavigation;
-  }
-
-  function isBusy() {
-    return Splide2.state.is([MOVING, SCROLLING]) && !!options.waitForTransition;
-  }
-
-  return {
-    mount: mount,
-    go: go,
-    scroll: scroll,
-    getNext: getNext,
-    getPrev: getPrev,
-    getAdjacent: getAdjacent,
-    getEnd: getEnd,
-    setIndex: setIndex,
-    getIndex: getIndex,
-    toIndex: toIndex,
-    toPage: toPage,
-    toDest: toDest,
-    hasFocus: hasFocus,
-    isBusy: isBusy
-  };
-}
-
-var XML_NAME_SPACE = "http://www.w3.org/2000/svg";
-var PATH = "m15.5 0.932-4.3 4.38 14.5 14.6-14.5 14.5 4.3 4.4 14.6-14.6 4.4-4.3-4.4-4.4-14.6-14.6z";
-var SIZE = 40;
-
-function Arrows(Splide2, Components2, options) {
-  var event = EventInterface(Splide2);
-  var on = event.on,
-      bind = event.bind,
-      emit = event.emit;
-  var classes = options.classes,
-      i18n = options.i18n;
-  var Elements = Components2.Elements,
-      Controller = Components2.Controller;
-  var placeholder = Elements.arrows,
-      track = Elements.track;
-  var wrapper = placeholder;
-  var prev = Elements.prev;
-  var next = Elements.next;
-  var created;
-  var wrapperClasses;
-  var arrows = {};
-
-  function mount() {
-    init();
-    on(EVENT_UPDATED, remount);
-  }
-
-  function remount() {
-    destroy();
-    mount();
-  }
-
-  function init() {
-    var enabled = options.arrows;
-
-    if (enabled && !(prev && next)) {
-      createArrows();
-    }
-
-    if (prev && next) {
-      assign(arrows, {
-        prev: prev,
-        next: next
-      });
-      display(wrapper, enabled ? "" : "none");
-      addClass(wrapper, wrapperClasses = CLASS_ARROWS + "--" + options.direction);
-
-      if (enabled) {
-        listen();
-        update();
-        setAttribute([prev, next], ARIA_CONTROLS, track.id);
-        emit(EVENT_ARROWS_MOUNTED, prev, next);
-      }
-    }
-  }
-
-  function destroy() {
-    event.destroy();
-    removeClass(wrapper, wrapperClasses);
-
-    if (created) {
-      remove(placeholder ? [prev, next] : wrapper);
-      prev = next = null;
-    } else {
-      removeAttribute([prev, next], ALL_ATTRIBUTES);
-    }
-  }
-
-  function listen() {
-    on([EVENT_MOUNTED, EVENT_MOVED, EVENT_REFRESH, EVENT_SCROLLED, EVENT_END_INDEX_CHANGED], update);
-    bind(next, "click", apply(go, ">"));
-    bind(prev, "click", apply(go, "<"));
-  }
-
-  function go(control) {
-    Controller.go(control, true);
-  }
-
-  function createArrows() {
-    wrapper = placeholder || create("div", classes.arrows);
-    prev = createArrow(true);
-    next = createArrow(false);
-    created = true;
-    append(wrapper, [prev, next]);
-    !placeholder && before(wrapper, track);
-  }
-
-  function createArrow(prev2) {
-    var arrow = "<button class=\"" + classes.arrow + " " + (prev2 ? classes.prev : classes.next) + "\" type=\"button\"><svg xmlns=\"" + XML_NAME_SPACE + "\" viewBox=\"0 0 " + SIZE + " " + SIZE + "\" width=\"" + SIZE + "\" height=\"" + SIZE + "\" focusable=\"false\"><path d=\"" + (options.arrowPath || PATH) + "\" />";
-    return parseHtml(arrow);
-  }
-
-  function update() {
-    if (prev && next) {
-      var index = Splide2.index;
-      var prevIndex = Controller.getPrev();
-      var nextIndex = Controller.getNext();
-      var prevLabel = prevIndex > -1 && index < prevIndex ? i18n.last : i18n.prev;
-      var nextLabel = nextIndex > -1 && index > nextIndex ? i18n.first : i18n.next;
-      prev.disabled = prevIndex < 0;
-      next.disabled = nextIndex < 0;
-      setAttribute(prev, ARIA_LABEL, prevLabel);
-      setAttribute(next, ARIA_LABEL, nextLabel);
-      emit(EVENT_ARROWS_UPDATED, prev, next, prevIndex, nextIndex);
-    }
-  }
-
-  return {
-    arrows: arrows,
-    mount: mount,
-    destroy: destroy,
-    update: update
-  };
-}
-
-var INTERVAL_DATA_ATTRIBUTE = DATA_ATTRIBUTE + "-interval";
-
-function Autoplay(Splide2, Components2, options) {
-  var _EventInterface6 = EventInterface(Splide2),
-      on = _EventInterface6.on,
-      bind = _EventInterface6.bind,
-      emit = _EventInterface6.emit;
-
-  var interval = RequestInterval(options.interval, Splide2.go.bind(Splide2, ">"), onAnimationFrame);
-  var isPaused = interval.isPaused;
-  var Elements = Components2.Elements,
-      _Components2$Elements4 = Components2.Elements,
-      root = _Components2$Elements4.root,
-      toggle = _Components2$Elements4.toggle;
-  var autoplay = options.autoplay;
-  var hovered;
-  var focused;
-  var stopped = autoplay === "pause";
-
-  function mount() {
-    if (autoplay) {
-      listen();
-      toggle && setAttribute(toggle, ARIA_CONTROLS, Elements.track.id);
-      stopped || play();
-      update();
-    }
-  }
-
-  function listen() {
-    if (options.pauseOnHover) {
-      bind(root, "mouseenter mouseleave", function (e) {
-        hovered = e.type === "mouseenter";
-        autoToggle();
-      });
-    }
-
-    if (options.pauseOnFocus) {
-      bind(root, "focusin focusout", function (e) {
-        focused = e.type === "focusin";
-        autoToggle();
-      });
-    }
-
-    if (toggle) {
-      bind(toggle, "click", function () {
-        stopped ? play() : pause(true);
-      });
-    }
-
-    on([EVENT_MOVE, EVENT_SCROLL, EVENT_REFRESH], interval.rewind);
-    on(EVENT_MOVE, onMove);
-  }
-
-  function play() {
-    if (isPaused() && Components2.Slides.isEnough()) {
-      interval.start(!options.resetProgress);
-      focused = hovered = stopped = false;
-      update();
-      emit(EVENT_AUTOPLAY_PLAY);
-    }
-  }
-
-  function pause(stop) {
-    if (stop === void 0) {
-      stop = true;
-    }
-
-    stopped = !!stop;
-    update();
-
-    if (!isPaused()) {
-      interval.pause();
-      emit(EVENT_AUTOPLAY_PAUSE);
-    }
-  }
-
-  function autoToggle() {
-    if (!stopped) {
-      hovered || focused ? pause(false) : play();
-    }
-  }
-
-  function update() {
-    if (toggle) {
-      toggleClass(toggle, CLASS_ACTIVE, !stopped);
-      setAttribute(toggle, ARIA_LABEL, options.i18n[stopped ? "play" : "pause"]);
-    }
-  }
-
-  function onAnimationFrame(rate) {
-    var bar = Elements.bar;
-    bar && style(bar, "width", rate * 100 + "%");
-    emit(EVENT_AUTOPLAY_PLAYING, rate);
-  }
-
-  function onMove(index) {
-    var Slide = Components2.Slides.getAt(index);
-    interval.set(Slide && +getAttribute(Slide.slide, INTERVAL_DATA_ATTRIBUTE) || options.interval);
-  }
-
-  return {
-    mount: mount,
-    destroy: interval.cancel,
-    play: play,
-    pause: pause,
-    isPaused: isPaused
-  };
-}
-
-function Cover(Splide2, Components2, options) {
-  var _EventInterface7 = EventInterface(Splide2),
-      on = _EventInterface7.on;
-
-  function mount() {
-    if (options.cover) {
-      on(EVENT_LAZYLOAD_LOADED, apply(toggle, true));
-      on([EVENT_MOUNTED, EVENT_UPDATED, EVENT_REFRESH], apply(cover, true));
-    }
-  }
-
-  function cover(cover2) {
-    Components2.Slides.forEach(function (Slide) {
-      var img = child(Slide.container || Slide.slide, "img");
-
-      if (img && img.src) {
-        toggle(cover2, img, Slide);
-      }
-    });
-  }
-
-  function toggle(cover2, img, Slide) {
-    Slide.style("background", cover2 ? "center/cover no-repeat url(\"" + img.src + "\")" : "", true);
-    display(img, cover2 ? "none" : "");
-  }
-
-  return {
-    mount: mount,
-    destroy: apply(cover, false)
-  };
-}
-
-var BOUNCE_DIFF_THRESHOLD = 10;
-var BOUNCE_DURATION = 600;
-var FRICTION_FACTOR = 0.6;
-var BASE_VELOCITY = 1.5;
-var MIN_DURATION = 800;
-
-function Scroll(Splide2, Components2, options) {
-  var _EventInterface8 = EventInterface(Splide2),
-      on = _EventInterface8.on,
-      emit = _EventInterface8.emit;
-
-  var set = Splide2.state.set;
-  var Move = Components2.Move;
-  var getPosition = Move.getPosition,
-      getLimit = Move.getLimit,
-      exceededLimit = Move.exceededLimit,
-      translate = Move.translate;
-  var isSlide = Splide2.is(SLIDE);
-  var interval;
-  var callback;
-  var friction = 1;
-
-  function mount() {
-    on(EVENT_MOVE, clear);
-    on([EVENT_UPDATED, EVENT_REFRESH], cancel);
-  }
-
-  function scroll(destination, duration, snap, onScrolled, noConstrain) {
-    var from = getPosition();
-    clear();
-
-    if (snap && (!isSlide || !exceededLimit())) {
-      var size = Components2.Layout.sliderSize();
-      var offset = sign(destination) * size * floor(abs(destination) / size) || 0;
-      destination = Move.toPosition(Components2.Controller.toDest(destination % size)) + offset;
-    }
-
-    var noDistance = approximatelyEqual(from, destination, 1);
-    friction = 1;
-    duration = noDistance ? 0 : duration || max(abs(destination - from) / BASE_VELOCITY, MIN_DURATION);
-    callback = onScrolled;
-    interval = RequestInterval(duration, onEnd, apply(update, from, destination, noConstrain), 1);
-    set(SCROLLING);
-    emit(EVENT_SCROLL);
-    interval.start();
-  }
-
-  function onEnd() {
-    set(IDLE);
-    callback && callback();
-    emit(EVENT_SCROLLED);
-  }
-
-  function update(from, to, noConstrain, rate) {
-    var position = getPosition();
-    var target = from + (to - from) * easing(rate);
-    var diff = (target - position) * friction;
-    translate(position + diff);
-
-    if (isSlide && !noConstrain && exceededLimit()) {
-      friction *= FRICTION_FACTOR;
-
-      if (abs(diff) < BOUNCE_DIFF_THRESHOLD) {
-        scroll(getLimit(exceededLimit(true)), BOUNCE_DURATION, false, callback, true);
-      }
-    }
-  }
-
-  function clear() {
-    if (interval) {
-      interval.cancel();
-    }
-  }
-
-  function cancel() {
-    if (interval && !interval.isPaused()) {
-      clear();
-      onEnd();
-    }
-  }
-
-  function easing(t) {
-    var easingFunc = options.easingFunc;
-    return easingFunc ? easingFunc(t) : 1 - Math.pow(1 - t, 4);
-  }
-
-  return {
-    mount: mount,
-    destroy: clear,
-    scroll: scroll,
-    cancel: cancel
-  };
-}
-
-var SCROLL_LISTENER_OPTIONS = {
-  passive: false,
-  capture: true
-};
-
-function Drag(Splide2, Components2, options) {
-  var _EventInterface9 = EventInterface(Splide2),
-      on = _EventInterface9.on,
-      emit = _EventInterface9.emit,
-      bind = _EventInterface9.bind,
-      unbind = _EventInterface9.unbind;
-
-  var state = Splide2.state;
-  var Move = Components2.Move,
-      Scroll = Components2.Scroll,
-      Controller = Components2.Controller,
-      track = Components2.Elements.track,
-      reduce = Components2.Media.reduce;
-  var _Components2$Directio2 = Components2.Direction,
-      resolve = _Components2$Directio2.resolve,
-      orient = _Components2$Directio2.orient;
-  var getPosition = Move.getPosition,
-      exceededLimit = Move.exceededLimit;
-  var basePosition;
-  var baseEvent;
-  var prevBaseEvent;
-  var isFree;
-  var dragging;
-  var exceeded = false;
-  var clickPrevented;
-  var disabled;
-  var target;
-
-  function mount() {
-    bind(track, POINTER_MOVE_EVENTS, noop, SCROLL_LISTENER_OPTIONS);
-    bind(track, POINTER_UP_EVENTS, noop, SCROLL_LISTENER_OPTIONS);
-    bind(track, POINTER_DOWN_EVENTS, onPointerDown, SCROLL_LISTENER_OPTIONS);
-    bind(track, "click", onClick, {
-      capture: true
-    });
-    bind(track, "dragstart", prevent);
-    on([EVENT_MOUNTED, EVENT_UPDATED], init);
-  }
-
-  function init() {
-    var drag = options.drag;
-    disable(!drag);
-    isFree = drag === "free";
-  }
-
-  function onPointerDown(e) {
-    clickPrevented = false;
-
-    if (!disabled) {
-      var isTouch = isTouchEvent(e);
-
-      if (isDraggable(e.target) && (isTouch || !e.button)) {
-        if (!Controller.isBusy()) {
-          target = isTouch ? track : window;
-          dragging = state.is([MOVING, SCROLLING]);
-          prevBaseEvent = null;
-          bind(target, POINTER_MOVE_EVENTS, onPointerMove, SCROLL_LISTENER_OPTIONS);
-          bind(target, POINTER_UP_EVENTS, onPointerUp, SCROLL_LISTENER_OPTIONS);
-          Move.cancel();
-          Scroll.cancel();
-          save(e);
-        } else {
-          prevent(e, true);
-        }
-      }
-    }
-  }
-
-  function onPointerMove(e) {
-    if (!state.is(DRAGGING)) {
-      state.set(DRAGGING);
-      emit(EVENT_DRAG);
-    }
-
-    if (e.cancelable) {
-      if (dragging) {
-        Move.translate(basePosition + constrain(diffCoord(e)));
-        var expired = diffTime(e) > LOG_INTERVAL;
-        var hasExceeded = exceeded !== (exceeded = exceededLimit());
-
-        if (expired || hasExceeded) {
-          save(e);
-        }
-
-        clickPrevented = true;
-        emit(EVENT_DRAGGING);
-        prevent(e);
-      } else if (isSliderDirection(e)) {
-        dragging = shouldStart(e);
-        prevent(e);
-      }
-    }
-  }
-
-  function onPointerUp(e) {
-    if (state.is(DRAGGING)) {
-      state.set(IDLE);
-      emit(EVENT_DRAGGED);
-    }
-
-    if (dragging) {
-      move(e);
-      prevent(e);
-    }
-
-    unbind(target, POINTER_MOVE_EVENTS, onPointerMove);
-    unbind(target, POINTER_UP_EVENTS, onPointerUp);
-    dragging = false;
-  }
-
-  function onClick(e) {
-    if (!disabled && clickPrevented) {
-      prevent(e, true);
-    }
-  }
-
-  function save(e) {
-    prevBaseEvent = baseEvent;
-    baseEvent = e;
-    basePosition = getPosition();
-  }
-
-  function move(e) {
-    var velocity = computeVelocity(e);
-    var destination = computeDestination(velocity);
-    var rewind = options.rewind && options.rewindByDrag;
-    reduce(false);
-
-    if (isFree) {
-      Controller.scroll(destination, 0, options.snap);
-    } else if (Splide2.is(FADE)) {
-      Controller.go(orient(sign(velocity)) < 0 ? rewind ? "<" : "-" : rewind ? ">" : "+");
-    } else if (Splide2.is(SLIDE) && exceeded && rewind) {
-      Controller.go(exceededLimit(true) ? ">" : "<");
-    } else {
-      Controller.go(Controller.toDest(destination), true);
-    }
-
-    reduce(true);
-  }
-
-  function shouldStart(e) {
-    var thresholds = options.dragMinThreshold;
-    var isObj = isObject(thresholds);
-    var mouse = isObj && thresholds.mouse || 0;
-    var touch = (isObj ? thresholds.touch : +thresholds) || 10;
-    return abs(diffCoord(e)) > (isTouchEvent(e) ? touch : mouse);
-  }
-
-  function isSliderDirection(e) {
-    return abs(diffCoord(e)) > abs(diffCoord(e, true));
-  }
-
-  function computeVelocity(e) {
-    if (Splide2.is(LOOP) || !exceeded) {
-      var time = diffTime(e);
-
-      if (time && time < LOG_INTERVAL) {
-        return diffCoord(e) / time;
-      }
-    }
-
-    return 0;
-  }
-
-  function computeDestination(velocity) {
-    return getPosition() + sign(velocity) * min(abs(velocity) * (options.flickPower || 600), isFree ? Infinity : Components2.Layout.listSize() * (options.flickMaxPages || 1));
-  }
-
-  function diffCoord(e, orthogonal) {
-    return coordOf(e, orthogonal) - coordOf(getBaseEvent(e), orthogonal);
-  }
-
-  function diffTime(e) {
-    return timeOf(e) - timeOf(getBaseEvent(e));
-  }
-
-  function getBaseEvent(e) {
-    return baseEvent === e && prevBaseEvent || baseEvent;
-  }
-
-  function coordOf(e, orthogonal) {
-    return (isTouchEvent(e) ? e.changedTouches[0] : e)["page" + resolve(orthogonal ? "Y" : "X")];
-  }
-
-  function constrain(diff) {
-    return diff / (exceeded && Splide2.is(SLIDE) ? FRICTION : 1);
-  }
-
-  function isDraggable(target2) {
-    var noDrag = options.noDrag;
-    return !matches(target2, "." + CLASS_PAGINATION_PAGE + ", ." + CLASS_ARROW) && (!noDrag || !matches(target2, noDrag));
-  }
-
-  function isTouchEvent(e) {
-    return typeof TouchEvent !== "undefined" && e instanceof TouchEvent;
-  }
-
-  function isDragging() {
-    return dragging;
-  }
-
-  function disable(value) {
-    disabled = value;
-  }
-
-  return {
-    mount: mount,
-    disable: disable,
-    isDragging: isDragging
-  };
-}
-
-var NORMALIZATION_MAP = {
-  Spacebar: " ",
-  Right: ARROW_RIGHT,
-  Left: ARROW_LEFT,
-  Up: ARROW_UP,
-  Down: ARROW_DOWN
-};
-
-function normalizeKey(key) {
-  key = isString(key) ? key : key.key;
-  return NORMALIZATION_MAP[key] || key;
-}
-
-var KEYBOARD_EVENT = "keydown";
-
-function Keyboard(Splide2, Components2, options) {
-  var _EventInterface10 = EventInterface(Splide2),
-      on = _EventInterface10.on,
-      bind = _EventInterface10.bind,
-      unbind = _EventInterface10.unbind;
-
-  var root = Splide2.root;
-  var resolve = Components2.Direction.resolve;
-  var target;
-  var disabled;
-
-  function mount() {
-    init();
-    on(EVENT_UPDATED, destroy);
-    on(EVENT_UPDATED, init);
-    on(EVENT_MOVE, onMove);
-  }
-
-  function init() {
-    var keyboard = options.keyboard;
-
-    if (keyboard) {
-      target = keyboard === "global" ? window : root;
-      bind(target, KEYBOARD_EVENT, onKeydown);
-    }
-  }
-
-  function destroy() {
-    unbind(target, KEYBOARD_EVENT);
-  }
-
-  function disable(value) {
-    disabled = value;
-  }
-
-  function onMove() {
-    var _disabled = disabled;
-    disabled = true;
-    nextTick(function () {
-      disabled = _disabled;
-    });
-  }
-
-  function onKeydown(e) {
-    if (!disabled) {
-      var key = normalizeKey(e);
-
-      if (key === resolve(ARROW_LEFT)) {
-        Splide2.go("<");
-      } else if (key === resolve(ARROW_RIGHT)) {
-        Splide2.go(">");
-      }
-    }
-  }
-
-  return {
-    mount: mount,
-    destroy: destroy,
-    disable: disable
-  };
-}
-
-var SRC_DATA_ATTRIBUTE = DATA_ATTRIBUTE + "-lazy";
-var SRCSET_DATA_ATTRIBUTE = SRC_DATA_ATTRIBUTE + "-srcset";
-var IMAGE_SELECTOR = "[" + SRC_DATA_ATTRIBUTE + "], [" + SRCSET_DATA_ATTRIBUTE + "]";
-
-function LazyLoad(Splide2, Components2, options) {
-  var _EventInterface11 = EventInterface(Splide2),
-      on = _EventInterface11.on,
-      off = _EventInterface11.off,
-      bind = _EventInterface11.bind,
-      emit = _EventInterface11.emit;
-
-  var isSequential = options.lazyLoad === "sequential";
-  var events = [EVENT_MOVED, EVENT_SCROLLED];
-  var entries = [];
-
-  function mount() {
-    if (options.lazyLoad) {
-      init();
-      on(EVENT_REFRESH, init);
-    }
-  }
-
-  function init() {
-    empty(entries);
-    register();
-
-    if (isSequential) {
-      loadNext();
-    } else {
-      off(events);
-      on(events, check);
-      check();
-    }
-  }
-
-  function register() {
-    Components2.Slides.forEach(function (Slide) {
-      queryAll(Slide.slide, IMAGE_SELECTOR).forEach(function (img) {
-        var src = getAttribute(img, SRC_DATA_ATTRIBUTE);
-        var srcset = getAttribute(img, SRCSET_DATA_ATTRIBUTE);
-
-        if (src !== img.src || srcset !== img.srcset) {
-          var className = options.classes.spinner;
-          var parent = img.parentElement;
-          var spinner = child(parent, "." + className) || create("span", className, parent);
-          entries.push([img, Slide, spinner]);
-          img.src || display(img, "none");
-        }
-      });
-    });
-  }
-
-  function check() {
-    entries = entries.filter(function (data) {
-      var distance = options.perPage * ((options.preloadPages || 1) + 1) - 1;
-      return data[1].isWithin(Splide2.index, distance) ? load(data) : true;
-    });
-    entries.length || off(events);
-  }
-
-  function load(data) {
-    var img = data[0];
-    addClass(data[1].slide, CLASS_LOADING);
-    bind(img, "load error", apply(onLoad, data));
-    setAttribute(img, "src", getAttribute(img, SRC_DATA_ATTRIBUTE));
-    setAttribute(img, "srcset", getAttribute(img, SRCSET_DATA_ATTRIBUTE));
-    removeAttribute(img, SRC_DATA_ATTRIBUTE);
-    removeAttribute(img, SRCSET_DATA_ATTRIBUTE);
-  }
-
-  function onLoad(data, e) {
-    var img = data[0],
-        Slide = data[1];
-    removeClass(Slide.slide, CLASS_LOADING);
-
-    if (e.type !== "error") {
-      remove(data[2]);
-      display(img, "");
-      emit(EVENT_LAZYLOAD_LOADED, img, Slide);
-      emit(EVENT_RESIZE);
-    }
-
-    isSequential && loadNext();
-  }
-
-  function loadNext() {
-    entries.length && load(entries.shift());
-  }
-
-  return {
-    mount: mount,
-    destroy: apply(empty, entries),
-    check: check
-  };
-}
-
-function Pagination(Splide2, Components2, options) {
-  var event = EventInterface(Splide2);
-  var on = event.on,
-      emit = event.emit,
-      bind = event.bind;
-  var Slides = Components2.Slides,
-      Elements = Components2.Elements,
-      Controller = Components2.Controller;
-  var hasFocus = Controller.hasFocus,
-      getIndex = Controller.getIndex,
-      go = Controller.go;
-  var resolve = Components2.Direction.resolve;
-  var placeholder = Elements.pagination;
-  var items = [];
-  var list;
-  var paginationClasses;
-
-  function mount() {
-    destroy();
-    on([EVENT_UPDATED, EVENT_REFRESH, EVENT_END_INDEX_CHANGED], mount);
-    var enabled = options.pagination;
-    placeholder && display(placeholder, enabled ? "" : "none");
-
-    if (enabled) {
-      on([EVENT_MOVE, EVENT_SCROLL, EVENT_SCROLLED], update);
-      createPagination();
-      update();
-      emit(EVENT_PAGINATION_MOUNTED, {
-        list: list,
-        items: items
-      }, getAt(Splide2.index));
-    }
-  }
-
-  function destroy() {
-    if (list) {
-      remove(placeholder ? slice(list.children) : list);
-      removeClass(list, paginationClasses);
-      empty(items);
-      list = null;
-    }
-
-    event.destroy();
-  }
-
-  function createPagination() {
-    var length = Splide2.length;
-    var classes = options.classes,
-        i18n = options.i18n,
-        perPage = options.perPage;
-    var max = hasFocus() ? Controller.getEnd() + 1 : ceil(length / perPage);
-    list = placeholder || create("ul", classes.pagination, Elements.track.parentElement);
-    addClass(list, paginationClasses = CLASS_PAGINATION + "--" + getDirection());
-    setAttribute(list, ROLE, "tablist");
-    setAttribute(list, ARIA_LABEL, i18n.select);
-    setAttribute(list, ARIA_ORIENTATION, getDirection() === TTB ? "vertical" : "");
-
-    for (var i = 0; i < max; i++) {
-      var li = create("li", null, list);
-      var button = create("button", {
-        class: classes.page,
-        type: "button"
-      }, li);
-      var controls = Slides.getIn(i).map(function (Slide) {
-        return Slide.slide.id;
-      });
-      var text = !hasFocus() && perPage > 1 ? i18n.pageX : i18n.slideX;
-      bind(button, "click", apply(onClick, i));
-
-      if (options.paginationKeyboard) {
-        bind(button, "keydown", apply(onKeydown, i));
-      }
-
-      setAttribute(li, ROLE, "presentation");
-      setAttribute(button, ROLE, "tab");
-      setAttribute(button, ARIA_CONTROLS, controls.join(" "));
-      setAttribute(button, ARIA_LABEL, format(text, i + 1));
-      setAttribute(button, TAB_INDEX, -1);
-      items.push({
-        li: li,
-        button: button,
-        page: i
-      });
-    }
-  }
-
-  function onClick(page) {
-    go(">" + page, true);
-  }
-
-  function onKeydown(page, e) {
-    var length = items.length;
-    var key = normalizeKey(e);
-    var dir = getDirection();
-    var nextPage = -1;
-
-    if (key === resolve(ARROW_RIGHT, false, dir)) {
-      nextPage = ++page % length;
-    } else if (key === resolve(ARROW_LEFT, false, dir)) {
-      nextPage = (--page + length) % length;
-    } else if (key === "Home") {
-      nextPage = 0;
-    } else if (key === "End") {
-      nextPage = length - 1;
-    }
-
-    var item = items[nextPage];
-
-    if (item) {
-      focus(item.button);
-      go(">" + nextPage);
-      prevent(e, true);
-    }
-  }
-
-  function getDirection() {
-    return options.paginationDirection || options.direction;
-  }
-
-  function getAt(index) {
-    return items[Controller.toPage(index)];
-  }
-
-  function update() {
-    var prev = getAt(getIndex(true));
-    var curr = getAt(getIndex());
-
-    if (prev) {
-      var button = prev.button;
-      removeClass(button, CLASS_ACTIVE);
-      removeAttribute(button, ARIA_SELECTED);
-      setAttribute(button, TAB_INDEX, -1);
-    }
-
-    if (curr) {
-      var _button = curr.button;
-      addClass(_button, CLASS_ACTIVE);
-      setAttribute(_button, ARIA_SELECTED, true);
-      setAttribute(_button, TAB_INDEX, "");
-    }
-
-    emit(EVENT_PAGINATION_UPDATED, {
-      list: list,
-      items: items
-    }, prev, curr);
-  }
-
-  return {
-    items: items,
-    mount: mount,
-    destroy: destroy,
-    getAt: getAt,
-    update: update
-  };
-}
-
-var TRIGGER_KEYS = [" ", "Enter"];
-
-function Sync(Splide2, Components2, options) {
-  var isNavigation = options.isNavigation,
-      slideFocus = options.slideFocus;
-  var events = [];
-
-  function mount() {
-    Splide2.splides.forEach(function (target) {
-      if (!target.isParent) {
-        sync(Splide2, target.splide);
-        sync(target.splide, Splide2);
-      }
-    });
-
-    if (isNavigation) {
-      navigate();
-    }
-  }
-
-  function destroy() {
-    events.forEach(function (event) {
-      event.destroy();
-    });
-    empty(events);
-  }
-
-  function remount() {
-    destroy();
-    mount();
-  }
-
-  function sync(splide, target) {
-    var event = EventInterface(splide);
-    event.on(EVENT_MOVE, function (index, prev, dest) {
-      target.go(target.is(LOOP) ? dest : index);
-    });
-    events.push(event);
-  }
-
-  function navigate() {
-    var event = EventInterface(Splide2);
-    var on = event.on;
-    on(EVENT_CLICK, onClick);
-    on(EVENT_SLIDE_KEYDOWN, onKeydown);
-    on([EVENT_MOUNTED, EVENT_UPDATED], update);
-    events.push(event);
-    event.emit(EVENT_NAVIGATION_MOUNTED, Splide2.splides);
-  }
-
-  function update() {
-    setAttribute(Components2.Elements.list, ARIA_ORIENTATION, options.direction === TTB ? "vertical" : "");
-  }
-
-  function onClick(Slide) {
-    Splide2.go(Slide.index);
-  }
-
-  function onKeydown(Slide, e) {
-    if (includes(TRIGGER_KEYS, normalizeKey(e))) {
-      onClick(Slide);
-      prevent(e);
-    }
-  }
-
-  return {
-    setup: apply(Components2.Media.set, {
-      slideFocus: isUndefined(slideFocus) ? isNavigation : slideFocus
-    }, true),
-    mount: mount,
-    destroy: destroy,
-    remount: remount
-  };
-}
-
-function Wheel(Splide2, Components2, options) {
-  var _EventInterface12 = EventInterface(Splide2),
-      bind = _EventInterface12.bind;
-
-  var lastTime = 0;
-
-  function mount() {
-    if (options.wheel) {
-      bind(Components2.Elements.track, "wheel", onWheel, SCROLL_LISTENER_OPTIONS);
-    }
-  }
-
-  function onWheel(e) {
-    if (e.cancelable) {
-      var deltaY = e.deltaY;
-      var backwards = deltaY < 0;
-      var timeStamp = timeOf(e);
-
-      var _min = options.wheelMinThreshold || 0;
-
-      var sleep = options.wheelSleep || 0;
-
-      if (abs(deltaY) > _min && timeStamp - lastTime > sleep) {
-        Splide2.go(backwards ? "<" : ">");
-        lastTime = timeStamp;
-      }
-
-      shouldPrevent(backwards) && prevent(e);
-    }
-  }
-
-  function shouldPrevent(backwards) {
-    return !options.releaseWheel || Splide2.state.is(MOVING) || Components2.Controller.getAdjacent(backwards) !== -1;
-  }
-
-  return {
-    mount: mount
-  };
-}
-
-var SR_REMOVAL_DELAY = 90;
-
-function Live(Splide2, Components2, options) {
-  var _EventInterface13 = EventInterface(Splide2),
-      on = _EventInterface13.on;
-
-  var track = Components2.Elements.track;
-  var enabled = options.live && !options.isNavigation;
-  var sr = create("span", CLASS_SR);
-  var interval = RequestInterval(SR_REMOVAL_DELAY, apply(toggle, false));
-
-  function mount() {
-    if (enabled) {
-      disable(!Components2.Autoplay.isPaused());
-      setAttribute(track, ARIA_ATOMIC, true);
-      sr.textContent = "\u2026";
-      on(EVENT_AUTOPLAY_PLAY, apply(disable, true));
-      on(EVENT_AUTOPLAY_PAUSE, apply(disable, false));
-      on([EVENT_MOVED, EVENT_SCROLLED], apply(toggle, true));
-    }
-  }
-
-  function toggle(active) {
-    setAttribute(track, ARIA_BUSY, active);
-
-    if (active) {
-      append(track, sr);
-      interval.start();
-    } else {
-      remove(sr);
-      interval.cancel();
-    }
-  }
-
-  function destroy() {
-    removeAttribute(track, [ARIA_LIVE, ARIA_ATOMIC, ARIA_BUSY]);
-    remove(sr);
-  }
-
-  function disable(disabled) {
-    if (enabled) {
-      setAttribute(track, ARIA_LIVE, disabled ? "off" : "polite");
-    }
-  }
-
-  return {
-    mount: mount,
-    disable: disable,
-    destroy: destroy
-  };
-}
-
-var ComponentConstructors = /*#__PURE__*/Object.freeze({
-  __proto__: null,
-  Media: Media,
-  Direction: Direction,
-  Elements: Elements,
-  Slides: Slides,
-  Layout: Layout,
-  Clones: Clones,
-  Move: Move,
-  Controller: Controller,
-  Arrows: Arrows,
-  Autoplay: Autoplay,
-  Cover: Cover,
-  Scroll: Scroll,
-  Drag: Drag,
-  Keyboard: Keyboard,
-  LazyLoad: LazyLoad,
-  Pagination: Pagination,
-  Sync: Sync,
-  Wheel: Wheel,
-  Live: Live
-});
-var I18N = {
-  prev: "Previous slide",
-  next: "Next slide",
-  first: "Go to first slide",
-  last: "Go to last slide",
-  slideX: "Go to slide %s",
-  pageX: "Go to page %s",
-  play: "Start autoplay",
-  pause: "Pause autoplay",
-  carousel: "carousel",
-  slide: "slide",
-  select: "Select a slide to show",
-  slideLabel: "%s of %s"
-};
-var DEFAULTS = {
-  type: "slide",
-  role: "region",
-  speed: 400,
-  perPage: 1,
-  cloneStatus: true,
-  arrows: true,
-  pagination: true,
-  paginationKeyboard: true,
-  interval: 5e3,
-  pauseOnHover: true,
-  pauseOnFocus: true,
-  resetProgress: true,
-  easing: "cubic-bezier(0.25, 1, 0.5, 1)",
-  drag: true,
-  direction: "ltr",
-  trimSpace: true,
-  focusableNodes: "a, button, textarea, input, select, iframe",
-  live: true,
-  classes: CLASSES,
-  i18n: I18N,
-  reducedMotion: {
-    speed: 0,
-    rewindSpeed: 0,
-    autoplay: "pause"
-  }
-};
-
-function Fade(Splide2, Components2, options) {
-  var Slides = Components2.Slides;
-
-  function mount() {
-    EventInterface(Splide2).on([EVENT_MOUNTED, EVENT_REFRESH], init);
-  }
-
-  function init() {
-    Slides.forEach(function (Slide) {
-      Slide.style("transform", "translateX(-" + 100 * Slide.index + "%)");
-    });
-  }
-
-  function start(index, done) {
-    Slides.style("transition", "opacity " + options.speed + "ms " + options.easing);
-    nextTick(done);
-  }
-
-  return {
-    mount: mount,
-    start: start,
-    cancel: noop
-  };
-}
-
-function Slide(Splide2, Components2, options) {
-  var Move = Components2.Move,
-      Controller = Components2.Controller,
-      Scroll = Components2.Scroll;
-  var list = Components2.Elements.list;
-  var transition = apply(style, list, "transition");
-  var endCallback;
-
-  function mount() {
-    EventInterface(Splide2).bind(list, "transitionend", function (e) {
-      if (e.target === list && endCallback) {
-        cancel();
-        endCallback();
-      }
-    });
-  }
-
-  function start(index, done) {
-    var destination = Move.toPosition(index, true);
-    var position = Move.getPosition();
-    var speed = getSpeed(index);
-
-    if (abs(destination - position) >= 1 && speed >= 1) {
-      if (options.useScroll) {
-        Scroll.scroll(destination, speed, false, done);
-      } else {
-        transition("transform " + speed + "ms " + options.easing);
-        Move.translate(destination, true);
-        endCallback = done;
-      }
-    } else {
-      Move.jump(index);
-      done();
-    }
-  }
-
-  function cancel() {
-    transition("");
-    Scroll.cancel();
-  }
-
-  function getSpeed(index) {
-    var rewindSpeed = options.rewindSpeed;
-
-    if (Splide2.is(SLIDE) && rewindSpeed) {
-      var prev = Controller.getIndex(true);
-      var end = Controller.getEnd();
-
-      if (prev === 0 && index >= end || prev >= end && index === 0) {
-        return rewindSpeed;
-      }
-    }
-
-    return options.speed;
-  }
-
-  return {
-    mount: mount,
-    start: start,
-    cancel: cancel
-  };
-}
-
-var _Splide = /*#__PURE__*/function () {
-  function _Splide(target, options) {
-    this.event = EventInterface();
-    this.Components = {};
-    this.state = State(CREATED);
-    this.splides = [];
-    this._o = {};
-    this._E = {};
-    var root = isString(target) ? query(document, target) : target;
-    assert(root, root + " is invalid.");
-    this.root = root;
-    options = merge({
-      label: getAttribute(root, ARIA_LABEL) || "",
-      labelledby: getAttribute(root, ARIA_LABELLEDBY) || ""
-    }, DEFAULTS, _Splide.defaults, options || {});
-
-    try {
-      merge(options, JSON.parse(getAttribute(root, DATA_ATTRIBUTE)));
-    } catch (e) {
-      assert(false, "Invalid JSON");
-    }
-
-    this._o = Object.create(merge({}, options));
-  }
-
-  var _proto = _Splide.prototype;
-
-  _proto.mount = function mount(Extensions, Transition) {
-    var _this = this;
-
-    var state = this.state,
-        Components2 = this.Components;
-    assert(state.is([CREATED, DESTROYED]), "Already mounted!");
-    state.set(CREATED);
-    this._C = Components2;
-    this._T = Transition || this._T || (this.is(FADE) ? Fade : Slide);
-    this._E = Extensions || this._E;
-    var Constructors = assign({}, ComponentConstructors, this._E, {
-      Transition: this._T
-    });
-    forOwn(Constructors, function (Component, key) {
-      var component = Component(_this, Components2, _this._o);
-      Components2[key] = component;
-      component.setup && component.setup();
-    });
-    forOwn(Components2, function (component) {
-      component.mount && component.mount();
-    });
-    this.emit(EVENT_MOUNTED);
-    addClass(this.root, CLASS_INITIALIZED);
-    state.set(IDLE);
-    this.emit(EVENT_READY);
-    return this;
-  };
-
-  _proto.sync = function sync(splide) {
-    this.splides.push({
-      splide: splide
-    });
-    splide.splides.push({
-      splide: this,
-      isParent: true
-    });
-
-    if (this.state.is(IDLE)) {
-      this._C.Sync.remount();
-
-      splide.Components.Sync.remount();
-    }
-
-    return this;
-  };
-
-  _proto.go = function go(control) {
-    this._C.Controller.go(control);
-
-    return this;
-  };
-
-  _proto.on = function on(events, callback) {
-    this.event.on(events, callback);
-    return this;
-  };
-
-  _proto.off = function off(events) {
-    this.event.off(events);
-    return this;
-  };
-
-  _proto.emit = function emit(event) {
-    var _this$event;
-
-    (_this$event = this.event).emit.apply(_this$event, [event].concat(slice(arguments, 1)));
-
-    return this;
-  };
-
-  _proto.add = function add(slides, index) {
-    this._C.Slides.add(slides, index);
-
-    return this;
-  };
-
-  _proto.remove = function remove(matcher) {
-    this._C.Slides.remove(matcher);
-
-    return this;
-  };
-
-  _proto.is = function is(type) {
-    return this._o.type === type;
-  };
-
-  _proto.refresh = function refresh() {
-    this.emit(EVENT_REFRESH);
-    return this;
-  };
-
-  _proto.destroy = function destroy(completely) {
-    if (completely === void 0) {
-      completely = true;
-    }
-
-    var event = this.event,
-        state = this.state;
-
-    if (state.is(CREATED)) {
-      EventInterface(this).on(EVENT_READY, this.destroy.bind(this, completely));
-    } else {
-      forOwn(this._C, function (component) {
-        component.destroy && component.destroy(completely);
-      }, true);
-      event.emit(EVENT_DESTROY);
-      event.destroy();
-      completely && empty(this.splides);
-      state.set(DESTROYED);
-    }
-
-    return this;
-  };
-
-  _createClass(_Splide, [{
-    key: "options",
-    get: function get() {
-      return this._o;
-    },
-    set: function set(options) {
-      this._C.Media.set(options, true, true);
-    }
-  }, {
-    key: "length",
-    get: function get() {
-      return this._C.Slides.getLength(true);
-    }
-  }, {
-    key: "index",
-    get: function get() {
-      return this._C.Controller.getIndex();
-    }
-  }]);
-
-  return _Splide;
-}();
-
-var Splide = _Splide;
-Splide.defaults = {};
-Splide.STATES = STATES;
-var CLASS_RENDERED = "is-rendered";
-var RENDERER_DEFAULT_CONFIG = {
-  listTag: "ul",
-  slideTag: "li"
-};
-
-var Style = /*#__PURE__*/function () {
-  function Style(id, options) {
-    this.styles = {};
-    this.id = id;
-    this.options = options;
-  }
-
-  var _proto2 = Style.prototype;
-
-  _proto2.rule = function rule(selector, prop, value, breakpoint) {
-    breakpoint = breakpoint || "default";
-    var selectors = this.styles[breakpoint] = this.styles[breakpoint] || {};
-    var styles = selectors[selector] = selectors[selector] || {};
-    styles[prop] = value;
-  };
-
-  _proto2.build = function build() {
-    var _this2 = this;
-
-    var css = "";
-
-    if (this.styles.default) {
-      css += this.buildSelectors(this.styles.default);
-    }
-
-    Object.keys(this.styles).sort(function (n, m) {
-      return _this2.options.mediaQuery === "min" ? +n - +m : +m - +n;
-    }).forEach(function (breakpoint) {
-      if (breakpoint !== "default") {
-        css += "@media screen and (max-width: " + breakpoint + "px) {";
-        css += _this2.buildSelectors(_this2.styles[breakpoint]);
-        css += "}";
-      }
-    });
-    return css;
-  };
-
-  _proto2.buildSelectors = function buildSelectors(selectors) {
-    var _this3 = this;
-
-    var css = "";
-    forOwn(selectors, function (styles, selector) {
-      selector = ("#" + _this3.id + " " + selector).trim();
-      css += selector + " {";
-      forOwn(styles, function (value, prop) {
-        if (value || value === 0) {
-          css += prop + ": " + value + ";";
-        }
-      });
-      css += "}";
-    });
-    return css;
-  };
-
-  return Style;
-}();
-
-var SplideRenderer = /*#__PURE__*/function () {
-  function SplideRenderer(contents, options, config, defaults) {
-    this.slides = [];
-    this.options = {};
-    this.breakpoints = [];
-    merge(DEFAULTS, defaults || {});
-    merge(merge(this.options, DEFAULTS), options || {});
-    this.contents = contents;
-    this.config = assign({}, RENDERER_DEFAULT_CONFIG, config || {});
-    this.id = this.config.id || uniqueId("splide");
-    this.Style = new Style(this.id, this.options);
-    this.Direction = Direction(null, null, this.options);
-    assert(this.contents.length, "Provide at least 1 content.");
-    this.init();
-  }
-
-  SplideRenderer.clean = function clean(splide) {
-    var _EventInterface14 = EventInterface(splide),
-        on = _EventInterface14.on;
-
-    var root = splide.root;
-    var clones = queryAll(root, "." + CLASS_CLONE);
-    on(EVENT_MOUNTED, function () {
-      remove(child(root, "style"));
-    });
-    remove(clones);
-  };
-
-  var _proto3 = SplideRenderer.prototype;
-
-  _proto3.init = function init() {
-    this.parseBreakpoints();
-    this.initSlides();
-    this.registerRootStyles();
-    this.registerTrackStyles();
-    this.registerSlideStyles();
-    this.registerListStyles();
-  };
-
-  _proto3.initSlides = function initSlides() {
-    var _this4 = this;
-
-    push(this.slides, this.contents.map(function (content, index) {
-      content = isString(content) ? {
-        html: content
-      } : content;
-      content.styles = content.styles || {};
-      content.attrs = content.attrs || {};
-
-      _this4.cover(content);
-
-      var classes = _this4.options.classes.slide + " " + (index === 0 ? CLASS_ACTIVE : "");
-      assign(content.attrs, {
-        class: (classes + " " + (content.attrs.class || "")).trim(),
-        style: _this4.buildStyles(content.styles)
-      });
-      return content;
-    }));
-
-    if (this.isLoop()) {
-      this.generateClones(this.slides);
-    }
-  };
-
-  _proto3.registerRootStyles = function registerRootStyles() {
-    var _this5 = this;
-
-    this.breakpoints.forEach(function (_ref2) {
-      var width = _ref2[0],
-          options = _ref2[1];
-
-      _this5.Style.rule(" ", "max-width", unit(options.width), width);
-    });
-  };
-
-  _proto3.registerTrackStyles = function registerTrackStyles() {
-    var _this6 = this;
-
-    var Style2 = this.Style;
-    var selector = "." + CLASS_TRACK;
-    this.breakpoints.forEach(function (_ref3) {
-      var width = _ref3[0],
-          options = _ref3[1];
-      Style2.rule(selector, _this6.resolve("paddingLeft"), _this6.cssPadding(options, false), width);
-      Style2.rule(selector, _this6.resolve("paddingRight"), _this6.cssPadding(options, true), width);
-      Style2.rule(selector, "height", _this6.cssTrackHeight(options), width);
-    });
-  };
-
-  _proto3.registerListStyles = function registerListStyles() {
-    var _this7 = this;
-
-    var Style2 = this.Style;
-    var selector = "." + CLASS_LIST;
-    this.breakpoints.forEach(function (_ref4) {
-      var width = _ref4[0],
-          options = _ref4[1];
-      Style2.rule(selector, "transform", _this7.buildTranslate(options), width);
-
-      if (!_this7.cssSlideHeight(options)) {
-        Style2.rule(selector, "aspect-ratio", _this7.cssAspectRatio(options), width);
-      }
-    });
-  };
-
-  _proto3.registerSlideStyles = function registerSlideStyles() {
-    var _this8 = this;
-
-    var Style2 = this.Style;
-    var selector = "." + CLASS_SLIDE;
-    this.breakpoints.forEach(function (_ref5) {
-      var width = _ref5[0],
-          options = _ref5[1];
-      Style2.rule(selector, "width", _this8.cssSlideWidth(options), width);
-      Style2.rule(selector, "height", _this8.cssSlideHeight(options) || "100%", width);
-      Style2.rule(selector, _this8.resolve("marginRight"), unit(options.gap) || "0px", width);
-      Style2.rule(selector + " > img", "display", options.cover ? "none" : "inline", width);
-    });
-  };
-
-  _proto3.buildTranslate = function buildTranslate(options) {
-    var _this$Direction = this.Direction,
-        resolve = _this$Direction.resolve,
-        orient = _this$Direction.orient;
-    var values = [];
-    values.push(this.cssOffsetClones(options));
-    values.push(this.cssOffsetGaps(options));
-
-    if (this.isCenter(options)) {
-      values.push(this.buildCssValue(orient(-50), "%"));
-      values.push.apply(values, this.cssOffsetCenter(options));
-    }
-
-    return values.filter(Boolean).map(function (value) {
-      return "translate" + resolve("X") + "(" + value + ")";
-    }).join(" ");
-  };
-
-  _proto3.cssOffsetClones = function cssOffsetClones(options) {
-    var _this$Direction2 = this.Direction,
-        resolve = _this$Direction2.resolve,
-        orient = _this$Direction2.orient;
-    var cloneCount = this.getCloneCount();
-
-    if (this.isFixedWidth(options)) {
-      var _this$parseCssValue = this.parseCssValue(options[resolve("fixedWidth")]),
-          value = _this$parseCssValue.value,
-          unit2 = _this$parseCssValue.unit;
-
-      return this.buildCssValue(orient(value) * cloneCount, unit2);
-    }
-
-    var percent = 100 * cloneCount / options.perPage;
-    return orient(percent) + "%";
-  };
-
-  _proto3.cssOffsetCenter = function cssOffsetCenter(options) {
-    var _this$Direction3 = this.Direction,
-        resolve = _this$Direction3.resolve,
-        orient = _this$Direction3.orient;
-
-    if (this.isFixedWidth(options)) {
-      var _this$parseCssValue2 = this.parseCssValue(options[resolve("fixedWidth")]),
-          value = _this$parseCssValue2.value,
-          unit2 = _this$parseCssValue2.unit;
-
-      return [this.buildCssValue(orient(value / 2), unit2)];
-    }
-
-    var values = [];
-    var perPage = options.perPage,
-        gap = options.gap;
-    values.push(orient(50 / perPage) + "%");
-
-    if (gap) {
-      var _this$parseCssValue3 = this.parseCssValue(gap),
-          _value = _this$parseCssValue3.value,
-          _unit = _this$parseCssValue3.unit;
-
-      var gapOffset = (_value / perPage - _value) / 2;
-      values.push(this.buildCssValue(orient(gapOffset), _unit));
-    }
-
-    return values;
-  };
-
-  _proto3.cssOffsetGaps = function cssOffsetGaps(options) {
-    var cloneCount = this.getCloneCount();
-
-    if (cloneCount && options.gap) {
-      var orient = this.Direction.orient;
-
-      var _this$parseCssValue4 = this.parseCssValue(options.gap),
-          value = _this$parseCssValue4.value,
-          unit2 = _this$parseCssValue4.unit;
-
-      if (this.isFixedWidth(options)) {
-        return this.buildCssValue(orient(value * cloneCount), unit2);
-      }
-
-      var perPage = options.perPage;
-      var gaps = cloneCount / perPage;
-      return this.buildCssValue(orient(gaps * value), unit2);
-    }
-
-    return "";
-  };
-
-  _proto3.resolve = function resolve(prop) {
-    return camelToKebab(this.Direction.resolve(prop));
-  };
-
-  _proto3.cssPadding = function cssPadding(options, right) {
-    var padding = options.padding;
-    var prop = this.Direction.resolve(right ? "right" : "left", true);
-    return padding && unit(padding[prop] || (isObject(padding) ? 0 : padding)) || "0px";
-  };
-
-  _proto3.cssTrackHeight = function cssTrackHeight(options) {
-    var height = "";
-
-    if (this.isVertical()) {
-      height = this.cssHeight(options);
-      assert(height, '"height" is missing.');
-      height = "calc(" + height + " - " + this.cssPadding(options, false) + " - " + this.cssPadding(options, true) + ")";
-    }
-
-    return height;
-  };
-
-  _proto3.cssHeight = function cssHeight(options) {
-    return unit(options.height);
-  };
-
-  _proto3.cssSlideWidth = function cssSlideWidth(options) {
-    return options.autoWidth ? "" : unit(options.fixedWidth) || (this.isVertical() ? "" : this.cssSlideSize(options));
-  };
-
-  _proto3.cssSlideHeight = function cssSlideHeight(options) {
-    return unit(options.fixedHeight) || (this.isVertical() ? options.autoHeight ? "" : this.cssSlideSize(options) : this.cssHeight(options));
-  };
-
-  _proto3.cssSlideSize = function cssSlideSize(options) {
-    var gap = unit(options.gap);
-    return "calc((100%" + (gap && " + " + gap) + ")/" + (options.perPage || 1) + (gap && " - " + gap) + ")";
-  };
-
-  _proto3.cssAspectRatio = function cssAspectRatio(options) {
-    var heightRatio = options.heightRatio;
-    return heightRatio ? "" + 1 / heightRatio : "";
-  };
-
-  _proto3.buildCssValue = function buildCssValue(value, unit2) {
-    return "" + value + unit2;
-  };
-
-  _proto3.parseCssValue = function parseCssValue(value) {
-    if (isString(value)) {
-      var number = parseFloat(value) || 0;
-      var unit2 = value.replace(/\d*(\.\d*)?/, "") || "px";
-      return {
-        value: number,
-        unit: unit2
-      };
-    }
-
-    return {
-      value: value,
-      unit: "px"
-    };
-  };
-
-  _proto3.parseBreakpoints = function parseBreakpoints() {
-    var _this9 = this;
-
-    var breakpoints = this.options.breakpoints;
-    this.breakpoints.push(["default", this.options]);
-
-    if (breakpoints) {
-      forOwn(breakpoints, function (options, width) {
-        _this9.breakpoints.push([width, merge(merge({}, _this9.options), options)]);
-      });
-    }
-  };
-
-  _proto3.isFixedWidth = function isFixedWidth(options) {
-    return !!options[this.Direction.resolve("fixedWidth")];
-  };
-
-  _proto3.isLoop = function isLoop() {
-    return this.options.type === LOOP;
-  };
-
-  _proto3.isCenter = function isCenter(options) {
-    if (options.focus === "center") {
-      if (this.isLoop()) {
-        return true;
-      }
-
-      if (this.options.type === SLIDE) {
-        return !this.options.trimSpace;
-      }
-    }
-
-    return false;
-  };
-
-  _proto3.isVertical = function isVertical() {
-    return this.options.direction === TTB;
-  };
-
-  _proto3.buildClasses = function buildClasses() {
-    var options = this.options;
-    return [CLASS_ROOT, CLASS_ROOT + "--" + options.type, CLASS_ROOT + "--" + options.direction, options.drag && CLASS_ROOT + "--draggable", options.isNavigation && CLASS_ROOT + "--nav", CLASS_ACTIVE, !this.config.hidden && CLASS_RENDERED].filter(Boolean).join(" ");
-  };
-
-  _proto3.buildAttrs = function buildAttrs(attrs) {
-    var attr = "";
-    forOwn(attrs, function (value, key) {
-      attr += value ? " " + camelToKebab(key) + "=\"" + value + "\"" : "";
-    });
-    return attr.trim();
-  };
-
-  _proto3.buildStyles = function buildStyles(styles) {
-    var style = "";
-    forOwn(styles, function (value, key) {
-      style += " " + camelToKebab(key) + ":" + value + ";";
-    });
-    return style.trim();
-  };
-
-  _proto3.renderSlides = function renderSlides() {
-    var _this10 = this;
-
-    var tag = this.config.slideTag;
-    return this.slides.map(function (content) {
-      return "<" + tag + " " + _this10.buildAttrs(content.attrs) + ">" + (content.html || "") + "</" + tag + ">";
-    }).join("");
-  };
-
-  _proto3.cover = function cover(content) {
-    var styles = content.styles,
-        _content$html = content.html,
-        html = _content$html === void 0 ? "" : _content$html;
-
-    if (this.options.cover && !this.options.lazyLoad) {
-      var src = html.match(/<img.*?src\s*=\s*(['"])(.+?)\1.*?>/);
-
-      if (src && src[2]) {
-        styles.background = "center/cover no-repeat url('" + src[2] + "')";
-      }
-    }
-  };
-
-  _proto3.generateClones = function generateClones(contents) {
-    var classes = this.options.classes;
-    var count = this.getCloneCount();
-    var slides = contents.slice();
-
-    while (slides.length < count) {
-      push(slides, slides);
-    }
-
-    push(slides.slice(-count).reverse(), slides.slice(0, count)).forEach(function (content, index) {
-      var attrs = assign({}, content.attrs, {
-        class: content.attrs.class + " " + classes.clone
-      });
-      var clone = assign({}, content, {
-        attrs: attrs
-      });
-      index < count ? contents.unshift(clone) : contents.push(clone);
-    });
-  };
-
-  _proto3.getCloneCount = function getCloneCount() {
-    if (this.isLoop()) {
-      var options = this.options;
-
-      if (options.clones) {
-        return options.clones;
-      }
-
-      var perPage = max.apply(void 0, this.breakpoints.map(function (_ref6) {
-        var options2 = _ref6[1];
-        return options2.perPage;
-      }));
-      return perPage * ((options.flickMaxPages || 1) + 1);
-    }
-
-    return 0;
-  };
-
-  _proto3.renderArrows = function renderArrows() {
-    var html = "";
-    html += "<div class=\"" + this.options.classes.arrows + "\">";
-    html += this.renderArrow(true);
-    html += this.renderArrow(false);
-    html += "</div>";
-    return html;
-  };
-
-  _proto3.renderArrow = function renderArrow(prev) {
-    var _this$options = this.options,
-        classes = _this$options.classes,
-        i18n = _this$options.i18n;
-    var attrs = {
-      class: classes.arrow + " " + (prev ? classes.prev : classes.next),
-      type: "button",
-      ariaLabel: prev ? i18n.prev : i18n.next
-    };
-    return "<button " + this.buildAttrs(attrs) + "><svg xmlns=\"" + XML_NAME_SPACE + "\" viewBox=\"0 0 " + SIZE + " " + SIZE + "\" width=\"" + SIZE + "\" height=\"" + SIZE + "\"><path d=\"" + (this.options.arrowPath || PATH) + "\" /></svg></button>";
-  };
-
-  _proto3.html = function html() {
-    var _this$config = this.config,
-        rootClass = _this$config.rootClass,
-        listTag = _this$config.listTag,
-        arrows = _this$config.arrows,
-        beforeTrack = _this$config.beforeTrack,
-        afterTrack = _this$config.afterTrack,
-        slider = _this$config.slider,
-        beforeSlider = _this$config.beforeSlider,
-        afterSlider = _this$config.afterSlider;
-    var html = "";
-    html += "<div id=\"" + this.id + "\" class=\"" + this.buildClasses() + " " + (rootClass || "") + "\">";
-    html += "<style>" + this.Style.build() + "</style>";
-
-    if (slider) {
-      html += beforeSlider || "";
-      html += "<div class=\"splide__slider\">";
-    }
-
-    html += beforeTrack || "";
-
-    if (arrows) {
-      html += this.renderArrows();
-    }
-
-    html += "<div class=\"splide__track\">";
-    html += "<" + listTag + " class=\"splide__list\">";
-    html += this.renderSlides();
-    html += "</" + listTag + ">";
-    html += "</div>";
-    html += afterTrack || "";
-
-    if (slider) {
-      html += "</div>";
-      html += afterSlider || "";
-    }
-
-    html += "</div>";
-    return html;
-  };
-
-  return SplideRenderer;
-}();
-
-
-
-
-/***/ }),
-
-/***/ "./node_modules/awesomplete/awesomplete.js":
-/*!*************************************************!*\
-  !*** ./node_modules/awesomplete/awesomplete.js ***!
-  \*************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-/**
- * Simple, lightweight, usable local autocomplete library for modern browsers
- * Because there weren’t enough autocomplete scripts in the world? Because I’m completely insane and have NIH syndrome? Probably both. :P
- * @author Lea Verou http://leaverou.github.io/awesomplete
- * MIT license
- */
-
-(function () {
-
-var _ = function (input, o) {
-	var me = this;
-
-    // Keep track of number of instances for unique IDs
-    _.count = (_.count || 0) + 1;
-    this.count = _.count;
-
-	// Setup
-
-	this.isOpened = false;
-
-	this.input = $(input);
-	this.input.setAttribute("autocomplete", "off");
-	this.input.setAttribute("aria-expanded", "false");
-	this.input.setAttribute("aria-owns", "awesomplete_list_" + this.count);
-	this.input.setAttribute("role", "combobox");
-
-	// store constructor options in case we need to distinguish
-	// between default and customized behavior later on
-	this.options = o = o || {};
-
-	configure(this, {
-		minChars: 2,
-		maxItems: 10,
-		autoFirst: false,
-		data: _.DATA,
-		filter: _.FILTER_CONTAINS,
-		sort: o.sort === false ? false : _.SORT_BYLENGTH,
-		container: _.CONTAINER,
-		item: _.ITEM,
-		replace: _.REPLACE,
-		tabSelect: false
-	}, o);
-
-	this.index = -1;
-
-	// Create necessary elements
-
-	this.container = this.container(input);
-
-	this.ul = $.create("ul", {
-		hidden: "hidden",
-        role: "listbox",
-        id: "awesomplete_list_" + this.count,
-		inside: this.container
-	});
-
-	this.status = $.create("span", {
-		className: "visually-hidden",
-		role: "status",
-		"aria-live": "assertive",
-        "aria-atomic": true,
-        inside: this.container,
-        textContent: this.minChars != 0 ? ("Type " + this.minChars + " or more characters for results.") : "Begin typing for results."
-	});
-
-	// Bind events
-
-	this._events = {
-		input: {
-			"input": this.evaluate.bind(this),
-			"blur": this.close.bind(this, { reason: "blur" }),
-			"keydown": function(evt) {
-				var c = evt.keyCode;
-
-				// If the dropdown `ul` is in view, then act on keydown for the following keys:
-				// Enter / Esc / Up / Down
-				if(me.opened) {
-					if (c === 13 && me.selected) { // Enter
-						evt.preventDefault();
-						me.select(undefined, undefined, evt);
-					}
-					else if (c === 9 && me.selected && me.tabSelect) {
-						me.select(undefined, undefined, evt);
-					}
-					else if (c === 27) { // Esc
-						me.close({ reason: "esc" });
-					}
-					else if (c === 38 || c === 40) { // Down/Up arrow
-						evt.preventDefault();
-						me[c === 38? "previous" : "next"]();
-					}
-				}
-			}
-		},
-		form: {
-			"submit": this.close.bind(this, { reason: "submit" })
-		},
-		ul: {
-			// Prevent the default mousedowm, which ensures the input is not blurred.
-			// The actual selection will happen on click. This also ensures dragging the
-			// cursor away from the list item will cancel the selection
-			"mousedown": function(evt) {
-				evt.preventDefault();
-			},
-			// The click event is fired even if the corresponding mousedown event has called preventDefault
-			"click": function(evt) {
-				var li = evt.target;
-
-				if (li !== this) {
-
-					while (li && !/li/i.test(li.nodeName)) {
-						li = li.parentNode;
-					}
-
-					if (li && evt.button === 0) {  // Only select on left click
-						evt.preventDefault();
-						me.select(li, evt.target, evt);
-					}
-				}
-			}
-		}
-	};
-
-	$.bind(this.input, this._events.input);
-	$.bind(this.input.form, this._events.form);
-	$.bind(this.ul, this._events.ul);
-
-	if (this.input.hasAttribute("list")) {
-		this.list = "#" + this.input.getAttribute("list");
-		this.input.removeAttribute("list");
-	}
-	else {
-		this.list = this.input.getAttribute("data-list") || o.list || [];
-	}
-
-	_.all.push(this);
-};
-
-_.prototype = {
-	set list(list) {
-		if (Array.isArray(list)) {
-			this._list = list;
-		}
-		else if (typeof list === "string" && list.indexOf(",") > -1) {
-				this._list = list.split(/\s*,\s*/);
-		}
-		else { // Element or CSS selector
-			list = $(list);
-
-			if (list && list.children) {
-				var items = [];
-				slice.apply(list.children).forEach(function (el) {
-					if (!el.disabled) {
-						var text = el.textContent.trim();
-						var value = el.value || text;
-						var label = el.label || text;
-						if (value !== "") {
-							items.push({ label: label, value: value });
-						}
-					}
-				});
-				this._list = items;
-			}
-		}
-
-		if (document.activeElement === this.input) {
-			this.evaluate();
-		}
-	},
-
-	get selected() {
-		return this.index > -1;
-	},
-
-	get opened() {
-		return this.isOpened;
-	},
-
-	close: function (o) {
-		if (!this.opened) {
-			return;
-		}
-
-		this.input.setAttribute("aria-expanded", "false");
-		this.ul.setAttribute("hidden", "");
-		this.isOpened = false;
-		this.index = -1;
-
-		this.status.setAttribute("hidden", "");
-
-		$.fire(this.input, "awesomplete-close", o || {});
-	},
-
-	open: function () {
-		this.input.setAttribute("aria-expanded", "true");
-		this.ul.removeAttribute("hidden");
-		this.isOpened = true;
-
-		this.status.removeAttribute("hidden");
-
-		if (this.autoFirst && this.index === -1) {
-			this.goto(0);
-		}
-
-		$.fire(this.input, "awesomplete-open");
-	},
-
-	destroy: function() {
-		//remove events from the input and its form
-		$.unbind(this.input, this._events.input);
-		$.unbind(this.input.form, this._events.form);
-
-		// cleanup container if it was created by Awesomplete but leave it alone otherwise
-		if (!this.options.container) {
-			//move the input out of the awesomplete container and remove the container and its children
-			var parentNode = this.container.parentNode;
-
-			parentNode.insertBefore(this.input, this.container);
-			parentNode.removeChild(this.container);
-		}
-
-		//remove autocomplete and aria-autocomplete attributes
-		this.input.removeAttribute("autocomplete");
-		this.input.removeAttribute("aria-autocomplete");
-
-		//remove this awesomeplete instance from the global array of instances
-		var indexOfAwesomplete = _.all.indexOf(this);
-
-		if (indexOfAwesomplete !== -1) {
-			_.all.splice(indexOfAwesomplete, 1);
-		}
-	},
-
-	next: function () {
-		var count = this.ul.children.length;
-		this.goto(this.index < count - 1 ? this.index + 1 : (count ? 0 : -1) );
-	},
-
-	previous: function () {
-		var count = this.ul.children.length;
-		var pos = this.index - 1;
-
-		this.goto(this.selected && pos !== -1 ? pos : count - 1);
-	},
-
-	// Should not be used, highlights specific item without any checks!
-	goto: function (i) {
-		var lis = this.ul.children;
-
-		if (this.selected) {
-			lis[this.index].setAttribute("aria-selected", "false");
-		}
-
-		this.index = i;
-
-		if (i > -1 && lis.length > 0) {
-			lis[i].setAttribute("aria-selected", "true");
-
-			this.status.textContent = lis[i].textContent + ", list item " + (i + 1) + " of " + lis.length;
-
-            this.input.setAttribute("aria-activedescendant", this.ul.id + "_item_" + this.index);
-
-			// scroll to highlighted element in case parent's height is fixed
-			this.ul.scrollTop = lis[i].offsetTop - this.ul.clientHeight + lis[i].clientHeight;
-
-			$.fire(this.input, "awesomplete-highlight", {
-				text: this.suggestions[this.index]
-			});
-		}
-	},
-
-	select: function (selected, origin, originalEvent) {
-		if (selected) {
-			this.index = $.siblingIndex(selected);
-		} else {
-			selected = this.ul.children[this.index];
-		}
-
-		if (selected) {
-			var suggestion = this.suggestions[this.index];
-
-			var allowed = $.fire(this.input, "awesomplete-select", {
-				text: suggestion,
-				origin: origin || selected,
-				originalEvent: originalEvent
-			});
-
-			if (allowed) {
-				this.replace(suggestion);
-				this.close({ reason: "select" });
-				$.fire(this.input, "awesomplete-selectcomplete", {
-					text: suggestion,
-					originalEvent: originalEvent
-				});
-			}
-		}
-	},
-
-	evaluate: function() {
-		var me = this;
-		var value = this.input.value;
-
-		if (value.length >= this.minChars && this._list && this._list.length > 0) {
-			this.index = -1;
-			// Populate list with options that match
-			this.ul.innerHTML = "";
-
-			this.suggestions = this._list
-				.map(function(item) {
-					return new Suggestion(me.data(item, value));
-				})
-				.filter(function(item) {
-					return me.filter(item, value);
-				});
-
-			if (this.sort !== false) {
-				this.suggestions = this.suggestions.sort(this.sort);
-			}
-
-			this.suggestions = this.suggestions.slice(0, this.maxItems);
-
-			this.suggestions.forEach(function(text, index) {
-					me.ul.appendChild(me.item(text, value, index));
-				});
-
-			if (this.ul.children.length === 0) {
-
-                this.status.textContent = "No results found";
-
-				this.close({ reason: "nomatches" });
-
-			} else {
-				this.open();
-
-                this.status.textContent = this.ul.children.length + " results found";
-			}
-		}
-		else {
-			this.close({ reason: "nomatches" });
-
-                this.status.textContent = "No results found";
-		}
-	}
-};
-
-// Static methods/properties
-
-_.all = [];
-
-_.FILTER_CONTAINS = function (text, input) {
-	return RegExp($.regExpEscape(input.trim()), "i").test(text);
-};
-
-_.FILTER_STARTSWITH = function (text, input) {
-	return RegExp("^" + $.regExpEscape(input.trim()), "i").test(text);
-};
-
-_.SORT_BYLENGTH = function (a, b) {
-	if (a.length !== b.length) {
-		return a.length - b.length;
-	}
-
-	return a < b? -1 : 1;
-};
-
-_.CONTAINER = function (input) {
-	return $.create("div", {
-		className: "awesomplete",
-		around: input
-	});
-}
-
-_.ITEM = function (text, input, item_id) {
-	var html = input.trim() === "" ? text : text.replace(RegExp($.regExpEscape(input.trim()), "gi"), "<mark>$&</mark>");
-	return $.create("li", {
-		innerHTML: html,
-		"role": "option",
-		"aria-selected": "false",
-		"id": "awesomplete_list_" + this.count + "_item_" + item_id
-	});
-};
-
-_.REPLACE = function (text) {
-	this.input.value = text.value;
-};
-
-_.DATA = function (item/*, input*/) { return item; };
-
-// Private functions
-
-function Suggestion(data) {
-	var o = Array.isArray(data)
-	  ? { label: data[0], value: data[1] }
-	  : typeof data === "object" && "label" in data && "value" in data ? data : { label: data, value: data };
-
-	this.label = o.label || o.value;
-	this.value = o.value;
-}
-Object.defineProperty(Suggestion.prototype = Object.create(String.prototype), "length", {
-	get: function() { return this.label.length; }
-});
-Suggestion.prototype.toString = Suggestion.prototype.valueOf = function () {
-	return "" + this.label;
-};
-
-function configure(instance, properties, o) {
-	for (var i in properties) {
-		var initial = properties[i],
-		    attrValue = instance.input.getAttribute("data-" + i.toLowerCase());
-
-		if (typeof initial === "number") {
-			instance[i] = parseInt(attrValue);
-		}
-		else if (initial === false) { // Boolean options must be false by default anyway
-			instance[i] = attrValue !== null;
-		}
-		else if (initial instanceof Function) {
-			instance[i] = null;
-		}
-		else {
-			instance[i] = attrValue;
-		}
-
-		if (!instance[i] && instance[i] !== 0) {
-			instance[i] = (i in o)? o[i] : initial;
-		}
-	}
-}
-
-// Helpers
-
-var slice = Array.prototype.slice;
-
-function $(expr, con) {
-	return typeof expr === "string"? (con || document).querySelector(expr) : expr || null;
-}
-
-function $$(expr, con) {
-	return slice.call((con || document).querySelectorAll(expr));
-}
-
-$.create = function(tag, o) {
-	var element = document.createElement(tag);
-
-	for (var i in o) {
-		var val = o[i];
-
-		if (i === "inside") {
-			$(val).appendChild(element);
-		}
-		else if (i === "around") {
-			var ref = $(val);
-			ref.parentNode.insertBefore(element, ref);
-			element.appendChild(ref);
-
-			if (ref.getAttribute("autofocus") != null) {
-				ref.focus();
-			}
-		}
-		else if (i in element) {
-			element[i] = val;
-		}
-		else {
-			element.setAttribute(i, val);
-		}
-	}
-
-	return element;
-};
-
-$.bind = function(element, o) {
-	if (element) {
-		for (var event in o) {
-			var callback = o[event];
-
-			event.split(/\s+/).forEach(function (event) {
-				element.addEventListener(event, callback);
-			});
-		}
-	}
-};
-
-$.unbind = function(element, o) {
-	if (element) {
-		for (var event in o) {
-			var callback = o[event];
-
-			event.split(/\s+/).forEach(function(event) {
-				element.removeEventListener(event, callback);
-			});
-		}
-	}
-};
-
-$.fire = function(target, type, properties) {
-	var evt = document.createEvent("HTMLEvents");
-
-	evt.initEvent(type, true, true );
-
-	for (var j in properties) {
-		evt[j] = properties[j];
-	}
-
-	return target.dispatchEvent(evt);
-};
-
-$.regExpEscape = function (s) {
-	return s.replace(/[-\\^$*+?.()|[\]{}]/g, "\\$&");
-};
-
-$.siblingIndex = function (el) {
-	/* eslint-disable no-cond-assign */
-	for (var i = 0; el = el.previousElementSibling; i++);
-	return i;
-};
-
-// Initialization
-
-function init() {
-	$$("input.awesomplete").forEach(function (input) {
-		new _(input);
-	});
-}
-
-// Make sure to export Awesomplete on self when in a browser
-if (typeof self !== "undefined") {
-	self.Awesomplete = _;
-}
-
-// Are we in a browser? Check for Document constructor
-if (typeof Document !== "undefined") {
-	// DOM already loaded?
-	if (document.readyState !== "loading") {
-		init();
-	}
-	else {
-		// Wait for it
-		document.addEventListener("DOMContentLoaded", init);
-	}
-}
-
-_.$ = $;
-_.$$ = $$;
-
-// Expose Awesomplete as a CJS module
-if ( true && module.exports) {
-	module.exports = _;
-}
-
-return _;
-
-}());
-
-
-/***/ }),
-
 /***/ "./node_modules/fast-xml-parser/src/fxp.js":
 /*!*************************************************!*\
   !*** ./node_modules/fast-xml-parser/src/fxp.js ***!
@@ -7672,6 +3109,36 @@ module.exports = {
   XMLValidator: validator,
   XMLBuilder: XMLBuilder
 }
+
+/***/ }),
+
+/***/ "./node_modules/fast-xml-parser/src/ignoreAttributes.js":
+/*!**************************************************************!*\
+  !*** ./node_modules/fast-xml-parser/src/ignoreAttributes.js ***!
+  \**************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+function getIgnoreAttributesFn(ignoreAttributes) {
+    if (typeof ignoreAttributes === 'function') {
+        return ignoreAttributes
+    }
+    if (Array.isArray(ignoreAttributes)) {
+        return (attrName) => {
+            for (const pattern of ignoreAttributes) {
+                if (typeof pattern === 'string' && attrName === pattern) {
+                    return true
+                }
+                if (pattern instanceof RegExp && pattern.test(attrName)) {
+                    return true
+                }
+            }
+        }
+    }
+    return () => false
+}
+
+module.exports = getIgnoreAttributesFn
 
 /***/ }),
 
@@ -8207,6 +3674,7 @@ function getPositionFromMatch(match) {
 
 //parse Empty Node as self closing node
 const buildFromOrderedJs = __webpack_require__(/*! ./orderedJs2Xml */ "./node_modules/fast-xml-parser/src/xmlbuilder/orderedJs2Xml.js");
+const getIgnoreAttributesFn = __webpack_require__(/*! ../ignoreAttributes */ "./node_modules/fast-xml-parser/src/ignoreAttributes.js")
 
 const defaultOptions = {
   attributeNamePrefix: '@_',
@@ -8244,11 +3712,12 @@ const defaultOptions = {
 
 function Builder(options) {
   this.options = Object.assign({}, defaultOptions, options);
-  if (this.options.ignoreAttributes || this.options.attributesGroupName) {
+  if (this.options.ignoreAttributes === true || this.options.attributesGroupName) {
     this.isAttribute = function(/*a*/) {
       return false;
     };
   } else {
+    this.ignoreAttributesFn = getIgnoreAttributesFn(this.options.ignoreAttributes)
     this.attrPrefixLen = this.options.attributeNamePrefix.length;
     this.isAttribute = isAttribute;
   }
@@ -8277,13 +3746,14 @@ Builder.prototype.build = function(jObj) {
         [this.options.arrayNodeName] : jObj
       }
     }
-    return this.j2x(jObj, 0).val;
+    return this.j2x(jObj, 0, []).val;
   }
 };
 
-Builder.prototype.j2x = function(jObj, level) {
+Builder.prototype.j2x = function(jObj, level, ajPath) {
   let attrStr = '';
   let val = '';
+  const jPath = ajPath.join('.')
   for (let key in jObj) {
     if(!Object.prototype.hasOwnProperty.call(jObj, key)) continue;
     if (typeof jObj[key] === 'undefined') {
@@ -8306,9 +3776,9 @@ Builder.prototype.j2x = function(jObj, level) {
     } else if (typeof jObj[key] !== 'object') {
       //premitive type
       const attr = this.isAttribute(key);
-      if (attr) {
+      if (attr && !this.ignoreAttributesFn(attr, jPath)) {
         attrStr += this.buildAttrPairStr(attr, '' + jObj[key]);
-      }else {
+      } else if (!attr) {
         //tag value
         if (key === this.options.textNodeName) {
           let newval = this.options.tagValueProcessor(key, '' + jObj[key]);
@@ -8321,6 +3791,7 @@ Builder.prototype.j2x = function(jObj, level) {
       //repeated nodes
       const arrLen = jObj[key].length;
       let listTagVal = "";
+      let listTagAttr = "";
       for (let j = 0; j < arrLen; j++) {
         const item = jObj[key][j];
         if (typeof item === 'undefined') {
@@ -8330,17 +3801,27 @@ Builder.prototype.j2x = function(jObj, level) {
           else val += this.indentate(level) + '<' + key + '/' + this.tagEndChar;
           // val += this.indentate(level) + '<' + key + '/' + this.tagEndChar;
         } else if (typeof item === 'object') {
-          if(this.options.oneListGroup ){
-            listTagVal += this.j2x(item, level + 1).val;
+          if(this.options.oneListGroup){
+            const result = this.j2x(item, level + 1, ajPath.concat(key));
+            listTagVal += result.val;
+            if (this.options.attributesGroupName && item.hasOwnProperty(this.options.attributesGroupName)) {
+              listTagAttr += result.attrStr
+            }
           }else{
-            listTagVal += this.processTextOrObjNode(item, key, level)
+            listTagVal += this.processTextOrObjNode(item, key, level, ajPath)
           }
         } else {
-          listTagVal += this.buildTextValNode(item, key, '', level);
+          if (this.options.oneListGroup) {
+            let textValue = this.options.tagValueProcessor(key, item);
+            textValue = this.replaceEntitiesValue(textValue);
+            listTagVal += textValue;
+          } else {
+            listTagVal += this.buildTextValNode(item, key, '', level);
+          }
         }
       }
       if(this.options.oneListGroup){
-        listTagVal = this.buildObjectNode(listTagVal, key, '', level);
+        listTagVal = this.buildObjectNode(listTagVal, key, listTagAttr, level);
       }
       val += listTagVal;
     } else {
@@ -8352,7 +3833,7 @@ Builder.prototype.j2x = function(jObj, level) {
           attrStr += this.buildAttrPairStr(Ks[j], '' + jObj[key][Ks[j]]);
         }
       } else {
-        val += this.processTextOrObjNode(jObj[key], key, level)
+        val += this.processTextOrObjNode(jObj[key], key, level, ajPath)
       }
     }
   }
@@ -8367,8 +3848,8 @@ Builder.prototype.buildAttrPairStr = function(attrName, val){
   } else return ' ' + attrName + '="' + val + '"';
 }
 
-function processTextOrObjNode (object, key, level) {
-  const result = this.j2x(object, level + 1);
+function processTextOrObjNode (object, key, level, ajPath) {
+  const result = this.j2x(object, level + 1, ajPath.concat(key));
   if (object[this.options.textNodeName] !== undefined && Object.keys(object).length === 1) {
     return this.buildTextValNode(object[this.options.textNodeName], key, result.attrStr, level);
   } else {
@@ -8860,6 +4341,7 @@ const util = __webpack_require__(/*! ../util */ "./node_modules/fast-xml-parser/
 const xmlNode = __webpack_require__(/*! ./xmlNode */ "./node_modules/fast-xml-parser/src/xmlparser/xmlNode.js");
 const readDocType = __webpack_require__(/*! ./DocTypeReader */ "./node_modules/fast-xml-parser/src/xmlparser/DocTypeReader.js");
 const toNumber = __webpack_require__(/*! strnum */ "./node_modules/strnum/strnum.js");
+const getIgnoreAttributesFn = __webpack_require__(/*! ../ignoreAttributes */ "./node_modules/fast-xml-parser/src/ignoreAttributes.js")
 
 // const regx =
 //   '<((!\\[CDATA\\[([\\s\\S]*?)(]]>))|((NAME:)?(NAME))([^>]*)>|((\\/)(NAME)\\s*>))([^<]*)'
@@ -8908,6 +4390,7 @@ class OrderedObjParser{
     this.readStopNodeData = readStopNodeData;
     this.saveTextToParentTag = saveTextToParentTag;
     this.addChild = addChild;
+    this.ignoreAttributesFn = getIgnoreAttributesFn(this.options.ignoreAttributes)
   }
 
 }
@@ -8980,7 +4463,7 @@ function resolveNameSpace(tagname) {
 const attrsRegx = new RegExp('([^\\s=]+)\\s*(=\\s*([\'"])([\\s\\S]*?)\\3)?', 'gm');
 
 function buildAttributesMap(attrStr, jPath, tagName) {
-  if (!this.options.ignoreAttributes && typeof attrStr === 'string') {
+  if (this.options.ignoreAttributes !== true && typeof attrStr === 'string') {
     // attrStr = attrStr.replace(/\r?\n/g, ' ');
     //attrStr = attrStr || attrStr.trim();
 
@@ -8989,6 +4472,9 @@ function buildAttributesMap(attrStr, jPath, tagName) {
     const attrs = {};
     for (let i = 0; i < len; i++) {
       const attrName = this.resolveNameSpace(matches[i][1]);
+      if (this.ignoreAttributesFn(attrName, jPath)) {
+        continue
+      }
       let oldVal = matches[i][4];
       let aName = this.options.attributeNamePrefix + attrName;
       if (attrName.length) {
@@ -12610,7 +8096,7 @@ module.exports = toNumber
 /***/ (function(module, exports, __webpack_require__) {
 
 /*!
-* sweetalert2 v11.7.5
+* sweetalert2 v11.14.1
 * Released under the MIT License.
 */
 (function (global, factory) {
@@ -12618,56 +8104,84 @@ module.exports = toNumber
   undefined;
 })(this, (function () { 'use strict';
 
-  /**
-   * This module contains `WeakMap`s for each effectively-"private  property" that a `Swal` has.
-   * For example, to set the private property "foo" of `this` to "bar", you can `privateProps.foo.set(this, 'bar')`
-   * This is the approach that Babel will probably take to implement private methods/fields
-   *   https://github.com/tc39/proposal-private-methods
-   *   https://github.com/babel/babel/pull/7555
-   * Once we have the changes from that PR in Babel, and our core class fits reasonable in *one module*
-   *   then we can use that language feature.
-   */
+  function _assertClassBrand(e, t, n) {
+    if ("function" == typeof e ? e === t : e.has(t)) return arguments.length < 3 ? t : n;
+    throw new TypeError("Private element is not present on this object");
+  }
+  function _checkPrivateRedeclaration(e, t) {
+    if (t.has(e)) throw new TypeError("Cannot initialize the same private elements twice on an object");
+  }
+  function _classPrivateFieldGet2(s, a) {
+    return s.get(_assertClassBrand(s, a));
+  }
+  function _classPrivateFieldInitSpec(e, t, a) {
+    _checkPrivateRedeclaration(e, t), t.set(e, a);
+  }
+  function _classPrivateFieldSet2(s, a, r) {
+    return s.set(_assertClassBrand(s, a), r), r;
+  }
 
-  var privateProps = {
-    awaitingPromise: new WeakMap(),
-    promise: new WeakMap(),
-    innerParams: new WeakMap(),
-    domCache: new WeakMap()
+  const RESTORE_FOCUS_TIMEOUT = 100;
+
+  /** @type {GlobalState} */
+  const globalState = {};
+  const focusPreviousActiveElement = () => {
+    if (globalState.previousActiveElement instanceof HTMLElement) {
+      globalState.previousActiveElement.focus();
+      globalState.previousActiveElement = null;
+    } else if (document.body) {
+      document.body.focus();
+    }
+  };
+
+  /**
+   * Restore previous active (focused) element
+   *
+   * @param {boolean} returnFocus
+   * @returns {Promise<void>}
+   */
+  const restoreActiveElement = returnFocus => {
+    return new Promise(resolve => {
+      if (!returnFocus) {
+        return resolve();
+      }
+      const x = window.scrollX;
+      const y = window.scrollY;
+      globalState.restoreFocusTimeout = setTimeout(() => {
+        focusPreviousActiveElement();
+        resolve();
+      }, RESTORE_FOCUS_TIMEOUT); // issues/900
+
+      window.scrollTo(x, y);
+    });
   };
 
   const swalPrefix = 'swal2-';
 
   /**
-   * @param {string[]} items
-   * @returns {object}
+   * @typedef {Record<SwalClass, string>} SwalClasses
    */
-  const prefix = items => {
-    const result = {};
-    for (const i in items) {
-      result[items[i]] = swalPrefix + items[i];
-    }
-    return result;
-  };
-  const swalClasses = prefix(['container', 'shown', 'height-auto', 'iosfix', 'popup', 'modal', 'no-backdrop', 'no-transition', 'toast', 'toast-shown', 'show', 'hide', 'close', 'title', 'html-container', 'actions', 'confirm', 'deny', 'cancel', 'default-outline', 'footer', 'icon', 'icon-content', 'image', 'input', 'file', 'range', 'select', 'radio', 'checkbox', 'label', 'textarea', 'inputerror', 'input-label', 'validation-message', 'progress-steps', 'active-progress-step', 'progress-step', 'progress-step-line', 'loader', 'loading', 'styled', 'top', 'top-start', 'top-end', 'top-left', 'top-right', 'center', 'center-start', 'center-end', 'center-left', 'center-right', 'bottom', 'bottom-start', 'bottom-end', 'bottom-left', 'bottom-right', 'grow-row', 'grow-column', 'grow-fullscreen', 'rtl', 'timer-progress-bar', 'timer-progress-bar-container', 'scrollbar-measure', 'icon-success', 'icon-warning', 'icon-info', 'icon-question', 'icon-error']);
-  const iconTypes = prefix(['success', 'warning', 'info', 'question', 'error']);
-
-  const consolePrefix = 'SweetAlert2:';
 
   /**
-   * Filter the unique values into a new array
-   *
-   * @param {Array} arr
-   * @returns {Array}
+   * @typedef {'success' | 'warning' | 'info' | 'question' | 'error'} SwalIcon
+   * @typedef {Record<SwalIcon, string>} SwalIcons
    */
-  const uniqueArray = arr => {
-    const result = [];
-    for (let i = 0; i < arr.length; i++) {
-      if (result.indexOf(arr[i]) === -1) {
-        result.push(arr[i]);
-      }
-    }
-    return result;
-  };
+
+  /** @type {SwalClass[]} */
+  const classNames = ['container', 'shown', 'height-auto', 'iosfix', 'popup', 'modal', 'no-backdrop', 'no-transition', 'toast', 'toast-shown', 'show', 'hide', 'close', 'title', 'html-container', 'actions', 'confirm', 'deny', 'cancel', 'default-outline', 'footer', 'icon', 'icon-content', 'image', 'input', 'file', 'range', 'select', 'radio', 'checkbox', 'label', 'textarea', 'inputerror', 'input-label', 'validation-message', 'progress-steps', 'active-progress-step', 'progress-step', 'progress-step-line', 'loader', 'loading', 'styled', 'top', 'top-start', 'top-end', 'top-left', 'top-right', 'center', 'center-start', 'center-end', 'center-left', 'center-right', 'bottom', 'bottom-start', 'bottom-end', 'bottom-left', 'bottom-right', 'grow-row', 'grow-column', 'grow-fullscreen', 'rtl', 'timer-progress-bar', 'timer-progress-bar-container', 'scrollbar-measure', 'icon-success', 'icon-warning', 'icon-info', 'icon-question', 'icon-error'];
+  const swalClasses = classNames.reduce((acc, className) => {
+    acc[className] = swalPrefix + className;
+    return acc;
+  }, /** @type {SwalClasses} */{});
+
+  /** @type {SwalIcon[]} */
+  const icons = ['success', 'warning', 'info', 'question', 'error'];
+  const iconTypes = icons.reduce((acc, icon) => {
+    acc[icon] = swalPrefix + icon;
+    return acc;
+  }, /** @type {SwalIcons} */{});
+
+  const consolePrefix = 'SweetAlert2:';
 
   /**
    * Capitalize the first letter of a string
@@ -12680,7 +8194,7 @@ module.exports = toNumber
   /**
    * Standardize console warnings
    *
-   * @param {string | Array} message
+   * @param {string | string[]} message
    */
   const warn = message => {
     console.warn(`${consolePrefix} ${typeof message === 'object' ? message.join(' ') : message}`);
@@ -12698,7 +8212,7 @@ module.exports = toNumber
   /**
    * Private global state for `warnOnce`
    *
-   * @type {Array}
+   * @type {string[]}
    * @private
    */
   const previousWarnOnceMessages = [];
@@ -12719,10 +8233,11 @@ module.exports = toNumber
    * Show a one-time console warning about deprecated params/methods
    *
    * @param {string} deprecatedParam
-   * @param {string} useInstead
+   * @param {string?} useInstead
    */
-  const warnAboutDeprecation = (deprecatedParam, useInstead) => {
-    warnOnce(`"${deprecatedParam}" is deprecated and will be removed in the next major release. Please use "${useInstead}" instead.`);
+  const warnAboutDeprecation = function (deprecatedParam) {
+    let useInstead = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
+    warnOnce(`"${deprecatedParam}" is deprecated and will be removed in the next major release.${useInstead ? ` Use "${useInstead}" instead.` : ''}`);
   };
 
   /**
@@ -12742,7 +8257,7 @@ module.exports = toNumber
 
   /**
    * @param {any} arg
-   * @returns {Promise}
+   * @returns {Promise<any>}
    */
   const asPromise = arg => hasToPromiseFn(arg) ? arg.toPromise() : Promise.resolve(arg);
 
@@ -12819,17 +8334,17 @@ module.exports = toNumber
   /**
    * @returns {HTMLButtonElement | null}
    */
-  const getConfirmButton = () => /** @type {HTMLButtonElement} */elementBySelector(`.${swalClasses.actions} .${swalClasses.confirm}`);
+  const getConfirmButton = () => (/** @type {HTMLButtonElement} */elementBySelector(`.${swalClasses.actions} .${swalClasses.confirm}`));
 
   /**
    * @returns {HTMLButtonElement | null}
    */
-  const getCancelButton = () => /** @type {HTMLButtonElement} */elementBySelector(`.${swalClasses.actions} .${swalClasses.cancel}`);
+  const getCancelButton = () => (/** @type {HTMLButtonElement} */elementBySelector(`.${swalClasses.actions} .${swalClasses.cancel}`));
 
   /**
    * @returns {HTMLButtonElement | null}
    */
-  const getDenyButton = () => /** @type {HTMLButtonElement} */elementBySelector(`.${swalClasses.actions} .${swalClasses.deny}`);
+  const getDenyButton = () => (/** @type {HTMLButtonElement} */elementBySelector(`.${swalClasses.actions} .${swalClasses.deny}`));
 
   /**
    * @returns {HTMLElement | null}
@@ -12882,11 +8397,17 @@ module.exports = toNumber
    * @returns {HTMLElement[]}
    */
   const getFocusableElements = () => {
-    const focusableElementsWithTabindex = Array.from(getPopup().querySelectorAll('[tabindex]:not([tabindex="-1"]):not([tabindex="0"])'))
+    const popup = getPopup();
+    if (!popup) {
+      return [];
+    }
+    /** @type {NodeListOf<HTMLElement>} */
+    const focusableElementsWithTabindex = popup.querySelectorAll('[tabindex]:not([tabindex="-1"]):not([tabindex="0"])');
+    const focusableElementsWithTabindexSorted = Array.from(focusableElementsWithTabindex)
     // sort according to tabindex
     .sort((a, b) => {
-      const tabindexA = parseInt(a.getAttribute('tabindex'));
-      const tabindexB = parseInt(b.getAttribute('tabindex'));
+      const tabindexA = parseInt(a.getAttribute('tabindex') || '0');
+      const tabindexB = parseInt(b.getAttribute('tabindex') || '0');
       if (tabindexA > tabindexB) {
         return 1;
       } else if (tabindexA < tabindexB) {
@@ -12894,8 +8415,11 @@ module.exports = toNumber
       }
       return 0;
     });
-    const otherFocusableElements = Array.from(getPopup().querySelectorAll(focusable)).filter(el => el.getAttribute('tabindex') !== '-1');
-    return uniqueArray(focusableElementsWithTabindex.concat(otherFocusableElements)).filter(el => isVisible$1(el));
+
+    /** @type {NodeListOf<HTMLElement>} */
+    const otherFocusableElements = popup.querySelectorAll(focusable);
+    const otherFocusableElementsFiltered = Array.from(otherFocusableElements).filter(el => el.getAttribute('tabindex') !== '-1');
+    return [...new Set(focusableElementsWithTabindexSorted.concat(otherFocusableElementsFiltered))].filter(el => isVisible$1(el));
   };
 
   /**
@@ -12909,19 +8433,22 @@ module.exports = toNumber
    * @returns {boolean}
    */
   const isToast = () => {
-    return getPopup() && hasClass(getPopup(), swalClasses.toast);
+    const popup = getPopup();
+    if (!popup) {
+      return false;
+    }
+    return hasClass(popup, swalClasses.toast);
   };
 
   /**
    * @returns {boolean}
    */
   const isLoading = () => {
-    return getPopup().hasAttribute('data-loading');
-  };
-
-  // Remember state in cases where opening and handling a modal will fiddle with it.
-  const states = {
-    previousBodyPadding: null
+    const popup = getPopup();
+    if (!popup) {
+      return false;
+    }
+    return popup.hasAttribute('data-loading');
   };
 
   /**
@@ -12936,16 +8463,22 @@ module.exports = toNumber
     if (html) {
       const parser = new DOMParser();
       const parsed = parser.parseFromString(html, `text/html`);
-      Array.from(parsed.querySelector('head').childNodes).forEach(child => {
-        elem.appendChild(child);
-      });
-      Array.from(parsed.querySelector('body').childNodes).forEach(child => {
-        if (child instanceof HTMLVideoElement || child instanceof HTMLAudioElement) {
-          elem.appendChild(child.cloneNode(true)); // https://github.com/sweetalert2/sweetalert2/issues/2507
-        } else {
+      const head = parsed.querySelector('head');
+      if (head) {
+        Array.from(head.childNodes).forEach(child => {
           elem.appendChild(child);
-        }
-      });
+        });
+      }
+      const body = parsed.querySelector('body');
+      if (body) {
+        Array.from(body.childNodes).forEach(child => {
+          if (child instanceof HTMLVideoElement || child instanceof HTMLAudioElement) {
+            elem.appendChild(child.cloneNode(true)); // https://github.com/sweetalert2/sweetalert2/issues/2507
+          } else {
+            elem.appendChild(child);
+          }
+        });
+      }
     }
   };
 
@@ -12973,7 +8506,7 @@ module.exports = toNumber
    */
   const removeCustomClasses = (elem, params) => {
     Array.from(elem.classList).forEach(className => {
-      if (!Object.values(swalClasses).includes(className) && !Object.values(iconTypes).includes(className) && !Object.values(params.showClass).includes(className)) {
+      if (!Object.values(swalClasses).includes(className) && !Object.values(iconTypes).includes(className) && !Object.values(params.showClass || {}).includes(className)) {
         elem.classList.remove(className);
       }
     });
@@ -12986,18 +8519,23 @@ module.exports = toNumber
    */
   const applyCustomClass = (elem, params, className) => {
     removeCustomClasses(elem, params);
-    if (params.customClass && params.customClass[className]) {
-      if (typeof params.customClass[className] !== 'string' && !params.customClass[className].forEach) {
-        warn(`Invalid type of customClass.${className}! Expected string or iterable object, got "${typeof params.customClass[className]}"`);
-        return;
-      }
-      addClass(elem, params.customClass[className]);
+    if (!params.customClass) {
+      return;
     }
+    const customClass = params.customClass[(/** @type {keyof SweetAlertCustomClass} */className)];
+    if (!customClass) {
+      return;
+    }
+    if (typeof customClass !== 'string' && !customClass.forEach) {
+      warn(`Invalid type of customClass.${className}! Expected string or iterable object, got "${typeof customClass}"`);
+      return;
+    }
+    addClass(elem, customClass);
   };
 
   /**
    * @param {HTMLElement} popup
-   * @param {import('./renderers/renderInput').InputClass} inputClass
+   * @param {import('./renderers/renderInput').InputClass | SweetAlertInput} inputClass
    * @returns {HTMLInputElement | null}
    */
   const getInput$1 = (popup, inputClass) => {
@@ -13037,7 +8575,7 @@ module.exports = toNumber
 
   /**
    * @param {HTMLElement | HTMLElement[] | null} target
-   * @param {string | string[] | readonly string[]} classList
+   * @param {string | string[] | readonly string[] | undefined} classList
    * @param {boolean} condition
    */
   const toggleClass = (target, classList, condition) => {
@@ -13050,17 +8588,25 @@ module.exports = toNumber
     classList.forEach(className => {
       if (Array.isArray(target)) {
         target.forEach(elem => {
-          condition ? elem.classList.add(className) : elem.classList.remove(className);
+          if (condition) {
+            elem.classList.add(className);
+          } else {
+            elem.classList.remove(className);
+          }
         });
       } else {
-        condition ? target.classList.add(className) : target.classList.remove(className);
+        if (condition) {
+          target.classList.add(className);
+        } else {
+          target.classList.remove(className);
+        }
       }
     });
   };
 
   /**
    * @param {HTMLElement | HTMLElement[] | null} target
-   * @param {string | string[] | readonly string[]} classList
+   * @param {string | string[] | readonly string[] | undefined} classList
    */
   const addClass = (target, classList) => {
     toggleClass(target, classList, true);
@@ -13068,7 +8614,7 @@ module.exports = toNumber
 
   /**
    * @param {HTMLElement | HTMLElement[] | null} target
-   * @param {string | string[] | readonly string[]} classList
+   * @param {string | string[] | readonly string[] | undefined} classList
    */
   const removeClass = (target, classList) => {
     toggleClass(target, classList, false);
@@ -13101,26 +8647,49 @@ module.exports = toNumber
       value = parseInt(value);
     }
     if (value || parseInt(value) === 0) {
-      elem.style[property] = typeof value === 'number' ? `${value}px` : value;
+      elem.style.setProperty(property, typeof value === 'number' ? `${value}px` : value);
     } else {
       elem.style.removeProperty(property);
     }
   };
 
   /**
-   * @param {HTMLElement} elem
+   * @param {HTMLElement | null} elem
    * @param {string} display
    */
   const show = function (elem) {
     let display = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'flex';
+    if (!elem) {
+      return;
+    }
     elem.style.display = display;
   };
 
   /**
-   * @param {HTMLElement} elem
+   * @param {HTMLElement | null} elem
    */
   const hide = elem => {
+    if (!elem) {
+      return;
+    }
     elem.style.display = 'none';
+  };
+
+  /**
+   * @param {HTMLElement | null} elem
+   * @param {string} display
+   */
+  const showWhenInnerHtmlPresent = function (elem) {
+    let display = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'block';
+    if (!elem) {
+      return;
+    }
+    new MutationObserver(() => {
+      toggle(elem, elem.innerHTML, display);
+    }).observe(elem, {
+      childList: true,
+      subtree: true
+    });
   };
 
   /**
@@ -13130,10 +8699,10 @@ module.exports = toNumber
    * @param {string} value
    */
   const setStyle = (parent, selector, property, value) => {
-    /** @type {HTMLElement} */
+    /** @type {HTMLElement | null} */
     const el = parent.querySelector(selector);
     if (el) {
-      el.style[property] = value;
+      el.style.setProperty(property, value);
     }
   };
 
@@ -13144,13 +8713,17 @@ module.exports = toNumber
    */
   const toggle = function (elem, condition) {
     let display = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 'flex';
-    condition ? show(elem, display) : hide(elem);
+    if (condition) {
+      show(elem, display);
+    } else {
+      hide(elem);
+    }
   };
 
   /**
    * borrowed from jquery $(elem).is(':visible') implementation
    *
-   * @param {HTMLElement} elem
+   * @param {HTMLElement | null} elem
    * @returns {boolean}
    */
   const isVisible$1 = elem => !!(elem && (elem.offsetWidth || elem.offsetHeight || elem.getClientRects().length));
@@ -13186,6 +8759,9 @@ module.exports = toNumber
   const animateTimerProgressBar = function (timer) {
     let reset = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
     const timerProgressBar = getTimerProgressBar();
+    if (!timerProgressBar) {
+      return;
+    }
     if (isVisible$1(timerProgressBar)) {
       if (reset) {
         timerProgressBar.style.transition = 'none';
@@ -13199,47 +8775,15 @@ module.exports = toNumber
   };
   const stopTimerProgressBar = () => {
     const timerProgressBar = getTimerProgressBar();
+    if (!timerProgressBar) {
+      return;
+    }
     const timerProgressBarWidth = parseInt(window.getComputedStyle(timerProgressBar).width);
     timerProgressBar.style.removeProperty('transition');
     timerProgressBar.style.width = '100%';
     const timerProgressBarFullWidth = parseInt(window.getComputedStyle(timerProgressBar).width);
     const timerProgressBarPercent = timerProgressBarWidth / timerProgressBarFullWidth * 100;
     timerProgressBar.style.width = `${timerProgressBarPercent}%`;
-  };
-
-  const RESTORE_FOCUS_TIMEOUT = 100;
-
-  /** @type {GlobalState} */
-  const globalState = {};
-  const focusPreviousActiveElement = () => {
-    if (globalState.previousActiveElement instanceof HTMLElement) {
-      globalState.previousActiveElement.focus();
-      globalState.previousActiveElement = null;
-    } else if (document.body) {
-      document.body.focus();
-    }
-  };
-
-  /**
-   * Restore previous active (focused) element
-   *
-   * @param {boolean} returnFocus
-   * @returns {Promise}
-   */
-  const restoreActiveElement = returnFocus => {
-    return new Promise(resolve => {
-      if (!returnFocus) {
-        return resolve();
-      }
-      const x = window.scrollX;
-      const y = window.scrollY;
-      globalState.restoreFocusTimeout = setTimeout(() => {
-        focusPreviousActiveElement();
-        resolve();
-      }, RESTORE_FOCUS_TIMEOUT); // issues/900
-
-      window.scrollTo(x, y);
-    });
   };
 
   /**
@@ -13257,19 +8801,19 @@ module.exports = toNumber
    <img class="${swalClasses.image}" />
    <h2 class="${swalClasses.title}" id="${swalClasses.title}"></h2>
    <div class="${swalClasses['html-container']}" id="${swalClasses['html-container']}"></div>
-   <input class="${swalClasses.input}" />
+   <input class="${swalClasses.input}" id="${swalClasses.input}" />
    <input type="file" class="${swalClasses.file}" />
    <div class="${swalClasses.range}">
      <input type="range" />
      <output></output>
    </div>
-   <select class="${swalClasses.select}"></select>
+   <select class="${swalClasses.select}" id="${swalClasses.select}"></select>
    <div class="${swalClasses.radio}"></div>
-   <label for="${swalClasses.checkbox}" class="${swalClasses.checkbox}">
-     <input type="checkbox" />
+   <label class="${swalClasses.checkbox}">
+     <input type="checkbox" id="${swalClasses.checkbox}" />
      <span class="${swalClasses.label}"></span>
    </label>
-   <textarea class="${swalClasses.textarea}"></textarea>
+   <textarea class="${swalClasses.textarea}" id="${swalClasses.textarea}"></textarea>
    <div class="${swalClasses['validation-message']}" id="${swalClasses['validation-message']}"></div>
    <div class="${swalClasses.actions}">
      <div class="${swalClasses.loader}"></div>
@@ -13361,8 +8905,6 @@ module.exports = toNumber
   const init = params => {
     // Clean up the old popup container if it exists
     const oldContainerExisted = resetOldContainer();
-
-    /* istanbul ignore if */
     if (isNodeEnv()) {
       error('SweetAlert2 requires document to initialize');
       return;
@@ -13402,7 +8944,7 @@ module.exports = toNumber
   };
 
   /**
-   * @param {object} param
+   * @param {any} param
    * @param {HTMLElement} target
    */
   const handleObject = (param, target) => {
@@ -13419,12 +8961,12 @@ module.exports = toNumber
 
   /**
    * @param {HTMLElement} target
-   * @param {HTMLElement} elem
+   * @param {any} elem
    */
   const handleJqueryElem = (target, elem) => {
     target.textContent = '';
     if (0 in elem) {
-      for (let i = 0; (i in elem); i++) {
+      for (let i = 0; i in elem; i++) {
         target.appendChild(elem[i].cloneNode(true));
       }
     } else {
@@ -13437,47 +8979,33 @@ module.exports = toNumber
    */
   const animationEndEvent = (() => {
     // Prevent run in Node env
-    /* istanbul ignore if */
     if (isNodeEnv()) {
       return false;
     }
     const testEl = document.createElement('div');
-    const transEndEventNames = {
-      WebkitAnimation: 'webkitAnimationEnd',
-      // Chrome, Safari and Opera
-      animation: 'animationend' // Standard syntax
-    };
 
-    for (const i in transEndEventNames) {
-      if (Object.prototype.hasOwnProperty.call(transEndEventNames, i) && typeof testEl.style[i] !== 'undefined') {
-        return transEndEventNames[i];
-      }
+    // Chrome, Safari and Opera
+    if (typeof testEl.style.webkitAnimation !== 'undefined') {
+      return 'webkitAnimationEnd';
+    }
+
+    // Standard syntax
+    if (typeof testEl.style.animation !== 'undefined') {
+      return 'animationend';
     }
     return false;
   })();
 
   /**
-   * Measure scrollbar width for padding body during modal show/hide
-   * https://github.com/twbs/bootstrap/blob/master/js/src/modal.js
-   *
-   * @returns {number}
-   */
-  const measureScrollbar = () => {
-    const scrollDiv = document.createElement('div');
-    scrollDiv.className = swalClasses['scrollbar-measure'];
-    document.body.appendChild(scrollDiv);
-    const scrollbarWidth = scrollDiv.getBoundingClientRect().width - scrollDiv.clientWidth;
-    document.body.removeChild(scrollDiv);
-    return scrollbarWidth;
-  };
-
-  /**
-   * @param {SweetAlert2} instance
+   * @param {SweetAlert} instance
    * @param {SweetAlertOptions} params
    */
   const renderActions = (instance, params) => {
     const actions = getActions();
     const loader = getLoader();
+    if (!actions || !loader) {
+      return;
+    }
 
     // Actions (buttons) wrapper
     if (!params.showConfirmButton && !params.showDenyButton && !params.showCancelButton) {
@@ -13493,7 +9021,7 @@ module.exports = toNumber
     renderButtons(actions, loader, params);
 
     // Loader
-    setInnerHtml(loader, params.loaderHtml);
+    setInnerHtml(loader, params.loaderHtml || '');
     applyCustomClass(loader, params, 'loader');
   };
 
@@ -13506,6 +9034,9 @@ module.exports = toNumber
     const confirmButton = getConfirmButton();
     const denyButton = getDenyButton();
     const cancelButton = getCancelButton();
+    if (!confirmButton || !denyButton || !cancelButton) {
+      return;
+    }
 
     // Render buttons
     renderButton(confirmButton, 'confirm', params);
@@ -13558,32 +9089,35 @@ module.exports = toNumber
    * @param {SweetAlertOptions} params
    */
   function renderButton(button, buttonType, params) {
-    toggle(button, params[`show${capitalizeFirstLetter(buttonType)}Button`], 'inline-block');
-    setInnerHtml(button, params[`${buttonType}ButtonText`]); // Set caption text
-    button.setAttribute('aria-label', params[`${buttonType}ButtonAriaLabel`]); // ARIA label
+    const buttonName = /** @type {'Confirm' | 'Deny' | 'Cancel'} */capitalizeFirstLetter(buttonType);
+    toggle(button, params[`show${buttonName}Button`], 'inline-block');
+    setInnerHtml(button, params[`${buttonType}ButtonText`] || ''); // Set caption text
+    button.setAttribute('aria-label', params[`${buttonType}ButtonAriaLabel`] || ''); // ARIA label
 
     // Add buttons custom classes
     button.className = swalClasses[buttonType];
     applyCustomClass(button, params, `${buttonType}Button`);
-    addClass(button, params[`${buttonType}ButtonClass`]);
   }
 
   /**
-   * @param {SweetAlert2} instance
+   * @param {SweetAlert} instance
    * @param {SweetAlertOptions} params
    */
   const renderCloseButton = (instance, params) => {
     const closeButton = getCloseButton();
-    setInnerHtml(closeButton, params.closeButtonHtml);
+    if (!closeButton) {
+      return;
+    }
+    setInnerHtml(closeButton, params.closeButtonHtml || '');
 
     // Custom class
     applyCustomClass(closeButton, params, 'closeButton');
     toggle(closeButton, params.showCloseButton);
-    closeButton.setAttribute('aria-label', params.closeButtonAriaLabel);
+    closeButton.setAttribute('aria-label', params.closeButtonAriaLabel || '');
   };
 
   /**
-   * @param {SweetAlert2} instance
+   * @param {SweetAlert} instance
    * @param {SweetAlertOptions} params
    */
   const renderContainer = (instance, params) => {
@@ -13616,6 +9150,9 @@ module.exports = toNumber
    * @param {SweetAlertOptions['position']} position
    */
   function handlePositionParam(container, position) {
+    if (!position) {
+      return;
+    }
     if (position in swalClasses) {
       addClass(container, swalClasses[position]);
     } else {
@@ -13629,29 +9166,49 @@ module.exports = toNumber
    * @param {SweetAlertOptions['grow']} grow
    */
   function handleGrowParam(container, grow) {
-    if (grow && typeof grow === 'string') {
-      const growClass = `grow-${grow}`;
-      if (growClass in swalClasses) {
-        addClass(container, swalClasses[growClass]);
-      }
+    if (!grow) {
+      return;
     }
+    addClass(container, swalClasses[`grow-${grow}`]);
   }
 
+  /**
+   * This module contains `WeakMap`s for each effectively-"private  property" that a `Swal` has.
+   * For example, to set the private property "foo" of `this` to "bar", you can `privateProps.foo.set(this, 'bar')`
+   * This is the approach that Babel will probably take to implement private methods/fields
+   *   https://github.com/tc39/proposal-private-methods
+   *   https://github.com/babel/babel/pull/7555
+   * Once we have the changes from that PR in Babel, and our core class fits reasonable in *one module*
+   *   then we can use that language feature.
+   */
+
+  var privateProps = {
+    innerParams: new WeakMap(),
+    domCache: new WeakMap()
+  };
+
   /// <reference path="../../../../sweetalert2.d.ts"/>
+
 
   /** @type {InputClass[]} */
   const inputClasses = ['input', 'file', 'range', 'select', 'radio', 'checkbox', 'textarea'];
 
   /**
-   * @param {SweetAlert2} instance
+   * @param {SweetAlert} instance
    * @param {SweetAlertOptions} params
    */
   const renderInput = (instance, params) => {
     const popup = getPopup();
+    if (!popup) {
+      return;
+    }
     const innerParams = privateProps.innerParams.get(instance);
     const rerender = !innerParams || params.input !== innerParams.input;
     inputClasses.forEach(inputClass => {
       const inputContainer = getDirectChildByClass(popup, swalClasses[inputClass]);
+      if (!inputContainer) {
+        return;
+      }
 
       // set attributes
       setAttributes(inputClass, params.inputAttributes);
@@ -13675,11 +9232,17 @@ module.exports = toNumber
    * @param {SweetAlertOptions} params
    */
   const showInput = params => {
+    if (!params.input) {
+      return;
+    }
     if (!renderInputType[params.input]) {
-      error(`Unexpected type of input! Expected "text", "email", "password", "number", "tel", "select", "radio", "checkbox", "textarea", "file" or "url", got "${params.input}"`);
+      error(`Unexpected type of input! Expected ${Object.keys(renderInputType).join(' | ')}, got "${params.input}"`);
       return;
     }
     const inputContainer = getInputContainer(params.input);
+    if (!inputContainer) {
+      return;
+    }
     const input = renderInputType[params.input](inputContainer, params);
     show(inputContainer);
 
@@ -13697,7 +9260,7 @@ module.exports = toNumber
   const removeAttributes = input => {
     for (let i = 0; i < input.attributes.length; i++) {
       const attrName = input.attributes[i].name;
-      if (!['type', 'value', 'style'].includes(attrName)) {
+      if (!['id', 'type', 'value', 'style'].includes(attrName)) {
         input.removeAttribute(attrName);
       }
     }
@@ -13708,7 +9271,11 @@ module.exports = toNumber
    * @param {SweetAlertOptions['inputAttributes']} inputAttributes
    */
   const setAttributes = (inputClass, inputAttributes) => {
-    const input = getInput$1(getPopup(), inputClass);
+    const popup = getPopup();
+    if (!popup) {
+      return;
+    }
+    const input = getInput$1(popup, inputClass);
     if (!input) {
       return;
     }
@@ -13722,9 +9289,12 @@ module.exports = toNumber
    * @param {SweetAlertOptions} params
    */
   const setCustomClass = params => {
+    if (!params.input) {
+      return;
+    }
     const inputContainer = getInputContainer(params.input);
-    if (typeof params.customClass === 'object') {
-      addClass(inputContainer, params.customClass.input);
+    if (inputContainer) {
+      applyCustomClass(inputContainer, params, 'input');
     }
   };
 
@@ -13733,7 +9303,7 @@ module.exports = toNumber
    * @param {SweetAlertOptions} params
    */
   const setInputPlaceholder = (input, params) => {
-    if (!input.placeholder || params.inputPlaceholder) {
+    if (!input.placeholder && params.inputPlaceholder) {
       input.placeholder = params.inputPlaceholder;
     }
   };
@@ -13745,7 +9315,6 @@ module.exports = toNumber
    */
   const setInputLabel = (input, prependTo, params) => {
     if (params.inputLabel) {
-      input.id = swalClasses.input;
       const label = document.createElement('label');
       const labelClass = swalClasses['input-label'];
       label.setAttribute('for', input.id);
@@ -13759,11 +9328,15 @@ module.exports = toNumber
   };
 
   /**
-   * @param {SweetAlertOptions['input']} inputType
-   * @returns {HTMLElement}
+   * @param {SweetAlertInput} inputType
+   * @returns {HTMLElement | undefined}
    */
   const getInputContainer = inputType => {
-    return getDirectChildByClass(getPopup(), swalClasses[inputType] || swalClasses.input);
+    const popup = getPopup();
+    if (!popup) {
+      return;
+    }
+    return getDirectChildByClass(popup, swalClasses[(/** @type {SwalClass} */inputType)] || swalClasses.input);
   };
 
   /**
@@ -13778,7 +9351,7 @@ module.exports = toNumber
     }
   };
 
-  /** @type {Record<string, (input: Input | HTMLElement, params: SweetAlertOptions) => Input>} */
+  /** @type {Record<SweetAlertInput, (input: Input | HTMLElement, params: SweetAlertOptions) => Input>} */
   const renderInputType = {};
 
   /**
@@ -13786,7 +9359,8 @@ module.exports = toNumber
    * @param {SweetAlertOptions} params
    * @returns {HTMLInputElement}
    */
-  renderInputType.text = renderInputType.email = renderInputType.password = renderInputType.number = renderInputType.tel = renderInputType.url = (input, params) => {
+  renderInputType.text = renderInputType.email = renderInputType.password = renderInputType.number = renderInputType.tel = renderInputType.url = renderInputType.search = renderInputType.date = renderInputType['datetime-local'] = renderInputType.time = renderInputType.week = renderInputType.month = /** @type {(input: Input | HTMLElement, params: SweetAlertOptions) => Input} */
+  (input, params) => {
     checkAndSetInputValue(input, params.inputValue);
     setInputLabel(input, input, params);
     setInputPlaceholder(input, params);
@@ -13856,10 +9430,9 @@ module.exports = toNumber
   renderInputType.checkbox = (checkboxContainer, params) => {
     const checkbox = getInput$1(getPopup(), 'checkbox');
     checkbox.value = '1';
-    checkbox.id = swalClasses.checkbox;
     checkbox.checked = Boolean(params.inputValue);
     const label = checkboxContainer.querySelector('span');
-    setInnerHtml(label, params.inputPlaceholder);
+    setInnerHtml(label, params.inputPlaceholder || params.inputLabel);
     return checkbox;
   };
 
@@ -13885,11 +9458,15 @@ module.exports = toNumber
       if ('MutationObserver' in window) {
         const initialPopupWidth = parseInt(window.getComputedStyle(getPopup()).width);
         const textareaResizeHandler = () => {
+          // check if texarea is still in document (i.e. popup wasn't closed in the meantime)
+          if (!document.body.contains(textarea)) {
+            return;
+          }
           const textareaWidth = textarea.offsetWidth + getMargin(textarea);
           if (textareaWidth > initialPopupWidth) {
             getPopup().style.width = `${textareaWidth}px`;
           } else {
-            getPopup().style.width = null;
+            applyNumericalStyle(getPopup(), 'width', params.width);
           }
         };
         new MutationObserver(textareaResizeHandler).observe(textarea, {
@@ -13902,11 +9479,15 @@ module.exports = toNumber
   };
 
   /**
-   * @param {SweetAlert2} instance
+   * @param {SweetAlert} instance
    * @param {SweetAlertOptions} params
    */
   const renderContent = (instance, params) => {
     const htmlContainer = getHtmlContainer();
+    if (!htmlContainer) {
+      return;
+    }
+    showWhenInnerHtmlPresent(htmlContainer);
     applyCustomClass(htmlContainer, params, 'htmlContainer');
 
     // Content as HTML
@@ -13929,12 +9510,16 @@ module.exports = toNumber
   };
 
   /**
-   * @param {SweetAlert2} instance
+   * @param {SweetAlert} instance
    * @param {SweetAlertOptions} params
    */
   const renderFooter = (instance, params) => {
     const footer = getFooter();
-    toggle(footer, params.footer);
+    if (!footer) {
+      return;
+    }
+    showWhenInnerHtmlPresent(footer);
+    toggle(footer, params.footer, 'block');
     if (params.footer) {
       parseHtmlToContainer(params.footer, footer);
     }
@@ -13944,12 +9529,15 @@ module.exports = toNumber
   };
 
   /**
-   * @param {SweetAlert2} instance
+   * @param {SweetAlert} instance
    * @param {SweetAlertOptions} params
    */
   const renderIcon = (instance, params) => {
     const innerParams = privateProps.innerParams.get(instance);
     const icon = getIcon();
+    if (!icon) {
+      return;
+    }
 
     // if the given icon already rendered, apply the styling without re-rendering the icon
     if (innerParams && params.icon === innerParams.icon) {
@@ -13974,7 +9562,7 @@ module.exports = toNumber
     applyStyles(icon, params);
 
     // Animate icon
-    addClass(icon, params.showClass.icon);
+    addClass(icon, params.showClass && params.showClass.icon);
   };
 
   /**
@@ -13982,12 +9570,12 @@ module.exports = toNumber
    * @param {SweetAlertOptions} params
    */
   const applyStyles = (icon, params) => {
-    for (const iconType in iconTypes) {
+    for (const [iconType, iconClassName] of Object.entries(iconTypes)) {
       if (params.icon !== iconType) {
-        removeClass(icon, iconTypes[iconType]);
+        removeClass(icon, iconClassName);
       }
     }
-    addClass(icon, iconTypes[params.icon]);
+    addClass(icon, params.icon && iconTypes[params.icon]);
 
     // Icon color
     setColor(icon, params);
@@ -14002,6 +9590,9 @@ module.exports = toNumber
   // Adjust success icon background color to match the popup background color
   const adjustSuccessIconBackgroundColor = () => {
     const popup = getPopup();
+    if (!popup) {
+      return;
+    }
     const popupBackgroundColor = window.getComputedStyle(popup).getPropertyValue('background-color');
     /** @type {NodeListOf<HTMLElement>} */
     const successIconParts = popup.querySelectorAll('[class^=swal2-success-circular-line], .swal2-success-fix');
@@ -14027,8 +9618,11 @@ module.exports = toNumber
    * @param {SweetAlertOptions} params
    */
   const setContent = (icon, params) => {
+    if (!params.icon && !params.iconHtml) {
+      return;
+    }
     let oldContent = icon.innerHTML;
-    let newContent;
+    let newContent = '';
     if (params.iconHtml) {
       newContent = iconContent(params.iconHtml);
     } else if (params.icon === 'success') {
@@ -14036,7 +9630,7 @@ module.exports = toNumber
       oldContent = oldContent.replace(/ style=".*?"/g, ''); // undo adjustSuccessIconBackgroundColor()
     } else if (params.icon === 'error') {
       newContent = errorIconHtml;
-    } else {
+    } else if (params.icon) {
       const defaultIconHtml = {
         question: '?',
         warning: '!',
@@ -14060,9 +9654,9 @@ module.exports = toNumber
     icon.style.color = params.iconColor;
     icon.style.borderColor = params.iconColor;
     for (const sel of ['.swal2-success-line-tip', '.swal2-success-line-long', '.swal2-x-mark-line-left', '.swal2-x-mark-line-right']) {
-      setStyle(icon, sel, 'backgroundColor', params.iconColor);
+      setStyle(icon, sel, 'background-color', params.iconColor);
     }
-    setStyle(icon, '.swal2-success-ring', 'borderColor', params.iconColor);
+    setStyle(icon, '.swal2-success-ring', 'border-color', params.iconColor);
   };
 
   /**
@@ -14072,11 +9666,14 @@ module.exports = toNumber
   const iconContent = content => `<div class="${swalClasses['icon-content']}">${content}</div>`;
 
   /**
-   * @param {SweetAlert2} instance
+   * @param {SweetAlert} instance
    * @param {SweetAlertOptions} params
    */
   const renderImage = (instance, params) => {
     const image = getImage();
+    if (!image) {
+      return;
+    }
     if (!params.imageUrl) {
       hide(image);
       return;
@@ -14085,7 +9682,7 @@ module.exports = toNumber
 
     // Src, alt
     image.setAttribute('src', params.imageUrl);
-    image.setAttribute('alt', params.imageAlt);
+    image.setAttribute('alt', params.imageAlt || '');
 
     // Width, height
     applyNumericalStyle(image, 'width', params.imageWidth);
@@ -14097,19 +9694,25 @@ module.exports = toNumber
   };
 
   /**
-   * @param {SweetAlert2} instance
+   * @param {SweetAlert} instance
    * @param {SweetAlertOptions} params
    */
   const renderPopup = (instance, params) => {
     const container = getContainer();
     const popup = getPopup();
+    if (!container || !popup) {
+      return;
+    }
 
     // Width
     // https://github.com/sweetalert2/sweetalert2/issues/2170
     if (params.toast) {
       applyNumericalStyle(container, 'width', params.width);
       popup.style.width = '100%';
-      popup.insertBefore(getLoader(), getIcon());
+      const loader = getLoader();
+      if (loader) {
+        popup.insertBefore(loader, getIcon());
+      }
     } else {
       applyNumericalStyle(popup, 'width', params.width);
     }
@@ -14137,8 +9740,9 @@ module.exports = toNumber
    * @param {SweetAlertOptions} params
    */
   const addClasses$1 = (popup, params) => {
+    const showClass = params.showClass || {};
     // Default Class + showClass when updating Swal.update({})
-    popup.className = `${swalClasses.popup} ${isVisible$1(popup) ? params.showClass.popup : ''}`;
+    popup.className = `${swalClasses.popup} ${isVisible$1(popup) ? showClass.popup : ''}`;
     if (params.toast) {
       addClass([document.documentElement, document.body], swalClasses['toast-shown']);
       addClass(popup, swalClasses.toast);
@@ -14148,6 +9752,7 @@ module.exports = toNumber
 
     // Custom class
     applyCustomClass(popup, params, 'popup');
+    // TODO: remove in the next major
     if (typeof params.customClass === 'string') {
       addClass(popup, params.customClass);
     }
@@ -14159,27 +9764,34 @@ module.exports = toNumber
   };
 
   /**
-   * @param {SweetAlert2} instance
+   * @param {SweetAlert} instance
    * @param {SweetAlertOptions} params
    */
   const renderProgressSteps = (instance, params) => {
     const progressStepsContainer = getProgressSteps();
-    if (!params.progressSteps || params.progressSteps.length === 0) {
+    if (!progressStepsContainer) {
+      return;
+    }
+    const {
+      progressSteps,
+      currentProgressStep
+    } = params;
+    if (!progressSteps || progressSteps.length === 0 || currentProgressStep === undefined) {
       hide(progressStepsContainer);
       return;
     }
     show(progressStepsContainer);
     progressStepsContainer.textContent = '';
-    if (params.currentProgressStep >= params.progressSteps.length) {
+    if (currentProgressStep >= progressSteps.length) {
       warn('Invalid currentProgressStep parameter, it should be less than progressSteps.length ' + '(currentProgressStep like JS arrays starts from 0)');
     }
-    params.progressSteps.forEach((step, index) => {
+    progressSteps.forEach((step, index) => {
       const stepEl = createStepElement(step);
       progressStepsContainer.appendChild(stepEl);
-      if (index === params.currentProgressStep) {
+      if (index === currentProgressStep) {
         addClass(stepEl, swalClasses['active-progress-step']);
       }
-      if (index !== params.progressSteps.length - 1) {
+      if (index !== progressSteps.length - 1) {
         const lineEl = createLineElement(params);
         progressStepsContainer.appendChild(lineEl);
       }
@@ -14211,11 +9823,15 @@ module.exports = toNumber
   };
 
   /**
-   * @param {SweetAlert2} instance
+   * @param {SweetAlert} instance
    * @param {SweetAlertOptions} params
    */
   const renderTitle = (instance, params) => {
     const title = getTitle();
+    if (!title) {
+      return;
+    }
+    showWhenInnerHtmlPresent(title);
     toggle(title, params.title || params.titleText, 'block');
     if (params.title) {
       parseHtmlToContainer(params.title, title);
@@ -14229,7 +9845,7 @@ module.exports = toNumber
   };
 
   /**
-   * @param {SweetAlert2} instance
+   * @param {SweetAlert} instance
    * @param {SweetAlertOptions} params
    */
   const render = (instance, params) => {
@@ -14243,59 +9859,12 @@ module.exports = toNumber
     renderContent(instance, params);
     renderActions(instance, params);
     renderFooter(instance, params);
-    if (typeof params.didRender === 'function') {
-      params.didRender(getPopup());
+    const popup = getPopup();
+    if (typeof params.didRender === 'function' && popup) {
+      params.didRender(popup);
     }
+    globalState.eventEmitter.emit('didRender', popup);
   };
-
-  /**
-   * Hides loader and shows back the button which was hidden by .showLoading()
-   */
-  function hideLoading() {
-    // do nothing if popup is closed
-    const innerParams = privateProps.innerParams.get(this);
-    if (!innerParams) {
-      return;
-    }
-    const domCache = privateProps.domCache.get(this);
-    hide(domCache.loader);
-    if (isToast()) {
-      if (innerParams.icon) {
-        show(getIcon());
-      }
-    } else {
-      showRelatedButton(domCache);
-    }
-    removeClass([domCache.popup, domCache.actions], swalClasses.loading);
-    domCache.popup.removeAttribute('aria-busy');
-    domCache.popup.removeAttribute('data-loading');
-    domCache.confirmButton.disabled = false;
-    domCache.denyButton.disabled = false;
-    domCache.cancelButton.disabled = false;
-  }
-  const showRelatedButton = domCache => {
-    const buttonToReplace = domCache.popup.getElementsByClassName(domCache.loader.getAttribute('data-button-to-replace'));
-    if (buttonToReplace.length) {
-      show(buttonToReplace[0], 'inline-block');
-    } else if (allButtonsAreHidden()) {
-      hide(domCache.actions);
-    }
-  };
-
-  /**
-   * Gets the input DOM node, this method works with input parameter.
-   *
-   * @param {SweetAlert2} instance
-   * @returns {HTMLElement | null}
-   */
-  function getInput(instance) {
-    const innerParams = privateProps.innerParams.get(instance || this);
-    const domCache = privateProps.domCache.get(instance || this);
-    if (!domCache) {
-      return null;
-    }
-    return getInput$1(domCache.popup, innerParams.input);
-  }
 
   /*
    * Global function to determine if SweetAlert2 popup is shown
@@ -14307,18 +9876,30 @@ module.exports = toNumber
   /*
    * Global function to click 'Confirm' button
    */
-  const clickConfirm = () => getConfirmButton() && getConfirmButton().click();
+  const clickConfirm = () => {
+    var _dom$getConfirmButton;
+    return (_dom$getConfirmButton = getConfirmButton()) === null || _dom$getConfirmButton === void 0 ? void 0 : _dom$getConfirmButton.click();
+  };
 
   /*
    * Global function to click 'Deny' button
    */
-  const clickDeny = () => getDenyButton() && getDenyButton().click();
+  const clickDeny = () => {
+    var _dom$getDenyButton;
+    return (_dom$getDenyButton = getDenyButton()) === null || _dom$getDenyButton === void 0 ? void 0 : _dom$getDenyButton.click();
+  };
 
   /*
    * Global function to click 'Cancel' button
    */
-  const clickCancel = () => getCancelButton() && getCancelButton().click();
+  const clickCancel = () => {
+    var _dom$getCancelButton;
+    return (_dom$getCancelButton = getCancelButton()) === null || _dom$getCancelButton === void 0 ? void 0 : _dom$getCancelButton.click();
+  };
 
+  /** @typedef {'cancel' | 'backdrop' | 'close' | 'esc' | 'timer'} DismissReason */
+
+  /** @type {Record<DismissReason, DismissReason>} */
   const DismissReason = Object.freeze({
     cancel: 'cancel',
     backdrop: 'backdrop',
@@ -14340,15 +9921,14 @@ module.exports = toNumber
   };
 
   /**
-   * @param {SweetAlert2} instance
    * @param {GlobalState} globalState
    * @param {SweetAlertOptions} innerParams
    * @param {*} dismissWith
    */
-  const addKeydownHandler = (instance, globalState, innerParams, dismissWith) => {
+  const addKeydownHandler = (globalState, innerParams, dismissWith) => {
     removeKeydownHandler(globalState);
     if (!innerParams.toast) {
-      globalState.keydownHandler = e => keydownHandler(instance, e, dismissWith);
+      globalState.keydownHandler = e => keydownHandler(innerParams, e, dismissWith);
       globalState.keydownTarget = innerParams.keydownListenerCapture ? window : getPopup();
       globalState.keydownListenerCapture = innerParams.keydownListenerCapture;
       globalState.keydownTarget.addEventListener('keydown', globalState.keydownHandler, {
@@ -14363,6 +9943,7 @@ module.exports = toNumber
    * @param {number} increment
    */
   const setFocus = (index, increment) => {
+    var _dom$getPopup;
     const focusableElements = getFocusableElements();
     // search for visible elements and select the next possible match
     if (focusableElements.length) {
@@ -14380,18 +9961,17 @@ module.exports = toNumber
       return;
     }
     // no visible focusable elements, focus the popup
-    getPopup().focus();
+    (_dom$getPopup = getPopup()) === null || _dom$getPopup === void 0 || _dom$getPopup.focus();
   };
   const arrowKeysNextButton = ['ArrowRight', 'ArrowDown'];
   const arrowKeysPreviousButton = ['ArrowLeft', 'ArrowUp'];
 
   /**
-   * @param {SweetAlert2} instance
+   * @param {SweetAlertOptions} innerParams
    * @param {KeyboardEvent} event
    * @param {Function} dismissWith
    */
-  const keydownHandler = (instance, event, dismissWith) => {
-    const innerParams = privateProps.innerParams.get(instance);
+  const keydownHandler = (innerParams, event, dismissWith) => {
     if (!innerParams) {
       return; // This instance has already been destroyed
     }
@@ -14409,7 +9989,7 @@ module.exports = toNumber
 
     // ENTER
     if (event.key === 'Enter') {
-      handleEnter(instance, event, innerParams);
+      handleEnter(event, innerParams);
     }
 
     // TAB
@@ -14429,20 +10009,19 @@ module.exports = toNumber
   };
 
   /**
-   * @param {SweetAlert2} instance
    * @param {KeyboardEvent} event
    * @param {SweetAlertOptions} innerParams
    */
-  const handleEnter = (instance, event, innerParams) => {
+  const handleEnter = (event, innerParams) => {
     // https://github.com/sweetalert2/sweetalert2/issues/2386
     if (!callIfFunction(innerParams.allowEnterKey)) {
       return;
     }
-    if (event.target && instance.getInput() && event.target instanceof HTMLElement && event.target.outerHTML === instance.getInput().outerHTML) {
+    const input = getInput$1(getPopup(), innerParams.input);
+    if (event.target && input && event.target instanceof HTMLElement && event.target.outerHTML === input.outerHTML) {
       if (['textarea', 'file'].includes(innerParams.input)) {
         return; // do not submit
       }
-
       clickConfirm();
       event.preventDefault();
     }
@@ -14479,9 +10058,13 @@ module.exports = toNumber
    * @param {string} key
    */
   const handleArrows = key => {
+    const actions = getActions();
     const confirmButton = getConfirmButton();
     const denyButton = getDenyButton();
     const cancelButton = getCancelButton();
+    if (!actions || !confirmButton || !denyButton || !cancelButton) {
+      return;
+    }
     /** @type HTMLElement[] */
     const buttons = [confirmButton, denyButton, cancelButton];
     if (document.activeElement instanceof HTMLElement && !buttons.includes(document.activeElement)) {
@@ -14489,7 +10072,10 @@ module.exports = toNumber
     }
     const sibling = arrowKeysNextButton.includes(key) ? 'nextElementSibling' : 'previousElementSibling';
     let buttonToFocus = document.activeElement;
-    for (let i = 0; i < getActions().children.length; i++) {
+    if (!buttonToFocus) {
+      return;
+    }
+    for (let i = 0; i < actions.children.length; i++) {
       buttonToFocus = buttonToFocus[sibling];
       if (!buttonToFocus) {
         return;
@@ -14536,13 +10122,14 @@ module.exports = toNumber
   // reader’s list of elements (headings, form controls, landmarks, etc.) in the document.
 
   const setAriaHidden = () => {
+    const container = getContainer();
     const bodyChildren = Array.from(document.body.children);
     bodyChildren.forEach(el => {
-      if (el === getContainer() || el.contains(getContainer())) {
+      if (el.contains(container)) {
         return;
       }
       if (el.hasAttribute('aria-hidden')) {
-        el.setAttribute('data-previous-aria-hidden', el.getAttribute('aria-hidden'));
+        el.setAttribute('data-previous-aria-hidden', el.getAttribute('aria-hidden') || '');
       }
       el.setAttribute('aria-hidden', 'true');
     });
@@ -14551,7 +10138,7 @@ module.exports = toNumber
     const bodyChildren = Array.from(document.body.children);
     bodyChildren.forEach(el => {
       if (el.hasAttribute('data-previous-aria-hidden')) {
-        el.setAttribute('aria-hidden', el.getAttribute('data-previous-aria-hidden'));
+        el.setAttribute('aria-hidden', el.getAttribute('data-previous-aria-hidden') || '');
         el.removeAttribute('data-previous-aria-hidden');
       } else {
         el.removeAttribute('aria-hidden');
@@ -14559,36 +10146,19 @@ module.exports = toNumber
     });
   };
 
-  /* istanbul ignore file */
+  // @ts-ignore
+  const isSafariOrIOS = typeof window !== 'undefined' && !!window.GestureEvent; // true for Safari desktop + all iOS browsers https://stackoverflow.com/a/70585394
 
-  // Fix iOS scrolling http://stackoverflow.com/q/39626302
-
+  /**
+   * Fix iOS scrolling
+   * http://stackoverflow.com/q/39626302
+   */
   const iOSfix = () => {
-    const iOS =
-    // @ts-ignore
-    /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream || navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1;
-    if (iOS && !hasClass(document.body, swalClasses.iosfix)) {
+    if (isSafariOrIOS && !hasClass(document.body, swalClasses.iosfix)) {
       const offset = document.body.scrollTop;
       document.body.style.top = `${offset * -1}px`;
       addClass(document.body, swalClasses.iosfix);
       lockBodyScroll();
-      addBottomPaddingForTallPopups();
-    }
-  };
-
-  /**
-   * https://github.com/sweetalert2/sweetalert2/issues/1948
-   */
-  const addBottomPaddingForTallPopups = () => {
-    const ua = navigator.userAgent;
-    const iOS = !!ua.match(/iPad/i) || !!ua.match(/iPhone/i);
-    const webkit = !!ua.match(/WebKit/i);
-    const iOSSafari = iOS && webkit && !ua.match(/CriOS/i);
-    if (iOSSafari) {
-      const bottomPanelHeight = 44;
-      if (getPopup().scrollHeight > window.innerHeight - bottomPanelHeight) {
-        getContainer().style.paddingBottom = `${bottomPanelHeight}px`;
-      }
     }
   };
 
@@ -14597,6 +10167,10 @@ module.exports = toNumber
    */
   const lockBodyScroll = () => {
     const container = getContainer();
+    if (!container) {
+      return;
+    }
+    /** @type {boolean} */
     let preventTouchMove;
     /**
      * @param {TouchEvent} event
@@ -14622,6 +10196,10 @@ module.exports = toNumber
   const shouldPreventTouchMove = event => {
     const target = event.target;
     const container = getContainer();
+    const htmlContainer = getHtmlContainer();
+    if (!container || !htmlContainer) {
+      return false;
+    }
     if (isStylus(event) || isZoom(event)) {
       return false;
     }
@@ -14632,9 +10210,9 @@ module.exports = toNumber
     // #1603
     target.tagName !== 'TEXTAREA' &&
     // #2266
-    !(isScrollable(getHtmlContainer()) &&
+    !(isScrollable(htmlContainer) &&
     // #1944
-    getHtmlContainer().contains(target))) {
+    htmlContainer.contains(target))) {
       return true;
     }
     return false;
@@ -14668,27 +10246,52 @@ module.exports = toNumber
     }
   };
 
-  const fixScrollbar = () => {
+  /**
+   * Measure scrollbar width for padding body during modal show/hide
+   * https://github.com/twbs/bootstrap/blob/master/js/src/modal.js
+   *
+   * @returns {number}
+   */
+  const measureScrollbar = () => {
+    const scrollDiv = document.createElement('div');
+    scrollDiv.className = swalClasses['scrollbar-measure'];
+    document.body.appendChild(scrollDiv);
+    const scrollbarWidth = scrollDiv.getBoundingClientRect().width - scrollDiv.clientWidth;
+    document.body.removeChild(scrollDiv);
+    return scrollbarWidth;
+  };
+
+  /**
+   * Remember state in cases where opening and handling a modal will fiddle with it.
+   * @type {number | null}
+   */
+  let previousBodyPadding = null;
+
+  /**
+   * @param {string} initialBodyOverflow
+   */
+  const replaceScrollbarWithPadding = initialBodyOverflow => {
     // for queues, do not do this more than once
-    if (states.previousBodyPadding !== null) {
+    if (previousBodyPadding !== null) {
       return;
     }
     // if the body has overflow
-    if (document.body.scrollHeight > window.innerHeight) {
+    if (document.body.scrollHeight > window.innerHeight || initialBodyOverflow === 'scroll' // https://github.com/sweetalert2/sweetalert2/issues/2663
+    ) {
       // add padding so the content doesn't shift after removal of scrollbar
-      states.previousBodyPadding = parseInt(window.getComputedStyle(document.body).getPropertyValue('padding-right'));
-      document.body.style.paddingRight = `${states.previousBodyPadding + measureScrollbar()}px`;
+      previousBodyPadding = parseInt(window.getComputedStyle(document.body).getPropertyValue('padding-right'));
+      document.body.style.paddingRight = `${previousBodyPadding + measureScrollbar()}px`;
     }
   };
-  const undoScrollbar = () => {
-    if (states.previousBodyPadding !== null) {
-      document.body.style.paddingRight = `${states.previousBodyPadding}px`;
-      states.previousBodyPadding = null;
+  const undoReplaceScrollbarWithPadding = () => {
+    if (previousBodyPadding !== null) {
+      document.body.style.paddingRight = `${previousBodyPadding}px`;
+      previousBodyPadding = null;
     }
   };
 
   /**
-   * @param {SweetAlert2} instance
+   * @param {SweetAlert} instance
    * @param {HTMLElement} container
    * @param {boolean} returnFocus
    * @param {Function} didClose
@@ -14700,10 +10303,10 @@ module.exports = toNumber
       restoreActiveElement(returnFocus).then(() => triggerDidCloseAndDispose(instance, didClose));
       removeKeydownHandler(globalState);
     }
-    const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
-    // workaround for #2088
+
+    // workaround for https://github.com/sweetalert2/sweetalert2/issues/2088
     // for some reason removing the container in Safari will scroll the document to bottom
-    if (isSafari) {
+    if (isSafariOrIOS) {
       container.setAttribute('style', 'display:none !important');
       container.removeAttribute('class');
       container.innerHTML = '';
@@ -14711,7 +10314,7 @@ module.exports = toNumber
       container.remove();
     }
     if (isModal()) {
-      undoScrollbar();
+      undoReplaceScrollbarWithPadding();
       undoIOSfix();
       unsetAriaHidden();
     }
@@ -14734,7 +10337,7 @@ module.exports = toNumber
     resolveValue = prepareResolveValue(resolveValue);
     const swalPromiseResolve = privateMethods.swalPromiseResolve.get(this);
     const didClose = triggerClosePopup(this);
-    if (this.isAwaitingPromise()) {
+    if (this.isAwaitingPromise) {
       // A swal awaiting for a promise (after a click on Confirm or Deny) cannot be dismissed anymore #2335
       if (!resolveValue.isDismissed) {
         handleAwaitingPromise(this);
@@ -14744,13 +10347,6 @@ module.exports = toNumber
       // Resolve Swal promise
       swalPromiseResolve(resolveValue);
     }
-  }
-
-  /**
-   * @returns {boolean}
-   */
-  function isAwaitingPromise() {
-    return !!privateProps.awaitingPromise.get(this);
   }
   const triggerClosePopup = instance => {
     const popup = getPopup();
@@ -14783,15 +10379,13 @@ module.exports = toNumber
   }
 
   /**
-   * @param {SweetAlert2} instance
+   * @param {SweetAlert} instance
    */
   const handleAwaitingPromise = instance => {
-    // @ts-ignore
-    if (instance.isAwaitingPromise()) {
-      privateProps.awaitingPromise.delete(instance);
+    if (instance.isAwaitingPromise) {
+      delete instance.isAwaitingPromise;
       // The instance might have been previously partly destroyed, we must resume the destroy process in this case #2335
       if (!privateProps.innerParams.get(instance)) {
-        // @ts-ignore
         instance._destroy();
       }
     }
@@ -14818,7 +10412,7 @@ module.exports = toNumber
   };
 
   /**
-   * @param {SweetAlert2} instance
+   * @param {SweetAlert} instance
    * @param {HTMLElement} popup
    * @param {SweetAlertOptions} innerParams
    */
@@ -14829,6 +10423,7 @@ module.exports = toNumber
     if (typeof innerParams.willClose === 'function') {
       innerParams.willClose(popup);
     }
+    globalState.eventEmitter.emit('willClose', popup);
     if (animationIsSupported) {
       animatePopup(instance, popup, container, innerParams.returnFocus, innerParams.didClose);
     } else {
@@ -14838,13 +10433,16 @@ module.exports = toNumber
   };
 
   /**
-   * @param {SweetAlert2} instance
+   * @param {SweetAlert} instance
    * @param {HTMLElement} popup
    * @param {HTMLElement} container
    * @param {boolean} returnFocus
    * @param {Function} didClose
    */
   const animatePopup = (instance, popup, container, returnFocus, didClose) => {
+    if (!animationEndEvent) {
+      return;
+    }
     globalState.swalCloseEventFinishedCallback = removePopupAndResetState.bind(null, instance, container, returnFocus, didClose);
     popup.addEventListener(animationEndEvent, function (e) {
       if (e.target === popup) {
@@ -14855,22 +10453,508 @@ module.exports = toNumber
   };
 
   /**
-   * @param {SweetAlert2} instance
+   * @param {SweetAlert} instance
    * @param {Function} didClose
    */
   const triggerDidCloseAndDispose = (instance, didClose) => {
     setTimeout(() => {
       if (typeof didClose === 'function') {
-        // @ts-ignore
         didClose.bind(instance.params)();
       }
-      // @ts-ignore
-      instance._destroy();
+      globalState.eventEmitter.emit('didClose');
+      // instance might have been destroyed already
+      if (instance._destroy) {
+        instance._destroy();
+      }
     });
   };
 
   /**
-   * @param {SweetAlert2} instance
+   * Shows loader (spinner), this is useful with AJAX requests.
+   * By default the loader be shown instead of the "Confirm" button.
+   *
+   * @param {HTMLButtonElement | null} [buttonToReplace]
+   */
+  const showLoading = buttonToReplace => {
+    let popup = getPopup();
+    if (!popup) {
+      new Swal();
+    }
+    popup = getPopup();
+    if (!popup) {
+      return;
+    }
+    const loader = getLoader();
+    if (isToast()) {
+      hide(getIcon());
+    } else {
+      replaceButton(popup, buttonToReplace);
+    }
+    show(loader);
+    popup.setAttribute('data-loading', 'true');
+    popup.setAttribute('aria-busy', 'true');
+    popup.focus();
+  };
+
+  /**
+   * @param {HTMLElement} popup
+   * @param {HTMLButtonElement | null} [buttonToReplace]
+   */
+  const replaceButton = (popup, buttonToReplace) => {
+    const actions = getActions();
+    const loader = getLoader();
+    if (!actions || !loader) {
+      return;
+    }
+    if (!buttonToReplace && isVisible$1(getConfirmButton())) {
+      buttonToReplace = getConfirmButton();
+    }
+    show(actions);
+    if (buttonToReplace) {
+      hide(buttonToReplace);
+      loader.setAttribute('data-button-to-replace', buttonToReplace.className);
+      actions.insertBefore(loader, buttonToReplace);
+    }
+    addClass([popup, actions], swalClasses.loading);
+  };
+
+  /**
+   * @param {SweetAlert} instance
+   * @param {SweetAlertOptions} params
+   */
+  const handleInputOptionsAndValue = (instance, params) => {
+    if (params.input === 'select' || params.input === 'radio') {
+      handleInputOptions(instance, params);
+    } else if (['text', 'email', 'number', 'tel', 'textarea'].some(i => i === params.input) && (hasToPromiseFn(params.inputValue) || isPromise(params.inputValue))) {
+      showLoading(getConfirmButton());
+      handleInputValue(instance, params);
+    }
+  };
+
+  /**
+   * @param {SweetAlert} instance
+   * @param {SweetAlertOptions} innerParams
+   * @returns {SweetAlertInputValue}
+   */
+  const getInputValue = (instance, innerParams) => {
+    const input = instance.getInput();
+    if (!input) {
+      return null;
+    }
+    switch (innerParams.input) {
+      case 'checkbox':
+        return getCheckboxValue(input);
+      case 'radio':
+        return getRadioValue(input);
+      case 'file':
+        return getFileValue(input);
+      default:
+        return innerParams.inputAutoTrim ? input.value.trim() : input.value;
+    }
+  };
+
+  /**
+   * @param {HTMLInputElement} input
+   * @returns {number}
+   */
+  const getCheckboxValue = input => input.checked ? 1 : 0;
+
+  /**
+   * @param {HTMLInputElement} input
+   * @returns {string | null}
+   */
+  const getRadioValue = input => input.checked ? input.value : null;
+
+  /**
+   * @param {HTMLInputElement} input
+   * @returns {FileList | File | null}
+   */
+  const getFileValue = input => input.files && input.files.length ? input.getAttribute('multiple') !== null ? input.files : input.files[0] : null;
+
+  /**
+   * @param {SweetAlert} instance
+   * @param {SweetAlertOptions} params
+   */
+  const handleInputOptions = (instance, params) => {
+    const popup = getPopup();
+    if (!popup) {
+      return;
+    }
+    /**
+     * @param {Record<string, any>} inputOptions
+     */
+    const processInputOptions = inputOptions => {
+      if (params.input === 'select') {
+        populateSelectOptions(popup, formatInputOptions(inputOptions), params);
+      } else if (params.input === 'radio') {
+        populateRadioOptions(popup, formatInputOptions(inputOptions), params);
+      }
+    };
+    if (hasToPromiseFn(params.inputOptions) || isPromise(params.inputOptions)) {
+      showLoading(getConfirmButton());
+      asPromise(params.inputOptions).then(inputOptions => {
+        instance.hideLoading();
+        processInputOptions(inputOptions);
+      });
+    } else if (typeof params.inputOptions === 'object') {
+      processInputOptions(params.inputOptions);
+    } else {
+      error(`Unexpected type of inputOptions! Expected object, Map or Promise, got ${typeof params.inputOptions}`);
+    }
+  };
+
+  /**
+   * @param {SweetAlert} instance
+   * @param {SweetAlertOptions} params
+   */
+  const handleInputValue = (instance, params) => {
+    const input = instance.getInput();
+    if (!input) {
+      return;
+    }
+    hide(input);
+    asPromise(params.inputValue).then(inputValue => {
+      input.value = params.input === 'number' ? `${parseFloat(inputValue) || 0}` : `${inputValue}`;
+      show(input);
+      input.focus();
+      instance.hideLoading();
+    }).catch(err => {
+      error(`Error in inputValue promise: ${err}`);
+      input.value = '';
+      show(input);
+      input.focus();
+      instance.hideLoading();
+    });
+  };
+
+  /**
+   * @param {HTMLElement} popup
+   * @param {InputOptionFlattened[]} inputOptions
+   * @param {SweetAlertOptions} params
+   */
+  function populateSelectOptions(popup, inputOptions, params) {
+    const select = getDirectChildByClass(popup, swalClasses.select);
+    if (!select) {
+      return;
+    }
+    /**
+     * @param {HTMLElement} parent
+     * @param {string} optionLabel
+     * @param {string} optionValue
+     */
+    const renderOption = (parent, optionLabel, optionValue) => {
+      const option = document.createElement('option');
+      option.value = optionValue;
+      setInnerHtml(option, optionLabel);
+      option.selected = isSelected(optionValue, params.inputValue);
+      parent.appendChild(option);
+    };
+    inputOptions.forEach(inputOption => {
+      const optionValue = inputOption[0];
+      const optionLabel = inputOption[1];
+      // <optgroup> spec:
+      // https://www.w3.org/TR/html401/interact/forms.html#h-17.6
+      // "...all OPTGROUP elements must be specified directly within a SELECT element (i.e., groups may not be nested)..."
+      // check whether this is a <optgroup>
+      if (Array.isArray(optionLabel)) {
+        // if it is an array, then it is an <optgroup>
+        const optgroup = document.createElement('optgroup');
+        optgroup.label = optionValue;
+        optgroup.disabled = false; // not configurable for now
+        select.appendChild(optgroup);
+        optionLabel.forEach(o => renderOption(optgroup, o[1], o[0]));
+      } else {
+        // case of <option>
+        renderOption(select, optionLabel, optionValue);
+      }
+    });
+    select.focus();
+  }
+
+  /**
+   * @param {HTMLElement} popup
+   * @param {InputOptionFlattened[]} inputOptions
+   * @param {SweetAlertOptions} params
+   */
+  function populateRadioOptions(popup, inputOptions, params) {
+    const radio = getDirectChildByClass(popup, swalClasses.radio);
+    if (!radio) {
+      return;
+    }
+    inputOptions.forEach(inputOption => {
+      const radioValue = inputOption[0];
+      const radioLabel = inputOption[1];
+      const radioInput = document.createElement('input');
+      const radioLabelElement = document.createElement('label');
+      radioInput.type = 'radio';
+      radioInput.name = swalClasses.radio;
+      radioInput.value = radioValue;
+      if (isSelected(radioValue, params.inputValue)) {
+        radioInput.checked = true;
+      }
+      const label = document.createElement('span');
+      setInnerHtml(label, radioLabel);
+      label.className = swalClasses.label;
+      radioLabelElement.appendChild(radioInput);
+      radioLabelElement.appendChild(label);
+      radio.appendChild(radioLabelElement);
+    });
+    const radios = radio.querySelectorAll('input');
+    if (radios.length) {
+      radios[0].focus();
+    }
+  }
+
+  /**
+   * Converts `inputOptions` into an array of `[value, label]`s
+   *
+   * @param {Record<string, any>} inputOptions
+   * @typedef {string[]} InputOptionFlattened
+   * @returns {InputOptionFlattened[]}
+   */
+  const formatInputOptions = inputOptions => {
+    /** @type {InputOptionFlattened[]} */
+    const result = [];
+    if (inputOptions instanceof Map) {
+      inputOptions.forEach((value, key) => {
+        let valueFormatted = value;
+        if (typeof valueFormatted === 'object') {
+          // case of <optgroup>
+          valueFormatted = formatInputOptions(valueFormatted);
+        }
+        result.push([key, valueFormatted]);
+      });
+    } else {
+      Object.keys(inputOptions).forEach(key => {
+        let valueFormatted = inputOptions[key];
+        if (typeof valueFormatted === 'object') {
+          // case of <optgroup>
+          valueFormatted = formatInputOptions(valueFormatted);
+        }
+        result.push([key, valueFormatted]);
+      });
+    }
+    return result;
+  };
+
+  /**
+   * @param {string} optionValue
+   * @param {SweetAlertInputValue} inputValue
+   * @returns {boolean}
+   */
+  const isSelected = (optionValue, inputValue) => {
+    return !!inputValue && inputValue.toString() === optionValue.toString();
+  };
+
+  /**
+   * @param {SweetAlert} instance
+   */
+  const handleConfirmButtonClick = instance => {
+    const innerParams = privateProps.innerParams.get(instance);
+    instance.disableButtons();
+    if (innerParams.input) {
+      handleConfirmOrDenyWithInput(instance, 'confirm');
+    } else {
+      confirm(instance, true);
+    }
+  };
+
+  /**
+   * @param {SweetAlert} instance
+   */
+  const handleDenyButtonClick = instance => {
+    const innerParams = privateProps.innerParams.get(instance);
+    instance.disableButtons();
+    if (innerParams.returnInputValueOnDeny) {
+      handleConfirmOrDenyWithInput(instance, 'deny');
+    } else {
+      deny(instance, false);
+    }
+  };
+
+  /**
+   * @param {SweetAlert} instance
+   * @param {Function} dismissWith
+   */
+  const handleCancelButtonClick = (instance, dismissWith) => {
+    instance.disableButtons();
+    dismissWith(DismissReason.cancel);
+  };
+
+  /**
+   * @param {SweetAlert} instance
+   * @param {'confirm' | 'deny'} type
+   */
+  const handleConfirmOrDenyWithInput = (instance, type) => {
+    const innerParams = privateProps.innerParams.get(instance);
+    if (!innerParams.input) {
+      error(`The "input" parameter is needed to be set when using returnInputValueOn${capitalizeFirstLetter(type)}`);
+      return;
+    }
+    const input = instance.getInput();
+    const inputValue = getInputValue(instance, innerParams);
+    if (innerParams.inputValidator) {
+      handleInputValidator(instance, inputValue, type);
+    } else if (input && !input.checkValidity()) {
+      instance.enableButtons();
+      instance.showValidationMessage(innerParams.validationMessage || input.validationMessage);
+    } else if (type === 'deny') {
+      deny(instance, inputValue);
+    } else {
+      confirm(instance, inputValue);
+    }
+  };
+
+  /**
+   * @param {SweetAlert} instance
+   * @param {SweetAlertInputValue} inputValue
+   * @param {'confirm' | 'deny'} type
+   */
+  const handleInputValidator = (instance, inputValue, type) => {
+    const innerParams = privateProps.innerParams.get(instance);
+    instance.disableInput();
+    const validationPromise = Promise.resolve().then(() => asPromise(innerParams.inputValidator(inputValue, innerParams.validationMessage)));
+    validationPromise.then(validationMessage => {
+      instance.enableButtons();
+      instance.enableInput();
+      if (validationMessage) {
+        instance.showValidationMessage(validationMessage);
+      } else if (type === 'deny') {
+        deny(instance, inputValue);
+      } else {
+        confirm(instance, inputValue);
+      }
+    });
+  };
+
+  /**
+   * @param {SweetAlert} instance
+   * @param {any} value
+   */
+  const deny = (instance, value) => {
+    const innerParams = privateProps.innerParams.get(instance || undefined);
+    if (innerParams.showLoaderOnDeny) {
+      showLoading(getDenyButton());
+    }
+    if (innerParams.preDeny) {
+      instance.isAwaitingPromise = true; // Flagging the instance as awaiting a promise so it's own promise's reject/resolve methods doesn't get destroyed until the result from this preDeny's promise is received
+      const preDenyPromise = Promise.resolve().then(() => asPromise(innerParams.preDeny(value, innerParams.validationMessage)));
+      preDenyPromise.then(preDenyValue => {
+        if (preDenyValue === false) {
+          instance.hideLoading();
+          handleAwaitingPromise(instance);
+        } else {
+          instance.close({
+            isDenied: true,
+            value: typeof preDenyValue === 'undefined' ? value : preDenyValue
+          });
+        }
+      }).catch(error => rejectWith(instance || undefined, error));
+    } else {
+      instance.close({
+        isDenied: true,
+        value
+      });
+    }
+  };
+
+  /**
+   * @param {SweetAlert} instance
+   * @param {any} value
+   */
+  const succeedWith = (instance, value) => {
+    instance.close({
+      isConfirmed: true,
+      value
+    });
+  };
+
+  /**
+   *
+   * @param {SweetAlert} instance
+   * @param {string} error
+   */
+  const rejectWith = (instance, error) => {
+    instance.rejectPromise(error);
+  };
+
+  /**
+   *
+   * @param {SweetAlert} instance
+   * @param {any} value
+   */
+  const confirm = (instance, value) => {
+    const innerParams = privateProps.innerParams.get(instance || undefined);
+    if (innerParams.showLoaderOnConfirm) {
+      showLoading();
+    }
+    if (innerParams.preConfirm) {
+      instance.resetValidationMessage();
+      instance.isAwaitingPromise = true; // Flagging the instance as awaiting a promise so it's own promise's reject/resolve methods doesn't get destroyed until the result from this preConfirm's promise is received
+      const preConfirmPromise = Promise.resolve().then(() => asPromise(innerParams.preConfirm(value, innerParams.validationMessage)));
+      preConfirmPromise.then(preConfirmValue => {
+        if (isVisible$1(getValidationMessage()) || preConfirmValue === false) {
+          instance.hideLoading();
+          handleAwaitingPromise(instance);
+        } else {
+          succeedWith(instance, typeof preConfirmValue === 'undefined' ? value : preConfirmValue);
+        }
+      }).catch(error => rejectWith(instance || undefined, error));
+    } else {
+      succeedWith(instance, value);
+    }
+  };
+
+  /**
+   * Hides loader and shows back the button which was hidden by .showLoading()
+   */
+  function hideLoading() {
+    // do nothing if popup is closed
+    const innerParams = privateProps.innerParams.get(this);
+    if (!innerParams) {
+      return;
+    }
+    const domCache = privateProps.domCache.get(this);
+    hide(domCache.loader);
+    if (isToast()) {
+      if (innerParams.icon) {
+        show(getIcon());
+      }
+    } else {
+      showRelatedButton(domCache);
+    }
+    removeClass([domCache.popup, domCache.actions], swalClasses.loading);
+    domCache.popup.removeAttribute('aria-busy');
+    domCache.popup.removeAttribute('data-loading');
+    domCache.confirmButton.disabled = false;
+    domCache.denyButton.disabled = false;
+    domCache.cancelButton.disabled = false;
+  }
+  const showRelatedButton = domCache => {
+    const buttonToReplace = domCache.popup.getElementsByClassName(domCache.loader.getAttribute('data-button-to-replace'));
+    if (buttonToReplace.length) {
+      show(buttonToReplace[0], 'inline-block');
+    } else if (allButtonsAreHidden()) {
+      hide(domCache.actions);
+    }
+  };
+
+  /**
+   * Gets the input DOM node, this method works with input parameter.
+   *
+   * @returns {HTMLInputElement | null}
+   */
+  function getInput() {
+    const innerParams = privateProps.innerParams.get(this);
+    const domCache = privateProps.domCache.get(this);
+    if (!domCache) {
+      return null;
+    }
+    return getInput$1(domCache.popup, innerParams.input);
+  }
+
+  /**
+   * @param {SweetAlert} instance
    * @param {string[]} buttons
    * @param {boolean} disabled
    */
@@ -14882,16 +10966,17 @@ module.exports = toNumber
   }
 
   /**
-   * @param {HTMLInputElement} input
+   * @param {HTMLInputElement | null} input
    * @param {boolean} disabled
    */
   function setInputDisabled(input, disabled) {
-    if (!input) {
+    const popup = getPopup();
+    if (!popup || !input) {
       return;
     }
     if (input.type === 'radio') {
-      const radiosContainer = input.parentNode.parentNode;
-      const radios = radiosContainer.querySelectorAll('input');
+      /** @type {NodeListOf<HTMLInputElement>} */
+      const radios = popup.querySelectorAll(`[name="${swalClasses.radio}"]`);
       for (let i = 0; i < radios.length; i++) {
         radios[i].disabled = disabled;
       }
@@ -14902,6 +10987,7 @@ module.exports = toNumber
 
   /**
    * Enable all the buttons
+   * @this {SweetAlert}
    */
   function enableButtons() {
     setButtonsDisabled(this, ['confirmButton', 'denyButton', 'cancelButton'], false);
@@ -14909,6 +10995,7 @@ module.exports = toNumber
 
   /**
    * Disable all the buttons
+   * @this {SweetAlert}
    */
   function disableButtons() {
     setButtonsDisabled(this, ['confirmButton', 'denyButton', 'cancelButton'], true);
@@ -14916,6 +11003,7 @@ module.exports = toNumber
 
   /**
    * Enable the input field
+   * @this {SweetAlert}
    */
   function enableInput() {
     setInputDisabled(this.getInput(), false);
@@ -14923,6 +11011,7 @@ module.exports = toNumber
 
   /**
    * Disable the input field
+   * @this {SweetAlert}
    */
   function disableInput() {
     setInputDisabled(this.getInput(), true);
@@ -14932,6 +11021,7 @@ module.exports = toNumber
    * Show block with validation message
    *
    * @param {string} error
+   * @this {SweetAlert}
    */
   function showValidationMessage(error) {
     const domCache = privateProps.domCache.get(this);
@@ -14944,7 +11034,7 @@ module.exports = toNumber
     show(domCache.validationMessage);
     const input = this.getInput();
     if (input) {
-      input.setAttribute('aria-invalid', true);
+      input.setAttribute('aria-invalid', 'true');
       input.setAttribute('aria-describedby', swalClasses['validation-message']);
       focusInput(input);
       addClass(input, swalClasses.inputerror);
@@ -14953,6 +11043,8 @@ module.exports = toNumber
 
   /**
    * Hide block with validation message
+   *
+   * @this {SweetAlert}
    */
   function resetValidationMessage() {
     const domCache = privateProps.domCache.get(this);
@@ -14978,6 +11070,7 @@ module.exports = toNumber
     iconHtml: undefined,
     template: undefined,
     toast: false,
+    animation: true,
     showClass: {
       popup: 'swal2-show',
       backdrop: 'swal2-backdrop-show',
@@ -15058,7 +11151,11 @@ module.exports = toNumber
     scrollbarPadding: true
   };
   const updatableParams = ['allowEscapeKey', 'allowOutsideClick', 'background', 'buttonsStyling', 'cancelButtonAriaLabel', 'cancelButtonColor', 'cancelButtonText', 'closeButtonAriaLabel', 'closeButtonHtml', 'color', 'confirmButtonAriaLabel', 'confirmButtonColor', 'confirmButtonText', 'currentProgressStep', 'customClass', 'denyButtonAriaLabel', 'denyButtonColor', 'denyButtonText', 'didClose', 'didDestroy', 'footer', 'hideClass', 'html', 'icon', 'iconColor', 'iconHtml', 'imageAlt', 'imageHeight', 'imageUrl', 'imageWidth', 'preConfirm', 'preDeny', 'progressSteps', 'returnFocus', 'reverseButtons', 'showCancelButton', 'showCloseButton', 'showConfirmButton', 'showDenyButton', 'text', 'title', 'titleText', 'willClose'];
-  const deprecatedParams = {};
+
+  /** @type {Record<string, string | undefined>} */
+  const deprecatedParams = {
+    allowEnterKey: undefined
+  };
   const toastIncompatibleParams = ['allowOutsideClick', 'allowEnterKey', 'backdrop', 'focusConfirm', 'focusDeny', 'focusCancel', 'returnFocus', 'heightAuto', 'keydownListenerCapture'];
 
   /**
@@ -15113,8 +11210,9 @@ module.exports = toNumber
    * @param {string} param
    */
   const checkIfParamIsDeprecated = param => {
-    if (isDeprecatedParameter(param)) {
-      warnAboutDeprecation(param, isDeprecatedParameter(param));
+    const isDeprecated = isDeprecatedParameter(param);
+    if (isDeprecated) {
+      warnAboutDeprecation(param, isDeprecated);
     }
   };
 
@@ -15196,16 +11294,16 @@ module.exports = toNumber
     if (typeof innerParams.didDestroy === 'function') {
       innerParams.didDestroy();
     }
+    globalState.eventEmitter.emit('didDestroy');
     disposeSwal(this);
   }
 
   /**
-   * @param {SweetAlert2} instance
+   * @param {SweetAlert} instance
    */
   const disposeSwal = instance => {
     disposeWeakMaps(instance);
     // Unset this.params so GC will dispose it (#1569)
-    // @ts-ignore
     delete instance.params;
     // Unset globalState props so GC will dispose globalState (#1569)
     delete globalState.keydownHandler;
@@ -15215,23 +11313,40 @@ module.exports = toNumber
   };
 
   /**
-   * @param {SweetAlert2} instance
+   * @param {SweetAlert} instance
    */
   const disposeWeakMaps = instance => {
     // If the current instance is awaiting a promise result, we keep the privateMethods to call them once the promise result is retrieved #2335
-    // @ts-ignore
-    if (instance.isAwaitingPromise()) {
+    if (instance.isAwaitingPromise) {
       unsetWeakMaps(privateProps, instance);
-      privateProps.awaitingPromise.set(instance, true);
+      instance.isAwaitingPromise = true;
     } else {
       unsetWeakMaps(privateMethods, instance);
       unsetWeakMaps(privateProps, instance);
+      delete instance.isAwaitingPromise;
+      // Unset instance methods
+      delete instance.disableButtons;
+      delete instance.enableButtons;
+      delete instance.getInput;
+      delete instance.disableInput;
+      delete instance.enableInput;
+      delete instance.hideLoading;
+      delete instance.disableLoading;
+      delete instance.showValidationMessage;
+      delete instance.resetValidationMessage;
+      delete instance.close;
+      delete instance.closePopup;
+      delete instance.closeModal;
+      delete instance.closeToast;
+      delete instance.rejectPromise;
+      delete instance.update;
+      delete instance._destroy;
     }
   };
 
   /**
    * @param {object} obj
-   * @param {SweetAlert2} instance
+   * @param {SweetAlert} instance
    */
   const unsetWeakMaps = (obj, instance) => {
     for (const i in obj) {
@@ -15254,7 +11369,6 @@ module.exports = toNumber
     getInput: getInput,
     handleAwaitingPromise: handleAwaitingPromise,
     hideLoading: hideLoading,
-    isAwaitingPromise: isAwaitingPromise,
     rejectPromise: rejectPromise,
     resetValidationMessage: resetValidationMessage,
     showValidationMessage: showValidationMessage,
@@ -15262,426 +11376,13 @@ module.exports = toNumber
   });
 
   /**
-   * Shows loader (spinner), this is useful with AJAX requests.
-   * By default the loader be shown instead of the "Confirm" button.
-   *
-   * @param {HTMLButtonElement} [buttonToReplace]
-   */
-  const showLoading = buttonToReplace => {
-    let popup = getPopup();
-    if (!popup) {
-      new Swal(); // eslint-disable-line no-new
-    }
-
-    popup = getPopup();
-    const loader = getLoader();
-    if (isToast()) {
-      hide(getIcon());
-    } else {
-      replaceButton(popup, buttonToReplace);
-    }
-    show(loader);
-    popup.setAttribute('data-loading', 'true');
-    popup.setAttribute('aria-busy', 'true');
-    popup.focus();
-  };
-
-  /**
-   * @param {HTMLElement} popup
-   * @param {HTMLButtonElement} [buttonToReplace]
-   */
-  const replaceButton = (popup, buttonToReplace) => {
-    const actions = getActions();
-    const loader = getLoader();
-    if (!buttonToReplace && isVisible$1(getConfirmButton())) {
-      buttonToReplace = getConfirmButton();
-    }
-    show(actions);
-    if (buttonToReplace) {
-      hide(buttonToReplace);
-      loader.setAttribute('data-button-to-replace', buttonToReplace.className);
-    }
-    loader.parentNode.insertBefore(loader, buttonToReplace);
-    addClass([popup, actions], swalClasses.loading);
-  };
-
-  /**
-   * @typedef { string | number | boolean } InputValue
-   */
-
-  /**
-   * @param {SweetAlert2} instance
-   * @param {SweetAlertOptions} params
-   */
-  const handleInputOptionsAndValue = (instance, params) => {
-    if (params.input === 'select' || params.input === 'radio') {
-      handleInputOptions(instance, params);
-    } else if (['text', 'email', 'number', 'tel', 'textarea'].includes(params.input) && (hasToPromiseFn(params.inputValue) || isPromise(params.inputValue))) {
-      showLoading(getConfirmButton());
-      handleInputValue(instance, params);
-    }
-  };
-
-  /**
-   * @param {SweetAlert2} instance
    * @param {SweetAlertOptions} innerParams
-   * @returns {string | number | File | FileList | null}
-   */
-  const getInputValue = (instance, innerParams) => {
-    const input = instance.getInput();
-    if (!input) {
-      return null;
-    }
-    switch (innerParams.input) {
-      case 'checkbox':
-        return getCheckboxValue(input);
-      case 'radio':
-        return getRadioValue(input);
-      case 'file':
-        return getFileValue(input);
-      default:
-        return innerParams.inputAutoTrim ? input.value.trim() : input.value;
-    }
-  };
-
-  /**
-   * @param {HTMLInputElement} input
-   * @returns {number}
-   */
-  const getCheckboxValue = input => input.checked ? 1 : 0;
-
-  /**
-   * @param {HTMLInputElement} input
-   * @returns {string | null}
-   */
-  const getRadioValue = input => input.checked ? input.value : null;
-
-  /**
-   * @param {HTMLInputElement} input
-   * @returns {FileList | File | null}
-   */
-  const getFileValue = input => input.files.length ? input.getAttribute('multiple') !== null ? input.files : input.files[0] : null;
-
-  /**
-   * @param {SweetAlert2} instance
-   * @param {SweetAlertOptions} params
-   */
-  const handleInputOptions = (instance, params) => {
-    const popup = getPopup();
-    /**
-     * @param {Record<string, any>} inputOptions
-     */
-    const processInputOptions = inputOptions => {
-      populateInputOptions[params.input](popup, formatInputOptions(inputOptions), params);
-    };
-    if (hasToPromiseFn(params.inputOptions) || isPromise(params.inputOptions)) {
-      showLoading(getConfirmButton());
-      asPromise(params.inputOptions).then(inputOptions => {
-        instance.hideLoading();
-        processInputOptions(inputOptions);
-      });
-    } else if (typeof params.inputOptions === 'object') {
-      processInputOptions(params.inputOptions);
-    } else {
-      error(`Unexpected type of inputOptions! Expected object, Map or Promise, got ${typeof params.inputOptions}`);
-    }
-  };
-
-  /**
-   * @param {SweetAlert2} instance
-   * @param {SweetAlertOptions} params
-   */
-  const handleInputValue = (instance, params) => {
-    const input = instance.getInput();
-    hide(input);
-    asPromise(params.inputValue).then(inputValue => {
-      input.value = params.input === 'number' ? `${parseFloat(inputValue) || 0}` : `${inputValue}`;
-      show(input);
-      input.focus();
-      instance.hideLoading();
-    }).catch(err => {
-      error(`Error in inputValue promise: ${err}`);
-      input.value = '';
-      show(input);
-      input.focus();
-      instance.hideLoading();
-    });
-  };
-  const populateInputOptions = {
-    /**
-     * @param {HTMLElement} popup
-     * @param {Record<string, any>} inputOptions
-     * @param {SweetAlertOptions} params
-     */
-    select: (popup, inputOptions, params) => {
-      const select = getDirectChildByClass(popup, swalClasses.select);
-      /**
-       * @param {HTMLElement} parent
-       * @param {string} optionLabel
-       * @param {string} optionValue
-       */
-      const renderOption = (parent, optionLabel, optionValue) => {
-        const option = document.createElement('option');
-        option.value = optionValue;
-        setInnerHtml(option, optionLabel);
-        option.selected = isSelected(optionValue, params.inputValue);
-        parent.appendChild(option);
-      };
-      inputOptions.forEach(inputOption => {
-        const optionValue = inputOption[0];
-        const optionLabel = inputOption[1];
-        // <optgroup> spec:
-        // https://www.w3.org/TR/html401/interact/forms.html#h-17.6
-        // "...all OPTGROUP elements must be specified directly within a SELECT element (i.e., groups may not be nested)..."
-        // check whether this is a <optgroup>
-        if (Array.isArray(optionLabel)) {
-          // if it is an array, then it is an <optgroup>
-          const optgroup = document.createElement('optgroup');
-          optgroup.label = optionValue;
-          optgroup.disabled = false; // not configurable for now
-          select.appendChild(optgroup);
-          optionLabel.forEach(o => renderOption(optgroup, o[1], o[0]));
-        } else {
-          // case of <option>
-          renderOption(select, optionLabel, optionValue);
-        }
-      });
-      select.focus();
-    },
-    /**
-     * @param {HTMLElement} popup
-     * @param {Record<string, any>} inputOptions
-     * @param {SweetAlertOptions} params
-     */
-    radio: (popup, inputOptions, params) => {
-      const radio = getDirectChildByClass(popup, swalClasses.radio);
-      inputOptions.forEach(inputOption => {
-        const radioValue = inputOption[0];
-        const radioLabel = inputOption[1];
-        const radioInput = document.createElement('input');
-        const radioLabelElement = document.createElement('label');
-        radioInput.type = 'radio';
-        radioInput.name = swalClasses.radio;
-        radioInput.value = radioValue;
-        if (isSelected(radioValue, params.inputValue)) {
-          radioInput.checked = true;
-        }
-        const label = document.createElement('span');
-        setInnerHtml(label, radioLabel);
-        label.className = swalClasses.label;
-        radioLabelElement.appendChild(radioInput);
-        radioLabelElement.appendChild(label);
-        radio.appendChild(radioLabelElement);
-      });
-      const radios = radio.querySelectorAll('input');
-      if (radios.length) {
-        radios[0].focus();
-      }
-    }
-  };
-
-  /**
-   * Converts `inputOptions` into an array of `[value, label]`s
-   *
-   * @param {Record<string, any>} inputOptions
-   * @returns {Array<Array<string>>}
-   */
-  const formatInputOptions = inputOptions => {
-    const result = [];
-    if (typeof Map !== 'undefined' && inputOptions instanceof Map) {
-      inputOptions.forEach((value, key) => {
-        let valueFormatted = value;
-        if (typeof valueFormatted === 'object') {
-          // case of <optgroup>
-          valueFormatted = formatInputOptions(valueFormatted);
-        }
-        result.push([key, valueFormatted]);
-      });
-    } else {
-      Object.keys(inputOptions).forEach(key => {
-        let valueFormatted = inputOptions[key];
-        if (typeof valueFormatted === 'object') {
-          // case of <optgroup>
-          valueFormatted = formatInputOptions(valueFormatted);
-        }
-        result.push([key, valueFormatted]);
-      });
-    }
-    return result;
-  };
-
-  /**
-   * @param {string} optionValue
-   * @param {InputValue | Promise<InputValue> | { toPromise: () => InputValue }} inputValue
-   * @returns {boolean}
-   */
-  const isSelected = (optionValue, inputValue) => {
-    return inputValue && inputValue.toString() === optionValue.toString();
-  };
-
-  /**
-   * @param {SweetAlert2} instance
-   */
-  const handleConfirmButtonClick = instance => {
-    const innerParams = privateProps.innerParams.get(instance);
-    instance.disableButtons();
-    if (innerParams.input) {
-      handleConfirmOrDenyWithInput(instance, 'confirm');
-    } else {
-      confirm(instance, true);
-    }
-  };
-
-  /**
-   * @param {SweetAlert2} instance
-   */
-  const handleDenyButtonClick = instance => {
-    const innerParams = privateProps.innerParams.get(instance);
-    instance.disableButtons();
-    if (innerParams.returnInputValueOnDeny) {
-      handleConfirmOrDenyWithInput(instance, 'deny');
-    } else {
-      deny(instance, false);
-    }
-  };
-
-  /**
-   * @param {SweetAlert2} instance
+   * @param {DomCache} domCache
    * @param {Function} dismissWith
    */
-  const handleCancelButtonClick = (instance, dismissWith) => {
-    instance.disableButtons();
-    dismissWith(DismissReason.cancel);
-  };
-
-  /**
-   * @param {SweetAlert2} instance
-   * @param {'confirm' | 'deny'} type
-   */
-  const handleConfirmOrDenyWithInput = (instance, type) => {
-    const innerParams = privateProps.innerParams.get(instance);
-    if (!innerParams.input) {
-      error(`The "input" parameter is needed to be set when using returnInputValueOn${capitalizeFirstLetter(type)}`);
-      return;
-    }
-    const inputValue = getInputValue(instance, innerParams);
-    if (innerParams.inputValidator) {
-      handleInputValidator(instance, inputValue, type);
-    } else if (!instance.getInput().checkValidity()) {
-      instance.enableButtons();
-      instance.showValidationMessage(innerParams.validationMessage);
-    } else if (type === 'deny') {
-      deny(instance, inputValue);
-    } else {
-      confirm(instance, inputValue);
-    }
-  };
-
-  /**
-   * @param {SweetAlert2} instance
-   * @param {string | number | File | FileList | null} inputValue
-   * @param {'confirm' | 'deny'} type
-   */
-  const handleInputValidator = (instance, inputValue, type) => {
-    const innerParams = privateProps.innerParams.get(instance);
-    instance.disableInput();
-    const validationPromise = Promise.resolve().then(() => asPromise(innerParams.inputValidator(inputValue, innerParams.validationMessage)));
-    validationPromise.then(validationMessage => {
-      instance.enableButtons();
-      instance.enableInput();
-      if (validationMessage) {
-        instance.showValidationMessage(validationMessage);
-      } else if (type === 'deny') {
-        deny(instance, inputValue);
-      } else {
-        confirm(instance, inputValue);
-      }
-    });
-  };
-
-  /**
-   * @param {SweetAlert2} instance
-   * @param {any} value
-   */
-  const deny = (instance, value) => {
-    const innerParams = privateProps.innerParams.get(instance || undefined);
-    if (innerParams.showLoaderOnDeny) {
-      showLoading(getDenyButton());
-    }
-    if (innerParams.preDeny) {
-      privateProps.awaitingPromise.set(instance || undefined, true); // Flagging the instance as awaiting a promise so it's own promise's reject/resolve methods doesn't get destroyed until the result from this preDeny's promise is received
-      const preDenyPromise = Promise.resolve().then(() => asPromise(innerParams.preDeny(value, innerParams.validationMessage)));
-      preDenyPromise.then(preDenyValue => {
-        if (preDenyValue === false) {
-          instance.hideLoading();
-          handleAwaitingPromise(instance);
-        } else {
-          instance.close({
-            isDenied: true,
-            value: typeof preDenyValue === 'undefined' ? value : preDenyValue
-          });
-        }
-      }).catch(error => rejectWith(instance || undefined, error));
-    } else {
-      instance.close({
-        isDenied: true,
-        value
-      });
-    }
-  };
-
-  /**
-   * @param {SweetAlert2} instance
-   * @param {any} value
-   */
-  const succeedWith = (instance, value) => {
-    instance.close({
-      isConfirmed: true,
-      value
-    });
-  };
-
-  /**
-   *
-   * @param {SweetAlert2} instance
-   * @param {string} error
-   */
-  const rejectWith = (instance, error) => {
-    // @ts-ignore
-    instance.rejectPromise(error);
-  };
-
-  /**
-   *
-   * @param {SweetAlert2} instance
-   * @param {any} value
-   */
-  const confirm = (instance, value) => {
-    const innerParams = privateProps.innerParams.get(instance || undefined);
-    if (innerParams.showLoaderOnConfirm) {
-      showLoading();
-    }
-    if (innerParams.preConfirm) {
-      instance.resetValidationMessage();
-      privateProps.awaitingPromise.set(instance || undefined, true); // Flagging the instance as awaiting a promise so it's own promise's reject/resolve methods doesn't get destroyed until the result from this preConfirm's promise is received
-      const preConfirmPromise = Promise.resolve().then(() => asPromise(innerParams.preConfirm(value, innerParams.validationMessage)));
-      preConfirmPromise.then(preConfirmValue => {
-        if (isVisible$1(getValidationMessage()) || preConfirmValue === false) {
-          instance.hideLoading();
-          handleAwaitingPromise(instance);
-        } else {
-          succeedWith(instance, typeof preConfirmValue === 'undefined' ? value : preConfirmValue);
-        }
-      }).catch(error => rejectWith(instance || undefined, error));
-    } else {
-      succeedWith(instance, value);
-    }
-  };
-
-  const handlePopupClick = (instance, domCache, dismissWith) => {
-    const innerParams = privateProps.innerParams.get(instance);
+  const handlePopupClick = (innerParams, domCache, dismissWith) => {
     if (innerParams.toast) {
-      handleToastClick(instance, domCache, dismissWith);
+      handleToastClick(innerParams, domCache, dismissWith);
     } else {
       // Ignore click events that had mousedown on the popup but mouseup on the container
       // This can happen when the user drags a slider
@@ -15689,13 +11390,18 @@ module.exports = toNumber
 
       // Ignore click events that had mousedown on the container but mouseup on the popup
       handleContainerMousedown(domCache);
-      handleModalClick(instance, domCache, dismissWith);
+      handleModalClick(innerParams, domCache, dismissWith);
     }
   };
-  const handleToastClick = (instance, domCache, dismissWith) => {
+
+  /**
+   * @param {SweetAlertOptions} innerParams
+   * @param {DomCache} domCache
+   * @param {Function} dismissWith
+   */
+  const handleToastClick = (innerParams, domCache, dismissWith) => {
     // Closing toast by internal click
     domCache.popup.onclick = () => {
-      const innerParams = privateProps.innerParams.get(instance);
       if (innerParams && (isAnyButtonShown(innerParams) || innerParams.timer || innerParams.input)) {
         return;
       }
@@ -15704,17 +11410,21 @@ module.exports = toNumber
   };
 
   /**
-   * @param {*} innerParams
+   * @param {SweetAlertOptions} innerParams
    * @returns {boolean}
    */
   const isAnyButtonShown = innerParams => {
-    return innerParams.showConfirmButton || innerParams.showDenyButton || innerParams.showCancelButton || innerParams.showCloseButton;
+    return !!(innerParams.showConfirmButton || innerParams.showDenyButton || innerParams.showCancelButton || innerParams.showCloseButton);
   };
   let ignoreOutsideClick = false;
+
+  /**
+   * @param {DomCache} domCache
+   */
   const handleModalMousedown = domCache => {
     domCache.popup.onmousedown = () => {
       domCache.container.onmouseup = function (e) {
-        domCache.container.onmouseup = undefined;
+        domCache.container.onmouseup = () => {};
         // We only check if the mouseup target is the container because usually it doesn't
         // have any other direct children aside of the popup
         if (e.target === domCache.container) {
@@ -15723,20 +11433,33 @@ module.exports = toNumber
       };
     };
   };
+
+  /**
+   * @param {DomCache} domCache
+   */
   const handleContainerMousedown = domCache => {
-    domCache.container.onmousedown = () => {
+    domCache.container.onmousedown = e => {
+      // prevent the modal text from being selected on double click on the container (allowOutsideClick: false)
+      if (e.target === domCache.container) {
+        e.preventDefault();
+      }
       domCache.popup.onmouseup = function (e) {
-        domCache.popup.onmouseup = undefined;
+        domCache.popup.onmouseup = () => {};
         // We also need to check if the mouseup target is a child of the popup
-        if (e.target === domCache.popup || domCache.popup.contains(e.target)) {
+        if (e.target === domCache.popup || e.target instanceof HTMLElement && domCache.popup.contains(e.target)) {
           ignoreOutsideClick = true;
         }
       };
     };
   };
-  const handleModalClick = (instance, domCache, dismissWith) => {
+
+  /**
+   * @param {SweetAlertOptions} innerParams
+   * @param {DomCache} domCache
+   * @param {Function} dismissWith
+   */
+  const handleModalClick = (innerParams, domCache, dismissWith) => {
     domCache.container.onclick = e => {
-      const innerParams = privateProps.innerParams.get(instance);
       if (ignoreOutsideClick) {
         ignoreOutsideClick = false;
         return;
@@ -15773,11 +11496,10 @@ module.exports = toNumber
    * @returns {Promise<SweetAlertResult>}
    */
   function fire() {
-    const Swal = this; // eslint-disable-line @typescript-eslint/no-this-alias
     for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
       args[_key] = arguments[_key];
     }
-    return new Swal(...args);
+    return new this(...args);
   }
 
   /**
@@ -15797,7 +11519,7 @@ module.exports = toNumber
    * const {value: lastName} = await TextPrompt('What is your last name?')
    *
    * @param {SweetAlertOptions} mixinParams
-   * @returns {SweetAlert2}
+   * @returns {SweetAlert}
    */
   function mixin(mixinParams) {
     class MixinSwal extends this {
@@ -15861,12 +11583,12 @@ module.exports = toNumber
    * Increase timer. Returns number of milliseconds of an updated timer.
    * If `timer` parameter isn't set, returns undefined.
    *
-   * @param {number} n
+   * @param {number} ms
    * @returns {number | undefined}
    */
-  const increaseTimer = n => {
+  const increaseTimer = ms => {
     if (globalState.timeout) {
-      const remaining = globalState.timeout.increase(n);
+      const remaining = globalState.timeout.increase(ms);
       animateTimerProgressBar(remaining, true);
       return remaining;
     }
@@ -15880,7 +11602,7 @@ module.exports = toNumber
    * @returns {boolean}
    */
   const isTimerRunning = () => {
-    return globalState.timeout && globalState.timeout.isRunning();
+    return !!(globalState.timeout && globalState.timeout.isRunning());
   };
 
   let bodyClickListenerAdded = false;
@@ -15908,6 +11630,141 @@ module.exports = toNumber
           return;
         }
       }
+    }
+  };
+
+  // Source: https://gist.github.com/mudge/5830382?permalink_comment_id=2691957#gistcomment-2691957
+
+  class EventEmitter {
+    constructor() {
+      /** @type {Events} */
+      this.events = {};
+    }
+
+    /**
+     * @param {string} eventName
+     * @returns {EventHandlers}
+     */
+    _getHandlersByEventName(eventName) {
+      if (typeof this.events[eventName] === 'undefined') {
+        // not Set because we need to keep the FIFO order
+        // https://github.com/sweetalert2/sweetalert2/pull/2763#discussion_r1748990334
+        this.events[eventName] = [];
+      }
+      return this.events[eventName];
+    }
+
+    /**
+     * @param {string} eventName
+     * @param {EventHandler} eventHandler
+     */
+    on(eventName, eventHandler) {
+      const currentHandlers = this._getHandlersByEventName(eventName);
+      if (!currentHandlers.includes(eventHandler)) {
+        currentHandlers.push(eventHandler);
+      }
+    }
+
+    /**
+     * @param {string} eventName
+     * @param {EventHandler} eventHandler
+     */
+    once(eventName, eventHandler) {
+      var _this = this;
+      /**
+       * @param {Array} args
+       */
+      const onceFn = function () {
+        _this.removeListener(eventName, onceFn);
+        for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
+          args[_key] = arguments[_key];
+        }
+        eventHandler.apply(_this, args);
+      };
+      this.on(eventName, onceFn);
+    }
+
+    /**
+     * @param {string} eventName
+     * @param {Array} args
+     */
+    emit(eventName) {
+      for (var _len2 = arguments.length, args = new Array(_len2 > 1 ? _len2 - 1 : 0), _key2 = 1; _key2 < _len2; _key2++) {
+        args[_key2 - 1] = arguments[_key2];
+      }
+      this._getHandlersByEventName(eventName).forEach(
+      /**
+       * @param {EventHandler} eventHandler
+       */
+      eventHandler => {
+        try {
+          eventHandler.apply(this, args);
+        } catch (error) {
+          console.error(error);
+        }
+      });
+    }
+
+    /**
+     * @param {string} eventName
+     * @param {EventHandler} eventHandler
+     */
+    removeListener(eventName, eventHandler) {
+      const currentHandlers = this._getHandlersByEventName(eventName);
+      const index = currentHandlers.indexOf(eventHandler);
+      if (index > -1) {
+        currentHandlers.splice(index, 1);
+      }
+    }
+
+    /**
+     * @param {string} eventName
+     */
+    removeAllListeners(eventName) {
+      if (this.events[eventName] !== undefined) {
+        // https://github.com/sweetalert2/sweetalert2/pull/2763#discussion_r1749239222
+        this.events[eventName].length = 0;
+      }
+    }
+    reset() {
+      this.events = {};
+    }
+  }
+
+  globalState.eventEmitter = new EventEmitter();
+
+  /**
+   * @param {string} eventName
+   * @param {EventHandler} eventHandler
+   */
+  const on = (eventName, eventHandler) => {
+    globalState.eventEmitter.on(eventName, eventHandler);
+  };
+
+  /**
+   * @param {string} eventName
+   * @param {EventHandler} eventHandler
+   */
+  const once = (eventName, eventHandler) => {
+    globalState.eventEmitter.once(eventName, eventHandler);
+  };
+
+  /**
+   * @param {string} [eventName]
+   * @param {EventHandler} [eventHandler]
+   */
+  const off = (eventName, eventHandler) => {
+    // Remove all handlers for all events
+    if (!eventName) {
+      globalState.eventEmitter.reset();
+      return;
+    }
+    if (eventHandler) {
+      // Remove a specific handler
+      globalState.eventEmitter.removeListener(eventName, eventHandler);
+    } else {
+      // Remove all handlers for a specific event
+      globalState.eventEmitter.removeAllListeners(eventName);
     }
   };
 
@@ -15948,6 +11805,9 @@ module.exports = toNumber
     isValidParameter: isValidParameter,
     isVisible: isVisible,
     mixin: mixin,
+    off: off,
+    on: on,
+    once: once,
     resumeTimer: resumeTimer,
     showLoading: showLoading,
     stopTimer: stopTimer,
@@ -15965,6 +11825,10 @@ module.exports = toNumber
       this.running = false;
       this.start();
     }
+
+    /**
+     * @returns {number}
+     */
     start() {
       if (!this.running) {
         this.running = true;
@@ -15973,14 +11837,23 @@ module.exports = toNumber
       }
       return this.remaining;
     }
+
+    /**
+     * @returns {number}
+     */
     stop() {
-      if (this.running) {
+      if (this.started && this.running) {
         this.running = false;
         clearTimeout(this.id);
         this.remaining -= new Date().getTime() - this.started.getTime();
       }
       return this.remaining;
     }
+
+    /**
+     * @param {number} n
+     * @returns {number}
+     */
     increase(n) {
       const running = this.running;
       if (running) {
@@ -15992,6 +11865,10 @@ module.exports = toNumber
       }
       return this.remaining;
     }
+
+    /**
+     * @returns {number}
+     */
     getTimerLeft() {
       if (this.running) {
         this.stop();
@@ -15999,6 +11876,10 @@ module.exports = toNumber
       }
       return this.remaining;
     }
+
+    /**
+     * @returns {boolean}
+     */
     isRunning() {
       return this.running;
     }
@@ -16011,8 +11892,7 @@ module.exports = toNumber
    * @returns {SweetAlertOptions}
    */
   const getTemplateParams = params => {
-    /** @type {HTMLTemplateElement} */
-    const template = typeof params.template === 'string' ? document.querySelector(params.template) : params.template;
+    const template = typeof params.template === 'string' ? (/** @type {HTMLTemplateElement} */document.querySelector(params.template)) : params.template;
     if (!template) {
       return {};
     }
@@ -16025,16 +11905,20 @@ module.exports = toNumber
 
   /**
    * @param {DocumentFragment} templateContent
-   * @returns {SweetAlertOptions}
+   * @returns {Record<string, any>}
    */
   const getSwalParams = templateContent => {
+    /** @type {Record<string, any>} */
     const result = {};
     /** @type {HTMLElement[]} */
     const swalParams = Array.from(templateContent.querySelectorAll('swal-param'));
     swalParams.forEach(param => {
       showWarningsForAttributes(param, ['name', 'value']);
-      const paramName = param.getAttribute('name');
+      const paramName = /** @type {keyof SweetAlertOptions} */param.getAttribute('name');
       const value = param.getAttribute('value');
+      if (!paramName || !value) {
+        return;
+      }
       if (typeof defaultParams[paramName] === 'boolean') {
         result[paramName] = value !== 'false';
       } else if (typeof defaultParams[paramName] === 'object') {
@@ -16048,15 +11932,19 @@ module.exports = toNumber
 
   /**
    * @param {DocumentFragment} templateContent
-   * @returns {SweetAlertOptions}
+   * @returns {Record<string, any>}
    */
   const getSwalFunctionParams = templateContent => {
+    /** @type {Record<string, any>} */
     const result = {};
     /** @type {HTMLElement[]} */
     const swalFunctions = Array.from(templateContent.querySelectorAll('swal-function-param'));
     swalFunctions.forEach(param => {
-      const paramName = param.getAttribute('name');
+      const paramName = /** @type {keyof SweetAlertOptions} */param.getAttribute('name');
       const value = param.getAttribute('value');
+      if (!paramName || !value) {
+        return;
+      }
       result[paramName] = new Function(`return ${value}`)();
     });
     return result;
@@ -16064,15 +11952,19 @@ module.exports = toNumber
 
   /**
    * @param {DocumentFragment} templateContent
-   * @returns {SweetAlertOptions}
+   * @returns {Record<string, any>}
    */
   const getSwalButtons = templateContent => {
+    /** @type {Record<string, any>} */
     const result = {};
     /** @type {HTMLElement[]} */
     const swalButtons = Array.from(templateContent.querySelectorAll('swal-button'));
     swalButtons.forEach(button => {
       showWarningsForAttributes(button, ['type', 'color', 'aria-label']);
       const type = button.getAttribute('type');
+      if (!type || !['confirm', 'cancel', 'deny'].includes(type)) {
+        return;
+      }
       result[`${type}ButtonText`] = button.innerHTML;
       result[`show${capitalizeFirstLetter(type)}Button`] = true;
       if (button.hasAttribute('color')) {
@@ -16087,25 +11979,25 @@ module.exports = toNumber
 
   /**
    * @param {DocumentFragment} templateContent
-   * @returns {SweetAlertOptions}
+   * @returns {Pick<SweetAlertOptions, 'imageUrl' | 'imageWidth' | 'imageHeight' | 'imageAlt'>}
    */
   const getSwalImage = templateContent => {
     const result = {};
-    /** @type {HTMLElement} */
+    /** @type {HTMLElement | null} */
     const image = templateContent.querySelector('swal-image');
     if (image) {
       showWarningsForAttributes(image, ['src', 'width', 'height', 'alt']);
       if (image.hasAttribute('src')) {
-        result.imageUrl = image.getAttribute('src');
+        result.imageUrl = image.getAttribute('src') || undefined;
       }
       if (image.hasAttribute('width')) {
-        result.imageWidth = image.getAttribute('width');
+        result.imageWidth = image.getAttribute('width') || undefined;
       }
       if (image.hasAttribute('height')) {
-        result.imageHeight = image.getAttribute('height');
+        result.imageHeight = image.getAttribute('height') || undefined;
       }
       if (image.hasAttribute('alt')) {
-        result.imageAlt = image.getAttribute('alt');
+        result.imageAlt = image.getAttribute('alt') || undefined;
       }
     }
     return result;
@@ -16113,17 +12005,15 @@ module.exports = toNumber
 
   /**
    * @param {DocumentFragment} templateContent
-   * @returns {SweetAlertOptions}
+   * @returns {Record<string, any>}
    */
   const getSwalIcon = templateContent => {
     const result = {};
-    /** @type {HTMLElement} */
+    /** @type {HTMLElement | null} */
     const icon = templateContent.querySelector('swal-icon');
     if (icon) {
       showWarningsForAttributes(icon, ['type', 'color']);
       if (icon.hasAttribute('type')) {
-        /** @type {SweetAlertIcon} */
-        // @ts-ignore
         result.icon = icon.getAttribute('type');
       }
       if (icon.hasAttribute('color')) {
@@ -16136,16 +12026,15 @@ module.exports = toNumber
 
   /**
    * @param {DocumentFragment} templateContent
-   * @returns {SweetAlertOptions}
+   * @returns {Record<string, any>}
    */
   const getSwalInput = templateContent => {
+    /** @type {Record<string, any>} */
     const result = {};
-    /** @type {HTMLElement} */
+    /** @type {HTMLElement | null} */
     const input = templateContent.querySelector('swal-input');
     if (input) {
       showWarningsForAttributes(input, ['type', 'label', 'placeholder', 'value']);
-      /** @type {SweetAlertInput} */
-      // @ts-ignore
       result.input = input.getAttribute('type') || 'text';
       if (input.hasAttribute('label')) {
         result.inputLabel = input.getAttribute('label');
@@ -16164,6 +12053,9 @@ module.exports = toNumber
       inputOptions.forEach(option => {
         showWarningsForAttributes(option, ['value']);
         const optionValue = option.getAttribute('value');
+        if (!optionValue) {
+          return;
+        }
         const optionName = option.innerHTML;
         result.inputOptions[optionValue] = optionName;
       });
@@ -16174,13 +12066,14 @@ module.exports = toNumber
   /**
    * @param {DocumentFragment} templateContent
    * @param {string[]} paramNames
-   * @returns {SweetAlertOptions}
+   * @returns {Record<string, any>}
    */
   const getSwalStringParams = (templateContent, paramNames) => {
+    /** @type {Record<string, any>} */
     const result = {};
     for (const i in paramNames) {
       const paramName = paramNames[i];
-      /** @type {HTMLElement} */
+      /** @type {HTMLElement | null} */
       const tag = templateContent.querySelector(paramName);
       if (tag) {
         showWarningsForAttributes(tag, []);
@@ -16228,6 +12121,7 @@ module.exports = toNumber
     if (typeof params.willOpen === 'function') {
       params.willOpen(popup);
     }
+    globalState.eventEmitter.emit('willOpen', popup);
     const bodyStyles = window.getComputedStyle(document.body);
     const initialBodyOverflow = bodyStyles.overflowY;
     addClasses(container, popup, params);
@@ -16246,6 +12140,7 @@ module.exports = toNumber
     if (typeof params.didOpen === 'function') {
       setTimeout(() => params.didOpen(popup));
     }
+    globalState.eventEmitter.emit('didOpen', popup);
     removeClass(container, swalClasses['no-transition']);
   };
 
@@ -16254,7 +12149,7 @@ module.exports = toNumber
    */
   const swalOpenAnimationFinished = event => {
     const popup = getPopup();
-    if (event.target !== popup) {
+    if (event.target !== popup || !animationEndEvent) {
       return;
     }
     const container = getContainer();
@@ -16283,7 +12178,7 @@ module.exports = toNumber
   const fixScrollContainer = (container, scrollbarPadding, initialBodyOverflow) => {
     iOSfix();
     if (scrollbarPadding && initialBodyOverflow !== 'hidden') {
-      fixScrollbar();
+      replaceScrollbarWithPadding(initialBodyOverflow);
     }
 
     // sweetalert2/issues/1247
@@ -16299,16 +12194,19 @@ module.exports = toNumber
    */
   const addClasses = (container, popup, params) => {
     addClass(container, params.showClass.backdrop);
-    // this workaround with opacity is needed for https://github.com/sweetalert2/sweetalert2/issues/2059
-    popup.style.setProperty('opacity', '0', 'important');
-    show(popup, 'grid');
-    setTimeout(() => {
-      // Animate popup right after showing it
-      addClass(popup, params.showClass.popup);
-      // and remove the opacity workaround
-      popup.style.removeProperty('opacity');
-    }, SHOW_CLASS_TIMEOUT); // 10ms in order to fix #2062
-
+    if (params.animation) {
+      // this workaround with opacity is needed for https://github.com/sweetalert2/sweetalert2/issues/2059
+      popup.style.setProperty('opacity', '0', 'important');
+      show(popup, 'grid');
+      setTimeout(() => {
+        // Animate popup right after showing it
+        addClass(popup, params.showClass.popup);
+        // and remove the opacity workaround
+        popup.style.removeProperty('opacity');
+      }, SHOW_CLASS_TIMEOUT); // 10ms in order to fix #2062
+    } else {
+      show(popup, 'grid');
+    }
     addClass([document.documentElement, document.body], swalClasses.shown);
     if (params.heightAuto && params.backdrop && !params.toast) {
       addClass([document.documentElement, document.body], swalClasses['height-auto']);
@@ -16318,16 +12216,16 @@ module.exports = toNumber
   var defaultInputValidators = {
     /**
      * @param {string} string
-     * @param {string} validationMessage
-     * @returns {Promise<void | string>}
+     * @param {string} [validationMessage]
+     * @returns {Promise<string | void>}
      */
     email: (string, validationMessage) => {
-      return /^[a-zA-Z0-9.+_-]+@[a-zA-Z0-9.-]+\.[a-zA-Z0-9-]{2,24}$/.test(string) ? Promise.resolve() : Promise.resolve(validationMessage || 'Invalid email address');
+      return /^[a-zA-Z0-9.+_'-]+@[a-zA-Z0-9.-]+\.[a-zA-Z0-9-]+$/.test(string) ? Promise.resolve() : Promise.resolve(validationMessage || 'Invalid email address');
     },
     /**
      * @param {string} string
-     * @param {string} validationMessage
-     * @returns {Promise<void | string>}
+     * @param {string} [validationMessage]
+     * @returns {Promise<string | void>}
      */
     url: (string, validationMessage) => {
       // taken from https://stackoverflow.com/a/3809435 with a small change from #1306 and #2013
@@ -16340,12 +12238,14 @@ module.exports = toNumber
    */
   function setDefaultInputValidators(params) {
     // Use default `inputValidator` for supported input types if not provided
-    if (!params.inputValidator) {
-      Object.keys(defaultInputValidators).forEach(key => {
-        if (params.input === key) {
-          params.inputValidator = defaultInputValidators[key];
-        }
-      });
+    if (params.inputValidator) {
+      return;
+    }
+    if (params.input === 'email') {
+      params.inputValidator = defaultInputValidators['email'];
+    }
+    if (params.input === 'url') {
+      params.inputValidator = defaultInputValidators['url'];
     }
   }
 
@@ -16381,9 +12281,19 @@ module.exports = toNumber
     init(params);
   }
 
+  /** @type {SweetAlert} */
   let currentInstance;
+  var _promise = /*#__PURE__*/new WeakMap();
   class SweetAlert {
+    /**
+     * @param {...any} args
+     * @this {SweetAlert}
+     */
     constructor() {
+      /**
+       * @type {Promise<SweetAlertResult>}
+       */
+      _classPrivateFieldInitSpec(this, _promise, void 0);
       // Prevent run in Node env
       if (typeof window === 'undefined') {
         return;
@@ -16395,25 +12305,28 @@ module.exports = toNumber
         args[_key] = arguments[_key];
       }
       const outerParams = Object.freeze(this.constructor.argsToParams(args));
-      Object.defineProperties(this, {
-        params: {
-          value: outerParams,
-          writable: false,
-          enumerable: true,
-          configurable: true
-        }
-      });
 
-      // @ts-ignore
-      const promise = currentInstance._main(currentInstance.params);
-      privateProps.promise.set(this, promise);
+      /** @type {Readonly<SweetAlertOptions>} */
+      this.params = outerParams;
+
+      /** @type {boolean} */
+      this.isAwaitingPromise = false;
+      _classPrivateFieldSet2(_promise, this, this._main(currentInstance.params));
     }
     _main(userParams) {
       let mixinParams = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
       showWarningsForParams(Object.assign({}, mixinParams, userParams));
       if (globalState.currentInstance) {
-        // @ts-ignore
+        const swalPromiseResolve = privateMethods.swalPromiseResolve.get(globalState.currentInstance);
+        const {
+          isAwaitingPromise
+        } = globalState.currentInstance;
         globalState.currentInstance._destroy();
+        if (!isAwaitingPromise) {
+          swalPromiseResolve({
+            isDismissed: true
+          });
+        }
         if (isModal()) {
           unsetAriaHidden();
         }
@@ -16439,17 +12352,15 @@ module.exports = toNumber
 
     // `catch` cannot be the name of a module export, so we define our thenable methods here instead
     then(onFulfilled) {
-      const promise = privateProps.promise.get(this);
-      return promise.then(onFulfilled);
+      return _classPrivateFieldGet2(_promise, this).then(onFulfilled);
     }
     finally(onFinally) {
-      const promise = privateProps.promise.get(this);
-      return promise.finally(onFinally);
+      return _classPrivateFieldGet2(_promise, this).finally(onFinally);
     }
   }
 
   /**
-   * @param {SweetAlert2} instance
+   * @param {SweetAlert} instance
    * @param {DomCache} domCache
    * @param {SweetAlertOptions} innerParams
    * @returns {Promise}
@@ -16461,7 +12372,6 @@ module.exports = toNumber
        * @param {DismissReason} dismiss
        */
       const dismissWith = dismiss => {
-        // @ts-ignore
         instance.close({
           isDismissed: true,
           dismiss
@@ -16479,11 +12389,10 @@ module.exports = toNumber
         handleCancelButtonClick(instance, dismissWith);
       };
       domCache.closeButton.onclick = () => {
-        // @ts-ignore
         dismissWith(DismissReason.close);
       };
-      handlePopupClick(instance, domCache, dismissWith);
-      addKeydownHandler(instance, globalState, innerParams, dismissWith);
+      handlePopupClick(innerParams, domCache, dismissWith);
+      addKeydownHandler(globalState, innerParams, dismissWith);
       handleInputOptionsAndValue(instance, innerParams);
       openPopup(innerParams);
       setupTimer(globalState, innerParams, dismissWith);
@@ -16506,11 +12415,17 @@ module.exports = toNumber
     const params = Object.assign({}, defaultParams, mixinParams, templateParams, userParams); // precedence is described in #2131
     params.showClass = Object.assign({}, defaultParams.showClass, params.showClass);
     params.hideClass = Object.assign({}, defaultParams.hideClass, params.hideClass);
+    if (params.animation === false) {
+      params.showClass = {
+        backdrop: 'swal2-noanimation'
+      };
+      params.hideClass = {};
+    }
     return params;
   };
 
   /**
-   * @param {SweetAlert2} instance
+   * @param {SweetAlert} instance
    * @returns {DomCache}
    */
   const populateDomCache = instance => {
@@ -16557,6 +12472,15 @@ module.exports = toNumber
   };
 
   /**
+   * Initialize focus in the popup:
+   *
+   * 1. If `toast` is `true`, don't steal focus from the document.
+   * 2. Else if there is an [autofocus] element, focus it.
+   * 3. Else if `focusConfirm` is `true` and confirm button is visible, focus it.
+   * 4. Else if `focusDeny` is `true` and deny button is visible, focus it.
+   * 5. Else if `focusCancel` is `true` and cancel button is visible, focus it.
+   * 6. Else focus the first focusable element in a popup (if any).
+   *
    * @param {DomCache} domCache
    * @param {SweetAlertOptions} innerParams
    */
@@ -16564,13 +12488,34 @@ module.exports = toNumber
     if (innerParams.toast) {
       return;
     }
+    // TODO: this is dumb, remove `allowEnterKey` param in the next major version
     if (!callIfFunction(innerParams.allowEnterKey)) {
+      warnAboutDeprecation('allowEnterKey');
       blurActiveElement();
       return;
     }
-    if (!focusButton(domCache, innerParams)) {
-      setFocus(-1, 1);
+    if (focusAutofocus(domCache)) {
+      return;
     }
+    if (focusButton(domCache, innerParams)) {
+      return;
+    }
+    setFocus(-1, 1);
+  };
+
+  /**
+   * @param {DomCache} domCache
+   * @returns {boolean}
+   */
+  const focusAutofocus = domCache => {
+    const autofocusElements = domCache.popup.querySelectorAll('[autofocus]');
+    for (const autofocusElement of autofocusElements) {
+      if (autofocusElement instanceof HTMLElement && isVisible$1(autofocusElement)) {
+        autofocusElement.focus();
+        return true;
+      }
+    }
+    return false;
   };
 
   /**
@@ -16600,7 +12545,7 @@ module.exports = toNumber
   };
 
   // Dear russian users visiting russian sites. Let's have fun.
-  if (typeof window !== 'undefined' && /^ru\b/.test(navigator.language) && location.host.match(/\.(ru|su|xn--p1ai)$/)) {
+  if (typeof window !== 'undefined' && /^ru\b/.test(navigator.language) && location.host.match(/\.(ru|su|by|xn--p1ai)$/)) {
     const now = new Date();
     const initiationDate = localStorage.getItem('swal-initiation');
     if (!initiationDate) {
@@ -16622,7 +12567,22 @@ module.exports = toNumber
   }
 
   // Assign instance methods from src/instanceMethods/*.js to prototype
-  Object.assign(SweetAlert.prototype, instanceMethods);
+  SweetAlert.prototype.disableButtons = disableButtons;
+  SweetAlert.prototype.enableButtons = enableButtons;
+  SweetAlert.prototype.getInput = getInput;
+  SweetAlert.prototype.disableInput = disableInput;
+  SweetAlert.prototype.enableInput = enableInput;
+  SweetAlert.prototype.hideLoading = hideLoading;
+  SweetAlert.prototype.disableLoading = hideLoading;
+  SweetAlert.prototype.showValidationMessage = showValidationMessage;
+  SweetAlert.prototype.resetValidationMessage = resetValidationMessage;
+  SweetAlert.prototype.close = close;
+  SweetAlert.prototype.closePopup = close;
+  SweetAlert.prototype.closeModal = close;
+  SweetAlert.prototype.closeToast = close;
+  SweetAlert.prototype.rejectPromise = rejectPromise;
+  SweetAlert.prototype.update = update;
+  SweetAlert.prototype._destroy = _destroy;
 
   // Assign static methods from src/staticMethods/*.js to constructor
   Object.assign(SweetAlert, staticMethods);
@@ -16634,13 +12594,14 @@ module.exports = toNumber
      * @returns {any | undefined}
      */
     SweetAlert[key] = function () {
-      if (currentInstance) {
+      if (currentInstance && currentInstance[key]) {
         return currentInstance[key](...arguments);
       }
+      return null;
     };
   });
   SweetAlert.DismissReason = DismissReason;
-  SweetAlert.version = '11.7.5';
+  SweetAlert.version = '11.14.1';
 
   const Swal = SweetAlert;
   // @ts-ignore
@@ -16650,7 +12611,7 @@ module.exports = toNumber
 
 }));
 if (typeof this !== 'undefined' && this.Sweetalert2){this.swal = this.sweetAlert = this.Swal = this.SweetAlert = this.Sweetalert2}
-"undefined"!=typeof document&&function(e,t){var n=e.createElement("style");if(e.getElementsByTagName("head")[0].appendChild(n),n.styleSheet)n.styleSheet.disabled||(n.styleSheet.cssText=t);else try{n.innerHTML=t}catch(e){n.innerText=t}}(document,".swal2-popup.swal2-toast{box-sizing:border-box;grid-column:1/4 !important;grid-row:1/4 !important;grid-template-columns:min-content auto min-content;padding:1em;overflow-y:hidden;background:#fff;box-shadow:0 0 1px rgba(0,0,0,.075),0 1px 2px rgba(0,0,0,.075),1px 2px 4px rgba(0,0,0,.075),1px 3px 8px rgba(0,0,0,.075),2px 4px 16px rgba(0,0,0,.075);pointer-events:all}.swal2-popup.swal2-toast>*{grid-column:2}.swal2-popup.swal2-toast .swal2-title{margin:.5em 1em;padding:0;font-size:1em;text-align:initial}.swal2-popup.swal2-toast .swal2-loading{justify-content:center}.swal2-popup.swal2-toast .swal2-input{height:2em;margin:.5em;font-size:1em}.swal2-popup.swal2-toast .swal2-validation-message{font-size:1em}.swal2-popup.swal2-toast .swal2-footer{margin:.5em 0 0;padding:.5em 0 0;font-size:.8em}.swal2-popup.swal2-toast .swal2-close{grid-column:3/3;grid-row:1/99;align-self:center;width:.8em;height:.8em;margin:0;font-size:2em}.swal2-popup.swal2-toast .swal2-html-container{margin:.5em 1em;padding:0;overflow:initial;font-size:1em;text-align:initial}.swal2-popup.swal2-toast .swal2-html-container:empty{padding:0}.swal2-popup.swal2-toast .swal2-loader{grid-column:1;grid-row:1/99;align-self:center;width:2em;height:2em;margin:.25em}.swal2-popup.swal2-toast .swal2-icon{grid-column:1;grid-row:1/99;align-self:center;width:2em;min-width:2em;height:2em;margin:0 .5em 0 0}.swal2-popup.swal2-toast .swal2-icon .swal2-icon-content{display:flex;align-items:center;font-size:1.8em;font-weight:bold}.swal2-popup.swal2-toast .swal2-icon.swal2-success .swal2-success-ring{width:2em;height:2em}.swal2-popup.swal2-toast .swal2-icon.swal2-error [class^=swal2-x-mark-line]{top:.875em;width:1.375em}.swal2-popup.swal2-toast .swal2-icon.swal2-error [class^=swal2-x-mark-line][class$=left]{left:.3125em}.swal2-popup.swal2-toast .swal2-icon.swal2-error [class^=swal2-x-mark-line][class$=right]{right:.3125em}.swal2-popup.swal2-toast .swal2-actions{justify-content:flex-start;height:auto;margin:0;margin-top:.5em;padding:0 .5em}.swal2-popup.swal2-toast .swal2-styled{margin:.25em .5em;padding:.4em .6em;font-size:1em}.swal2-popup.swal2-toast .swal2-success{border-color:#a5dc86}.swal2-popup.swal2-toast .swal2-success [class^=swal2-success-circular-line]{position:absolute;width:1.6em;height:3em;transform:rotate(45deg);border-radius:50%}.swal2-popup.swal2-toast .swal2-success [class^=swal2-success-circular-line][class$=left]{top:-0.8em;left:-0.5em;transform:rotate(-45deg);transform-origin:2em 2em;border-radius:4em 0 0 4em}.swal2-popup.swal2-toast .swal2-success [class^=swal2-success-circular-line][class$=right]{top:-0.25em;left:.9375em;transform-origin:0 1.5em;border-radius:0 4em 4em 0}.swal2-popup.swal2-toast .swal2-success .swal2-success-ring{width:2em;height:2em}.swal2-popup.swal2-toast .swal2-success .swal2-success-fix{top:0;left:.4375em;width:.4375em;height:2.6875em}.swal2-popup.swal2-toast .swal2-success [class^=swal2-success-line]{height:.3125em}.swal2-popup.swal2-toast .swal2-success [class^=swal2-success-line][class$=tip]{top:1.125em;left:.1875em;width:.75em}.swal2-popup.swal2-toast .swal2-success [class^=swal2-success-line][class$=long]{top:.9375em;right:.1875em;width:1.375em}.swal2-popup.swal2-toast .swal2-success.swal2-icon-show .swal2-success-line-tip{animation:swal2-toast-animate-success-line-tip .75s}.swal2-popup.swal2-toast .swal2-success.swal2-icon-show .swal2-success-line-long{animation:swal2-toast-animate-success-line-long .75s}.swal2-popup.swal2-toast.swal2-show{animation:swal2-toast-show .5s}.swal2-popup.swal2-toast.swal2-hide{animation:swal2-toast-hide .1s forwards}.swal2-container{display:grid;position:fixed;z-index:1060;inset:0;box-sizing:border-box;grid-template-areas:\"top-start     top            top-end\" \"center-start  center         center-end\" \"bottom-start  bottom-center  bottom-end\";grid-template-rows:minmax(min-content, auto) minmax(min-content, auto) minmax(min-content, auto);height:100%;padding:.625em;overflow-x:hidden;transition:background-color .1s;-webkit-overflow-scrolling:touch}.swal2-container.swal2-backdrop-show,.swal2-container.swal2-noanimation{background:rgba(0,0,0,.4)}.swal2-container.swal2-backdrop-hide{background:rgba(0,0,0,0) !important}.swal2-container.swal2-top-start,.swal2-container.swal2-center-start,.swal2-container.swal2-bottom-start{grid-template-columns:minmax(0, 1fr) auto auto}.swal2-container.swal2-top,.swal2-container.swal2-center,.swal2-container.swal2-bottom{grid-template-columns:auto minmax(0, 1fr) auto}.swal2-container.swal2-top-end,.swal2-container.swal2-center-end,.swal2-container.swal2-bottom-end{grid-template-columns:auto auto minmax(0, 1fr)}.swal2-container.swal2-top-start>.swal2-popup{align-self:start}.swal2-container.swal2-top>.swal2-popup{grid-column:2;align-self:start;justify-self:center}.swal2-container.swal2-top-end>.swal2-popup,.swal2-container.swal2-top-right>.swal2-popup{grid-column:3;align-self:start;justify-self:end}.swal2-container.swal2-center-start>.swal2-popup,.swal2-container.swal2-center-left>.swal2-popup{grid-row:2;align-self:center}.swal2-container.swal2-center>.swal2-popup{grid-column:2;grid-row:2;align-self:center;justify-self:center}.swal2-container.swal2-center-end>.swal2-popup,.swal2-container.swal2-center-right>.swal2-popup{grid-column:3;grid-row:2;align-self:center;justify-self:end}.swal2-container.swal2-bottom-start>.swal2-popup,.swal2-container.swal2-bottom-left>.swal2-popup{grid-column:1;grid-row:3;align-self:end}.swal2-container.swal2-bottom>.swal2-popup{grid-column:2;grid-row:3;justify-self:center;align-self:end}.swal2-container.swal2-bottom-end>.swal2-popup,.swal2-container.swal2-bottom-right>.swal2-popup{grid-column:3;grid-row:3;align-self:end;justify-self:end}.swal2-container.swal2-grow-row>.swal2-popup,.swal2-container.swal2-grow-fullscreen>.swal2-popup{grid-column:1/4;width:100%}.swal2-container.swal2-grow-column>.swal2-popup,.swal2-container.swal2-grow-fullscreen>.swal2-popup{grid-row:1/4;align-self:stretch}.swal2-container.swal2-no-transition{transition:none !important}.swal2-popup{display:none;position:relative;box-sizing:border-box;grid-template-columns:minmax(0, 100%);width:32em;max-width:100%;padding:0 0 1.25em;border:none;border-radius:5px;background:#fff;color:#545454;font-family:inherit;font-size:1rem}.swal2-popup:focus{outline:none}.swal2-popup.swal2-loading{overflow-y:hidden}.swal2-title{position:relative;max-width:100%;margin:0;padding:.8em 1em 0;color:inherit;font-size:1.875em;font-weight:600;text-align:center;text-transform:none;word-wrap:break-word}.swal2-actions{display:flex;z-index:1;box-sizing:border-box;flex-wrap:wrap;align-items:center;justify-content:center;width:auto;margin:1.25em auto 0;padding:0}.swal2-actions:not(.swal2-loading) .swal2-styled[disabled]{opacity:.4}.swal2-actions:not(.swal2-loading) .swal2-styled:hover{background-image:linear-gradient(rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.1))}.swal2-actions:not(.swal2-loading) .swal2-styled:active{background-image:linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2))}.swal2-loader{display:none;align-items:center;justify-content:center;width:2.2em;height:2.2em;margin:0 1.875em;animation:swal2-rotate-loading 1.5s linear 0s infinite normal;border-width:.25em;border-style:solid;border-radius:100%;border-color:#2778c4 rgba(0,0,0,0) #2778c4 rgba(0,0,0,0)}.swal2-styled{margin:.3125em;padding:.625em 1.1em;transition:box-shadow .1s;box-shadow:0 0 0 3px rgba(0,0,0,0);font-weight:500}.swal2-styled:not([disabled]){cursor:pointer}.swal2-styled.swal2-confirm{border:0;border-radius:.25em;background:initial;background-color:#7066e0;color:#fff;font-size:1em}.swal2-styled.swal2-confirm:focus{box-shadow:0 0 0 3px rgba(112,102,224,.5)}.swal2-styled.swal2-deny{border:0;border-radius:.25em;background:initial;background-color:#dc3741;color:#fff;font-size:1em}.swal2-styled.swal2-deny:focus{box-shadow:0 0 0 3px rgba(220,55,65,.5)}.swal2-styled.swal2-cancel{border:0;border-radius:.25em;background:initial;background-color:#6e7881;color:#fff;font-size:1em}.swal2-styled.swal2-cancel:focus{box-shadow:0 0 0 3px rgba(110,120,129,.5)}.swal2-styled.swal2-default-outline:focus{box-shadow:0 0 0 3px rgba(100,150,200,.5)}.swal2-styled:focus{outline:none}.swal2-styled::-moz-focus-inner{border:0}.swal2-footer{justify-content:center;margin:1em 0 0;padding:1em 1em 0;border-top:1px solid #eee;color:inherit;font-size:1em}.swal2-timer-progress-bar-container{position:absolute;right:0;bottom:0;left:0;grid-column:auto !important;overflow:hidden;border-bottom-right-radius:5px;border-bottom-left-radius:5px}.swal2-timer-progress-bar{width:100%;height:.25em;background:rgba(0,0,0,.2)}.swal2-image{max-width:100%;margin:2em auto 1em}.swal2-close{z-index:2;align-items:center;justify-content:center;width:1.2em;height:1.2em;margin-top:0;margin-right:0;margin-bottom:-1.2em;padding:0;overflow:hidden;transition:color .1s,box-shadow .1s;border:none;border-radius:5px;background:rgba(0,0,0,0);color:#ccc;font-family:monospace;font-size:2.5em;cursor:pointer;justify-self:end}.swal2-close:hover{transform:none;background:rgba(0,0,0,0);color:#f27474}.swal2-close:focus{outline:none;box-shadow:inset 0 0 0 3px rgba(100,150,200,.5)}.swal2-close::-moz-focus-inner{border:0}.swal2-html-container{z-index:1;justify-content:center;margin:1em 1.6em .3em;padding:0;overflow:auto;color:inherit;font-size:1.125em;font-weight:normal;line-height:normal;text-align:center;word-wrap:break-word;word-break:break-word}.swal2-input,.swal2-file,.swal2-textarea,.swal2-select,.swal2-radio,.swal2-checkbox{margin:1em 2em 3px}.swal2-input,.swal2-file,.swal2-textarea{box-sizing:border-box;width:auto;transition:border-color .1s,box-shadow .1s;border:1px solid #d9d9d9;border-radius:.1875em;background:rgba(0,0,0,0);box-shadow:inset 0 1px 1px rgba(0,0,0,.06),0 0 0 3px rgba(0,0,0,0);color:inherit;font-size:1.125em}.swal2-input.swal2-inputerror,.swal2-file.swal2-inputerror,.swal2-textarea.swal2-inputerror{border-color:#f27474 !important;box-shadow:0 0 2px #f27474 !important}.swal2-input:focus,.swal2-file:focus,.swal2-textarea:focus{border:1px solid #b4dbed;outline:none;box-shadow:inset 0 1px 1px rgba(0,0,0,.06),0 0 0 3px rgba(100,150,200,.5)}.swal2-input::placeholder,.swal2-file::placeholder,.swal2-textarea::placeholder{color:#ccc}.swal2-range{margin:1em 2em 3px;background:#fff}.swal2-range input{width:80%}.swal2-range output{width:20%;color:inherit;font-weight:600;text-align:center}.swal2-range input,.swal2-range output{height:2.625em;padding:0;font-size:1.125em;line-height:2.625em}.swal2-input{height:2.625em;padding:0 .75em}.swal2-file{width:75%;margin-right:auto;margin-left:auto;background:rgba(0,0,0,0);font-size:1.125em}.swal2-textarea{height:6.75em;padding:.75em}.swal2-select{min-width:50%;max-width:100%;padding:.375em .625em;background:rgba(0,0,0,0);color:inherit;font-size:1.125em}.swal2-radio,.swal2-checkbox{align-items:center;justify-content:center;background:#fff;color:inherit}.swal2-radio label,.swal2-checkbox label{margin:0 .6em;font-size:1.125em}.swal2-radio input,.swal2-checkbox input{flex-shrink:0;margin:0 .4em}.swal2-input-label{display:flex;justify-content:center;margin:1em auto 0}.swal2-validation-message{align-items:center;justify-content:center;margin:1em 0 0;padding:.625em;overflow:hidden;background:#f0f0f0;color:#666;font-size:1em;font-weight:300}.swal2-validation-message::before{content:\"!\";display:inline-block;width:1.5em;min-width:1.5em;height:1.5em;margin:0 .625em;border-radius:50%;background-color:#f27474;color:#fff;font-weight:600;line-height:1.5em;text-align:center}.swal2-icon{position:relative;box-sizing:content-box;justify-content:center;width:5em;height:5em;margin:2.5em auto .6em;border:0.25em solid rgba(0,0,0,0);border-radius:50%;border-color:#000;font-family:inherit;line-height:5em;cursor:default;user-select:none}.swal2-icon .swal2-icon-content{display:flex;align-items:center;font-size:3.75em}.swal2-icon.swal2-error{border-color:#f27474;color:#f27474}.swal2-icon.swal2-error .swal2-x-mark{position:relative;flex-grow:1}.swal2-icon.swal2-error [class^=swal2-x-mark-line]{display:block;position:absolute;top:2.3125em;width:2.9375em;height:.3125em;border-radius:.125em;background-color:#f27474}.swal2-icon.swal2-error [class^=swal2-x-mark-line][class$=left]{left:1.0625em;transform:rotate(45deg)}.swal2-icon.swal2-error [class^=swal2-x-mark-line][class$=right]{right:1em;transform:rotate(-45deg)}.swal2-icon.swal2-error.swal2-icon-show{animation:swal2-animate-error-icon .5s}.swal2-icon.swal2-error.swal2-icon-show .swal2-x-mark{animation:swal2-animate-error-x-mark .5s}.swal2-icon.swal2-warning{border-color:#facea8;color:#f8bb86}.swal2-icon.swal2-warning.swal2-icon-show{animation:swal2-animate-error-icon .5s}.swal2-icon.swal2-warning.swal2-icon-show .swal2-icon-content{animation:swal2-animate-i-mark .5s}.swal2-icon.swal2-info{border-color:#9de0f6;color:#3fc3ee}.swal2-icon.swal2-info.swal2-icon-show{animation:swal2-animate-error-icon .5s}.swal2-icon.swal2-info.swal2-icon-show .swal2-icon-content{animation:swal2-animate-i-mark .8s}.swal2-icon.swal2-question{border-color:#c9dae1;color:#87adbd}.swal2-icon.swal2-question.swal2-icon-show{animation:swal2-animate-error-icon .5s}.swal2-icon.swal2-question.swal2-icon-show .swal2-icon-content{animation:swal2-animate-question-mark .8s}.swal2-icon.swal2-success{border-color:#a5dc86;color:#a5dc86}.swal2-icon.swal2-success [class^=swal2-success-circular-line]{position:absolute;width:3.75em;height:7.5em;transform:rotate(45deg);border-radius:50%}.swal2-icon.swal2-success [class^=swal2-success-circular-line][class$=left]{top:-0.4375em;left:-2.0635em;transform:rotate(-45deg);transform-origin:3.75em 3.75em;border-radius:7.5em 0 0 7.5em}.swal2-icon.swal2-success [class^=swal2-success-circular-line][class$=right]{top:-0.6875em;left:1.875em;transform:rotate(-45deg);transform-origin:0 3.75em;border-radius:0 7.5em 7.5em 0}.swal2-icon.swal2-success .swal2-success-ring{position:absolute;z-index:2;top:-0.25em;left:-0.25em;box-sizing:content-box;width:100%;height:100%;border:.25em solid rgba(165,220,134,.3);border-radius:50%}.swal2-icon.swal2-success .swal2-success-fix{position:absolute;z-index:1;top:.5em;left:1.625em;width:.4375em;height:5.625em;transform:rotate(-45deg)}.swal2-icon.swal2-success [class^=swal2-success-line]{display:block;position:absolute;z-index:2;height:.3125em;border-radius:.125em;background-color:#a5dc86}.swal2-icon.swal2-success [class^=swal2-success-line][class$=tip]{top:2.875em;left:.8125em;width:1.5625em;transform:rotate(45deg)}.swal2-icon.swal2-success [class^=swal2-success-line][class$=long]{top:2.375em;right:.5em;width:2.9375em;transform:rotate(-45deg)}.swal2-icon.swal2-success.swal2-icon-show .swal2-success-line-tip{animation:swal2-animate-success-line-tip .75s}.swal2-icon.swal2-success.swal2-icon-show .swal2-success-line-long{animation:swal2-animate-success-line-long .75s}.swal2-icon.swal2-success.swal2-icon-show .swal2-success-circular-line-right{animation:swal2-rotate-success-circular-line 4.25s ease-in}.swal2-progress-steps{flex-wrap:wrap;align-items:center;max-width:100%;margin:1.25em auto;padding:0;background:rgba(0,0,0,0);font-weight:600}.swal2-progress-steps li{display:inline-block;position:relative}.swal2-progress-steps .swal2-progress-step{z-index:20;flex-shrink:0;width:2em;height:2em;border-radius:2em;background:#2778c4;color:#fff;line-height:2em;text-align:center}.swal2-progress-steps .swal2-progress-step.swal2-active-progress-step{background:#2778c4}.swal2-progress-steps .swal2-progress-step.swal2-active-progress-step~.swal2-progress-step{background:#add8e6;color:#fff}.swal2-progress-steps .swal2-progress-step.swal2-active-progress-step~.swal2-progress-step-line{background:#add8e6}.swal2-progress-steps .swal2-progress-step-line{z-index:10;flex-shrink:0;width:2.5em;height:.4em;margin:0 -1px;background:#2778c4}[class^=swal2]{-webkit-tap-highlight-color:rgba(0,0,0,0)}.swal2-show{animation:swal2-show .3s}.swal2-hide{animation:swal2-hide .15s forwards}.swal2-noanimation{transition:none}.swal2-scrollbar-measure{position:absolute;top:-9999px;width:50px;height:50px;overflow:scroll}.swal2-rtl .swal2-close{margin-right:initial;margin-left:0}.swal2-rtl .swal2-timer-progress-bar{right:0;left:auto}@keyframes swal2-toast-show{0%{transform:translateY(-0.625em) rotateZ(2deg)}33%{transform:translateY(0) rotateZ(-2deg)}66%{transform:translateY(0.3125em) rotateZ(2deg)}100%{transform:translateY(0) rotateZ(0deg)}}@keyframes swal2-toast-hide{100%{transform:rotateZ(1deg);opacity:0}}@keyframes swal2-toast-animate-success-line-tip{0%{top:.5625em;left:.0625em;width:0}54%{top:.125em;left:.125em;width:0}70%{top:.625em;left:-0.25em;width:1.625em}84%{top:1.0625em;left:.75em;width:.5em}100%{top:1.125em;left:.1875em;width:.75em}}@keyframes swal2-toast-animate-success-line-long{0%{top:1.625em;right:1.375em;width:0}65%{top:1.25em;right:.9375em;width:0}84%{top:.9375em;right:0;width:1.125em}100%{top:.9375em;right:.1875em;width:1.375em}}@keyframes swal2-show{0%{transform:scale(0.7)}45%{transform:scale(1.05)}80%{transform:scale(0.95)}100%{transform:scale(1)}}@keyframes swal2-hide{0%{transform:scale(1);opacity:1}100%{transform:scale(0.5);opacity:0}}@keyframes swal2-animate-success-line-tip{0%{top:1.1875em;left:.0625em;width:0}54%{top:1.0625em;left:.125em;width:0}70%{top:2.1875em;left:-0.375em;width:3.125em}84%{top:3em;left:1.3125em;width:1.0625em}100%{top:2.8125em;left:.8125em;width:1.5625em}}@keyframes swal2-animate-success-line-long{0%{top:3.375em;right:2.875em;width:0}65%{top:3.375em;right:2.875em;width:0}84%{top:2.1875em;right:0;width:3.4375em}100%{top:2.375em;right:.5em;width:2.9375em}}@keyframes swal2-rotate-success-circular-line{0%{transform:rotate(-45deg)}5%{transform:rotate(-45deg)}12%{transform:rotate(-405deg)}100%{transform:rotate(-405deg)}}@keyframes swal2-animate-error-x-mark{0%{margin-top:1.625em;transform:scale(0.4);opacity:0}50%{margin-top:1.625em;transform:scale(0.4);opacity:0}80%{margin-top:-0.375em;transform:scale(1.15)}100%{margin-top:0;transform:scale(1);opacity:1}}@keyframes swal2-animate-error-icon{0%{transform:rotateX(100deg);opacity:0}100%{transform:rotateX(0deg);opacity:1}}@keyframes swal2-rotate-loading{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}@keyframes swal2-animate-question-mark{0%{transform:rotateY(-360deg)}100%{transform:rotateY(0)}}@keyframes swal2-animate-i-mark{0%{transform:rotateZ(45deg);opacity:0}25%{transform:rotateZ(-25deg);opacity:.4}50%{transform:rotateZ(15deg);opacity:.8}75%{transform:rotateZ(-5deg);opacity:1}100%{transform:rotateX(0);opacity:1}}body.swal2-shown:not(.swal2-no-backdrop):not(.swal2-toast-shown){overflow:hidden}body.swal2-height-auto{height:auto !important}body.swal2-no-backdrop .swal2-container{background-color:rgba(0,0,0,0) !important;pointer-events:none}body.swal2-no-backdrop .swal2-container .swal2-popup{pointer-events:all}body.swal2-no-backdrop .swal2-container .swal2-modal{box-shadow:0 0 10px rgba(0,0,0,.4)}@media print{body.swal2-shown:not(.swal2-no-backdrop):not(.swal2-toast-shown){overflow-y:scroll !important}body.swal2-shown:not(.swal2-no-backdrop):not(.swal2-toast-shown)>[aria-hidden=true]{display:none}body.swal2-shown:not(.swal2-no-backdrop):not(.swal2-toast-shown) .swal2-container{position:static !important}}body.swal2-toast-shown .swal2-container{box-sizing:border-box;width:360px;max-width:100%;background-color:rgba(0,0,0,0);pointer-events:none}body.swal2-toast-shown .swal2-container.swal2-top{inset:0 auto auto 50%;transform:translateX(-50%)}body.swal2-toast-shown .swal2-container.swal2-top-end,body.swal2-toast-shown .swal2-container.swal2-top-right{inset:0 0 auto auto}body.swal2-toast-shown .swal2-container.swal2-top-start,body.swal2-toast-shown .swal2-container.swal2-top-left{inset:0 auto auto 0}body.swal2-toast-shown .swal2-container.swal2-center-start,body.swal2-toast-shown .swal2-container.swal2-center-left{inset:50% auto auto 0;transform:translateY(-50%)}body.swal2-toast-shown .swal2-container.swal2-center{inset:50% auto auto 50%;transform:translate(-50%, -50%)}body.swal2-toast-shown .swal2-container.swal2-center-end,body.swal2-toast-shown .swal2-container.swal2-center-right{inset:50% 0 auto auto;transform:translateY(-50%)}body.swal2-toast-shown .swal2-container.swal2-bottom-start,body.swal2-toast-shown .swal2-container.swal2-bottom-left{inset:auto auto 0 0}body.swal2-toast-shown .swal2-container.swal2-bottom{inset:auto auto 0 50%;transform:translateX(-50%)}body.swal2-toast-shown .swal2-container.swal2-bottom-end,body.swal2-toast-shown .swal2-container.swal2-bottom-right{inset:auto 0 0 auto}");
+"undefined"!=typeof document&&function(e,t){var n=e.createElement("style");if(e.getElementsByTagName("head")[0].appendChild(n),n.styleSheet)n.styleSheet.disabled||(n.styleSheet.cssText=t);else try{n.innerHTML=t}catch(e){n.innerText=t}}(document,".swal2-popup.swal2-toast{box-sizing:border-box;grid-column:1/4 !important;grid-row:1/4 !important;grid-template-columns:min-content auto min-content;padding:1em;overflow-y:hidden;background:#fff;box-shadow:0 0 1px rgba(0,0,0,.075),0 1px 2px rgba(0,0,0,.075),1px 2px 4px rgba(0,0,0,.075),1px 3px 8px rgba(0,0,0,.075),2px 4px 16px rgba(0,0,0,.075);pointer-events:all}.swal2-popup.swal2-toast>*{grid-column:2}.swal2-popup.swal2-toast .swal2-title{margin:.5em 1em;padding:0;font-size:1em;text-align:initial}.swal2-popup.swal2-toast .swal2-loading{justify-content:center}.swal2-popup.swal2-toast .swal2-input{height:2em;margin:.5em;font-size:1em}.swal2-popup.swal2-toast .swal2-validation-message{font-size:1em}.swal2-popup.swal2-toast .swal2-footer{margin:.5em 0 0;padding:.5em 0 0;font-size:.8em}.swal2-popup.swal2-toast .swal2-close{grid-column:3/3;grid-row:1/99;align-self:center;width:.8em;height:.8em;margin:0;font-size:2em}.swal2-popup.swal2-toast .swal2-html-container{margin:.5em 1em;padding:0;overflow:initial;font-size:1em;text-align:initial}.swal2-popup.swal2-toast .swal2-html-container:empty{padding:0}.swal2-popup.swal2-toast .swal2-loader{grid-column:1;grid-row:1/99;align-self:center;width:2em;height:2em;margin:.25em}.swal2-popup.swal2-toast .swal2-icon{grid-column:1;grid-row:1/99;align-self:center;width:2em;min-width:2em;height:2em;margin:0 .5em 0 0}.swal2-popup.swal2-toast .swal2-icon .swal2-icon-content{display:flex;align-items:center;font-size:1.8em;font-weight:bold}.swal2-popup.swal2-toast .swal2-icon.swal2-success .swal2-success-ring{width:2em;height:2em}.swal2-popup.swal2-toast .swal2-icon.swal2-error [class^=swal2-x-mark-line]{top:.875em;width:1.375em}.swal2-popup.swal2-toast .swal2-icon.swal2-error [class^=swal2-x-mark-line][class$=left]{left:.3125em}.swal2-popup.swal2-toast .swal2-icon.swal2-error [class^=swal2-x-mark-line][class$=right]{right:.3125em}.swal2-popup.swal2-toast .swal2-actions{justify-content:flex-start;height:auto;margin:0;margin-top:.5em;padding:0 .5em}.swal2-popup.swal2-toast .swal2-styled{margin:.25em .5em;padding:.4em .6em;font-size:1em}.swal2-popup.swal2-toast .swal2-success{border-color:#a5dc86}.swal2-popup.swal2-toast .swal2-success [class^=swal2-success-circular-line]{position:absolute;width:1.6em;height:3em;border-radius:50%}.swal2-popup.swal2-toast .swal2-success [class^=swal2-success-circular-line][class$=left]{top:-0.8em;left:-0.5em;transform:rotate(-45deg);transform-origin:2em 2em;border-radius:4em 0 0 4em}.swal2-popup.swal2-toast .swal2-success [class^=swal2-success-circular-line][class$=right]{top:-0.25em;left:.9375em;transform-origin:0 1.5em;border-radius:0 4em 4em 0}.swal2-popup.swal2-toast .swal2-success .swal2-success-ring{width:2em;height:2em}.swal2-popup.swal2-toast .swal2-success .swal2-success-fix{top:0;left:.4375em;width:.4375em;height:2.6875em}.swal2-popup.swal2-toast .swal2-success [class^=swal2-success-line]{height:.3125em}.swal2-popup.swal2-toast .swal2-success [class^=swal2-success-line][class$=tip]{top:1.125em;left:.1875em;width:.75em}.swal2-popup.swal2-toast .swal2-success [class^=swal2-success-line][class$=long]{top:.9375em;right:.1875em;width:1.375em}.swal2-popup.swal2-toast .swal2-success.swal2-icon-show .swal2-success-line-tip{animation:swal2-toast-animate-success-line-tip .75s}.swal2-popup.swal2-toast .swal2-success.swal2-icon-show .swal2-success-line-long{animation:swal2-toast-animate-success-line-long .75s}.swal2-popup.swal2-toast.swal2-show{animation:swal2-toast-show .5s}.swal2-popup.swal2-toast.swal2-hide{animation:swal2-toast-hide .1s forwards}div:where(.swal2-container){display:grid;position:fixed;z-index:1060;inset:0;box-sizing:border-box;grid-template-areas:\"top-start     top            top-end\" \"center-start  center         center-end\" \"bottom-start  bottom-center  bottom-end\";grid-template-rows:minmax(min-content, auto) minmax(min-content, auto) minmax(min-content, auto);height:100%;padding:.625em;overflow-x:hidden;transition:background-color .1s;-webkit-overflow-scrolling:touch}div:where(.swal2-container).swal2-backdrop-show,div:where(.swal2-container).swal2-noanimation{background:rgba(0,0,0,.4)}div:where(.swal2-container).swal2-backdrop-hide{background:rgba(0,0,0,0) !important}div:where(.swal2-container).swal2-top-start,div:where(.swal2-container).swal2-center-start,div:where(.swal2-container).swal2-bottom-start{grid-template-columns:minmax(0, 1fr) auto auto}div:where(.swal2-container).swal2-top,div:where(.swal2-container).swal2-center,div:where(.swal2-container).swal2-bottom{grid-template-columns:auto minmax(0, 1fr) auto}div:where(.swal2-container).swal2-top-end,div:where(.swal2-container).swal2-center-end,div:where(.swal2-container).swal2-bottom-end{grid-template-columns:auto auto minmax(0, 1fr)}div:where(.swal2-container).swal2-top-start>.swal2-popup{align-self:start}div:where(.swal2-container).swal2-top>.swal2-popup{grid-column:2;place-self:start center}div:where(.swal2-container).swal2-top-end>.swal2-popup,div:where(.swal2-container).swal2-top-right>.swal2-popup{grid-column:3;place-self:start end}div:where(.swal2-container).swal2-center-start>.swal2-popup,div:where(.swal2-container).swal2-center-left>.swal2-popup{grid-row:2;align-self:center}div:where(.swal2-container).swal2-center>.swal2-popup{grid-column:2;grid-row:2;place-self:center center}div:where(.swal2-container).swal2-center-end>.swal2-popup,div:where(.swal2-container).swal2-center-right>.swal2-popup{grid-column:3;grid-row:2;place-self:center end}div:where(.swal2-container).swal2-bottom-start>.swal2-popup,div:where(.swal2-container).swal2-bottom-left>.swal2-popup{grid-column:1;grid-row:3;align-self:end}div:where(.swal2-container).swal2-bottom>.swal2-popup{grid-column:2;grid-row:3;place-self:end center}div:where(.swal2-container).swal2-bottom-end>.swal2-popup,div:where(.swal2-container).swal2-bottom-right>.swal2-popup{grid-column:3;grid-row:3;place-self:end end}div:where(.swal2-container).swal2-grow-row>.swal2-popup,div:where(.swal2-container).swal2-grow-fullscreen>.swal2-popup{grid-column:1/4;width:100%}div:where(.swal2-container).swal2-grow-column>.swal2-popup,div:where(.swal2-container).swal2-grow-fullscreen>.swal2-popup{grid-row:1/4;align-self:stretch}div:where(.swal2-container).swal2-no-transition{transition:none !important}div:where(.swal2-container) div:where(.swal2-popup){display:none;position:relative;box-sizing:border-box;grid-template-columns:minmax(0, 100%);width:32em;max-width:100%;padding:0 0 1.25em;border:none;border-radius:5px;background:#fff;color:#545454;font-family:inherit;font-size:1rem}div:where(.swal2-container) div:where(.swal2-popup):focus{outline:none}div:where(.swal2-container) div:where(.swal2-popup).swal2-loading{overflow-y:hidden}div:where(.swal2-container) h2:where(.swal2-title){position:relative;max-width:100%;margin:0;padding:.8em 1em 0;color:inherit;font-size:1.875em;font-weight:600;text-align:center;text-transform:none;word-wrap:break-word}div:where(.swal2-container) div:where(.swal2-actions){display:flex;z-index:1;box-sizing:border-box;flex-wrap:wrap;align-items:center;justify-content:center;width:auto;margin:1.25em auto 0;padding:0}div:where(.swal2-container) div:where(.swal2-actions):not(.swal2-loading) .swal2-styled[disabled]{opacity:.4}div:where(.swal2-container) div:where(.swal2-actions):not(.swal2-loading) .swal2-styled:hover{background-image:linear-gradient(rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.1))}div:where(.swal2-container) div:where(.swal2-actions):not(.swal2-loading) .swal2-styled:active{background-image:linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2))}div:where(.swal2-container) div:where(.swal2-loader){display:none;align-items:center;justify-content:center;width:2.2em;height:2.2em;margin:0 1.875em;animation:swal2-rotate-loading 1.5s linear 0s infinite normal;border-width:.25em;border-style:solid;border-radius:100%;border-color:#2778c4 rgba(0,0,0,0) #2778c4 rgba(0,0,0,0)}div:where(.swal2-container) button:where(.swal2-styled){margin:.3125em;padding:.625em 1.1em;transition:box-shadow .1s;box-shadow:0 0 0 3px rgba(0,0,0,0);font-weight:500}div:where(.swal2-container) button:where(.swal2-styled):not([disabled]){cursor:pointer}div:where(.swal2-container) button:where(.swal2-styled):where(.swal2-confirm){border:0;border-radius:.25em;background:initial;background-color:#7066e0;color:#fff;font-size:1em}div:where(.swal2-container) button:where(.swal2-styled):where(.swal2-confirm):focus-visible{box-shadow:0 0 0 3px rgba(112,102,224,.5)}div:where(.swal2-container) button:where(.swal2-styled):where(.swal2-deny){border:0;border-radius:.25em;background:initial;background-color:#dc3741;color:#fff;font-size:1em}div:where(.swal2-container) button:where(.swal2-styled):where(.swal2-deny):focus-visible{box-shadow:0 0 0 3px rgba(220,55,65,.5)}div:where(.swal2-container) button:where(.swal2-styled):where(.swal2-cancel){border:0;border-radius:.25em;background:initial;background-color:#6e7881;color:#fff;font-size:1em}div:where(.swal2-container) button:where(.swal2-styled):where(.swal2-cancel):focus-visible{box-shadow:0 0 0 3px rgba(110,120,129,.5)}div:where(.swal2-container) button:where(.swal2-styled).swal2-default-outline:focus-visible{box-shadow:0 0 0 3px rgba(100,150,200,.5)}div:where(.swal2-container) button:where(.swal2-styled):focus-visible{outline:none}div:where(.swal2-container) button:where(.swal2-styled)::-moz-focus-inner{border:0}div:where(.swal2-container) div:where(.swal2-footer){margin:1em 0 0;padding:1em 1em 0;border-top:1px solid #eee;color:inherit;font-size:1em;text-align:center}div:where(.swal2-container) .swal2-timer-progress-bar-container{position:absolute;right:0;bottom:0;left:0;grid-column:auto !important;overflow:hidden;border-bottom-right-radius:5px;border-bottom-left-radius:5px}div:where(.swal2-container) div:where(.swal2-timer-progress-bar){width:100%;height:.25em;background:rgba(0,0,0,.2)}div:where(.swal2-container) img:where(.swal2-image){max-width:100%;margin:2em auto 1em}div:where(.swal2-container) button:where(.swal2-close){z-index:2;align-items:center;justify-content:center;width:1.2em;height:1.2em;margin-top:0;margin-right:0;margin-bottom:-1.2em;padding:0;overflow:hidden;transition:color .1s,box-shadow .1s;border:none;border-radius:5px;background:rgba(0,0,0,0);color:#ccc;font-family:monospace;font-size:2.5em;cursor:pointer;justify-self:end}div:where(.swal2-container) button:where(.swal2-close):hover{transform:none;background:rgba(0,0,0,0);color:#f27474}div:where(.swal2-container) button:where(.swal2-close):focus-visible{outline:none;box-shadow:inset 0 0 0 3px rgba(100,150,200,.5)}div:where(.swal2-container) button:where(.swal2-close)::-moz-focus-inner{border:0}div:where(.swal2-container) .swal2-html-container{z-index:1;justify-content:center;margin:0;padding:1em 1.6em .3em;overflow:auto;color:inherit;font-size:1.125em;font-weight:normal;line-height:normal;text-align:center;word-wrap:break-word;word-break:break-word}div:where(.swal2-container) input:where(.swal2-input),div:where(.swal2-container) input:where(.swal2-file),div:where(.swal2-container) textarea:where(.swal2-textarea),div:where(.swal2-container) select:where(.swal2-select),div:where(.swal2-container) div:where(.swal2-radio),div:where(.swal2-container) label:where(.swal2-checkbox){margin:1em 2em 3px}div:where(.swal2-container) input:where(.swal2-input),div:where(.swal2-container) input:where(.swal2-file),div:where(.swal2-container) textarea:where(.swal2-textarea){box-sizing:border-box;width:auto;transition:border-color .1s,box-shadow .1s;border:1px solid #d9d9d9;border-radius:.1875em;background:rgba(0,0,0,0);box-shadow:inset 0 1px 1px rgba(0,0,0,.06),0 0 0 3px rgba(0,0,0,0);color:inherit;font-size:1.125em}div:where(.swal2-container) input:where(.swal2-input).swal2-inputerror,div:where(.swal2-container) input:where(.swal2-file).swal2-inputerror,div:where(.swal2-container) textarea:where(.swal2-textarea).swal2-inputerror{border-color:#f27474 !important;box-shadow:0 0 2px #f27474 !important}div:where(.swal2-container) input:where(.swal2-input):focus,div:where(.swal2-container) input:where(.swal2-file):focus,div:where(.swal2-container) textarea:where(.swal2-textarea):focus{border:1px solid #b4dbed;outline:none;box-shadow:inset 0 1px 1px rgba(0,0,0,.06),0 0 0 3px rgba(100,150,200,.5)}div:where(.swal2-container) input:where(.swal2-input)::placeholder,div:where(.swal2-container) input:where(.swal2-file)::placeholder,div:where(.swal2-container) textarea:where(.swal2-textarea)::placeholder{color:#ccc}div:where(.swal2-container) .swal2-range{margin:1em 2em 3px;background:#fff}div:where(.swal2-container) .swal2-range input{width:80%}div:where(.swal2-container) .swal2-range output{width:20%;color:inherit;font-weight:600;text-align:center}div:where(.swal2-container) .swal2-range input,div:where(.swal2-container) .swal2-range output{height:2.625em;padding:0;font-size:1.125em;line-height:2.625em}div:where(.swal2-container) .swal2-input{height:2.625em;padding:0 .75em}div:where(.swal2-container) .swal2-file{width:75%;margin-right:auto;margin-left:auto;background:rgba(0,0,0,0);font-size:1.125em}div:where(.swal2-container) .swal2-textarea{height:6.75em;padding:.75em}div:where(.swal2-container) .swal2-select{min-width:50%;max-width:100%;padding:.375em .625em;background:rgba(0,0,0,0);color:inherit;font-size:1.125em}div:where(.swal2-container) .swal2-radio,div:where(.swal2-container) .swal2-checkbox{align-items:center;justify-content:center;background:#fff;color:inherit}div:where(.swal2-container) .swal2-radio label,div:where(.swal2-container) .swal2-checkbox label{margin:0 .6em;font-size:1.125em}div:where(.swal2-container) .swal2-radio input,div:where(.swal2-container) .swal2-checkbox input{flex-shrink:0;margin:0 .4em}div:where(.swal2-container) label:where(.swal2-input-label){display:flex;justify-content:center;margin:1em auto 0}div:where(.swal2-container) div:where(.swal2-validation-message){align-items:center;justify-content:center;margin:1em 0 0;padding:.625em;overflow:hidden;background:#f0f0f0;color:#666;font-size:1em;font-weight:300}div:where(.swal2-container) div:where(.swal2-validation-message)::before{content:\"!\";display:inline-block;width:1.5em;min-width:1.5em;height:1.5em;margin:0 .625em;border-radius:50%;background-color:#f27474;color:#fff;font-weight:600;line-height:1.5em;text-align:center}div:where(.swal2-container) .swal2-progress-steps{flex-wrap:wrap;align-items:center;max-width:100%;margin:1.25em auto;padding:0;background:rgba(0,0,0,0);font-weight:600}div:where(.swal2-container) .swal2-progress-steps li{display:inline-block;position:relative}div:where(.swal2-container) .swal2-progress-steps .swal2-progress-step{z-index:20;flex-shrink:0;width:2em;height:2em;border-radius:2em;background:#2778c4;color:#fff;line-height:2em;text-align:center}div:where(.swal2-container) .swal2-progress-steps .swal2-progress-step.swal2-active-progress-step{background:#2778c4}div:where(.swal2-container) .swal2-progress-steps .swal2-progress-step.swal2-active-progress-step~.swal2-progress-step{background:#add8e6;color:#fff}div:where(.swal2-container) .swal2-progress-steps .swal2-progress-step.swal2-active-progress-step~.swal2-progress-step-line{background:#add8e6}div:where(.swal2-container) .swal2-progress-steps .swal2-progress-step-line{z-index:10;flex-shrink:0;width:2.5em;height:.4em;margin:0 -1px;background:#2778c4}div:where(.swal2-icon){position:relative;box-sizing:content-box;justify-content:center;width:5em;height:5em;margin:2.5em auto .6em;border:0.25em solid rgba(0,0,0,0);border-radius:50%;border-color:#000;font-family:inherit;line-height:5em;cursor:default;user-select:none}div:where(.swal2-icon) .swal2-icon-content{display:flex;align-items:center;font-size:3.75em}div:where(.swal2-icon).swal2-error{border-color:#f27474;color:#f27474}div:where(.swal2-icon).swal2-error .swal2-x-mark{position:relative;flex-grow:1}div:where(.swal2-icon).swal2-error [class^=swal2-x-mark-line]{display:block;position:absolute;top:2.3125em;width:2.9375em;height:.3125em;border-radius:.125em;background-color:#f27474}div:where(.swal2-icon).swal2-error [class^=swal2-x-mark-line][class$=left]{left:1.0625em;transform:rotate(45deg)}div:where(.swal2-icon).swal2-error [class^=swal2-x-mark-line][class$=right]{right:1em;transform:rotate(-45deg)}div:where(.swal2-icon).swal2-error.swal2-icon-show{animation:swal2-animate-error-icon .5s}div:where(.swal2-icon).swal2-error.swal2-icon-show .swal2-x-mark{animation:swal2-animate-error-x-mark .5s}div:where(.swal2-icon).swal2-warning{border-color:#facea8;color:#f8bb86}div:where(.swal2-icon).swal2-warning.swal2-icon-show{animation:swal2-animate-error-icon .5s}div:where(.swal2-icon).swal2-warning.swal2-icon-show .swal2-icon-content{animation:swal2-animate-i-mark .5s}div:where(.swal2-icon).swal2-info{border-color:#9de0f6;color:#3fc3ee}div:where(.swal2-icon).swal2-info.swal2-icon-show{animation:swal2-animate-error-icon .5s}div:where(.swal2-icon).swal2-info.swal2-icon-show .swal2-icon-content{animation:swal2-animate-i-mark .8s}div:where(.swal2-icon).swal2-question{border-color:#c9dae1;color:#87adbd}div:where(.swal2-icon).swal2-question.swal2-icon-show{animation:swal2-animate-error-icon .5s}div:where(.swal2-icon).swal2-question.swal2-icon-show .swal2-icon-content{animation:swal2-animate-question-mark .8s}div:where(.swal2-icon).swal2-success{border-color:#a5dc86;color:#a5dc86}div:where(.swal2-icon).swal2-success [class^=swal2-success-circular-line]{position:absolute;width:3.75em;height:7.5em;border-radius:50%}div:where(.swal2-icon).swal2-success [class^=swal2-success-circular-line][class$=left]{top:-0.4375em;left:-2.0635em;transform:rotate(-45deg);transform-origin:3.75em 3.75em;border-radius:7.5em 0 0 7.5em}div:where(.swal2-icon).swal2-success [class^=swal2-success-circular-line][class$=right]{top:-0.6875em;left:1.875em;transform:rotate(-45deg);transform-origin:0 3.75em;border-radius:0 7.5em 7.5em 0}div:where(.swal2-icon).swal2-success .swal2-success-ring{position:absolute;z-index:2;top:-0.25em;left:-0.25em;box-sizing:content-box;width:100%;height:100%;border:.25em solid rgba(165,220,134,.3);border-radius:50%}div:where(.swal2-icon).swal2-success .swal2-success-fix{position:absolute;z-index:1;top:.5em;left:1.625em;width:.4375em;height:5.625em;transform:rotate(-45deg)}div:where(.swal2-icon).swal2-success [class^=swal2-success-line]{display:block;position:absolute;z-index:2;height:.3125em;border-radius:.125em;background-color:#a5dc86}div:where(.swal2-icon).swal2-success [class^=swal2-success-line][class$=tip]{top:2.875em;left:.8125em;width:1.5625em;transform:rotate(45deg)}div:where(.swal2-icon).swal2-success [class^=swal2-success-line][class$=long]{top:2.375em;right:.5em;width:2.9375em;transform:rotate(-45deg)}div:where(.swal2-icon).swal2-success.swal2-icon-show .swal2-success-line-tip{animation:swal2-animate-success-line-tip .75s}div:where(.swal2-icon).swal2-success.swal2-icon-show .swal2-success-line-long{animation:swal2-animate-success-line-long .75s}div:where(.swal2-icon).swal2-success.swal2-icon-show .swal2-success-circular-line-right{animation:swal2-rotate-success-circular-line 4.25s ease-in}[class^=swal2]{-webkit-tap-highlight-color:rgba(0,0,0,0)}.swal2-show{animation:swal2-show .3s}.swal2-hide{animation:swal2-hide .15s forwards}.swal2-noanimation{transition:none}.swal2-scrollbar-measure{position:absolute;top:-9999px;width:50px;height:50px;overflow:scroll}.swal2-rtl .swal2-close{margin-right:initial;margin-left:0}.swal2-rtl .swal2-timer-progress-bar{right:0;left:auto}@keyframes swal2-toast-show{0%{transform:translateY(-0.625em) rotateZ(2deg)}33%{transform:translateY(0) rotateZ(-2deg)}66%{transform:translateY(0.3125em) rotateZ(2deg)}100%{transform:translateY(0) rotateZ(0deg)}}@keyframes swal2-toast-hide{100%{transform:rotateZ(1deg);opacity:0}}@keyframes swal2-toast-animate-success-line-tip{0%{top:.5625em;left:.0625em;width:0}54%{top:.125em;left:.125em;width:0}70%{top:.625em;left:-0.25em;width:1.625em}84%{top:1.0625em;left:.75em;width:.5em}100%{top:1.125em;left:.1875em;width:.75em}}@keyframes swal2-toast-animate-success-line-long{0%{top:1.625em;right:1.375em;width:0}65%{top:1.25em;right:.9375em;width:0}84%{top:.9375em;right:0;width:1.125em}100%{top:.9375em;right:.1875em;width:1.375em}}@keyframes swal2-show{0%{transform:scale(0.7)}45%{transform:scale(1.05)}80%{transform:scale(0.95)}100%{transform:scale(1)}}@keyframes swal2-hide{0%{transform:scale(1);opacity:1}100%{transform:scale(0.5);opacity:0}}@keyframes swal2-animate-success-line-tip{0%{top:1.1875em;left:.0625em;width:0}54%{top:1.0625em;left:.125em;width:0}70%{top:2.1875em;left:-0.375em;width:3.125em}84%{top:3em;left:1.3125em;width:1.0625em}100%{top:2.8125em;left:.8125em;width:1.5625em}}@keyframes swal2-animate-success-line-long{0%{top:3.375em;right:2.875em;width:0}65%{top:3.375em;right:2.875em;width:0}84%{top:2.1875em;right:0;width:3.4375em}100%{top:2.375em;right:.5em;width:2.9375em}}@keyframes swal2-rotate-success-circular-line{0%{transform:rotate(-45deg)}5%{transform:rotate(-45deg)}12%{transform:rotate(-405deg)}100%{transform:rotate(-405deg)}}@keyframes swal2-animate-error-x-mark{0%{margin-top:1.625em;transform:scale(0.4);opacity:0}50%{margin-top:1.625em;transform:scale(0.4);opacity:0}80%{margin-top:-0.375em;transform:scale(1.15)}100%{margin-top:0;transform:scale(1);opacity:1}}@keyframes swal2-animate-error-icon{0%{transform:rotateX(100deg);opacity:0}100%{transform:rotateX(0deg);opacity:1}}@keyframes swal2-rotate-loading{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}@keyframes swal2-animate-question-mark{0%{transform:rotateY(-360deg)}100%{transform:rotateY(0)}}@keyframes swal2-animate-i-mark{0%{transform:rotateZ(45deg);opacity:0}25%{transform:rotateZ(-25deg);opacity:.4}50%{transform:rotateZ(15deg);opacity:.8}75%{transform:rotateZ(-5deg);opacity:1}100%{transform:rotateX(0);opacity:1}}body.swal2-shown:not(.swal2-no-backdrop):not(.swal2-toast-shown){overflow:hidden}body.swal2-height-auto{height:auto !important}body.swal2-no-backdrop .swal2-container{background-color:rgba(0,0,0,0) !important;pointer-events:none}body.swal2-no-backdrop .swal2-container .swal2-popup{pointer-events:all}body.swal2-no-backdrop .swal2-container .swal2-modal{box-shadow:0 0 10px rgba(0,0,0,.4)}@media print{body.swal2-shown:not(.swal2-no-backdrop):not(.swal2-toast-shown){overflow-y:scroll !important}body.swal2-shown:not(.swal2-no-backdrop):not(.swal2-toast-shown)>[aria-hidden=true]{display:none}body.swal2-shown:not(.swal2-no-backdrop):not(.swal2-toast-shown) .swal2-container{position:static !important}}body.swal2-toast-shown .swal2-container{box-sizing:border-box;width:360px;max-width:100%;background-color:rgba(0,0,0,0);pointer-events:none}body.swal2-toast-shown .swal2-container.swal2-top{inset:0 auto auto 50%;transform:translateX(-50%)}body.swal2-toast-shown .swal2-container.swal2-top-end,body.swal2-toast-shown .swal2-container.swal2-top-right{inset:0 0 auto auto}body.swal2-toast-shown .swal2-container.swal2-top-start,body.swal2-toast-shown .swal2-container.swal2-top-left{inset:0 auto auto 0}body.swal2-toast-shown .swal2-container.swal2-center-start,body.swal2-toast-shown .swal2-container.swal2-center-left{inset:50% auto auto 0;transform:translateY(-50%)}body.swal2-toast-shown .swal2-container.swal2-center{inset:50% auto auto 50%;transform:translate(-50%, -50%)}body.swal2-toast-shown .swal2-container.swal2-center-end,body.swal2-toast-shown .swal2-container.swal2-center-right{inset:50% 0 auto auto;transform:translateY(-50%)}body.swal2-toast-shown .swal2-container.swal2-bottom-start,body.swal2-toast-shown .swal2-container.swal2-bottom-left{inset:auto auto 0 0}body.swal2-toast-shown .swal2-container.swal2-bottom{inset:auto auto 0 50%;transform:translateX(-50%)}body.swal2-toast-shown .swal2-container.swal2-bottom-end,body.swal2-toast-shown .swal2-container.swal2-bottom-right{inset:auto 0 0 auto}");
 
 /***/ }),
 
@@ -19618,6 +15579,552 @@ tippy.setDefaultProps({
 
 /***/ }),
 
+/***/ "./node_modules/wavesurfer.js/dist/base-plugin.js":
+/*!********************************************************!*\
+  !*** ./node_modules/wavesurfer.js/dist/base-plugin.js ***!
+  \********************************************************/
+/*! exports provided: BasePlugin, default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "BasePlugin", function() { return BasePlugin; });
+/* harmony import */ var _event_emitter_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./event-emitter.js */ "./node_modules/wavesurfer.js/dist/event-emitter.js");
+
+/** Base class for wavesurfer plugins */
+class BasePlugin extends _event_emitter_js__WEBPACK_IMPORTED_MODULE_0__["default"] {
+    /** Create a plugin instance */
+    constructor(options) {
+        super();
+        this.subscriptions = [];
+        this.options = options;
+    }
+    /** Called after this.wavesurfer is available */
+    onInit() {
+        return;
+    }
+    /** Do not call directly, only called by WavesSurfer internally */
+    _init(wavesurfer) {
+        this.wavesurfer = wavesurfer;
+        this.onInit();
+    }
+    /** Destroy the plugin and unsubscribe from all events */
+    destroy() {
+        this.emit('destroy');
+        this.subscriptions.forEach((unsubscribe) => unsubscribe());
+    }
+}
+/* harmony default export */ __webpack_exports__["default"] = (BasePlugin);
+
+
+/***/ }),
+
+/***/ "./node_modules/wavesurfer.js/dist/decoder.js":
+/*!****************************************************!*\
+  !*** ./node_modules/wavesurfer.js/dist/decoder.js ***!
+  \****************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+/** Decode an array buffer into an audio buffer */
+function decode(audioData, sampleRate) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const audioCtx = new AudioContext({ sampleRate });
+        const decode = audioCtx.decodeAudioData(audioData);
+        return decode.finally(() => audioCtx.close());
+    });
+}
+/** Normalize peaks to -1..1 */
+function normalize(channelData) {
+    const firstChannel = channelData[0];
+    if (firstChannel.some((n) => n > 1 || n < -1)) {
+        const length = firstChannel.length;
+        let max = 0;
+        for (let i = 0; i < length; i++) {
+            const absN = Math.abs(firstChannel[i]);
+            if (absN > max)
+                max = absN;
+        }
+        for (const channel of channelData) {
+            for (let i = 0; i < length; i++) {
+                channel[i] /= max;
+            }
+        }
+    }
+    return channelData;
+}
+/** Create an audio buffer from pre-decoded audio data */
+function createBuffer(channelData, duration) {
+    // If a single array of numbers is passed, make it an array of arrays
+    if (typeof channelData[0] === 'number')
+        channelData = [channelData];
+    // Normalize to -1..1
+    normalize(channelData);
+    return {
+        duration,
+        length: channelData[0].length,
+        sampleRate: channelData[0].length / duration,
+        numberOfChannels: channelData.length,
+        getChannelData: (i) => channelData === null || channelData === void 0 ? void 0 : channelData[i],
+        copyFromChannel: AudioBuffer.prototype.copyFromChannel,
+        copyToChannel: AudioBuffer.prototype.copyToChannel,
+    };
+}
+const Decoder = {
+    decode,
+    createBuffer,
+};
+/* harmony default export */ __webpack_exports__["default"] = (Decoder);
+
+
+/***/ }),
+
+/***/ "./node_modules/wavesurfer.js/dist/dom.js":
+/*!************************************************!*\
+  !*** ./node_modules/wavesurfer.js/dist/dom.js ***!
+  \************************************************/
+/*! exports provided: createElement, default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "createElement", function() { return createElement; });
+function renderNode(tagName, content) {
+    const element = content.xmlns
+        ? document.createElementNS(content.xmlns, tagName)
+        : document.createElement(tagName);
+    for (const [key, value] of Object.entries(content)) {
+        if (key === 'children') {
+            for (const [key, value] of Object.entries(content)) {
+                if (typeof value === 'string') {
+                    element.appendChild(document.createTextNode(value));
+                }
+                else {
+                    element.appendChild(renderNode(key, value));
+                }
+            }
+        }
+        else if (key === 'style') {
+            Object.assign(element.style, value);
+        }
+        else if (key === 'textContent') {
+            element.textContent = value;
+        }
+        else {
+            element.setAttribute(key, value.toString());
+        }
+    }
+    return element;
+}
+function createElement(tagName, content, container) {
+    const el = renderNode(tagName, content || {});
+    container === null || container === void 0 ? void 0 : container.appendChild(el);
+    return el;
+}
+/* harmony default export */ __webpack_exports__["default"] = (createElement);
+
+
+/***/ }),
+
+/***/ "./node_modules/wavesurfer.js/dist/draggable.js":
+/*!******************************************************!*\
+  !*** ./node_modules/wavesurfer.js/dist/draggable.js ***!
+  \******************************************************/
+/*! exports provided: makeDraggable */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "makeDraggable", function() { return makeDraggable; });
+function makeDraggable(element, onDrag, onStart, onEnd, threshold = 3, mouseButton = 0, touchDelay = 100) {
+    if (!element)
+        return () => void 0;
+    const isTouchDevice = matchMedia('(pointer: coarse)').matches;
+    let unsubscribeDocument = () => void 0;
+    const onPointerDown = (event) => {
+        if (event.button !== mouseButton)
+            return;
+        event.preventDefault();
+        event.stopPropagation();
+        let startX = event.clientX;
+        let startY = event.clientY;
+        let isDragging = false;
+        const touchStartTime = Date.now();
+        const onPointerMove = (event) => {
+            event.preventDefault();
+            event.stopPropagation();
+            if (isTouchDevice && Date.now() - touchStartTime < touchDelay)
+                return;
+            const x = event.clientX;
+            const y = event.clientY;
+            const dx = x - startX;
+            const dy = y - startY;
+            if (isDragging || Math.abs(dx) > threshold || Math.abs(dy) > threshold) {
+                const rect = element.getBoundingClientRect();
+                const { left, top } = rect;
+                if (!isDragging) {
+                    onStart === null || onStart === void 0 ? void 0 : onStart(startX - left, startY - top);
+                    isDragging = true;
+                }
+                onDrag(dx, dy, x - left, y - top);
+                startX = x;
+                startY = y;
+            }
+        };
+        const onPointerUp = (event) => {
+            if (isDragging) {
+                const x = event.clientX;
+                const y = event.clientY;
+                const rect = element.getBoundingClientRect();
+                const { left, top } = rect;
+                onEnd === null || onEnd === void 0 ? void 0 : onEnd(x - left, y - top);
+            }
+            unsubscribeDocument();
+        };
+        const onPointerLeave = (e) => {
+            // Listen to events only on the document and not on inner elements
+            if (!e.relatedTarget || e.relatedTarget === document.documentElement) {
+                onPointerUp(e);
+            }
+        };
+        const onClick = (event) => {
+            if (isDragging) {
+                event.stopPropagation();
+                event.preventDefault();
+            }
+        };
+        const onTouchMove = (event) => {
+            if (isDragging) {
+                event.preventDefault();
+            }
+        };
+        document.addEventListener('pointermove', onPointerMove);
+        document.addEventListener('pointerup', onPointerUp);
+        document.addEventListener('pointerout', onPointerLeave);
+        document.addEventListener('pointercancel', onPointerLeave);
+        document.addEventListener('touchmove', onTouchMove, { passive: false });
+        document.addEventListener('click', onClick, { capture: true });
+        unsubscribeDocument = () => {
+            document.removeEventListener('pointermove', onPointerMove);
+            document.removeEventListener('pointerup', onPointerUp);
+            document.removeEventListener('pointerout', onPointerLeave);
+            document.removeEventListener('pointercancel', onPointerLeave);
+            document.removeEventListener('touchmove', onTouchMove);
+            setTimeout(() => {
+                document.removeEventListener('click', onClick, { capture: true });
+            }, 10);
+        };
+    };
+    element.addEventListener('pointerdown', onPointerDown);
+    return () => {
+        unsubscribeDocument();
+        element.removeEventListener('pointerdown', onPointerDown);
+    };
+}
+
+
+/***/ }),
+
+/***/ "./node_modules/wavesurfer.js/dist/event-emitter.js":
+/*!**********************************************************!*\
+  !*** ./node_modules/wavesurfer.js/dist/event-emitter.js ***!
+  \**********************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/** A simple event emitter that can be used to listen to and emit events. */
+class EventEmitter {
+    constructor() {
+        this.listeners = {};
+    }
+    /** Subscribe to an event. Returns an unsubscribe function. */
+    on(event, listener, options) {
+        if (!this.listeners[event]) {
+            this.listeners[event] = new Set();
+        }
+        this.listeners[event].add(listener);
+        if (options === null || options === void 0 ? void 0 : options.once) {
+            const unsubscribeOnce = () => {
+                this.un(event, unsubscribeOnce);
+                this.un(event, listener);
+            };
+            this.on(event, unsubscribeOnce);
+            return unsubscribeOnce;
+        }
+        return () => this.un(event, listener);
+    }
+    /** Unsubscribe from an event */
+    un(event, listener) {
+        var _a;
+        (_a = this.listeners[event]) === null || _a === void 0 ? void 0 : _a.delete(listener);
+    }
+    /** Subscribe to an event only once */
+    once(event, listener) {
+        return this.on(event, listener, { once: true });
+    }
+    /** Clear all events */
+    unAll() {
+        this.listeners = {};
+    }
+    /** Emit an event */
+    emit(eventName, ...args) {
+        if (this.listeners[eventName]) {
+            this.listeners[eventName].forEach((listener) => listener(...args));
+        }
+    }
+}
+/* harmony default export */ __webpack_exports__["default"] = (EventEmitter);
+
+
+/***/ }),
+
+/***/ "./node_modules/wavesurfer.js/dist/fetcher.js":
+/*!****************************************************!*\
+  !*** ./node_modules/wavesurfer.js/dist/fetcher.js ***!
+  \****************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+function watchProgress(response, progressCallback) {
+    return __awaiter(this, void 0, void 0, function* () {
+        if (!response.body || !response.headers)
+            return;
+        const reader = response.body.getReader();
+        const contentLength = Number(response.headers.get('Content-Length')) || 0;
+        let receivedLength = 0;
+        // Process the data
+        const processChunk = (value) => __awaiter(this, void 0, void 0, function* () {
+            // Add to the received length
+            receivedLength += (value === null || value === void 0 ? void 0 : value.length) || 0;
+            const percentage = Math.round((receivedLength / contentLength) * 100);
+            progressCallback(percentage);
+        });
+        const read = () => __awaiter(this, void 0, void 0, function* () {
+            let data;
+            try {
+                data = yield reader.read();
+            }
+            catch (_a) {
+                // Ignore errors because we can only handle the main response
+                return;
+            }
+            // Continue reading data until done
+            if (!data.done) {
+                processChunk(data.value);
+                yield read();
+            }
+        });
+        read();
+    });
+}
+function fetchBlob(url, progressCallback, requestInit) {
+    return __awaiter(this, void 0, void 0, function* () {
+        // Fetch the resource
+        const response = yield fetch(url, requestInit);
+        if (response.status >= 400) {
+            throw new Error(`Failed to fetch ${url}: ${response.status} (${response.statusText})`);
+        }
+        // Read the data to track progress
+        watchProgress(response.clone(), progressCallback);
+        return response.blob();
+    });
+}
+const Fetcher = {
+    fetchBlob,
+};
+/* harmony default export */ __webpack_exports__["default"] = (Fetcher);
+
+
+/***/ }),
+
+/***/ "./node_modules/wavesurfer.js/dist/player.js":
+/*!***************************************************!*\
+  !*** ./node_modules/wavesurfer.js/dist/player.js ***!
+  \***************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _event_emitter_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./event-emitter.js */ "./node_modules/wavesurfer.js/dist/event-emitter.js");
+var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+
+class Player extends _event_emitter_js__WEBPACK_IMPORTED_MODULE_0__["default"] {
+    constructor(options) {
+        super();
+        this.isExternalMedia = false;
+        if (options.media) {
+            this.media = options.media;
+            this.isExternalMedia = true;
+        }
+        else {
+            this.media = document.createElement('audio');
+        }
+        // Controls
+        if (options.mediaControls) {
+            this.media.controls = true;
+        }
+        // Autoplay
+        if (options.autoplay) {
+            this.media.autoplay = true;
+        }
+        // Speed
+        if (options.playbackRate != null) {
+            this.onMediaEvent('canplay', () => {
+                if (options.playbackRate != null) {
+                    this.media.playbackRate = options.playbackRate;
+                }
+            }, { once: true });
+        }
+    }
+    onMediaEvent(event, callback, options) {
+        this.media.addEventListener(event, callback, options);
+        return () => this.media.removeEventListener(event, callback, options);
+    }
+    getSrc() {
+        return this.media.currentSrc || this.media.src || '';
+    }
+    revokeSrc() {
+        const src = this.getSrc();
+        if (src.startsWith('blob:')) {
+            URL.revokeObjectURL(src);
+        }
+    }
+    canPlayType(type) {
+        return this.media.canPlayType(type) !== '';
+    }
+    setSrc(url, blob) {
+        const src = this.getSrc();
+        if (url && src === url)
+            return;
+        this.revokeSrc();
+        const newSrc = blob instanceof Blob && (this.canPlayType(blob.type) || !url) ? URL.createObjectURL(blob) : url;
+        try {
+            this.media.src = newSrc;
+        }
+        catch (e) {
+            this.media.src = url;
+        }
+    }
+    destroy() {
+        this.media.pause();
+        if (this.isExternalMedia)
+            return;
+        this.media.remove();
+        this.revokeSrc();
+        this.media.src = '';
+        // Load resets the media element to its initial state
+        this.media.load();
+    }
+    setMediaElement(element) {
+        this.media = element;
+    }
+    /** Start playing the audio */
+    play() {
+        return __awaiter(this, void 0, void 0, function* () {
+            return this.media.play();
+        });
+    }
+    /** Pause the audio */
+    pause() {
+        this.media.pause();
+    }
+    /** Check if the audio is playing */
+    isPlaying() {
+        return !this.media.paused && !this.media.ended;
+    }
+    /** Jump to a specific time in the audio (in seconds) */
+    setTime(time) {
+        this.media.currentTime = time;
+    }
+    /** Get the duration of the audio in seconds */
+    getDuration() {
+        return this.media.duration;
+    }
+    /** Get the current audio position in seconds */
+    getCurrentTime() {
+        return this.media.currentTime;
+    }
+    /** Get the audio volume */
+    getVolume() {
+        return this.media.volume;
+    }
+    /** Set the audio volume */
+    setVolume(volume) {
+        this.media.volume = volume;
+    }
+    /** Get the audio muted state */
+    getMuted() {
+        return this.media.muted;
+    }
+    /** Mute or unmute the audio */
+    setMuted(muted) {
+        this.media.muted = muted;
+    }
+    /** Get the playback speed */
+    getPlaybackRate() {
+        return this.media.playbackRate;
+    }
+    /** Check if the audio is seeking */
+    isSeeking() {
+        return this.media.seeking;
+    }
+    /** Set the playback speed, pass an optional false to NOT preserve the pitch */
+    setPlaybackRate(rate, preservePitch) {
+        // preservePitch is true by default in most browsers
+        if (preservePitch != null) {
+            this.media.preservesPitch = preservePitch;
+        }
+        this.media.playbackRate = rate;
+    }
+    /** Get the HTML media element */
+    getMediaElement() {
+        return this.media;
+    }
+    /** Set a sink id to change the audio output device */
+    setSinkId(sinkId) {
+        // See https://developer.mozilla.org/en-US/docs/Web/API/HTMLMediaElement/setSinkId
+        const media = this.media;
+        return media.setSinkId(sinkId);
+    }
+}
+/* harmony default export */ __webpack_exports__["default"] = (Player);
+
+
+/***/ }),
+
 /***/ "./node_modules/wavesurfer.js/dist/plugins/record.esm.js":
 /*!***************************************************************!*\
   !*** ./node_modules/wavesurfer.js/dist/plugins/record.esm.js ***!
@@ -19627,23 +16134,1372 @@ tippy.setDefaultProps({
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return i; });
-function e(e,t,r,s){return new(r||(r=Promise))((function(i,n){function o(e){try{d(s.next(e))}catch(e){n(e)}}function a(e){try{d(s.throw(e))}catch(e){n(e)}}function d(e){var t;e.done?i(e.value):(t=e.value,t instanceof r?t:new r((function(e){e(t)}))).then(o,a)}d((s=s.apply(e,t||[])).next())}))}"function"==typeof SuppressedError&&SuppressedError;class t{constructor(){this.listeners={}}on(e,t){return this.listeners[e]||(this.listeners[e]=new Set),this.listeners[e].add(t),()=>this.un(e,t)}once(e,t){const r=this.on(e,t),s=this.on(e,(()=>{r(),s()}));return r}un(e,t){this.listeners[e]&&(t?this.listeners[e].delete(t):delete this.listeners[e])}unAll(){this.listeners={}}emit(e,...t){this.listeners[e]&&this.listeners[e].forEach((e=>e(...t)))}}class r extends t{constructor(e){super(),this.subscriptions=[],this.options=e}onInit(){}init(e){this.wavesurfer=e,this.onInit()}destroy(){this.emit("destroy"),this.subscriptions.forEach((e=>e()))}}const s=["audio/webm","audio/wav","audio/mpeg","audio/mp4","audio/mp3"];class i extends r{constructor(){super(...arguments),this.mediaRecorder=null,this.recordedUrl="",this.savedCursorWidth=1,this.savedInteractive=!0}static create(e){return new i(e||{})}preventInteraction(){this.wavesurfer&&(this.savedCursorWidth=this.wavesurfer.options.cursorWidth||1,this.savedInteractive=this.wavesurfer.options.interact||!0,this.wavesurfer.options.cursorWidth=0,this.wavesurfer.options.interact=!1)}restoreInteraction(){this.wavesurfer&&(this.wavesurfer.options.cursorWidth=this.savedCursorWidth,this.wavesurfer.options.interact=this.savedInteractive)}onInit(){this.preventInteraction()}loadBlob(e,t){var r;const s=new Blob(e,{type:t});this.recordedUrl=URL.createObjectURL(s),this.restoreInteraction(),null===(r=this.wavesurfer)||void 0===r||r.load(this.recordedUrl)}render(e){const t=new AudioContext({sampleRate:8e3}),r=t.createMediaStreamSource(e),s=t.createAnalyser();r.connect(s);const i=s.frequencyBinCount,n=new Float32Array(i),o=i/t.sampleRate;let a;const d=()=>{var e;s.getFloatTimeDomainData(n),null===(e=this.wavesurfer)||void 0===e||e.load("",[n],o),a=requestAnimationFrame(d)};return d(),()=>{a&&cancelAnimationFrame(a),r&&(r.disconnect(),r.mediaStream.getTracks().forEach((e=>e.stop()))),t&&t.close()}}cleanUp(){var e;this.stopRecording(),null===(e=this.wavesurfer)||void 0===e||e.empty(),this.recordedUrl&&(URL.revokeObjectURL(this.recordedUrl),this.recordedUrl="")}startRecording(){return e(this,void 0,void 0,(function*(){let e;this.preventInteraction(),this.cleanUp();try{e=yield navigator.mediaDevices.getUserMedia({audio:!0})}catch(e){throw new Error("Error accessing the microphone: "+e.message)}const t=this.render(e),r=new MediaRecorder(e,{mimeType:this.options.mimeType||s.find((e=>MediaRecorder.isTypeSupported(e))),audioBitsPerSecond:this.options.audioBitsPerSecond}),i=[];r.addEventListener("dataavailable",(e=>{e.data.size>0&&i.push(e.data)})),r.addEventListener("stop",(()=>{t(),this.loadBlob(i,r.mimeType),this.emit("stopRecording")})),r.start(),this.emit("startRecording"),this.mediaRecorder=r}))}isRecording(){var e;return"recording"===(null===(e=this.mediaRecorder)||void 0===e?void 0:e.state)}stopRecording(){var e;this.isRecording()&&(null===(e=this.mediaRecorder)||void 0===e||e.stop())}getRecordedUrl(){return this.recordedUrl}destroy(){super.destroy(),this.cleanUp()}}
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return r; });
+function t(t,i,e,s){return new(e||(e=Promise))((function(o,r){function n(t){try{d(s.next(t))}catch(t){r(t)}}function a(t){try{d(s.throw(t))}catch(t){r(t)}}function d(t){var i;t.done?o(t.value):(i=t.value,i instanceof e?i:new e((function(t){t(i)}))).then(n,a)}d((s=s.apply(t,i||[])).next())}))}"function"==typeof SuppressedError&&SuppressedError;class i{constructor(){this.listeners={}}on(t,i,e){if(this.listeners[t]||(this.listeners[t]=new Set),this.listeners[t].add(i),null==e?void 0:e.once){const e=()=>{this.un(t,e),this.un(t,i)};return this.on(t,e),e}return()=>this.un(t,i)}un(t,i){var e;null===(e=this.listeners[t])||void 0===e||e.delete(i)}once(t,i){return this.on(t,i,{once:!0})}unAll(){this.listeners={}}emit(t,...i){this.listeners[t]&&this.listeners[t].forEach((t=>t(...i)))}}class e extends i{constructor(t){super(),this.subscriptions=[],this.options=t}onInit(){}_init(t){this.wavesurfer=t,this.onInit()}destroy(){this.emit("destroy"),this.subscriptions.forEach((t=>t()))}}class s extends i{constructor(){super(...arguments),this.unsubscribe=()=>{}}start(){this.unsubscribe=this.on("tick",(()=>{requestAnimationFrame((()=>{this.emit("tick")}))})),this.emit("tick")}stop(){this.unsubscribe()}destroy(){this.unsubscribe()}}const o=["audio/webm","audio/wav","audio/mpeg","audio/mp4","audio/mp3"];class r extends e{constructor(t){var i,e,o,r,n,a;super(Object.assign(Object.assign({},t),{audioBitsPerSecond:null!==(i=t.audioBitsPerSecond)&&void 0!==i?i:128e3,scrollingWaveform:null!==(e=t.scrollingWaveform)&&void 0!==e&&e,scrollingWaveformWindow:null!==(o=t.scrollingWaveformWindow)&&void 0!==o?o:5,continuousWaveform:null!==(r=t.continuousWaveform)&&void 0!==r&&r,renderRecordedAudio:null===(n=t.renderRecordedAudio)||void 0===n||n,mediaRecorderTimeslice:null!==(a=t.mediaRecorderTimeslice)&&void 0!==a?a:void 0})),this.stream=null,this.mediaRecorder=null,this.dataWindow=null,this.isWaveformPaused=!1,this.lastStartTime=0,this.lastDuration=0,this.duration=0,this.timer=new s,this.subscriptions.push(this.timer.on("tick",(()=>{const t=performance.now()-this.lastStartTime;this.duration=this.isPaused()?this.duration:this.lastDuration+t,this.emit("record-progress",this.duration)})))}static create(t){return new r(t||{})}renderMicStream(t){var i;const e=new AudioContext,s=e.createMediaStreamSource(t),o=e.createAnalyser();s.connect(o),this.options.continuousWaveform&&(o.fftSize=32);const r=o.frequencyBinCount,n=new Float32Array(r);let a=0;this.wavesurfer&&(null!==(i=this.originalOptions)&&void 0!==i||(this.originalOptions=Object.assign({},this.wavesurfer.options)),this.wavesurfer.options.interact=!1,this.options.scrollingWaveform&&(this.wavesurfer.options.cursorWidth=0));const d=setInterval((()=>{var t,i,s,d;if(!this.isWaveformPaused){if(o.getFloatTimeDomainData(n),this.options.scrollingWaveform){const t=Math.floor((this.options.scrollingWaveformWindow||0)*e.sampleRate),i=Math.min(t,this.dataWindow?this.dataWindow.length+r:r),s=new Float32Array(t);if(this.dataWindow){const e=Math.max(0,t-this.dataWindow.length);s.set(this.dataWindow.slice(-i+r),e)}s.set(n,t-r),this.dataWindow=s}else if(this.options.continuousWaveform){if(!this.dataWindow){const e=this.options.continuousWaveformDuration?Math.round(100*this.options.continuousWaveformDuration):(null!==(i=null===(t=this.wavesurfer)||void 0===t?void 0:t.getWidth())&&void 0!==i?i:0)*window.devicePixelRatio;this.dataWindow=new Float32Array(e)}let e=0;for(let t=0;t<r;t++){const i=Math.abs(n[t]);i>e&&(e=i)}if(a+1>this.dataWindow.length){const t=new Float32Array(2*this.dataWindow.length);t.set(this.dataWindow,0),this.dataWindow=t}this.dataWindow[a]=e,a++}else this.dataWindow=n;if(this.wavesurfer){const t=(null!==(d=null===(s=this.dataWindow)||void 0===s?void 0:s.length)&&void 0!==d?d:0)/100;this.wavesurfer.load("",[this.dataWindow],this.options.scrollingWaveform?this.options.scrollingWaveformWindow:t).then((()=>{this.wavesurfer&&this.options.continuousWaveform&&(this.wavesurfer.setTime(this.getDuration()/1e3),this.wavesurfer.options.minPxPerSec||this.wavesurfer.setOptions({minPxPerSec:this.wavesurfer.getWidth()/this.wavesurfer.getDuration()}))})).catch((t=>{console.error("Error rendering real-time recording data:",t)}))}}}),10);return{onDestroy:()=>{clearInterval(d),null==s||s.disconnect(),null==e||e.close()},onEnd:()=>{this.isWaveformPaused=!0,clearInterval(d),this.stopMic()}}}startMic(i){return t(this,void 0,void 0,(function*(){let t;try{t=yield navigator.mediaDevices.getUserMedia({audio:!(null==i?void 0:i.deviceId)||{deviceId:i.deviceId}})}catch(t){throw new Error("Error accessing the microphone: "+t.message)}const{onDestroy:e,onEnd:s}=this.renderMicStream(t);return this.subscriptions.push(this.once("destroy",e)),this.subscriptions.push(this.once("record-end",s)),this.stream=t,t}))}stopMic(){this.stream&&(this.stream.getTracks().forEach((t=>t.stop())),this.stream=null,this.mediaRecorder=null)}startRecording(i){return t(this,void 0,void 0,(function*(){const t=this.stream||(yield this.startMic(i));this.dataWindow=null;const e=this.mediaRecorder||new MediaRecorder(t,{mimeType:this.options.mimeType||o.find((t=>MediaRecorder.isTypeSupported(t))),audioBitsPerSecond:this.options.audioBitsPerSecond});this.mediaRecorder=e,this.stopRecording();const s=[];e.ondataavailable=t=>{t.data.size>0&&s.push(t.data),this.emit("record-data-available",t.data)};const r=t=>{var i;const o=new Blob(s,{type:e.mimeType});this.emit(t,o),this.options.renderRecordedAudio&&(this.applyOriginalOptionsIfNeeded(),null===(i=this.wavesurfer)||void 0===i||i.load(URL.createObjectURL(o)))};e.onpause=()=>r("record-pause"),e.onstop=()=>r("record-end"),e.start(this.options.mediaRecorderTimeslice),this.lastStartTime=performance.now(),this.lastDuration=0,this.duration=0,this.isWaveformPaused=!1,this.timer.start(),this.emit("record-start")}))}getDuration(){return this.duration}isRecording(){var t;return"recording"===(null===(t=this.mediaRecorder)||void 0===t?void 0:t.state)}isPaused(){var t;return"paused"===(null===(t=this.mediaRecorder)||void 0===t?void 0:t.state)}isActive(){var t;return"inactive"!==(null===(t=this.mediaRecorder)||void 0===t?void 0:t.state)}stopRecording(){var t;this.isActive()&&(null===(t=this.mediaRecorder)||void 0===t||t.stop(),this.timer.stop())}pauseRecording(){var t,i;this.isRecording()&&(this.isWaveformPaused=!0,null===(t=this.mediaRecorder)||void 0===t||t.requestData(),null===(i=this.mediaRecorder)||void 0===i||i.pause(),this.timer.stop(),this.lastDuration=this.duration)}resumeRecording(){var t;this.isPaused()&&(this.isWaveformPaused=!1,null===(t=this.mediaRecorder)||void 0===t||t.resume(),this.timer.start(),this.lastStartTime=performance.now(),this.emit("record-resume"))}static getAvailableAudioDevices(){return t(this,void 0,void 0,(function*(){return navigator.mediaDevices.enumerateDevices().then((t=>t.filter((t=>"audioinput"===t.kind))))}))}destroy(){this.applyOriginalOptionsIfNeeded(),super.destroy(),this.stopRecording(),this.stopMic()}applyOriginalOptionsIfNeeded(){this.wavesurfer&&this.originalOptions&&(this.wavesurfer.setOptions(this.originalOptions),delete this.originalOptions)}}
 
 
 /***/ }),
 
-/***/ "./node_modules/wavesurfer.js/dist/wavesurfer.esm.js":
-/*!***********************************************************!*\
-  !*** ./node_modules/wavesurfer.js/dist/wavesurfer.esm.js ***!
-  \***********************************************************/
+/***/ "./node_modules/wavesurfer.js/dist/renderer.js":
+/*!*****************************************************!*\
+  !*** ./node_modules/wavesurfer.js/dist/renderer.js ***!
+  \*****************************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return h; });
-function t(t,e,i,s){return new(i||(i=Promise))((function(n,r){function o(t){try{h(s.next(t))}catch(t){r(t)}}function a(t){try{h(s.throw(t))}catch(t){r(t)}}function h(t){var e;t.done?n(t.value):(e=t.value,e instanceof i?e:new i((function(t){t(e)}))).then(o,a)}h((s=s.apply(t,e||[])).next())}))}"function"==typeof SuppressedError&&SuppressedError;const e={decode:function(e,i){return t(this,void 0,void 0,(function*(){const t=new AudioContext({sampleRate:i}),s=t.decodeAudioData(e);return s.finally((()=>t.close())),s}))},createBuffer:function(t,e){return"number"==typeof t[0]&&(t=[t]),function(t){const e=t[0];if(e.some((t=>t>1||t<-1))){const i=e.length;let s=0;for(let t=0;t<i;t++){const i=Math.abs(e[t]);i>s&&(s=i)}for(const e of t)for(let t=0;t<i;t++)e[t]/=s}}(t),{duration:e,length:t[0].length,sampleRate:t[0].length/e,numberOfChannels:t.length,getChannelData:e=>null==t?void 0:t[e],copyFromChannel:AudioBuffer.prototype.copyFromChannel,copyToChannel:AudioBuffer.prototype.copyToChannel}}};const i={fetchBlob:function(e,i){return t(this,void 0,void 0,(function*(){return fetch(e,i).then((t=>t.blob()))}))}};class s{constructor(){this.listeners={}}on(t,e){return this.listeners[t]||(this.listeners[t]=new Set),this.listeners[t].add(e),()=>this.un(t,e)}once(t,e){const i=this.on(t,e),s=this.on(t,(()=>{i(),s()}));return i}un(t,e){this.listeners[t]&&(e?this.listeners[t].delete(e):delete this.listeners[t])}unAll(){this.listeners={}}emit(t,...e){this.listeners[t]&&this.listeners[t].forEach((t=>t(...e)))}}class n extends s{constructor(t){super(),t.media?this.media=t.media:this.media=document.createElement("audio"),t.autoplay&&(this.media.autoplay=!0),null!=t.playbackRate&&(this.media.playbackRate=t.playbackRate)}onMediaEvent(t,e,i){return this.media.addEventListener(t,e,i),()=>this.media.removeEventListener(t,e)}onceMediaEvent(t,e){return this.onMediaEvent(t,e,{once:!0})}getSrc(){return this.media.currentSrc||this.media.src||""}revokeSrc(){const t=this.getSrc();t.startsWith("blob:")&&URL.revokeObjectURL(t)}setSrc(t,e){if(this.getSrc()===t)return;this.revokeSrc();const i=e instanceof Blob?URL.createObjectURL(e):t;this.media.src=i,this.media.load()}destroy(){this.media.pause(),this.revokeSrc(),this.media.src="",this.media.load()}play(){return this.media.play()}pause(){this.media.pause()}isPlaying(){return this.media.currentTime>0&&!this.media.paused&&!this.media.ended}setTime(t){this.media.currentTime=t}getDuration(){return this.media.duration}getCurrentTime(){return this.media.currentTime}getVolume(){return this.media.volume}setVolume(t){this.media.volume=t}getMuted(){return this.media.muted}setMuted(t){this.media.muted=t}getPlaybackRate(){return this.media.playbackRate}setPlaybackRate(t,e){null!=e&&(this.media.preservesPitch=e),this.media.playbackRate=t}getMediaElement(){return this.media}setSinkId(t){return this.media.setSinkId(t)}}class r extends s{constructor(t){let e;if(super(),this.timeouts=[],this.isScrolling=!1,this.audioData=null,this.resizeObserver=null,this.isDragging=!1,this.options=t,"string"==typeof t.container?e=document.querySelector(t.container):t.container instanceof HTMLElement&&(e=t.container),!e)throw new Error("Container not found");this.parent=e;const[i,s]=this.initHtml();e.appendChild(i),this.container=i,this.scrollContainer=s.querySelector(".scroll"),this.wrapper=s.querySelector(".wrapper"),this.canvasWrapper=s.querySelector(".canvases"),this.progressWrapper=s.querySelector(".progress"),this.cursor=s.querySelector(".cursor"),this.initEvents()}initEvents(){this.wrapper.addEventListener("click",(t=>{const e=this.wrapper.getBoundingClientRect(),i=(t.clientX-e.left)/e.width;this.emit("click",i)})),this.initDrag(),this.scrollContainer.addEventListener("scroll",(()=>{const{scrollLeft:t,scrollWidth:e,clientWidth:i}=this.scrollContainer,s=t/e,n=(t+i)/e;this.emit("scroll",s,n)}));const t=this.createDelay(100);this.resizeObserver=new ResizeObserver((()=>{t((()=>this.reRender()))})),this.resizeObserver.observe(this.scrollContainer)}initDrag(){!function(t,e,i,s,n=5){let r=()=>{};if(!t)return r;const o=o=>{if(2===o.button)return;o.preventDefault(),o.stopPropagation();let a=o.clientX,h=o.clientY,l=!1;const c=s=>{s.preventDefault(),s.stopPropagation();const r=s.clientX,o=s.clientY;if(l||Math.abs(r-a)>=n||Math.abs(o-h)>=n){const{left:s,top:n}=t.getBoundingClientRect();l||(l=!0,null==i||i(a-s,h-n)),e(r-a,o-h,r-s,o-n),a=r,h=o}},d=t=>{l&&(t.preventDefault(),t.stopPropagation())},u=()=>{l&&(null==s||s()),r()};document.addEventListener("pointermove",c),document.addEventListener("pointerup",u),document.addEventListener("pointerleave",u),document.addEventListener("click",d,!0),r=()=>{document.removeEventListener("pointermove",c),document.removeEventListener("pointerup",u),document.removeEventListener("pointerleave",u),setTimeout((()=>{document.removeEventListener("click",d,!0)}),10)}};t.addEventListener("pointerdown",o)}(this.wrapper,((t,e,i)=>{this.emit("drag",Math.max(0,Math.min(1,i/this.wrapper.clientWidth)))}),(()=>this.isDragging=!0),(()=>this.isDragging=!1))}getHeight(){return null==this.options.height?128:isNaN(Number(this.options.height))?"auto"===this.options.height&&this.parent.clientHeight||128:Number(this.options.height)}initHtml(){const t=document.createElement("div"),e=t.attachShadow({mode:"open"});return e.innerHTML=`\n      <style>\n        :host {\n          user-select: none;\n        }\n        :host .scroll {\n          overflow-x: auto;\n          overflow-y: hidden;\n          width: 100%;\n          position: relative;\n          touch-action: none;\n        }\n        :host .noScrollbar {\n          scrollbar-color: transparent;\n          scrollbar-width: none;\n        }\n        :host .noScrollbar::-webkit-scrollbar {\n          display: none;\n          -webkit-appearance: none;\n        }\n        :host .wrapper {\n          position: relative;\n          overflow: visible;\n          z-index: 2;\n        }\n        :host .canvases {\n          min-height: ${this.getHeight()}px;\n        }\n        :host .canvases > div {\n          position: relative;\n        }\n        :host canvas {\n          display: block;\n          position: absolute;\n          top: 0;\n          image-rendering: pixelated;\n        }\n        :host .progress {\n          pointer-events: none;\n          position: absolute;\n          z-index: 2;\n          top: 0;\n          left: 0;\n          width: 0;\n          height: 100%;\n          overflow: hidden;\n        }\n        :host .progress > div {\n          position: relative;\n        }\n        :host .cursor {\n          pointer-events: none;\n          position: absolute;\n          z-index: 5;\n          top: 0;\n          left: 0;\n          height: 100%;\n          border-radius: 2px;\n        }\n      </style>\n\n      <div class="scroll" part="scroll">\n        <div class="wrapper">\n          <div class="canvases"></div>\n          <div class="progress" part="progress"></div>\n          <div class="cursor" part="cursor"></div>\n        </div>\n      </div>\n    `,[t,e]}setOptions(t){this.options=t,this.reRender()}getWrapper(){return this.wrapper}getScroll(){return this.scrollContainer.scrollLeft}destroy(){var t;this.container.remove(),null===(t=this.resizeObserver)||void 0===t||t.disconnect()}createDelay(t=10){const e={};return this.timeouts.push(e),i=>{e.timeout&&clearTimeout(e.timeout),e.timeout=setTimeout(i,t)}}convertColorValues(t){if(!Array.isArray(t))return t||"";if(t.length<2)return t[0]||"";const e=document.createElement("canvas"),i=e.getContext("2d").createLinearGradient(0,0,0,e.height),s=1/(t.length-1);return t.forEach(((t,e)=>{const n=e*s;i.addColorStop(n,t)})),i}renderBars(t,e,i){if(i.fillStyle=this.convertColorValues(e.waveColor),e.renderFunction)return void e.renderFunction(t,i);const s=t[0],n=t[1]||t[0],r=s.length,o=window.devicePixelRatio||1,{width:a,height:h}=i.canvas,l=h/2,c=e.barHeight||1,d=e.barWidth?e.barWidth*o:1,u=e.barGap?e.barGap*o:e.barWidth?d/2:0,p=e.barRadius||0,m=a/(d+u)/r;let g=1;if(e.normalize){g=0;for(let t=0;t<r;t++){const e=Math.abs(s[t]);e>g&&(g=e)}}const v=l/g*c,f=p&&"roundRect"in i?"roundRect":"rect";i.beginPath();let b=0,y=0,C=0;for(let t=0;t<=r;t++){const r=Math.round(t*m);if(r>b){const t=Math.round(y*v),s=t+Math.round(C*v)||1;let n=l-t;"top"===e.barAlign?n=0:"bottom"===e.barAlign&&(n=h-s),i[f](b*(d+u),n,d,s,p),b=r,y=0,C=0}const o=Math.abs(s[t]||0),a=Math.abs(n[t]||0);o>y&&(y=o),a>C&&(C=a)}i.fill(),i.closePath()}renderSingleCanvas(t,e,i,s,n,r,o,a){const h=window.devicePixelRatio||1,l=document.createElement("canvas"),c=t[0].length;l.width=Math.round(i*(r-n)/c),l.height=s*h,l.style.width=`${Math.floor(l.width/h)}px`,l.style.height=`${s}px`,l.style.left=`${Math.floor(n*i/h/c)}px`,o.appendChild(l);const d=l.getContext("2d");this.renderBars(t.map((t=>t.slice(n,r))),e,d);const u=l.cloneNode();a.appendChild(u);const p=u.getContext("2d");l.width>0&&l.height>0&&p.drawImage(l,0,0),p.globalCompositeOperation="source-in",p.fillStyle=this.convertColorValues(e.progressColor),p.fillRect(0,0,l.width,l.height)}renderWaveform(t,e,i){const s=document.createElement("div"),n=this.getHeight();s.style.height=`${n}px`,this.canvasWrapper.style.minHeight=`${n}px`,this.canvasWrapper.appendChild(s);const o=s.cloneNode();this.progressWrapper.appendChild(o);const{scrollLeft:a,scrollWidth:h,clientWidth:l}=this.scrollContainer,c=t[0].length,d=c/h;let u=Math.min(r.MAX_CANVAS_WIDTH,l);if(e.barWidth||e.barGap){const t=e.barWidth||.5,i=t+(e.barGap||t/2);u%i!=0&&(u=Math.floor(u/i)*i)}const p=Math.floor(Math.abs(a)*d),m=Math.floor(p+u*d),g=m-p,v=(r,a)=>{this.renderSingleCanvas(t,e,i,n,Math.max(0,r),Math.min(a,c),s,o)},f=this.createDelay(),b=this.createDelay(),y=(t,e)=>{v(t,e),t>0&&f((()=>{y(t-g,e-g)}))},C=(t,e)=>{v(t,e),e<c&&b((()=>{C(t+g,e+g)}))};y(p,m),m<c&&C(m,m+g)}render(t){this.timeouts.forEach((t=>t.timeout&&clearTimeout(t.timeout))),this.timeouts=[],this.canvasWrapper.innerHTML="",this.progressWrapper.innerHTML="",this.wrapper.style.width="";const e=window.devicePixelRatio||1,i=this.scrollContainer.clientWidth,s=Math.ceil(t.duration*(this.options.minPxPerSec||0));this.isScrolling=s>i;const n=this.options.fillParent&&!this.isScrolling,r=(n?i:s)*e;if(this.wrapper.style.width=n?"100%":`${s}px`,this.scrollContainer.style.overflowX=this.isScrolling?"auto":"hidden",this.scrollContainer.classList.toggle("noScrollbar",!!this.options.hideScrollbar),this.cursor.style.backgroundColor=`${this.options.cursorColor||this.options.progressColor}`,this.cursor.style.width=`${this.options.cursorWidth}px`,this.options.splitChannels)for(let e=0;e<t.numberOfChannels;e++){const i=Object.assign(Object.assign({},this.options),this.options.splitChannels[e]);this.renderWaveform([t.getChannelData(e)],i,r)}else{const e=[t.getChannelData(0)];t.numberOfChannels>1&&e.push(t.getChannelData(1)),this.renderWaveform(e,this.options,r)}this.audioData=t,this.emit("render")}reRender(){if(!this.audioData)return;const t=this.progressWrapper.clientWidth;this.render(this.audioData);const e=this.progressWrapper.clientWidth;this.scrollContainer.scrollLeft+=e-t}zoom(t){this.options.minPxPerSec=t,this.reRender()}scrollIntoView(t,e=!1){const{clientWidth:i,scrollLeft:s,scrollWidth:n}=this.scrollContainer,r=n*t,o=i/2;if(r>s+(e&&this.options.autoCenter&&!this.isDragging?o:i)||r<s)if(this.options.autoCenter&&!this.isDragging){const t=o/20;r-(s+o)>=t&&r<s+i?this.scrollContainer.scrollLeft+=t:this.scrollContainer.scrollLeft=r-o}else if(this.isDragging){const t=10;this.scrollContainer.scrollLeft=r<s?r-t:r-i+t}else this.scrollContainer.scrollLeft=r;{const{scrollLeft:t}=this.scrollContainer,e=t/n,s=(t+i)/n;this.emit("scroll",e,s)}}renderProgress(t,e){isNaN(t)||(this.progressWrapper.style.width=100*t+"%",this.cursor.style.left=100*t+"%",this.cursor.style.marginLeft=100===Math.round(100*t)?`-${this.options.cursorWidth}px`:"",this.isScrolling&&this.options.autoScroll&&this.scrollIntoView(t,e))}}r.MAX_CANVAS_WIDTH=4e3;class o extends s{constructor(){super(...arguments),this.unsubscribe=()=>{}}start(){this.unsubscribe=this.on("tick",(()=>{requestAnimationFrame((()=>{this.emit("tick")}))})),this.emit("tick")}stop(){this.unsubscribe()}destroy(){this.unsubscribe()}}const a={waveColor:"#999",progressColor:"#555",cursorWidth:1,minPxPerSec:0,fillParent:!0,interact:!0,autoScroll:!0,autoCenter:!0,sampleRate:8e3};class h extends n{static create(t){return new h(t)}constructor(t){var e,i;super({media:t.media,autoplay:t.autoplay,playbackRate:t.audioRate}),this.plugins=[],this.decodedData=null,this.duration=null,this.subscriptions=[],this.options=Object.assign({},a,t),this.timer=new o,this.renderer=new r(this.options),this.initPlayerEvents(),this.initRendererEvents(),this.initTimerEvents(),this.initPlugins();const s=this.options.url||(null===(e=this.options.media)||void 0===e?void 0:e.currentSrc)||(null===(i=this.options.media)||void 0===i?void 0:i.src);s&&this.load(s,this.options.peaks,this.options.duration)}setOptions(t){this.options=Object.assign({},this.options,t),this.renderer.setOptions(this.options),t.audioRate&&this.setPlaybackRate(t.audioRate)}initTimerEvents(){this.subscriptions.push(this.timer.on("tick",(()=>{const t=this.getCurrentTime();this.renderer.renderProgress(t/this.getDuration(),!0),this.emit("timeupdate",t),this.emit("audioprocess",t)})))}initPlayerEvents(){this.subscriptions.push(this.onMediaEvent("timeupdate",(()=>{const t=this.getCurrentTime();this.renderer.renderProgress(t/this.getDuration(),this.isPlaying()),this.emit("timeupdate",t)})),this.onMediaEvent("play",(()=>{this.emit("play"),this.timer.start()})),this.onMediaEvent("pause",(()=>{this.emit("pause"),this.timer.stop()})),this.onMediaEvent("ended",(()=>{this.emit("finish")})),this.onMediaEvent("seeking",(()=>{this.emit("seeking",this.getCurrentTime())})))}initRendererEvents(){this.subscriptions.push(this.renderer.on("click",(t=>{this.options.interact&&(this.seekTo(t),this.emit("interaction",this.getCurrentTime()),this.emit("click",t))})),this.renderer.on("scroll",((t,e)=>{const i=this.getDuration();this.emit("scroll",t*i,e*i)})),this.renderer.on("render",(()=>{this.emit("redraw")})));{let t;this.subscriptions.push(this.renderer.on("drag",(e=>{this.options.interact&&(this.renderer.renderProgress(e),clearTimeout(t),t=setTimeout((()=>{this.seekTo(e)}),this.isPlaying()?0:200),this.emit("interaction",e*this.getDuration()),this.emit("drag",e))})))}}initPlugins(){var t;(null===(t=this.options.plugins)||void 0===t?void 0:t.length)&&this.options.plugins.forEach((t=>{this.registerPlugin(t)}))}registerPlugin(t){return t.init(this),this.plugins.push(t),this.subscriptions.push(t.once("destroy",(()=>{this.plugins=this.plugins.filter((e=>e!==t))}))),t}getWrapper(){return this.renderer.getWrapper()}getScroll(){return this.renderer.getScroll()}getActivePlugins(){return this.plugins}load(s,n,r){return t(this,void 0,void 0,(function*(){this.isPlaying()&&this.pause(),this.decodedData=null,this.duration=null,this.emit("load",s);const t=n?void 0:yield i.fetchBlob(s,this.options.fetchParams);if(this.setSrc(s,t),this.duration=r||this.getDuration()||(yield new Promise((t=>{this.onceMediaEvent("loadedmetadata",(()=>t(this.getDuration())))})))||0,n)this.decodedData=e.createBuffer(n,this.duration);else if(t){const i=yield t.arrayBuffer();this.decodedData=yield e.decode(i,this.options.sampleRate),0!==this.duration&&this.duration!==1/0||(this.duration=this.decodedData.duration)}this.emit("decode",this.duration),this.decodedData&&this.renderer.render(this.decodedData),this.emit("ready",this.duration)}))}zoom(t){if(!this.decodedData)throw new Error("No audio loaded");this.renderer.zoom(t),this.emit("zoom",t)}getDecodedData(){return this.decodedData}getDuration(){return null!==this.duration?this.duration:super.getDuration()}toggleInteraction(t){this.options.interact=t}seekTo(t){const e=this.getDuration()*t;this.setTime(e)}playPause(){return t(this,void 0,void 0,(function*(){return this.isPlaying()?this.pause():this.play()}))}stop(){this.pause(),this.setTime(0)}skip(t){this.setTime(this.getCurrentTime()+t)}empty(){this.load("",[[0]],.001)}destroy(){this.emit("destroy"),this.plugins.forEach((t=>t.destroy())),this.subscriptions.forEach((t=>t())),this.timer.destroy(),this.renderer.destroy(),super.destroy()}}
+/* harmony import */ var _draggable_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./draggable.js */ "./node_modules/wavesurfer.js/dist/draggable.js");
+/* harmony import */ var _event_emitter_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./event-emitter.js */ "./node_modules/wavesurfer.js/dist/event-emitter.js");
+var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+var __rest = (undefined && undefined.__rest) || function (s, e) {
+    var t = {};
+    for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
+        t[p] = s[p];
+    if (s != null && typeof Object.getOwnPropertySymbols === "function")
+        for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
+            if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i]))
+                t[p[i]] = s[p[i]];
+        }
+    return t;
+};
+
+
+class Renderer extends _event_emitter_js__WEBPACK_IMPORTED_MODULE_1__["default"] {
+    constructor(options, audioElement) {
+        super();
+        this.timeouts = [];
+        this.isScrollable = false;
+        this.audioData = null;
+        this.resizeObserver = null;
+        this.lastContainerWidth = 0;
+        this.isDragging = false;
+        this.subscriptions = [];
+        this.subscriptions = [];
+        this.options = options;
+        const parent = this.parentFromOptionsContainer(options.container);
+        this.parent = parent;
+        const [div, shadow] = this.initHtml();
+        parent.appendChild(div);
+        this.container = div;
+        this.scrollContainer = shadow.querySelector('.scroll');
+        this.wrapper = shadow.querySelector('.wrapper');
+        this.canvasWrapper = shadow.querySelector('.canvases');
+        this.progressWrapper = shadow.querySelector('.progress');
+        this.cursor = shadow.querySelector('.cursor');
+        if (audioElement) {
+            shadow.appendChild(audioElement);
+        }
+        this.initEvents();
+    }
+    parentFromOptionsContainer(container) {
+        let parent;
+        if (typeof container === 'string') {
+            parent = document.querySelector(container);
+        }
+        else if (container instanceof HTMLElement) {
+            parent = container;
+        }
+        if (!parent) {
+            throw new Error('Container not found');
+        }
+        return parent;
+    }
+    initEvents() {
+        const getClickPosition = (e) => {
+            const rect = this.wrapper.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            const relativeX = x / rect.width;
+            const relativeY = y / rect.height;
+            return [relativeX, relativeY];
+        };
+        // Add a click listener
+        this.wrapper.addEventListener('click', (e) => {
+            const [x, y] = getClickPosition(e);
+            this.emit('click', x, y);
+        });
+        // Add a double click listener
+        this.wrapper.addEventListener('dblclick', (e) => {
+            const [x, y] = getClickPosition(e);
+            this.emit('dblclick', x, y);
+        });
+        // Drag
+        if (this.options.dragToSeek === true || typeof this.options.dragToSeek === 'object') {
+            this.initDrag();
+        }
+        // Add a scroll listener
+        this.scrollContainer.addEventListener('scroll', () => {
+            const { scrollLeft, scrollWidth, clientWidth } = this.scrollContainer;
+            const startX = scrollLeft / scrollWidth;
+            const endX = (scrollLeft + clientWidth) / scrollWidth;
+            this.emit('scroll', startX, endX, scrollLeft, scrollLeft + clientWidth);
+        });
+        // Re-render the waveform on container resize
+        if (typeof ResizeObserver === 'function') {
+            const delay = this.createDelay(100);
+            this.resizeObserver = new ResizeObserver(() => {
+                delay()
+                    .then(() => this.onContainerResize())
+                    .catch(() => undefined);
+            });
+            this.resizeObserver.observe(this.scrollContainer);
+        }
+    }
+    onContainerResize() {
+        const width = this.parent.clientWidth;
+        if (width === this.lastContainerWidth && this.options.height !== 'auto')
+            return;
+        this.lastContainerWidth = width;
+        this.reRender();
+    }
+    initDrag() {
+        this.subscriptions.push(Object(_draggable_js__WEBPACK_IMPORTED_MODULE_0__["makeDraggable"])(this.wrapper, 
+        // On drag
+        (_, __, x) => {
+            this.emit('drag', Math.max(0, Math.min(1, x / this.wrapper.getBoundingClientRect().width)));
+        }, 
+        // On start drag
+        (x) => {
+            this.isDragging = true;
+            this.emit('dragstart', Math.max(0, Math.min(1, x / this.wrapper.getBoundingClientRect().width)));
+        }, 
+        // On end drag
+        (x) => {
+            this.isDragging = false;
+            this.emit('dragend', Math.max(0, Math.min(1, x / this.wrapper.getBoundingClientRect().width)));
+        }));
+    }
+    getHeight(optionsHeight, optionsSplitChannel) {
+        var _a;
+        const defaultHeight = 128;
+        const numberOfChannels = ((_a = this.audioData) === null || _a === void 0 ? void 0 : _a.numberOfChannels) || 1;
+        if (optionsHeight == null)
+            return defaultHeight;
+        if (!isNaN(Number(optionsHeight)))
+            return Number(optionsHeight);
+        if (optionsHeight === 'auto') {
+            const height = this.parent.clientHeight || defaultHeight;
+            if (optionsSplitChannel === null || optionsSplitChannel === void 0 ? void 0 : optionsSplitChannel.every((channel) => !channel.overlay))
+                return height / numberOfChannels;
+            return height;
+        }
+        return defaultHeight;
+    }
+    initHtml() {
+        const div = document.createElement('div');
+        const shadow = div.attachShadow({ mode: 'open' });
+        const cspNonce = this.options.cspNonce && typeof this.options.cspNonce === 'string' ? this.options.cspNonce.replace(/"/g, '') : '';
+        shadow.innerHTML = `
+      <style${cspNonce ? ` nonce="${cspNonce}"` : ''}>
+        :host {
+          user-select: none;
+          min-width: 1px;
+        }
+        :host audio {
+          display: block;
+          width: 100%;
+        }
+        :host .scroll {
+          overflow-x: auto;
+          overflow-y: hidden;
+          width: 100%;
+          position: relative;
+        }
+        :host .noScrollbar {
+          scrollbar-color: transparent;
+          scrollbar-width: none;
+        }
+        :host .noScrollbar::-webkit-scrollbar {
+          display: none;
+          -webkit-appearance: none;
+        }
+        :host .wrapper {
+          position: relative;
+          overflow: visible;
+          z-index: 2;
+        }
+        :host .canvases {
+          min-height: ${this.getHeight(this.options.height, this.options.splitChannels)}px;
+        }
+        :host .canvases > div {
+          position: relative;
+        }
+        :host canvas {
+          display: block;
+          position: absolute;
+          top: 0;
+          image-rendering: pixelated;
+        }
+        :host .progress {
+          pointer-events: none;
+          position: absolute;
+          z-index: 2;
+          top: 0;
+          left: 0;
+          width: 0;
+          height: 100%;
+          overflow: hidden;
+        }
+        :host .progress > div {
+          position: relative;
+        }
+        :host .cursor {
+          pointer-events: none;
+          position: absolute;
+          z-index: 5;
+          top: 0;
+          left: 0;
+          height: 100%;
+          border-radius: 2px;
+        }
+      </style>
+
+      <div class="scroll" part="scroll">
+        <div class="wrapper" part="wrapper">
+          <div class="canvases" part="canvases"></div>
+          <div class="progress" part="progress"></div>
+          <div class="cursor" part="cursor"></div>
+        </div>
+      </div>
+    `;
+        return [div, shadow];
+    }
+    /** Wavesurfer itself calls this method. Do not call it manually. */
+    setOptions(options) {
+        if (this.options.container !== options.container) {
+            const newParent = this.parentFromOptionsContainer(options.container);
+            newParent.appendChild(this.container);
+            this.parent = newParent;
+        }
+        if (options.dragToSeek === true || typeof this.options.dragToSeek === 'object') {
+            this.initDrag();
+        }
+        this.options = options;
+        // Re-render the waveform
+        this.reRender();
+    }
+    getWrapper() {
+        return this.wrapper;
+    }
+    getWidth() {
+        return this.scrollContainer.clientWidth;
+    }
+    getScroll() {
+        return this.scrollContainer.scrollLeft;
+    }
+    setScroll(pixels) {
+        this.scrollContainer.scrollLeft = pixels;
+    }
+    setScrollPercentage(percent) {
+        const { scrollWidth } = this.scrollContainer;
+        const scrollStart = scrollWidth * percent;
+        this.setScroll(scrollStart);
+    }
+    destroy() {
+        var _a, _b;
+        this.subscriptions.forEach((unsubscribe) => unsubscribe());
+        this.container.remove();
+        (_a = this.resizeObserver) === null || _a === void 0 ? void 0 : _a.disconnect();
+        (_b = this.unsubscribeOnScroll) === null || _b === void 0 ? void 0 : _b.call(this);
+    }
+    createDelay(delayMs = 10) {
+        let timeout;
+        let reject;
+        const onClear = () => {
+            if (timeout)
+                clearTimeout(timeout);
+            if (reject)
+                reject();
+        };
+        this.timeouts.push(onClear);
+        return () => {
+            return new Promise((resolveFn, rejectFn) => {
+                onClear();
+                reject = rejectFn;
+                timeout = setTimeout(() => {
+                    timeout = undefined;
+                    reject = undefined;
+                    resolveFn();
+                }, delayMs);
+            });
+        };
+    }
+    // Convert array of color values to linear gradient
+    convertColorValues(color) {
+        if (!Array.isArray(color))
+            return color || '';
+        if (color.length < 2)
+            return color[0] || '';
+        const canvasElement = document.createElement('canvas');
+        const ctx = canvasElement.getContext('2d');
+        const gradientHeight = canvasElement.height * (window.devicePixelRatio || 1);
+        const gradient = ctx.createLinearGradient(0, 0, 0, gradientHeight);
+        const colorStopPercentage = 1 / (color.length - 1);
+        color.forEach((color, index) => {
+            const offset = index * colorStopPercentage;
+            gradient.addColorStop(offset, color);
+        });
+        return gradient;
+    }
+    getPixelRatio() {
+        return Math.max(1, window.devicePixelRatio || 1);
+    }
+    renderBarWaveform(channelData, options, ctx, vScale) {
+        const topChannel = channelData[0];
+        const bottomChannel = channelData[1] || channelData[0];
+        const length = topChannel.length;
+        const { width, height } = ctx.canvas;
+        const halfHeight = height / 2;
+        const pixelRatio = this.getPixelRatio();
+        const barWidth = options.barWidth ? options.barWidth * pixelRatio : 1;
+        const barGap = options.barGap ? options.barGap * pixelRatio : options.barWidth ? barWidth / 2 : 0;
+        const barRadius = options.barRadius || 0;
+        const barIndexScale = width / (barWidth + barGap) / length;
+        const rectFn = barRadius && 'roundRect' in ctx ? 'roundRect' : 'rect';
+        ctx.beginPath();
+        let prevX = 0;
+        let maxTop = 0;
+        let maxBottom = 0;
+        for (let i = 0; i <= length; i++) {
+            const x = Math.round(i * barIndexScale);
+            if (x > prevX) {
+                const topBarHeight = Math.round(maxTop * halfHeight * vScale);
+                const bottomBarHeight = Math.round(maxBottom * halfHeight * vScale);
+                const barHeight = topBarHeight + bottomBarHeight || 1;
+                // Vertical alignment
+                let y = halfHeight - topBarHeight;
+                if (options.barAlign === 'top') {
+                    y = 0;
+                }
+                else if (options.barAlign === 'bottom') {
+                    y = height - barHeight;
+                }
+                ctx[rectFn](prevX * (barWidth + barGap), y, barWidth, barHeight, barRadius);
+                prevX = x;
+                maxTop = 0;
+                maxBottom = 0;
+            }
+            const magnitudeTop = Math.abs(topChannel[i] || 0);
+            const magnitudeBottom = Math.abs(bottomChannel[i] || 0);
+            if (magnitudeTop > maxTop)
+                maxTop = magnitudeTop;
+            if (magnitudeBottom > maxBottom)
+                maxBottom = magnitudeBottom;
+        }
+        ctx.fill();
+        ctx.closePath();
+    }
+    renderLineWaveform(channelData, _options, ctx, vScale) {
+        const drawChannel = (index) => {
+            const channel = channelData[index] || channelData[0];
+            const length = channel.length;
+            const { height } = ctx.canvas;
+            const halfHeight = height / 2;
+            const hScale = ctx.canvas.width / length;
+            ctx.moveTo(0, halfHeight);
+            let prevX = 0;
+            let max = 0;
+            for (let i = 0; i <= length; i++) {
+                const x = Math.round(i * hScale);
+                if (x > prevX) {
+                    const h = Math.round(max * halfHeight * vScale) || 1;
+                    const y = halfHeight + h * (index === 0 ? -1 : 1);
+                    ctx.lineTo(prevX, y);
+                    prevX = x;
+                    max = 0;
+                }
+                const value = Math.abs(channel[i] || 0);
+                if (value > max)
+                    max = value;
+            }
+            ctx.lineTo(prevX, halfHeight);
+        };
+        ctx.beginPath();
+        drawChannel(0);
+        drawChannel(1);
+        ctx.fill();
+        ctx.closePath();
+    }
+    renderWaveform(channelData, options, ctx) {
+        ctx.fillStyle = this.convertColorValues(options.waveColor);
+        // Custom rendering function
+        if (options.renderFunction) {
+            options.renderFunction(channelData, ctx);
+            return;
+        }
+        // Vertical scaling
+        let vScale = options.barHeight || 1;
+        if (options.normalize) {
+            const max = Array.from(channelData[0]).reduce((max, value) => Math.max(max, Math.abs(value)), 0);
+            vScale = max ? 1 / max : 1;
+        }
+        // Render waveform as bars
+        if (options.barWidth || options.barGap || options.barAlign) {
+            this.renderBarWaveform(channelData, options, ctx, vScale);
+            return;
+        }
+        // Render waveform as a polyline
+        this.renderLineWaveform(channelData, options, ctx, vScale);
+    }
+    renderSingleCanvas(data, options, width, height, offset, canvasContainer, progressContainer) {
+        const pixelRatio = this.getPixelRatio();
+        const canvas = document.createElement('canvas');
+        canvas.width = Math.round(width * pixelRatio);
+        canvas.height = Math.round(height * pixelRatio);
+        canvas.style.width = `${width}px`;
+        canvas.style.height = `${height}px`;
+        canvas.style.left = `${Math.round(offset)}px`;
+        canvasContainer.appendChild(canvas);
+        const ctx = canvas.getContext('2d');
+        this.renderWaveform(data, options, ctx);
+        // Draw a progress canvas
+        if (canvas.width > 0 && canvas.height > 0) {
+            const progressCanvas = canvas.cloneNode();
+            const progressCtx = progressCanvas.getContext('2d');
+            progressCtx.drawImage(canvas, 0, 0);
+            // Set the composition method to draw only where the waveform is drawn
+            progressCtx.globalCompositeOperation = 'source-in';
+            progressCtx.fillStyle = this.convertColorValues(options.progressColor);
+            // This rectangle acts as a mask thanks to the composition method
+            progressCtx.fillRect(0, 0, canvas.width, canvas.height);
+            progressContainer.appendChild(progressCanvas);
+        }
+    }
+    renderMultiCanvas(channelData, options, width, height, canvasContainer, progressContainer) {
+        const pixelRatio = this.getPixelRatio();
+        const { clientWidth } = this.scrollContainer;
+        const totalWidth = width / pixelRatio;
+        let singleCanvasWidth = Math.min(Renderer.MAX_CANVAS_WIDTH, clientWidth, totalWidth);
+        let drawnIndexes = {};
+        // Adjust width to avoid gaps between canvases when using bars
+        if (options.barWidth || options.barGap) {
+            const barWidth = options.barWidth || 0.5;
+            const barGap = options.barGap || barWidth / 2;
+            const totalBarWidth = barWidth + barGap;
+            if (singleCanvasWidth % totalBarWidth !== 0) {
+                singleCanvasWidth = Math.floor(singleCanvasWidth / totalBarWidth) * totalBarWidth;
+            }
+        }
+        // Draw a single canvas
+        const draw = (index) => {
+            if (index < 0 || index >= numCanvases)
+                return;
+            if (drawnIndexes[index])
+                return;
+            drawnIndexes[index] = true;
+            const offset = index * singleCanvasWidth;
+            const clampedWidth = Math.min(totalWidth - offset, singleCanvasWidth);
+            if (clampedWidth <= 0)
+                return;
+            const data = channelData.map((channel) => {
+                const start = Math.floor((offset / totalWidth) * channel.length);
+                const end = Math.floor(((offset + clampedWidth) / totalWidth) * channel.length);
+                return channel.slice(start, end);
+            });
+            this.renderSingleCanvas(data, options, clampedWidth, height, offset, canvasContainer, progressContainer);
+        };
+        // Clear canvases to avoid too many DOM nodes
+        const clearCanvases = () => {
+            if (Object.keys(drawnIndexes).length > Renderer.MAX_NODES) {
+                canvasContainer.innerHTML = '';
+                progressContainer.innerHTML = '';
+                drawnIndexes = {};
+            }
+        };
+        // Calculate how many canvases to render
+        const numCanvases = Math.ceil(totalWidth / singleCanvasWidth);
+        // Render all canvases if the waveform doesn't scroll
+        if (!this.isScrollable) {
+            for (let i = 0; i < numCanvases; i++) {
+                draw(i);
+            }
+            return;
+        }
+        // Lazy rendering
+        const viewPosition = this.scrollContainer.scrollLeft / totalWidth;
+        const startCanvas = Math.floor(viewPosition * numCanvases);
+        // Draw the canvases in the viewport first
+        draw(startCanvas - 1);
+        draw(startCanvas);
+        draw(startCanvas + 1);
+        // Subscribe to the scroll event to draw additional canvases
+        if (numCanvases > 1) {
+            this.unsubscribeOnScroll = this.on('scroll', () => {
+                const { scrollLeft } = this.scrollContainer;
+                const canvasIndex = Math.floor((scrollLeft / totalWidth) * numCanvases);
+                clearCanvases();
+                draw(canvasIndex - 1);
+                draw(canvasIndex);
+                draw(canvasIndex + 1);
+            });
+        }
+    }
+    renderChannel(channelData, _a, width, channelIndex) {
+        var { overlay } = _a, options = __rest(_a, ["overlay"]);
+        // A container for canvases
+        const canvasContainer = document.createElement('div');
+        const height = this.getHeight(options.height, options.splitChannels);
+        canvasContainer.style.height = `${height}px`;
+        if (overlay && channelIndex > 0) {
+            canvasContainer.style.marginTop = `-${height}px`;
+        }
+        this.canvasWrapper.style.minHeight = `${height}px`;
+        this.canvasWrapper.appendChild(canvasContainer);
+        // A container for progress canvases
+        const progressContainer = canvasContainer.cloneNode();
+        this.progressWrapper.appendChild(progressContainer);
+        // Render the waveform
+        this.renderMultiCanvas(channelData, options, width, height, canvasContainer, progressContainer);
+    }
+    render(audioData) {
+        return __awaiter(this, void 0, void 0, function* () {
+            var _a;
+            // Clear previous timeouts
+            this.timeouts.forEach((clear) => clear());
+            this.timeouts = [];
+            // Clear the canvases
+            this.canvasWrapper.innerHTML = '';
+            this.progressWrapper.innerHTML = '';
+            // Width
+            if (this.options.width != null) {
+                this.scrollContainer.style.width =
+                    typeof this.options.width === 'number' ? `${this.options.width}px` : this.options.width;
+            }
+            // Determine the width of the waveform
+            const pixelRatio = this.getPixelRatio();
+            const parentWidth = this.scrollContainer.clientWidth;
+            const scrollWidth = Math.ceil(audioData.duration * (this.options.minPxPerSec || 0));
+            // Whether the container should scroll
+            this.isScrollable = scrollWidth > parentWidth;
+            const useParentWidth = this.options.fillParent && !this.isScrollable;
+            // Width of the waveform in pixels
+            const width = (useParentWidth ? parentWidth : scrollWidth) * pixelRatio;
+            // Set the width of the wrapper
+            this.wrapper.style.width = useParentWidth ? '100%' : `${scrollWidth}px`;
+            // Set additional styles
+            this.scrollContainer.style.overflowX = this.isScrollable ? 'auto' : 'hidden';
+            this.scrollContainer.classList.toggle('noScrollbar', !!this.options.hideScrollbar);
+            this.cursor.style.backgroundColor = `${this.options.cursorColor || this.options.progressColor}`;
+            this.cursor.style.width = `${this.options.cursorWidth}px`;
+            this.audioData = audioData;
+            this.emit('render');
+            // Render the waveform
+            if (this.options.splitChannels) {
+                // Render a waveform for each channel
+                for (let i = 0; i < audioData.numberOfChannels; i++) {
+                    const options = Object.assign(Object.assign({}, this.options), (_a = this.options.splitChannels) === null || _a === void 0 ? void 0 : _a[i]);
+                    this.renderChannel([audioData.getChannelData(i)], options, width, i);
+                }
+            }
+            else {
+                // Render a single waveform for the first two channels (left and right)
+                const channels = [audioData.getChannelData(0)];
+                if (audioData.numberOfChannels > 1)
+                    channels.push(audioData.getChannelData(1));
+                this.renderChannel(channels, this.options, width, 0);
+            }
+            // Must be emitted asynchronously for backward compatibility
+            Promise.resolve().then(() => this.emit('rendered'));
+        });
+    }
+    reRender() {
+        var _a;
+        (_a = this.unsubscribeOnScroll) === null || _a === void 0 ? void 0 : _a.call(this);
+        delete this.unsubscribeOnScroll;
+        // Return if the waveform has not been rendered yet
+        if (!this.audioData)
+            return;
+        // Remember the current cursor position
+        const { scrollWidth } = this.scrollContainer;
+        const { right: before } = this.progressWrapper.getBoundingClientRect();
+        // Re-render the waveform
+        this.render(this.audioData);
+        // Adjust the scroll position so that the cursor stays in the same place
+        if (this.isScrollable && scrollWidth !== this.scrollContainer.scrollWidth) {
+            const { right: after } = this.progressWrapper.getBoundingClientRect();
+            let delta = after - before;
+            // to limit compounding floating-point drift
+            // we need to round to the half px furthest from 0
+            delta *= 2;
+            delta = delta < 0 ? Math.floor(delta) : Math.ceil(delta);
+            delta /= 2;
+            this.scrollContainer.scrollLeft += delta;
+        }
+    }
+    zoom(minPxPerSec) {
+        this.options.minPxPerSec = minPxPerSec;
+        this.reRender();
+    }
+    scrollIntoView(progress, isPlaying = false) {
+        const { scrollLeft, scrollWidth, clientWidth } = this.scrollContainer;
+        const progressWidth = progress * scrollWidth;
+        const startEdge = scrollLeft;
+        const endEdge = scrollLeft + clientWidth;
+        const middle = clientWidth / 2;
+        if (this.isDragging) {
+            // Scroll when dragging close to the edge of the viewport
+            const minGap = 30;
+            if (progressWidth + minGap > endEdge) {
+                this.scrollContainer.scrollLeft += minGap;
+            }
+            else if (progressWidth - minGap < startEdge) {
+                this.scrollContainer.scrollLeft -= minGap;
+            }
+        }
+        else {
+            if (progressWidth < startEdge || progressWidth > endEdge) {
+                this.scrollContainer.scrollLeft = progressWidth - (this.options.autoCenter ? middle : 0);
+            }
+            // Keep the cursor centered when playing
+            const center = progressWidth - scrollLeft - middle;
+            if (isPlaying && this.options.autoCenter && center > 0) {
+                this.scrollContainer.scrollLeft += Math.min(center, 10);
+            }
+        }
+        // Emit the scroll event
+        {
+            const newScroll = this.scrollContainer.scrollLeft;
+            const startX = newScroll / scrollWidth;
+            const endX = (newScroll + clientWidth) / scrollWidth;
+            this.emit('scroll', startX, endX, newScroll, newScroll + clientWidth);
+        }
+    }
+    renderProgress(progress, isPlaying) {
+        if (isNaN(progress))
+            return;
+        const percents = progress * 100;
+        this.canvasWrapper.style.clipPath = `polygon(${percents}% 0, 100% 0, 100% 100%, ${percents}% 100%)`;
+        this.progressWrapper.style.width = `${percents}%`;
+        this.cursor.style.left = `${percents}%`;
+        this.cursor.style.transform = `translateX(-${Math.round(percents) === 100 ? this.options.cursorWidth : 0}px)`;
+        if (this.isScrollable && this.options.autoScroll) {
+            this.scrollIntoView(progress, isPlaying);
+        }
+    }
+    exportImage(format, quality, type) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const canvases = this.canvasWrapper.querySelectorAll('canvas');
+            if (!canvases.length) {
+                throw new Error('No waveform data');
+            }
+            // Data URLs
+            if (type === 'dataURL') {
+                const images = Array.from(canvases).map((canvas) => canvas.toDataURL(format, quality));
+                return Promise.resolve(images);
+            }
+            // Blobs
+            return Promise.all(Array.from(canvases).map((canvas) => {
+                return new Promise((resolve, reject) => {
+                    canvas.toBlob((blob) => {
+                        blob ? resolve(blob) : reject(new Error('Could not export image'));
+                    }, format, quality);
+                });
+            }));
+        });
+    }
+}
+Renderer.MAX_CANVAS_WIDTH = 8000;
+Renderer.MAX_NODES = 10;
+/* harmony default export */ __webpack_exports__["default"] = (Renderer);
+
+
+/***/ }),
+
+/***/ "./node_modules/wavesurfer.js/dist/timer.js":
+/*!**************************************************!*\
+  !*** ./node_modules/wavesurfer.js/dist/timer.js ***!
+  \**************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _event_emitter_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./event-emitter.js */ "./node_modules/wavesurfer.js/dist/event-emitter.js");
+
+class Timer extends _event_emitter_js__WEBPACK_IMPORTED_MODULE_0__["default"] {
+    constructor() {
+        super(...arguments);
+        this.unsubscribe = () => undefined;
+    }
+    start() {
+        this.unsubscribe = this.on('tick', () => {
+            requestAnimationFrame(() => {
+                this.emit('tick');
+            });
+        });
+        this.emit('tick');
+    }
+    stop() {
+        this.unsubscribe();
+    }
+    destroy() {
+        this.unsubscribe();
+    }
+}
+/* harmony default export */ __webpack_exports__["default"] = (Timer);
+
+
+/***/ }),
+
+/***/ "./node_modules/wavesurfer.js/dist/wavesurfer.js":
+/*!*******************************************************!*\
+  !*** ./node_modules/wavesurfer.js/dist/wavesurfer.js ***!
+  \*******************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _base_plugin_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./base-plugin.js */ "./node_modules/wavesurfer.js/dist/base-plugin.js");
+/* harmony import */ var _decoder_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./decoder.js */ "./node_modules/wavesurfer.js/dist/decoder.js");
+/* harmony import */ var _dom_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./dom.js */ "./node_modules/wavesurfer.js/dist/dom.js");
+/* harmony import */ var _fetcher_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./fetcher.js */ "./node_modules/wavesurfer.js/dist/fetcher.js");
+/* harmony import */ var _player_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./player.js */ "./node_modules/wavesurfer.js/dist/player.js");
+/* harmony import */ var _renderer_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./renderer.js */ "./node_modules/wavesurfer.js/dist/renderer.js");
+/* harmony import */ var _timer_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./timer.js */ "./node_modules/wavesurfer.js/dist/timer.js");
+/* harmony import */ var _webaudio_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./webaudio.js */ "./node_modules/wavesurfer.js/dist/webaudio.js");
+var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+
+
+
+
+
+
+
+
+const defaultOptions = {
+    waveColor: '#999',
+    progressColor: '#555',
+    cursorWidth: 1,
+    minPxPerSec: 0,
+    fillParent: true,
+    interact: true,
+    dragToSeek: false,
+    autoScroll: true,
+    autoCenter: true,
+    sampleRate: 8000,
+};
+class WaveSurfer extends _player_js__WEBPACK_IMPORTED_MODULE_4__["default"] {
+    /** Create a new WaveSurfer instance */
+    static create(options) {
+        return new WaveSurfer(options);
+    }
+    /** Create a new WaveSurfer instance */
+    constructor(options) {
+        const media = options.media ||
+            (options.backend === 'WebAudio' ? new _webaudio_js__WEBPACK_IMPORTED_MODULE_7__["default"]() : undefined);
+        super({
+            media,
+            mediaControls: options.mediaControls,
+            autoplay: options.autoplay,
+            playbackRate: options.audioRate,
+        });
+        this.plugins = [];
+        this.decodedData = null;
+        this.subscriptions = [];
+        this.mediaSubscriptions = [];
+        this.abortController = null;
+        this.options = Object.assign({}, defaultOptions, options);
+        this.timer = new _timer_js__WEBPACK_IMPORTED_MODULE_6__["default"]();
+        const audioElement = media ? undefined : this.getMediaElement();
+        this.renderer = new _renderer_js__WEBPACK_IMPORTED_MODULE_5__["default"](this.options, audioElement);
+        this.initPlayerEvents();
+        this.initRendererEvents();
+        this.initTimerEvents();
+        this.initPlugins();
+        // Read the initial URL before load has been called
+        const initialUrl = this.options.url || this.getSrc() || '';
+        // Init and load async to allow external events to be registered
+        Promise.resolve().then(() => {
+            this.emit('init');
+            // Load audio if URL or an external media with an src is passed,
+            // of render w/o audio if pre-decoded peaks and duration are provided
+            const { peaks, duration } = this.options;
+            if (initialUrl || (peaks && duration)) {
+                // Swallow async errors because they cannot be caught from a constructor call.
+                // Subscribe to the wavesurfer's error event to handle them.
+                this.load(initialUrl, peaks, duration).catch(() => null);
+            }
+        });
+    }
+    updateProgress(currentTime = this.getCurrentTime()) {
+        this.renderer.renderProgress(currentTime / this.getDuration(), this.isPlaying());
+        return currentTime;
+    }
+    initTimerEvents() {
+        // The timer fires every 16ms for a smooth progress animation
+        this.subscriptions.push(this.timer.on('tick', () => {
+            if (!this.isSeeking()) {
+                const currentTime = this.updateProgress();
+                this.emit('timeupdate', currentTime);
+                this.emit('audioprocess', currentTime);
+            }
+        }));
+    }
+    initPlayerEvents() {
+        if (this.isPlaying()) {
+            this.emit('play');
+            this.timer.start();
+        }
+        this.mediaSubscriptions.push(this.onMediaEvent('timeupdate', () => {
+            const currentTime = this.updateProgress();
+            this.emit('timeupdate', currentTime);
+        }), this.onMediaEvent('play', () => {
+            this.emit('play');
+            this.timer.start();
+        }), this.onMediaEvent('pause', () => {
+            this.emit('pause');
+            this.timer.stop();
+        }), this.onMediaEvent('emptied', () => {
+            this.timer.stop();
+        }), this.onMediaEvent('ended', () => {
+            this.emit('finish');
+        }), this.onMediaEvent('seeking', () => {
+            this.emit('seeking', this.getCurrentTime());
+        }), this.onMediaEvent('error', (err) => {
+            this.emit('error', err.error);
+        }));
+    }
+    initRendererEvents() {
+        this.subscriptions.push(
+        // Seek on click
+        this.renderer.on('click', (relativeX, relativeY) => {
+            if (this.options.interact) {
+                this.seekTo(relativeX);
+                this.emit('interaction', relativeX * this.getDuration());
+                this.emit('click', relativeX, relativeY);
+            }
+        }), 
+        // Double click
+        this.renderer.on('dblclick', (relativeX, relativeY) => {
+            this.emit('dblclick', relativeX, relativeY);
+        }), 
+        // Scroll
+        this.renderer.on('scroll', (startX, endX, scrollLeft, scrollRight) => {
+            const duration = this.getDuration();
+            this.emit('scroll', startX * duration, endX * duration, scrollLeft, scrollRight);
+        }), 
+        // Redraw
+        this.renderer.on('render', () => {
+            this.emit('redraw');
+        }), 
+        // RedrawComplete
+        this.renderer.on('rendered', () => {
+            this.emit('redrawcomplete');
+        }), 
+        // DragStart
+        this.renderer.on('dragstart', (relativeX) => {
+            this.emit('dragstart', relativeX);
+        }), 
+        // DragEnd
+        this.renderer.on('dragend', (relativeX) => {
+            this.emit('dragend', relativeX);
+        }));
+        // Drag
+        {
+            let debounce;
+            this.subscriptions.push(this.renderer.on('drag', (relativeX) => {
+                if (!this.options.interact)
+                    return;
+                // Update the visual position
+                this.renderer.renderProgress(relativeX);
+                // Set the audio position with a debounce
+                clearTimeout(debounce);
+                let debounceTime;
+                if (this.isPlaying()) {
+                    debounceTime = 0;
+                }
+                else if (this.options.dragToSeek === true) {
+                    debounceTime = 200;
+                }
+                else if (typeof this.options.dragToSeek === 'object' && this.options.dragToSeek !== undefined) {
+                    debounceTime = this.options.dragToSeek['debounceTime'];
+                }
+                debounce = setTimeout(() => {
+                    this.seekTo(relativeX);
+                }, debounceTime);
+                this.emit('interaction', relativeX * this.getDuration());
+                this.emit('drag', relativeX);
+            }));
+        }
+    }
+    initPlugins() {
+        var _a;
+        if (!((_a = this.options.plugins) === null || _a === void 0 ? void 0 : _a.length))
+            return;
+        this.options.plugins.forEach((plugin) => {
+            this.registerPlugin(plugin);
+        });
+    }
+    unsubscribePlayerEvents() {
+        this.mediaSubscriptions.forEach((unsubscribe) => unsubscribe());
+        this.mediaSubscriptions = [];
+    }
+    /** Set new wavesurfer options and re-render it */
+    setOptions(options) {
+        this.options = Object.assign({}, this.options, options);
+        this.renderer.setOptions(this.options);
+        if (options.audioRate) {
+            this.setPlaybackRate(options.audioRate);
+        }
+        if (options.mediaControls != null) {
+            this.getMediaElement().controls = options.mediaControls;
+        }
+    }
+    /** Register a wavesurfer.js plugin */
+    registerPlugin(plugin) {
+        plugin._init(this);
+        this.plugins.push(plugin);
+        // Unregister plugin on destroy
+        this.subscriptions.push(plugin.once('destroy', () => {
+            this.plugins = this.plugins.filter((p) => p !== plugin);
+        }));
+        return plugin;
+    }
+    /** For plugins only: get the waveform wrapper div */
+    getWrapper() {
+        return this.renderer.getWrapper();
+    }
+    /** For plugins only: get the scroll container client width */
+    getWidth() {
+        return this.renderer.getWidth();
+    }
+    /** Get the current scroll position in pixels */
+    getScroll() {
+        return this.renderer.getScroll();
+    }
+    /** Set the current scroll position in pixels */
+    setScroll(pixels) {
+        return this.renderer.setScroll(pixels);
+    }
+    /** Move the start of the viewing window to a specific time in the audio (in seconds) */
+    setScrollTime(time) {
+        const percentage = time / this.getDuration();
+        this.renderer.setScrollPercentage(percentage);
+    }
+    /** Get all registered plugins */
+    getActivePlugins() {
+        return this.plugins;
+    }
+    loadAudio(url, blob, channelData, duration) {
+        return __awaiter(this, void 0, void 0, function* () {
+            var _a;
+            this.emit('load', url);
+            if (!this.options.media && this.isPlaying())
+                this.pause();
+            this.decodedData = null;
+            // Fetch the entire audio as a blob if pre-decoded data is not provided
+            if (!blob && !channelData) {
+                const fetchParams = this.options.fetchParams || {};
+                if (window.AbortController && !fetchParams.signal) {
+                    this.abortController = new AbortController();
+                    fetchParams.signal = (_a = this.abortController) === null || _a === void 0 ? void 0 : _a.signal;
+                }
+                const onProgress = (percentage) => this.emit('loading', percentage);
+                blob = yield _fetcher_js__WEBPACK_IMPORTED_MODULE_3__["default"].fetchBlob(url, onProgress, fetchParams);
+            }
+            // Set the mediaelement source
+            this.setSrc(url, blob);
+            // Wait for the audio duration
+            const audioDuration = yield new Promise((resolve) => {
+                const staticDuration = duration || this.getDuration();
+                if (staticDuration) {
+                    resolve(staticDuration);
+                }
+                else {
+                    this.mediaSubscriptions.push(this.onMediaEvent('loadedmetadata', () => resolve(this.getDuration()), { once: true }));
+                }
+            });
+            // Set the duration if the player is a WebAudioPlayer without a URL
+            if (!url && !blob) {
+                const media = this.getMediaElement();
+                if (media instanceof _webaudio_js__WEBPACK_IMPORTED_MODULE_7__["default"]) {
+                    media.duration = audioDuration;
+                }
+            }
+            // Decode the audio data or use user-provided peaks
+            if (channelData) {
+                this.decodedData = _decoder_js__WEBPACK_IMPORTED_MODULE_1__["default"].createBuffer(channelData, audioDuration || 0);
+            }
+            else if (blob) {
+                const arrayBuffer = yield blob.arrayBuffer();
+                this.decodedData = yield _decoder_js__WEBPACK_IMPORTED_MODULE_1__["default"].decode(arrayBuffer, this.options.sampleRate);
+            }
+            if (this.decodedData) {
+                this.emit('decode', this.getDuration());
+                this.renderer.render(this.decodedData);
+            }
+            this.emit('ready', this.getDuration());
+        });
+    }
+    /** Load an audio file by URL, with optional pre-decoded audio data */
+    load(url, channelData, duration) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                return yield this.loadAudio(url, undefined, channelData, duration);
+            }
+            catch (err) {
+                this.emit('error', err);
+                throw err;
+            }
+        });
+    }
+    /** Load an audio blob */
+    loadBlob(blob, channelData, duration) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                return yield this.loadAudio('', blob, channelData, duration);
+            }
+            catch (err) {
+                this.emit('error', err);
+                throw err;
+            }
+        });
+    }
+    /** Zoom the waveform by a given pixels-per-second factor */
+    zoom(minPxPerSec) {
+        if (!this.decodedData) {
+            throw new Error('No audio loaded');
+        }
+        this.renderer.zoom(minPxPerSec);
+        this.emit('zoom', minPxPerSec);
+    }
+    /** Get the decoded audio data */
+    getDecodedData() {
+        return this.decodedData;
+    }
+    /** Get decoded peaks */
+    exportPeaks({ channels = 2, maxLength = 8000, precision = 10000 } = {}) {
+        if (!this.decodedData) {
+            throw new Error('The audio has not been decoded yet');
+        }
+        const maxChannels = Math.min(channels, this.decodedData.numberOfChannels);
+        const peaks = [];
+        for (let i = 0; i < maxChannels; i++) {
+            const channel = this.decodedData.getChannelData(i);
+            const data = [];
+            const sampleSize = channel.length / maxLength;
+            for (let i = 0; i < maxLength; i++) {
+                const sample = channel.slice(Math.floor(i * sampleSize), Math.ceil((i + 1) * sampleSize));
+                let max = 0;
+                for (let x = 0; x < sample.length; x++) {
+                    const n = sample[x];
+                    if (Math.abs(n) > Math.abs(max))
+                        max = n;
+                }
+                data.push(Math.round(max * precision) / precision);
+            }
+            peaks.push(data);
+        }
+        return peaks;
+    }
+    /** Get the duration of the audio in seconds */
+    getDuration() {
+        let duration = super.getDuration() || 0;
+        // Fall back to the decoded data duration if the media duration is incorrect
+        if ((duration === 0 || duration === Infinity) && this.decodedData) {
+            duration = this.decodedData.duration;
+        }
+        return duration;
+    }
+    /** Toggle if the waveform should react to clicks */
+    toggleInteraction(isInteractive) {
+        this.options.interact = isInteractive;
+    }
+    /** Jump to a specific time in the audio (in seconds) */
+    setTime(time) {
+        super.setTime(time);
+        this.updateProgress(time);
+        this.emit('timeupdate', time);
+    }
+    /** Seek to a percentage of audio as [0..1] (0 = beginning, 1 = end) */
+    seekTo(progress) {
+        const time = this.getDuration() * progress;
+        this.setTime(time);
+    }
+    /** Play or pause the audio */
+    playPause() {
+        return __awaiter(this, void 0, void 0, function* () {
+            return this.isPlaying() ? this.pause() : this.play();
+        });
+    }
+    /** Stop the audio and go to the beginning */
+    stop() {
+        this.pause();
+        this.setTime(0);
+    }
+    /** Skip N or -N seconds from the current position */
+    skip(seconds) {
+        this.setTime(this.getCurrentTime() + seconds);
+    }
+    /** Empty the waveform */
+    empty() {
+        this.load('', [[0]], 0.001);
+    }
+    /** Set HTML media element */
+    setMediaElement(element) {
+        this.unsubscribePlayerEvents();
+        super.setMediaElement(element);
+        this.initPlayerEvents();
+    }
+    exportImage() {
+        return __awaiter(this, arguments, void 0, function* (format = 'image/png', quality = 1, type = 'dataURL') {
+            return this.renderer.exportImage(format, quality, type);
+        });
+    }
+    /** Unmount wavesurfer */
+    destroy() {
+        var _a;
+        this.emit('destroy');
+        (_a = this.abortController) === null || _a === void 0 ? void 0 : _a.abort();
+        this.plugins.forEach((plugin) => plugin.destroy());
+        this.subscriptions.forEach((unsubscribe) => unsubscribe());
+        this.unsubscribePlayerEvents();
+        this.timer.destroy();
+        this.renderer.destroy();
+        super.destroy();
+    }
+}
+WaveSurfer.BasePlugin = _base_plugin_js__WEBPACK_IMPORTED_MODULE_0__["default"];
+WaveSurfer.dom = _dom_js__WEBPACK_IMPORTED_MODULE_2__;
+/* harmony default export */ __webpack_exports__["default"] = (WaveSurfer);
+
+
+/***/ }),
+
+/***/ "./node_modules/wavesurfer.js/dist/webaudio.js":
+/*!*****************************************************!*\
+  !*** ./node_modules/wavesurfer.js/dist/webaudio.js ***!
+  \*****************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _event_emitter_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./event-emitter.js */ "./node_modules/wavesurfer.js/dist/event-emitter.js");
+var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+
+/**
+ * A Web Audio buffer player emulating the behavior of an HTML5 Audio element.
+ */
+class WebAudioPlayer extends _event_emitter_js__WEBPACK_IMPORTED_MODULE_0__["default"] {
+    constructor(audioContext = new AudioContext()) {
+        super();
+        this.bufferNode = null;
+        this.playStartTime = 0;
+        this.playedDuration = 0;
+        this._muted = false;
+        this._playbackRate = 1;
+        this._duration = undefined;
+        this.buffer = null;
+        this.currentSrc = '';
+        this.paused = true;
+        this.crossOrigin = null;
+        this.seeking = false;
+        this.autoplay = false;
+        /** Subscribe to an event. Returns an unsubscribe function. */
+        this.addEventListener = this.on;
+        /** Unsubscribe from an event */
+        this.removeEventListener = this.un;
+        this.audioContext = audioContext;
+        this.gainNode = this.audioContext.createGain();
+        this.gainNode.connect(this.audioContext.destination);
+    }
+    load() {
+        return __awaiter(this, void 0, void 0, function* () {
+            return;
+        });
+    }
+    get src() {
+        return this.currentSrc;
+    }
+    set src(value) {
+        this.currentSrc = value;
+        this._duration = undefined;
+        if (!value) {
+            this.buffer = null;
+            this.emit('emptied');
+            return;
+        }
+        fetch(value)
+            .then((response) => {
+            if (response.status >= 400) {
+                throw new Error(`Failed to fetch ${value}: ${response.status} (${response.statusText})`);
+            }
+            return response.arrayBuffer();
+        })
+            .then((arrayBuffer) => {
+            if (this.currentSrc !== value)
+                return null;
+            return this.audioContext.decodeAudioData(arrayBuffer);
+        })
+            .then((audioBuffer) => {
+            if (this.currentSrc !== value)
+                return;
+            this.buffer = audioBuffer;
+            this.emit('loadedmetadata');
+            this.emit('canplay');
+            if (this.autoplay)
+                this.play();
+        });
+    }
+    _play() {
+        var _a;
+        if (!this.paused)
+            return;
+        this.paused = false;
+        (_a = this.bufferNode) === null || _a === void 0 ? void 0 : _a.disconnect();
+        this.bufferNode = this.audioContext.createBufferSource();
+        if (this.buffer) {
+            this.bufferNode.buffer = this.buffer;
+        }
+        this.bufferNode.playbackRate.value = this._playbackRate;
+        this.bufferNode.connect(this.gainNode);
+        let currentPos = this.playedDuration * this._playbackRate;
+        if (currentPos >= this.duration) {
+            currentPos = 0;
+            this.playedDuration = 0;
+        }
+        this.bufferNode.start(this.audioContext.currentTime, currentPos);
+        this.playStartTime = this.audioContext.currentTime;
+        this.bufferNode.onended = () => {
+            if (this.currentTime >= this.duration) {
+                this.pause();
+                this.emit('ended');
+            }
+        };
+    }
+    _pause() {
+        var _a;
+        this.paused = true;
+        (_a = this.bufferNode) === null || _a === void 0 ? void 0 : _a.stop();
+        this.playedDuration += this.audioContext.currentTime - this.playStartTime;
+    }
+    play() {
+        return __awaiter(this, void 0, void 0, function* () {
+            if (!this.paused)
+                return;
+            this._play();
+            this.emit('play');
+        });
+    }
+    pause() {
+        if (this.paused)
+            return;
+        this._pause();
+        this.emit('pause');
+    }
+    stopAt(timeSeconds) {
+        var _a, _b;
+        const delay = timeSeconds - this.currentTime;
+        (_a = this.bufferNode) === null || _a === void 0 ? void 0 : _a.stop(this.audioContext.currentTime + delay);
+        (_b = this.bufferNode) === null || _b === void 0 ? void 0 : _b.addEventListener('ended', () => {
+            this.bufferNode = null;
+            this.pause();
+        }, { once: true });
+    }
+    setSinkId(deviceId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const ac = this.audioContext;
+            return ac.setSinkId(deviceId);
+        });
+    }
+    get playbackRate() {
+        return this._playbackRate;
+    }
+    set playbackRate(value) {
+        this._playbackRate = value;
+        if (this.bufferNode) {
+            this.bufferNode.playbackRate.value = value;
+        }
+    }
+    get currentTime() {
+        const time = this.paused
+            ? this.playedDuration
+            : this.playedDuration + (this.audioContext.currentTime - this.playStartTime);
+        return time * this._playbackRate;
+    }
+    set currentTime(value) {
+        const wasPlaying = !this.paused;
+        wasPlaying && this._pause();
+        this.playedDuration = value / this._playbackRate;
+        wasPlaying && this._play();
+        this.emit('seeking');
+        this.emit('timeupdate');
+    }
+    get duration() {
+        var _a, _b;
+        return (_a = this._duration) !== null && _a !== void 0 ? _a : (((_b = this.buffer) === null || _b === void 0 ? void 0 : _b.duration) || 0);
+    }
+    set duration(value) {
+        this._duration = value;
+    }
+    get volume() {
+        return this.gainNode.gain.value;
+    }
+    set volume(value) {
+        this.gainNode.gain.value = value;
+        this.emit('volumechange');
+    }
+    get muted() {
+        return this._muted;
+    }
+    set muted(value) {
+        if (this._muted === value)
+            return;
+        this._muted = value;
+        if (this._muted) {
+            this.gainNode.disconnect();
+        }
+        else {
+            this.gainNode.connect(this.audioContext.destination);
+        }
+    }
+    canPlayType(mimeType) {
+        return /^(audio|video)\//.test(mimeType);
+    }
+    /** Get the GainNode used to play the audio. Can be used to attach filters. */
+    getGainNode() {
+        return this.gainNode;
+    }
+    /** Get decoded audio */
+    getChannelData() {
+        const channels = [];
+        if (!this.buffer)
+            return channels;
+        const numChannels = this.buffer.numberOfChannels;
+        for (let i = 0; i < numChannels; i++) {
+            channels.push(this.buffer.getChannelData(i));
+        }
+        return channels;
+    }
+}
+/* harmony default export */ __webpack_exports__["default"] = (WebAudioPlayer);
 
 
 /***/ }),
@@ -19657,19 +17513,21 @@ function t(t,e,i,s){return new(i||(i=Promise))((function(n,r){function o(t){try{
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof(obj); }
-function _regeneratorRuntime() { "use strict"; /*! regenerator-runtime -- Copyright (c) 2014-present, Facebook, Inc. -- license (MIT): https://github.com/facebook/regenerator/blob/main/LICENSE */ _regeneratorRuntime = function _regeneratorRuntime() { return exports; }; var exports = {}, Op = Object.prototype, hasOwn = Op.hasOwnProperty, defineProperty = Object.defineProperty || function (obj, key, desc) { obj[key] = desc.value; }, $Symbol = "function" == typeof Symbol ? Symbol : {}, iteratorSymbol = $Symbol.iterator || "@@iterator", asyncIteratorSymbol = $Symbol.asyncIterator || "@@asyncIterator", toStringTagSymbol = $Symbol.toStringTag || "@@toStringTag"; function define(obj, key, value) { return Object.defineProperty(obj, key, { value: value, enumerable: !0, configurable: !0, writable: !0 }), obj[key]; } try { define({}, ""); } catch (err) { define = function define(obj, key, value) { return obj[key] = value; }; } function wrap(innerFn, outerFn, self, tryLocsList) { var protoGenerator = outerFn && outerFn.prototype instanceof Generator ? outerFn : Generator, generator = Object.create(protoGenerator.prototype), context = new Context(tryLocsList || []); return defineProperty(generator, "_invoke", { value: makeInvokeMethod(innerFn, self, context) }), generator; } function tryCatch(fn, obj, arg) { try { return { type: "normal", arg: fn.call(obj, arg) }; } catch (err) { return { type: "throw", arg: err }; } } exports.wrap = wrap; var ContinueSentinel = {}; function Generator() {} function GeneratorFunction() {} function GeneratorFunctionPrototype() {} var IteratorPrototype = {}; define(IteratorPrototype, iteratorSymbol, function () { return this; }); var getProto = Object.getPrototypeOf, NativeIteratorPrototype = getProto && getProto(getProto(values([]))); NativeIteratorPrototype && NativeIteratorPrototype !== Op && hasOwn.call(NativeIteratorPrototype, iteratorSymbol) && (IteratorPrototype = NativeIteratorPrototype); var Gp = GeneratorFunctionPrototype.prototype = Generator.prototype = Object.create(IteratorPrototype); function defineIteratorMethods(prototype) { ["next", "throw", "return"].forEach(function (method) { define(prototype, method, function (arg) { return this._invoke(method, arg); }); }); } function AsyncIterator(generator, PromiseImpl) { function invoke(method, arg, resolve, reject) { var record = tryCatch(generator[method], generator, arg); if ("throw" !== record.type) { var result = record.arg, value = result.value; return value && "object" == _typeof(value) && hasOwn.call(value, "__await") ? PromiseImpl.resolve(value.__await).then(function (value) { invoke("next", value, resolve, reject); }, function (err) { invoke("throw", err, resolve, reject); }) : PromiseImpl.resolve(value).then(function (unwrapped) { result.value = unwrapped, resolve(result); }, function (error) { return invoke("throw", error, resolve, reject); }); } reject(record.arg); } var previousPromise; defineProperty(this, "_invoke", { value: function value(method, arg) { function callInvokeWithMethodAndArg() { return new PromiseImpl(function (resolve, reject) { invoke(method, arg, resolve, reject); }); } return previousPromise = previousPromise ? previousPromise.then(callInvokeWithMethodAndArg, callInvokeWithMethodAndArg) : callInvokeWithMethodAndArg(); } }); } function makeInvokeMethod(innerFn, self, context) { var state = "suspendedStart"; return function (method, arg) { if ("executing" === state) throw new Error("Generator is already running"); if ("completed" === state) { if ("throw" === method) throw arg; return doneResult(); } for (context.method = method, context.arg = arg;;) { var delegate = context.delegate; if (delegate) { var delegateResult = maybeInvokeDelegate(delegate, context); if (delegateResult) { if (delegateResult === ContinueSentinel) continue; return delegateResult; } } if ("next" === context.method) context.sent = context._sent = context.arg;else if ("throw" === context.method) { if ("suspendedStart" === state) throw state = "completed", context.arg; context.dispatchException(context.arg); } else "return" === context.method && context.abrupt("return", context.arg); state = "executing"; var record = tryCatch(innerFn, self, context); if ("normal" === record.type) { if (state = context.done ? "completed" : "suspendedYield", record.arg === ContinueSentinel) continue; return { value: record.arg, done: context.done }; } "throw" === record.type && (state = "completed", context.method = "throw", context.arg = record.arg); } }; } function maybeInvokeDelegate(delegate, context) { var method = delegate.iterator[context.method]; if (undefined === method) { if (context.delegate = null, "throw" === context.method) { if (delegate.iterator.return && (context.method = "return", context.arg = undefined, maybeInvokeDelegate(delegate, context), "throw" === context.method)) return ContinueSentinel; context.method = "throw", context.arg = new TypeError("The iterator does not provide a 'throw' method"); } return ContinueSentinel; } var record = tryCatch(method, delegate.iterator, context.arg); if ("throw" === record.type) return context.method = "throw", context.arg = record.arg, context.delegate = null, ContinueSentinel; var info = record.arg; return info ? info.done ? (context[delegate.resultName] = info.value, context.next = delegate.nextLoc, "return" !== context.method && (context.method = "next", context.arg = undefined), context.delegate = null, ContinueSentinel) : info : (context.method = "throw", context.arg = new TypeError("iterator result is not an object"), context.delegate = null, ContinueSentinel); } function pushTryEntry(locs) { var entry = { tryLoc: locs[0] }; 1 in locs && (entry.catchLoc = locs[1]), 2 in locs && (entry.finallyLoc = locs[2], entry.afterLoc = locs[3]), this.tryEntries.push(entry); } function resetTryEntry(entry) { var record = entry.completion || {}; record.type = "normal", delete record.arg, entry.completion = record; } function Context(tryLocsList) { this.tryEntries = [{ tryLoc: "root" }], tryLocsList.forEach(pushTryEntry, this), this.reset(!0); } function values(iterable) { if (iterable) { var iteratorMethod = iterable[iteratorSymbol]; if (iteratorMethod) return iteratorMethod.call(iterable); if ("function" == typeof iterable.next) return iterable; if (!isNaN(iterable.length)) { var i = -1, next = function next() { for (; ++i < iterable.length;) if (hasOwn.call(iterable, i)) return next.value = iterable[i], next.done = !1, next; return next.value = undefined, next.done = !0, next; }; return next.next = next; } } return { next: doneResult }; } function doneResult() { return { value: undefined, done: !0 }; } return GeneratorFunction.prototype = GeneratorFunctionPrototype, defineProperty(Gp, "constructor", { value: GeneratorFunctionPrototype, configurable: !0 }), defineProperty(GeneratorFunctionPrototype, "constructor", { value: GeneratorFunction, configurable: !0 }), GeneratorFunction.displayName = define(GeneratorFunctionPrototype, toStringTagSymbol, "GeneratorFunction"), exports.isGeneratorFunction = function (genFun) { var ctor = "function" == typeof genFun && genFun.constructor; return !!ctor && (ctor === GeneratorFunction || "GeneratorFunction" === (ctor.displayName || ctor.name)); }, exports.mark = function (genFun) { return Object.setPrototypeOf ? Object.setPrototypeOf(genFun, GeneratorFunctionPrototype) : (genFun.__proto__ = GeneratorFunctionPrototype, define(genFun, toStringTagSymbol, "GeneratorFunction")), genFun.prototype = Object.create(Gp), genFun; }, exports.awrap = function (arg) { return { __await: arg }; }, defineIteratorMethods(AsyncIterator.prototype), define(AsyncIterator.prototype, asyncIteratorSymbol, function () { return this; }), exports.AsyncIterator = AsyncIterator, exports.async = function (innerFn, outerFn, self, tryLocsList, PromiseImpl) { void 0 === PromiseImpl && (PromiseImpl = Promise); var iter = new AsyncIterator(wrap(innerFn, outerFn, self, tryLocsList), PromiseImpl); return exports.isGeneratorFunction(outerFn) ? iter : iter.next().then(function (result) { return result.done ? result.value : iter.next(); }); }, defineIteratorMethods(Gp), define(Gp, toStringTagSymbol, "Generator"), define(Gp, iteratorSymbol, function () { return this; }), define(Gp, "toString", function () { return "[object Generator]"; }), exports.keys = function (val) { var object = Object(val), keys = []; for (var key in object) keys.push(key); return keys.reverse(), function next() { for (; keys.length;) { var key = keys.pop(); if (key in object) return next.value = key, next.done = !1, next; } return next.done = !0, next; }; }, exports.values = values, Context.prototype = { constructor: Context, reset: function reset(skipTempReset) { if (this.prev = 0, this.next = 0, this.sent = this._sent = undefined, this.done = !1, this.delegate = null, this.method = "next", this.arg = undefined, this.tryEntries.forEach(resetTryEntry), !skipTempReset) for (var name in this) "t" === name.charAt(0) && hasOwn.call(this, name) && !isNaN(+name.slice(1)) && (this[name] = undefined); }, stop: function stop() { this.done = !0; var rootRecord = this.tryEntries[0].completion; if ("throw" === rootRecord.type) throw rootRecord.arg; return this.rval; }, dispatchException: function dispatchException(exception) { if (this.done) throw exception; var context = this; function handle(loc, caught) { return record.type = "throw", record.arg = exception, context.next = loc, caught && (context.method = "next", context.arg = undefined), !!caught; } for (var i = this.tryEntries.length - 1; i >= 0; --i) { var entry = this.tryEntries[i], record = entry.completion; if ("root" === entry.tryLoc) return handle("end"); if (entry.tryLoc <= this.prev) { var hasCatch = hasOwn.call(entry, "catchLoc"), hasFinally = hasOwn.call(entry, "finallyLoc"); if (hasCatch && hasFinally) { if (this.prev < entry.catchLoc) return handle(entry.catchLoc, !0); if (this.prev < entry.finallyLoc) return handle(entry.finallyLoc); } else if (hasCatch) { if (this.prev < entry.catchLoc) return handle(entry.catchLoc, !0); } else { if (!hasFinally) throw new Error("try statement without catch or finally"); if (this.prev < entry.finallyLoc) return handle(entry.finallyLoc); } } } }, abrupt: function abrupt(type, arg) { for (var i = this.tryEntries.length - 1; i >= 0; --i) { var entry = this.tryEntries[i]; if (entry.tryLoc <= this.prev && hasOwn.call(entry, "finallyLoc") && this.prev < entry.finallyLoc) { var finallyEntry = entry; break; } } finallyEntry && ("break" === type || "continue" === type) && finallyEntry.tryLoc <= arg && arg <= finallyEntry.finallyLoc && (finallyEntry = null); var record = finallyEntry ? finallyEntry.completion : {}; return record.type = type, record.arg = arg, finallyEntry ? (this.method = "next", this.next = finallyEntry.finallyLoc, ContinueSentinel) : this.complete(record); }, complete: function complete(record, afterLoc) { if ("throw" === record.type) throw record.arg; return "break" === record.type || "continue" === record.type ? this.next = record.arg : "return" === record.type ? (this.rval = this.arg = record.arg, this.method = "return", this.next = "end") : "normal" === record.type && afterLoc && (this.next = afterLoc), ContinueSentinel; }, finish: function finish(finallyLoc) { for (var i = this.tryEntries.length - 1; i >= 0; --i) { var entry = this.tryEntries[i]; if (entry.finallyLoc === finallyLoc) return this.complete(entry.completion, entry.afterLoc), resetTryEntry(entry), ContinueSentinel; } }, catch: function _catch(tryLoc) { for (var i = this.tryEntries.length - 1; i >= 0; --i) { var entry = this.tryEntries[i]; if (entry.tryLoc === tryLoc) { var record = entry.completion; if ("throw" === record.type) { var thrown = record.arg; resetTryEntry(entry); } return thrown; } } throw new Error("illegal catch attempt"); }, delegateYield: function delegateYield(iterable, resultName, nextLoc) { return this.delegate = { iterator: values(iterable), resultName: resultName, nextLoc: nextLoc }, "next" === this.method && (this.arg = undefined), ContinueSentinel; } }, exports; }
-function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
-function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
-function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); Object.defineProperty(Constructor, "prototype", { writable: false }); return Constructor; }
+function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
+function _regeneratorRuntime() { "use strict"; /*! regenerator-runtime -- Copyright (c) 2014-present, Facebook, Inc. -- license (MIT): https://github.com/facebook/regenerator/blob/main/LICENSE */ _regeneratorRuntime = function _regeneratorRuntime() { return e; }; var t, e = {}, r = Object.prototype, n = r.hasOwnProperty, o = Object.defineProperty || function (t, e, r) { t[e] = r.value; }, i = "function" == typeof Symbol ? Symbol : {}, a = i.iterator || "@@iterator", c = i.asyncIterator || "@@asyncIterator", u = i.toStringTag || "@@toStringTag"; function define(t, e, r) { return Object.defineProperty(t, e, { value: r, enumerable: !0, configurable: !0, writable: !0 }), t[e]; } try { define({}, ""); } catch (t) { define = function define(t, e, r) { return t[e] = r; }; } function wrap(t, e, r, n) { var i = e && e.prototype instanceof Generator ? e : Generator, a = Object.create(i.prototype), c = new Context(n || []); return o(a, "_invoke", { value: makeInvokeMethod(t, r, c) }), a; } function tryCatch(t, e, r) { try { return { type: "normal", arg: t.call(e, r) }; } catch (t) { return { type: "throw", arg: t }; } } e.wrap = wrap; var h = "suspendedStart", l = "suspendedYield", f = "executing", s = "completed", y = {}; function Generator() {} function GeneratorFunction() {} function GeneratorFunctionPrototype() {} var p = {}; define(p, a, function () { return this; }); var d = Object.getPrototypeOf, v = d && d(d(values([]))); v && v !== r && n.call(v, a) && (p = v); var g = GeneratorFunctionPrototype.prototype = Generator.prototype = Object.create(p); function defineIteratorMethods(t) { ["next", "throw", "return"].forEach(function (e) { define(t, e, function (t) { return this._invoke(e, t); }); }); } function AsyncIterator(t, e) { function invoke(r, o, i, a) { var c = tryCatch(t[r], t, o); if ("throw" !== c.type) { var u = c.arg, h = u.value; return h && "object" == _typeof(h) && n.call(h, "__await") ? e.resolve(h.__await).then(function (t) { invoke("next", t, i, a); }, function (t) { invoke("throw", t, i, a); }) : e.resolve(h).then(function (t) { u.value = t, i(u); }, function (t) { return invoke("throw", t, i, a); }); } a(c.arg); } var r; o(this, "_invoke", { value: function value(t, n) { function callInvokeWithMethodAndArg() { return new e(function (e, r) { invoke(t, n, e, r); }); } return r = r ? r.then(callInvokeWithMethodAndArg, callInvokeWithMethodAndArg) : callInvokeWithMethodAndArg(); } }); } function makeInvokeMethod(e, r, n) { var o = h; return function (i, a) { if (o === f) throw Error("Generator is already running"); if (o === s) { if ("throw" === i) throw a; return { value: t, done: !0 }; } for (n.method = i, n.arg = a;;) { var c = n.delegate; if (c) { var u = maybeInvokeDelegate(c, n); if (u) { if (u === y) continue; return u; } } if ("next" === n.method) n.sent = n._sent = n.arg;else if ("throw" === n.method) { if (o === h) throw o = s, n.arg; n.dispatchException(n.arg); } else "return" === n.method && n.abrupt("return", n.arg); o = f; var p = tryCatch(e, r, n); if ("normal" === p.type) { if (o = n.done ? s : l, p.arg === y) continue; return { value: p.arg, done: n.done }; } "throw" === p.type && (o = s, n.method = "throw", n.arg = p.arg); } }; } function maybeInvokeDelegate(e, r) { var n = r.method, o = e.iterator[n]; if (o === t) return r.delegate = null, "throw" === n && e.iterator.return && (r.method = "return", r.arg = t, maybeInvokeDelegate(e, r), "throw" === r.method) || "return" !== n && (r.method = "throw", r.arg = new TypeError("The iterator does not provide a '" + n + "' method")), y; var i = tryCatch(o, e.iterator, r.arg); if ("throw" === i.type) return r.method = "throw", r.arg = i.arg, r.delegate = null, y; var a = i.arg; return a ? a.done ? (r[e.resultName] = a.value, r.next = e.nextLoc, "return" !== r.method && (r.method = "next", r.arg = t), r.delegate = null, y) : a : (r.method = "throw", r.arg = new TypeError("iterator result is not an object"), r.delegate = null, y); } function pushTryEntry(t) { var e = { tryLoc: t[0] }; 1 in t && (e.catchLoc = t[1]), 2 in t && (e.finallyLoc = t[2], e.afterLoc = t[3]), this.tryEntries.push(e); } function resetTryEntry(t) { var e = t.completion || {}; e.type = "normal", delete e.arg, t.completion = e; } function Context(t) { this.tryEntries = [{ tryLoc: "root" }], t.forEach(pushTryEntry, this), this.reset(!0); } function values(e) { if (e || "" === e) { var r = e[a]; if (r) return r.call(e); if ("function" == typeof e.next) return e; if (!isNaN(e.length)) { var o = -1, i = function next() { for (; ++o < e.length;) if (n.call(e, o)) return next.value = e[o], next.done = !1, next; return next.value = t, next.done = !0, next; }; return i.next = i; } } throw new TypeError(_typeof(e) + " is not iterable"); } return GeneratorFunction.prototype = GeneratorFunctionPrototype, o(g, "constructor", { value: GeneratorFunctionPrototype, configurable: !0 }), o(GeneratorFunctionPrototype, "constructor", { value: GeneratorFunction, configurable: !0 }), GeneratorFunction.displayName = define(GeneratorFunctionPrototype, u, "GeneratorFunction"), e.isGeneratorFunction = function (t) { var e = "function" == typeof t && t.constructor; return !!e && (e === GeneratorFunction || "GeneratorFunction" === (e.displayName || e.name)); }, e.mark = function (t) { return Object.setPrototypeOf ? Object.setPrototypeOf(t, GeneratorFunctionPrototype) : (t.__proto__ = GeneratorFunctionPrototype, define(t, u, "GeneratorFunction")), t.prototype = Object.create(g), t; }, e.awrap = function (t) { return { __await: t }; }, defineIteratorMethods(AsyncIterator.prototype), define(AsyncIterator.prototype, c, function () { return this; }), e.AsyncIterator = AsyncIterator, e.async = function (t, r, n, o, i) { void 0 === i && (i = Promise); var a = new AsyncIterator(wrap(t, r, n, o), i); return e.isGeneratorFunction(r) ? a : a.next().then(function (t) { return t.done ? t.value : a.next(); }); }, defineIteratorMethods(g), define(g, u, "Generator"), define(g, a, function () { return this; }), define(g, "toString", function () { return "[object Generator]"; }), e.keys = function (t) { var e = Object(t), r = []; for (var n in e) r.push(n); return r.reverse(), function next() { for (; r.length;) { var t = r.pop(); if (t in e) return next.value = t, next.done = !1, next; } return next.done = !0, next; }; }, e.values = values, Context.prototype = { constructor: Context, reset: function reset(e) { if (this.prev = 0, this.next = 0, this.sent = this._sent = t, this.done = !1, this.delegate = null, this.method = "next", this.arg = t, this.tryEntries.forEach(resetTryEntry), !e) for (var r in this) "t" === r.charAt(0) && n.call(this, r) && !isNaN(+r.slice(1)) && (this[r] = t); }, stop: function stop() { this.done = !0; var t = this.tryEntries[0].completion; if ("throw" === t.type) throw t.arg; return this.rval; }, dispatchException: function dispatchException(e) { if (this.done) throw e; var r = this; function handle(n, o) { return a.type = "throw", a.arg = e, r.next = n, o && (r.method = "next", r.arg = t), !!o; } for (var o = this.tryEntries.length - 1; o >= 0; --o) { var i = this.tryEntries[o], a = i.completion; if ("root" === i.tryLoc) return handle("end"); if (i.tryLoc <= this.prev) { var c = n.call(i, "catchLoc"), u = n.call(i, "finallyLoc"); if (c && u) { if (this.prev < i.catchLoc) return handle(i.catchLoc, !0); if (this.prev < i.finallyLoc) return handle(i.finallyLoc); } else if (c) { if (this.prev < i.catchLoc) return handle(i.catchLoc, !0); } else { if (!u) throw Error("try statement without catch or finally"); if (this.prev < i.finallyLoc) return handle(i.finallyLoc); } } } }, abrupt: function abrupt(t, e) { for (var r = this.tryEntries.length - 1; r >= 0; --r) { var o = this.tryEntries[r]; if (o.tryLoc <= this.prev && n.call(o, "finallyLoc") && this.prev < o.finallyLoc) { var i = o; break; } } i && ("break" === t || "continue" === t) && i.tryLoc <= e && e <= i.finallyLoc && (i = null); var a = i ? i.completion : {}; return a.type = t, a.arg = e, i ? (this.method = "next", this.next = i.finallyLoc, y) : this.complete(a); }, complete: function complete(t, e) { if ("throw" === t.type) throw t.arg; return "break" === t.type || "continue" === t.type ? this.next = t.arg : "return" === t.type ? (this.rval = this.arg = t.arg, this.method = "return", this.next = "end") : "normal" === t.type && e && (this.next = e), y; }, finish: function finish(t) { for (var e = this.tryEntries.length - 1; e >= 0; --e) { var r = this.tryEntries[e]; if (r.finallyLoc === t) return this.complete(r.completion, r.afterLoc), resetTryEntry(r), y; } }, catch: function _catch(t) { for (var e = this.tryEntries.length - 1; e >= 0; --e) { var r = this.tryEntries[e]; if (r.tryLoc === t) { var n = r.completion; if ("throw" === n.type) { var o = n.arg; resetTryEntry(r); } return o; } } throw Error("illegal catch attempt"); }, delegateYield: function delegateYield(e, r, n) { return this.delegate = { iterator: values(e), resultName: r, nextLoc: n }, "next" === this.method && (this.arg = t), y; } }, e; }
+function asyncGeneratorStep(n, t, e, r, o, a, c) { try { var i = n[a](c), u = i.value; } catch (n) { return void e(n); } i.done ? t(u) : Promise.resolve(u).then(r, o); }
+function _asyncToGenerator(n) { return function () { var t = this, e = arguments; return new Promise(function (r, o) { var a = n.apply(t, e); function _next(n) { asyncGeneratorStep(a, r, o, _next, _throw, "next", n); } function _throw(n) { asyncGeneratorStep(a, r, o, _next, _throw, "throw", n); } _next(void 0); }); }; }
+function _classCallCheck(a, n) { if (!(a instanceof n)) throw new TypeError("Cannot call a class as a function"); }
+function _defineProperties(e, r) { for (var t = 0; t < r.length; t++) { var o = r[t]; o.enumerable = o.enumerable || !1, o.configurable = !0, "value" in o && (o.writable = !0), Object.defineProperty(e, _toPropertyKey(o.key), o); } }
+function _createClass(e, r, t) { return r && _defineProperties(e.prototype, r), t && _defineProperties(e, t), Object.defineProperty(e, "prototype", { writable: !1 }), e; }
+function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == _typeof(i) ? i : i + ""; }
+function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != _typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
 var Exim = /*#__PURE__*/function () {
   function Exim(thisClass) {
     _classCallCheck(this, Exim);
     this.setup_hooks(thisClass);
   }
-  _createClass(Exim, [{
+  return _createClass(Exim, [{
     key: "setup_hooks",
     value: function setup_hooks(thisClass) {
       this.total_paged = false;
@@ -19724,7 +17582,7 @@ var Exim = /*#__PURE__*/function () {
                 text: "You got what you expected!",
                 icon: "success",
                 didOpen: function () {
-                  var _didOpen = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee() {
+                  var _didOpen = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee() {
                     var _this$lastJson$prod_t, _this$lastJson3;
                     var json_export, prod_title, dataStr, dlAnchorElem;
                     return _regeneratorRuntime().wrap(function _callee$(_context) {
@@ -19771,7 +17629,6 @@ var Exim = /*#__PURE__*/function () {
       });
     }
   }]);
-  return Exim;
 }();
 /* harmony default export */ __webpack_exports__["default"] = (Exim);
 // thisClass.Exim.get_exports(thisClass, 'product', 1) // product | content | post,page,custom_post_type
@@ -19805,7 +17662,6 @@ var icons = {
   right: "<svg width=\"20px\" height=\"20px\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" class=\"arrow arrow__right  arrow__disabled\" data-arrow=\"right\"><path d=\"M5 3l3.057-3 11.943 12-11.943 12-3.057-3 9-9z\"></path></svg>"
   // cloth: `<svg width="32px" height="32px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 36 36" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" role="img" class="iconify iconify--twemoji" preserveAspectRatio="xMidYMid meet" fill="#000000"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"><path fill="#e63f51" d="M22.42 11.847L26 2s-.398.002-1 .034V0h-2v2.219c-2.271.302-5 1.028-5 2.781c0-1.753-2.729-2.479-5-2.781V0h-2v2.034C10.398 2.002 10 2 10 2l3.581 9.847L1 25.643S7 36 18 36s17-10.357 17-10.357L22.42 11.847z"></path><path fill="#FFC52F" d="M13 11h10v2H13z"></path><path fill="#FFC52F" d="M15 13s-6.734 8.106-5.051 9.006C11.633 22.907 15 13 15 13zm6.096 0s6.734 8.105 5.051 9.007c-1.684.9-5.051-9.007-5.051-9.007zM18 13s-2 11 0 11s0-11 0-11z"></path></g></svg>`,
 };
-
 Object.keys(icons).forEach(function (key) {
   icons[key] = "<span class=\"svg_icon svg_icon__" + key + "\">" + icons[key] + "</span>";
 });
@@ -19830,43 +17686,42 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _tidio__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./tidio */ "./src/js/frontend/tidio.js");
 /* harmony import */ var flatpickr__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! flatpickr */ "./node_modules/flatpickr/dist/esm/index.js");
 /* harmony import */ var tippy_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! tippy.js */ "./node_modules/tippy.js/dist/tippy.esm.js");
-/* harmony import */ var wavesurfer_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! wavesurfer.js */ "./node_modules/wavesurfer.js/dist/wavesurfer.esm.js");
+/* harmony import */ var wavesurfer_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! wavesurfer.js */ "./node_modules/wavesurfer.js/dist/wavesurfer.js");
 /* harmony import */ var sweetalert2__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! sweetalert2 */ "./node_modules/sweetalert2/dist/sweetalert2.all.js");
 /* harmony import */ var sweetalert2__WEBPACK_IMPORTED_MODULE_9___default = /*#__PURE__*/__webpack_require__.n(sweetalert2__WEBPACK_IMPORTED_MODULE_9__);
-/* harmony import */ var awesomplete__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! awesomplete */ "./node_modules/awesomplete/awesomplete.js");
-/* harmony import */ var awesomplete__WEBPACK_IMPORTED_MODULE_10___default = /*#__PURE__*/__webpack_require__.n(awesomplete__WEBPACK_IMPORTED_MODULE_10__);
-/* harmony import */ var toastify_js__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! toastify-js */ "./node_modules/toastify-js/src/toastify.js");
-/* harmony import */ var toastify_js__WEBPACK_IMPORTED_MODULE_11___default = /*#__PURE__*/__webpack_require__.n(toastify_js__WEBPACK_IMPORTED_MODULE_11__);
-/* harmony import */ var wavesurfer_js_dist_plugins_record_esm_js__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! wavesurfer.js/dist/plugins/record.esm.js */ "./node_modules/wavesurfer.js/dist/plugins/record.esm.js");
-/* harmony import */ var _splidejs_splide__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! @splidejs/splide */ "./node_modules/@splidejs/splide/dist/js/splide.esm.js");
-/* harmony import */ var keen_slider__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! keen-slider */ "./node_modules/keen-slider/keen-slider.es.js");
-function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof(obj); }
-function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest(); }
+/* harmony import */ var toastify_js__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! toastify-js */ "./node_modules/toastify-js/src/toastify.js");
+/* harmony import */ var toastify_js__WEBPACK_IMPORTED_MODULE_10___default = /*#__PURE__*/__webpack_require__.n(toastify_js__WEBPACK_IMPORTED_MODULE_10__);
+/* harmony import */ var wavesurfer_js_dist_plugins_record_esm_js__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! wavesurfer.js/dist/plugins/record.esm.js */ "./node_modules/wavesurfer.js/dist/plugins/record.esm.js");
+/* harmony import */ var keen_slider__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! keen-slider */ "./node_modules/keen-slider/keen-slider.es.js");
+function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
+function _slicedToArray(r, e) { return _arrayWithHoles(r) || _iterableToArrayLimit(r, e) || _unsupportedIterableToArray(r, e) || _nonIterableRest(); }
 function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
-function _iterableToArrayLimit(arr, i) { var _i = arr == null ? null : typeof Symbol !== "undefined" && arr[Symbol.iterator] || arr["@@iterator"]; if (_i == null) return; var _arr = []; var _n = true; var _d = false; var _s, _e; try { for (_i = _i.call(arr); !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
-function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
-function _regeneratorRuntime() { "use strict"; /*! regenerator-runtime -- Copyright (c) 2014-present, Facebook, Inc. -- license (MIT): https://github.com/facebook/regenerator/blob/main/LICENSE */ _regeneratorRuntime = function _regeneratorRuntime() { return exports; }; var exports = {}, Op = Object.prototype, hasOwn = Op.hasOwnProperty, defineProperty = Object.defineProperty || function (obj, key, desc) { obj[key] = desc.value; }, $Symbol = "function" == typeof Symbol ? Symbol : {}, iteratorSymbol = $Symbol.iterator || "@@iterator", asyncIteratorSymbol = $Symbol.asyncIterator || "@@asyncIterator", toStringTagSymbol = $Symbol.toStringTag || "@@toStringTag"; function define(obj, key, value) { return Object.defineProperty(obj, key, { value: value, enumerable: !0, configurable: !0, writable: !0 }), obj[key]; } try { define({}, ""); } catch (err) { define = function define(obj, key, value) { return obj[key] = value; }; } function wrap(innerFn, outerFn, self, tryLocsList) { var protoGenerator = outerFn && outerFn.prototype instanceof Generator ? outerFn : Generator, generator = Object.create(protoGenerator.prototype), context = new Context(tryLocsList || []); return defineProperty(generator, "_invoke", { value: makeInvokeMethod(innerFn, self, context) }), generator; } function tryCatch(fn, obj, arg) { try { return { type: "normal", arg: fn.call(obj, arg) }; } catch (err) { return { type: "throw", arg: err }; } } exports.wrap = wrap; var ContinueSentinel = {}; function Generator() {} function GeneratorFunction() {} function GeneratorFunctionPrototype() {} var IteratorPrototype = {}; define(IteratorPrototype, iteratorSymbol, function () { return this; }); var getProto = Object.getPrototypeOf, NativeIteratorPrototype = getProto && getProto(getProto(values([]))); NativeIteratorPrototype && NativeIteratorPrototype !== Op && hasOwn.call(NativeIteratorPrototype, iteratorSymbol) && (IteratorPrototype = NativeIteratorPrototype); var Gp = GeneratorFunctionPrototype.prototype = Generator.prototype = Object.create(IteratorPrototype); function defineIteratorMethods(prototype) { ["next", "throw", "return"].forEach(function (method) { define(prototype, method, function (arg) { return this._invoke(method, arg); }); }); } function AsyncIterator(generator, PromiseImpl) { function invoke(method, arg, resolve, reject) { var record = tryCatch(generator[method], generator, arg); if ("throw" !== record.type) { var result = record.arg, value = result.value; return value && "object" == _typeof(value) && hasOwn.call(value, "__await") ? PromiseImpl.resolve(value.__await).then(function (value) { invoke("next", value, resolve, reject); }, function (err) { invoke("throw", err, resolve, reject); }) : PromiseImpl.resolve(value).then(function (unwrapped) { result.value = unwrapped, resolve(result); }, function (error) { return invoke("throw", error, resolve, reject); }); } reject(record.arg); } var previousPromise; defineProperty(this, "_invoke", { value: function value(method, arg) { function callInvokeWithMethodAndArg() { return new PromiseImpl(function (resolve, reject) { invoke(method, arg, resolve, reject); }); } return previousPromise = previousPromise ? previousPromise.then(callInvokeWithMethodAndArg, callInvokeWithMethodAndArg) : callInvokeWithMethodAndArg(); } }); } function makeInvokeMethod(innerFn, self, context) { var state = "suspendedStart"; return function (method, arg) { if ("executing" === state) throw new Error("Generator is already running"); if ("completed" === state) { if ("throw" === method) throw arg; return doneResult(); } for (context.method = method, context.arg = arg;;) { var delegate = context.delegate; if (delegate) { var delegateResult = maybeInvokeDelegate(delegate, context); if (delegateResult) { if (delegateResult === ContinueSentinel) continue; return delegateResult; } } if ("next" === context.method) context.sent = context._sent = context.arg;else if ("throw" === context.method) { if ("suspendedStart" === state) throw state = "completed", context.arg; context.dispatchException(context.arg); } else "return" === context.method && context.abrupt("return", context.arg); state = "executing"; var record = tryCatch(innerFn, self, context); if ("normal" === record.type) { if (state = context.done ? "completed" : "suspendedYield", record.arg === ContinueSentinel) continue; return { value: record.arg, done: context.done }; } "throw" === record.type && (state = "completed", context.method = "throw", context.arg = record.arg); } }; } function maybeInvokeDelegate(delegate, context) { var method = delegate.iterator[context.method]; if (undefined === method) { if (context.delegate = null, "throw" === context.method) { if (delegate.iterator.return && (context.method = "return", context.arg = undefined, maybeInvokeDelegate(delegate, context), "throw" === context.method)) return ContinueSentinel; context.method = "throw", context.arg = new TypeError("The iterator does not provide a 'throw' method"); } return ContinueSentinel; } var record = tryCatch(method, delegate.iterator, context.arg); if ("throw" === record.type) return context.method = "throw", context.arg = record.arg, context.delegate = null, ContinueSentinel; var info = record.arg; return info ? info.done ? (context[delegate.resultName] = info.value, context.next = delegate.nextLoc, "return" !== context.method && (context.method = "next", context.arg = undefined), context.delegate = null, ContinueSentinel) : info : (context.method = "throw", context.arg = new TypeError("iterator result is not an object"), context.delegate = null, ContinueSentinel); } function pushTryEntry(locs) { var entry = { tryLoc: locs[0] }; 1 in locs && (entry.catchLoc = locs[1]), 2 in locs && (entry.finallyLoc = locs[2], entry.afterLoc = locs[3]), this.tryEntries.push(entry); } function resetTryEntry(entry) { var record = entry.completion || {}; record.type = "normal", delete record.arg, entry.completion = record; } function Context(tryLocsList) { this.tryEntries = [{ tryLoc: "root" }], tryLocsList.forEach(pushTryEntry, this), this.reset(!0); } function values(iterable) { if (iterable) { var iteratorMethod = iterable[iteratorSymbol]; if (iteratorMethod) return iteratorMethod.call(iterable); if ("function" == typeof iterable.next) return iterable; if (!isNaN(iterable.length)) { var i = -1, next = function next() { for (; ++i < iterable.length;) if (hasOwn.call(iterable, i)) return next.value = iterable[i], next.done = !1, next; return next.value = undefined, next.done = !0, next; }; return next.next = next; } } return { next: doneResult }; } function doneResult() { return { value: undefined, done: !0 }; } return GeneratorFunction.prototype = GeneratorFunctionPrototype, defineProperty(Gp, "constructor", { value: GeneratorFunctionPrototype, configurable: !0 }), defineProperty(GeneratorFunctionPrototype, "constructor", { value: GeneratorFunction, configurable: !0 }), GeneratorFunction.displayName = define(GeneratorFunctionPrototype, toStringTagSymbol, "GeneratorFunction"), exports.isGeneratorFunction = function (genFun) { var ctor = "function" == typeof genFun && genFun.constructor; return !!ctor && (ctor === GeneratorFunction || "GeneratorFunction" === (ctor.displayName || ctor.name)); }, exports.mark = function (genFun) { return Object.setPrototypeOf ? Object.setPrototypeOf(genFun, GeneratorFunctionPrototype) : (genFun.__proto__ = GeneratorFunctionPrototype, define(genFun, toStringTagSymbol, "GeneratorFunction")), genFun.prototype = Object.create(Gp), genFun; }, exports.awrap = function (arg) { return { __await: arg }; }, defineIteratorMethods(AsyncIterator.prototype), define(AsyncIterator.prototype, asyncIteratorSymbol, function () { return this; }), exports.AsyncIterator = AsyncIterator, exports.async = function (innerFn, outerFn, self, tryLocsList, PromiseImpl) { void 0 === PromiseImpl && (PromiseImpl = Promise); var iter = new AsyncIterator(wrap(innerFn, outerFn, self, tryLocsList), PromiseImpl); return exports.isGeneratorFunction(outerFn) ? iter : iter.next().then(function (result) { return result.done ? result.value : iter.next(); }); }, defineIteratorMethods(Gp), define(Gp, toStringTagSymbol, "Generator"), define(Gp, iteratorSymbol, function () { return this; }), define(Gp, "toString", function () { return "[object Generator]"; }), exports.keys = function (val) { var object = Object(val), keys = []; for (var key in object) keys.push(key); return keys.reverse(), function next() { for (; keys.length;) { var key = keys.pop(); if (key in object) return next.value = key, next.done = !1, next; } return next.done = !0, next; }; }, exports.values = values, Context.prototype = { constructor: Context, reset: function reset(skipTempReset) { if (this.prev = 0, this.next = 0, this.sent = this._sent = undefined, this.done = !1, this.delegate = null, this.method = "next", this.arg = undefined, this.tryEntries.forEach(resetTryEntry), !skipTempReset) for (var name in this) "t" === name.charAt(0) && hasOwn.call(this, name) && !isNaN(+name.slice(1)) && (this[name] = undefined); }, stop: function stop() { this.done = !0; var rootRecord = this.tryEntries[0].completion; if ("throw" === rootRecord.type) throw rootRecord.arg; return this.rval; }, dispatchException: function dispatchException(exception) { if (this.done) throw exception; var context = this; function handle(loc, caught) { return record.type = "throw", record.arg = exception, context.next = loc, caught && (context.method = "next", context.arg = undefined), !!caught; } for (var i = this.tryEntries.length - 1; i >= 0; --i) { var entry = this.tryEntries[i], record = entry.completion; if ("root" === entry.tryLoc) return handle("end"); if (entry.tryLoc <= this.prev) { var hasCatch = hasOwn.call(entry, "catchLoc"), hasFinally = hasOwn.call(entry, "finallyLoc"); if (hasCatch && hasFinally) { if (this.prev < entry.catchLoc) return handle(entry.catchLoc, !0); if (this.prev < entry.finallyLoc) return handle(entry.finallyLoc); } else if (hasCatch) { if (this.prev < entry.catchLoc) return handle(entry.catchLoc, !0); } else { if (!hasFinally) throw new Error("try statement without catch or finally"); if (this.prev < entry.finallyLoc) return handle(entry.finallyLoc); } } } }, abrupt: function abrupt(type, arg) { for (var i = this.tryEntries.length - 1; i >= 0; --i) { var entry = this.tryEntries[i]; if (entry.tryLoc <= this.prev && hasOwn.call(entry, "finallyLoc") && this.prev < entry.finallyLoc) { var finallyEntry = entry; break; } } finallyEntry && ("break" === type || "continue" === type) && finallyEntry.tryLoc <= arg && arg <= finallyEntry.finallyLoc && (finallyEntry = null); var record = finallyEntry ? finallyEntry.completion : {}; return record.type = type, record.arg = arg, finallyEntry ? (this.method = "next", this.next = finallyEntry.finallyLoc, ContinueSentinel) : this.complete(record); }, complete: function complete(record, afterLoc) { if ("throw" === record.type) throw record.arg; return "break" === record.type || "continue" === record.type ? this.next = record.arg : "return" === record.type ? (this.rval = this.arg = record.arg, this.method = "return", this.next = "end") : "normal" === record.type && afterLoc && (this.next = afterLoc), ContinueSentinel; }, finish: function finish(finallyLoc) { for (var i = this.tryEntries.length - 1; i >= 0; --i) { var entry = this.tryEntries[i]; if (entry.finallyLoc === finallyLoc) return this.complete(entry.completion, entry.afterLoc), resetTryEntry(entry), ContinueSentinel; } }, catch: function _catch(tryLoc) { for (var i = this.tryEntries.length - 1; i >= 0; --i) { var entry = this.tryEntries[i]; if (entry.tryLoc === tryLoc) { var record = entry.completion; if ("throw" === record.type) { var thrown = record.arg; resetTryEntry(entry); } return thrown; } } throw new Error("illegal catch attempt"); }, delegateYield: function delegateYield(iterable, resultName, nextLoc) { return this.delegate = { iterator: values(iterable), resultName: resultName, nextLoc: nextLoc }, "next" === this.method && (this.arg = undefined), ContinueSentinel; } }, exports; }
-function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread(); }
+function _iterableToArrayLimit(r, l) { var t = null == r ? null : "undefined" != typeof Symbol && r[Symbol.iterator] || r["@@iterator"]; if (null != t) { var e, n, i, u, a = [], f = !0, o = !1; try { if (i = (t = t.call(r)).next, 0 === l) { if (Object(t) !== t) return; f = !1; } else for (; !(f = (e = i.call(t)).done) && (a.push(e.value), a.length !== l); f = !0); } catch (r) { o = !0, n = r; } finally { try { if (!f && null != t.return && (u = t.return(), Object(u) !== u)) return; } finally { if (o) throw n; } } return a; } }
+function _arrayWithHoles(r) { if (Array.isArray(r)) return r; }
+function _regeneratorRuntime() { "use strict"; /*! regenerator-runtime -- Copyright (c) 2014-present, Facebook, Inc. -- license (MIT): https://github.com/facebook/regenerator/blob/main/LICENSE */ _regeneratorRuntime = function _regeneratorRuntime() { return e; }; var t, e = {}, r = Object.prototype, n = r.hasOwnProperty, o = Object.defineProperty || function (t, e, r) { t[e] = r.value; }, i = "function" == typeof Symbol ? Symbol : {}, a = i.iterator || "@@iterator", c = i.asyncIterator || "@@asyncIterator", u = i.toStringTag || "@@toStringTag"; function define(t, e, r) { return Object.defineProperty(t, e, { value: r, enumerable: !0, configurable: !0, writable: !0 }), t[e]; } try { define({}, ""); } catch (t) { define = function define(t, e, r) { return t[e] = r; }; } function wrap(t, e, r, n) { var i = e && e.prototype instanceof Generator ? e : Generator, a = Object.create(i.prototype), c = new Context(n || []); return o(a, "_invoke", { value: makeInvokeMethod(t, r, c) }), a; } function tryCatch(t, e, r) { try { return { type: "normal", arg: t.call(e, r) }; } catch (t) { return { type: "throw", arg: t }; } } e.wrap = wrap; var h = "suspendedStart", l = "suspendedYield", f = "executing", s = "completed", y = {}; function Generator() {} function GeneratorFunction() {} function GeneratorFunctionPrototype() {} var p = {}; define(p, a, function () { return this; }); var d = Object.getPrototypeOf, v = d && d(d(values([]))); v && v !== r && n.call(v, a) && (p = v); var g = GeneratorFunctionPrototype.prototype = Generator.prototype = Object.create(p); function defineIteratorMethods(t) { ["next", "throw", "return"].forEach(function (e) { define(t, e, function (t) { return this._invoke(e, t); }); }); } function AsyncIterator(t, e) { function invoke(r, o, i, a) { var c = tryCatch(t[r], t, o); if ("throw" !== c.type) { var u = c.arg, h = u.value; return h && "object" == _typeof(h) && n.call(h, "__await") ? e.resolve(h.__await).then(function (t) { invoke("next", t, i, a); }, function (t) { invoke("throw", t, i, a); }) : e.resolve(h).then(function (t) { u.value = t, i(u); }, function (t) { return invoke("throw", t, i, a); }); } a(c.arg); } var r; o(this, "_invoke", { value: function value(t, n) { function callInvokeWithMethodAndArg() { return new e(function (e, r) { invoke(t, n, e, r); }); } return r = r ? r.then(callInvokeWithMethodAndArg, callInvokeWithMethodAndArg) : callInvokeWithMethodAndArg(); } }); } function makeInvokeMethod(e, r, n) { var o = h; return function (i, a) { if (o === f) throw Error("Generator is already running"); if (o === s) { if ("throw" === i) throw a; return { value: t, done: !0 }; } for (n.method = i, n.arg = a;;) { var c = n.delegate; if (c) { var u = maybeInvokeDelegate(c, n); if (u) { if (u === y) continue; return u; } } if ("next" === n.method) n.sent = n._sent = n.arg;else if ("throw" === n.method) { if (o === h) throw o = s, n.arg; n.dispatchException(n.arg); } else "return" === n.method && n.abrupt("return", n.arg); o = f; var p = tryCatch(e, r, n); if ("normal" === p.type) { if (o = n.done ? s : l, p.arg === y) continue; return { value: p.arg, done: n.done }; } "throw" === p.type && (o = s, n.method = "throw", n.arg = p.arg); } }; } function maybeInvokeDelegate(e, r) { var n = r.method, o = e.iterator[n]; if (o === t) return r.delegate = null, "throw" === n && e.iterator.return && (r.method = "return", r.arg = t, maybeInvokeDelegate(e, r), "throw" === r.method) || "return" !== n && (r.method = "throw", r.arg = new TypeError("The iterator does not provide a '" + n + "' method")), y; var i = tryCatch(o, e.iterator, r.arg); if ("throw" === i.type) return r.method = "throw", r.arg = i.arg, r.delegate = null, y; var a = i.arg; return a ? a.done ? (r[e.resultName] = a.value, r.next = e.nextLoc, "return" !== r.method && (r.method = "next", r.arg = t), r.delegate = null, y) : a : (r.method = "throw", r.arg = new TypeError("iterator result is not an object"), r.delegate = null, y); } function pushTryEntry(t) { var e = { tryLoc: t[0] }; 1 in t && (e.catchLoc = t[1]), 2 in t && (e.finallyLoc = t[2], e.afterLoc = t[3]), this.tryEntries.push(e); } function resetTryEntry(t) { var e = t.completion || {}; e.type = "normal", delete e.arg, t.completion = e; } function Context(t) { this.tryEntries = [{ tryLoc: "root" }], t.forEach(pushTryEntry, this), this.reset(!0); } function values(e) { if (e || "" === e) { var r = e[a]; if (r) return r.call(e); if ("function" == typeof e.next) return e; if (!isNaN(e.length)) { var o = -1, i = function next() { for (; ++o < e.length;) if (n.call(e, o)) return next.value = e[o], next.done = !1, next; return next.value = t, next.done = !0, next; }; return i.next = i; } } throw new TypeError(_typeof(e) + " is not iterable"); } return GeneratorFunction.prototype = GeneratorFunctionPrototype, o(g, "constructor", { value: GeneratorFunctionPrototype, configurable: !0 }), o(GeneratorFunctionPrototype, "constructor", { value: GeneratorFunction, configurable: !0 }), GeneratorFunction.displayName = define(GeneratorFunctionPrototype, u, "GeneratorFunction"), e.isGeneratorFunction = function (t) { var e = "function" == typeof t && t.constructor; return !!e && (e === GeneratorFunction || "GeneratorFunction" === (e.displayName || e.name)); }, e.mark = function (t) { return Object.setPrototypeOf ? Object.setPrototypeOf(t, GeneratorFunctionPrototype) : (t.__proto__ = GeneratorFunctionPrototype, define(t, u, "GeneratorFunction")), t.prototype = Object.create(g), t; }, e.awrap = function (t) { return { __await: t }; }, defineIteratorMethods(AsyncIterator.prototype), define(AsyncIterator.prototype, c, function () { return this; }), e.AsyncIterator = AsyncIterator, e.async = function (t, r, n, o, i) { void 0 === i && (i = Promise); var a = new AsyncIterator(wrap(t, r, n, o), i); return e.isGeneratorFunction(r) ? a : a.next().then(function (t) { return t.done ? t.value : a.next(); }); }, defineIteratorMethods(g), define(g, u, "Generator"), define(g, a, function () { return this; }), define(g, "toString", function () { return "[object Generator]"; }), e.keys = function (t) { var e = Object(t), r = []; for (var n in e) r.push(n); return r.reverse(), function next() { for (; r.length;) { var t = r.pop(); if (t in e) return next.value = t, next.done = !1, next; } return next.done = !0, next; }; }, e.values = values, Context.prototype = { constructor: Context, reset: function reset(e) { if (this.prev = 0, this.next = 0, this.sent = this._sent = t, this.done = !1, this.delegate = null, this.method = "next", this.arg = t, this.tryEntries.forEach(resetTryEntry), !e) for (var r in this) "t" === r.charAt(0) && n.call(this, r) && !isNaN(+r.slice(1)) && (this[r] = t); }, stop: function stop() { this.done = !0; var t = this.tryEntries[0].completion; if ("throw" === t.type) throw t.arg; return this.rval; }, dispatchException: function dispatchException(e) { if (this.done) throw e; var r = this; function handle(n, o) { return a.type = "throw", a.arg = e, r.next = n, o && (r.method = "next", r.arg = t), !!o; } for (var o = this.tryEntries.length - 1; o >= 0; --o) { var i = this.tryEntries[o], a = i.completion; if ("root" === i.tryLoc) return handle("end"); if (i.tryLoc <= this.prev) { var c = n.call(i, "catchLoc"), u = n.call(i, "finallyLoc"); if (c && u) { if (this.prev < i.catchLoc) return handle(i.catchLoc, !0); if (this.prev < i.finallyLoc) return handle(i.finallyLoc); } else if (c) { if (this.prev < i.catchLoc) return handle(i.catchLoc, !0); } else { if (!u) throw Error("try statement without catch or finally"); if (this.prev < i.finallyLoc) return handle(i.finallyLoc); } } } }, abrupt: function abrupt(t, e) { for (var r = this.tryEntries.length - 1; r >= 0; --r) { var o = this.tryEntries[r]; if (o.tryLoc <= this.prev && n.call(o, "finallyLoc") && this.prev < o.finallyLoc) { var i = o; break; } } i && ("break" === t || "continue" === t) && i.tryLoc <= e && e <= i.finallyLoc && (i = null); var a = i ? i.completion : {}; return a.type = t, a.arg = e, i ? (this.method = "next", this.next = i.finallyLoc, y) : this.complete(a); }, complete: function complete(t, e) { if ("throw" === t.type) throw t.arg; return "break" === t.type || "continue" === t.type ? this.next = t.arg : "return" === t.type ? (this.rval = this.arg = t.arg, this.method = "return", this.next = "end") : "normal" === t.type && e && (this.next = e), y; }, finish: function finish(t) { for (var e = this.tryEntries.length - 1; e >= 0; --e) { var r = this.tryEntries[e]; if (r.finallyLoc === t) return this.complete(r.completion, r.afterLoc), resetTryEntry(r), y; } }, catch: function _catch(t) { for (var e = this.tryEntries.length - 1; e >= 0; --e) { var r = this.tryEntries[e]; if (r.tryLoc === t) { var n = r.completion; if ("throw" === n.type) { var o = n.arg; resetTryEntry(r); } return o; } } throw Error("illegal catch attempt"); }, delegateYield: function delegateYield(e, r, n) { return this.delegate = { iterator: values(e), resultName: r, nextLoc: n }, "next" === this.method && (this.arg = t), y; } }, e; }
+function _toConsumableArray(r) { return _arrayWithoutHoles(r) || _iterableToArray(r) || _unsupportedIterableToArray(r) || _nonIterableSpread(); }
 function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
-function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
-function _iterableToArray(iter) { if (typeof Symbol !== "undefined" && iter[Symbol.iterator] != null || iter["@@iterator"] != null) return Array.from(iter); }
-function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) return _arrayLikeToArray(arr); }
-function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) arr2[i] = arr[i]; return arr2; }
-function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
-function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
-function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); enumerableOnly && (symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
-function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = null != arguments[i] ? arguments[i] : {}; i % 2 ? ownKeys(Object(source), !0).forEach(function (key) { _defineProperty(target, key, source[key]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } return target; }
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
-function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); Object.defineProperty(Constructor, "prototype", { writable: false }); return Constructor; }
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); Object.defineProperty(subClass, "prototype", { writable: false }); if (superClass) _setPrototypeOf(subClass, superClass); }
-function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf ? Object.setPrototypeOf.bind() : function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
-function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn(this, result); }; }
-function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } else if (call !== void 0) { throw new TypeError("Derived constructors may only return object or undefined"); } return _assertThisInitialized(self); }
-function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
-function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); return true; } catch (e) { return false; } }
-function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf.bind() : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+function _unsupportedIterableToArray(r, a) { if (r) { if ("string" == typeof r) return _arrayLikeToArray(r, a); var t = {}.toString.call(r).slice(8, -1); return "Object" === t && r.constructor && (t = r.constructor.name), "Map" === t || "Set" === t ? Array.from(r) : "Arguments" === t || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(t) ? _arrayLikeToArray(r, a) : void 0; } }
+function _iterableToArray(r) { if ("undefined" != typeof Symbol && null != r[Symbol.iterator] || null != r["@@iterator"]) return Array.from(r); }
+function _arrayWithoutHoles(r) { if (Array.isArray(r)) return _arrayLikeToArray(r); }
+function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length); for (var e = 0, n = Array(a); e < a; e++) n[e] = r[e]; return n; }
+function asyncGeneratorStep(n, t, e, r, o, a, c) { try { var i = n[a](c), u = i.value; } catch (n) { return void e(n); } i.done ? t(u) : Promise.resolve(u).then(r, o); }
+function _asyncToGenerator(n) { return function () { var t = this, e = arguments; return new Promise(function (r, o) { var a = n.apply(t, e); function _next(n) { asyncGeneratorStep(a, r, o, _next, _throw, "next", n); } function _throw(n) { asyncGeneratorStep(a, r, o, _next, _throw, "throw", n); } _next(void 0); }); }; }
+function ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
+function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t = null != arguments[r] ? arguments[r] : {}; r % 2 ? ownKeys(Object(t), !0).forEach(function (r) { _defineProperty(e, r, t[r]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : ownKeys(Object(t)).forEach(function (r) { Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r)); }); } return e; }
+function _defineProperty(e, r, t) { return (r = _toPropertyKey(r)) in e ? Object.defineProperty(e, r, { value: t, enumerable: !0, configurable: !0, writable: !0 }) : e[r] = t, e; }
+function _classCallCheck(a, n) { if (!(a instanceof n)) throw new TypeError("Cannot call a class as a function"); }
+function _defineProperties(e, r) { for (var t = 0; t < r.length; t++) { var o = r[t]; o.enumerable = o.enumerable || !1, o.configurable = !0, "value" in o && (o.writable = !0), Object.defineProperty(e, _toPropertyKey(o.key), o); } }
+function _createClass(e, r, t) { return r && _defineProperties(e.prototype, r), t && _defineProperties(e, t), Object.defineProperty(e, "prototype", { writable: !1 }), e; }
+function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == _typeof(i) ? i : i + ""; }
+function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != _typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
+function _callSuper(t, o, e) { return o = _getPrototypeOf(o), _possibleConstructorReturn(t, _isNativeReflectConstruct() ? Reflect.construct(o, e || [], _getPrototypeOf(t).constructor) : o.apply(t, e)); }
+function _possibleConstructorReturn(t, e) { if (e && ("object" == _typeof(e) || "function" == typeof e)) return e; if (void 0 !== e) throw new TypeError("Derived constructors may only return object or undefined"); return _assertThisInitialized(t); }
+function _assertThisInitialized(e) { if (void 0 === e) throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); return e; }
+function _isNativeReflectConstruct() { try { var t = !Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); } catch (t) {} return (_isNativeReflectConstruct = function _isNativeReflectConstruct() { return !!t; })(); }
+function _getPrototypeOf(t) { return _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf.bind() : function (t) { return t.__proto__ || Object.getPrototypeOf(t); }, _getPrototypeOf(t); }
+function _inherits(t, e) { if ("function" != typeof e && null !== e) throw new TypeError("Super expression must either be null or a function"); t.prototype = Object.create(e && e.prototype, { constructor: { value: t, writable: !0, configurable: !0 } }), Object.defineProperty(t, "prototype", { writable: !1 }), e && _setPrototypeOf(t, e); }
+function _setPrototypeOf(t, e) { return _setPrototypeOf = Object.setPrototypeOf ? Object.setPrototypeOf.bind() : function (t, e) { return t.__proto__ = e, t; }, _setPrototypeOf(t, e); }
 /**
  * Frontend Script.
  * 
@@ -19888,20 +17743,18 @@ function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.g
 
 
 
+// import Awesomplete from "awesomplete";
 
 
-
-
+// import Splide from '@splidejs/splide';
 
 (function ($) {
   var FutureWordPress_Frontend = /*#__PURE__*/function (_popupCart) {
-    _inherits(FutureWordPress_Frontend, _popupCart);
-    var _super = _createSuper(FutureWordPress_Frontend);
     function FutureWordPress_Frontend() {
       var _this$config$ajaxUrl, _this$config, _this$config$ajax_non, _this$config2, _this$config$profile, _this$config3, _this$config$i18n, _this$config4;
       var _this;
       _classCallCheck(this, FutureWordPress_Frontend);
-      _this = _super.call(this);
+      _this = _callSuper(this, FutureWordPress_Frontend);
       _this.config = fwpSiteConfig;
       _this.ajaxUrl = (_this$config$ajaxUrl = (_this$config = _this.config) === null || _this$config === void 0 ? void 0 : _this$config.ajaxUrl) !== null && _this$config$ajaxUrl !== void 0 ? _this$config$ajaxUrl : '';
       _this.ajaxNonce = (_this$config$ajax_non = (_this$config2 = _this.config) === null || _this$config2 === void 0 ? void 0 : _this$config2.ajax_nonce) !== null && _this$config$ajax_non !== void 0 ? _this$config$ajax_non : '';
@@ -19912,11 +17765,12 @@ function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.g
       _this.i18n = _objectSpread({
         confirming: 'Confirming'
       }, i18n);
-      _this.Exim = new _exim__WEBPACK_IMPORTED_MODULE_1__["default"](_assertThisInitialized(_this));
+      _this.Exim = new _exim__WEBPACK_IMPORTED_MODULE_1__["default"](_this);
       _this.setup_hooks();
       return _this;
     }
-    _createClass(FutureWordPress_Frontend, [{
+    _inherits(FutureWordPress_Frontend, _popupCart);
+    return _createClass(FutureWordPress_Frontend, [{
       key: "setup_hooks",
       value: function setup_hooks() {
         var _this$config$local, _this$config5, _this$config$currency, _this$config6;
@@ -19963,12 +17817,12 @@ function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.g
       value: function init_css_n_js_local() {
         this.tippy = tippy_js__WEBPACK_IMPORTED_MODULE_7__["default"];
         this.flatpickr = flatpickr__WEBPACK_IMPORTED_MODULE_6__["default"];
-        this.KeenSlider = keen_slider__WEBPACK_IMPORTED_MODULE_14__["default"];
-        this.KeenSlider = keen_slider__WEBPACK_IMPORTED_MODULE_14__["default"];
+        this.KeenSlider = keen_slider__WEBPACK_IMPORTED_MODULE_12__["default"];
+        this.KeenSlider = keen_slider__WEBPACK_IMPORTED_MODULE_12__["default"];
         this.Swal = window.Swal = sweetalert2__WEBPACK_IMPORTED_MODULE_9___default.a;
         window.WaveSurfer = wavesurfer_js__WEBPACK_IMPORTED_MODULE_8__["default"];
-        window.RecordPlugin = wavesurfer_js_dist_plugins_record_esm_js__WEBPACK_IMPORTED_MODULE_12__["default"];
-        this.toastify = toastify_js__WEBPACK_IMPORTED_MODULE_11___default.a;
+        window.RecordPlugin = wavesurfer_js_dist_plugins_record_esm_js__WEBPACK_IMPORTED_MODULE_11__["default"];
+        this.toastify = toastify_js__WEBPACK_IMPORTED_MODULE_10___default.a;
         this.init_search_form();
         this.init_toast();
         // this.Splide = Splide;
@@ -20022,7 +17876,7 @@ function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.g
         var _this2 = this;
         var thisClass = this;
         document.body.addEventListener('gotproductpopupresult', /*#__PURE__*/function () {
-          var _ref2 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee2(event) {
+          var _ref2 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee2(event) {
             var _custom_fields$sittin, _custom_fields$standi;
             var product, custom_fields, _custom_fields$sittin2, current_groups, steps, sHtml_id;
             return _regeneratorRuntime().wrap(function _callee2$(_context2) {
@@ -20119,8 +17973,8 @@ function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.g
                   }
                   // return;
                   setTimeout(function () {
-                    document.querySelectorAll("#".concat(sHtml_id, ".dynamic_popup")).forEach( /*#__PURE__*/function () {
-                      var _ref3 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee(root) {
+                    document.querySelectorAll("#".concat(sHtml_id, ".dynamic_popup")).forEach(/*#__PURE__*/function () {
+                      var _ref3 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee(root) {
                         var template;
                         return _regeneratorRuntime().wrap(function _callee$(_context) {
                           while (1) switch (_context.prev = _context.next) {
@@ -20155,7 +18009,6 @@ function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.g
                         // voiceRecord.duration = parseFloat((voice.duration == '')?'20':voice.duration);
                         // this.popupCart.addAdditionalPrice(voice.steptitle, parseFloat(voice.cost));
                       }
-
                       if (_prompts__WEBPACK_IMPORTED_MODULE_0__["default"].groupSelected) {
                         thisClass.prompts.init_events(thisClass);
                       } else {
@@ -20192,7 +18045,7 @@ function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.g
           };
         }());
         document.body.addEventListener('popup_submitting_done', /*#__PURE__*/function () {
-          var _ref4 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee4(event) {
+          var _ref4 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee4(event) {
             var _thisClass$lastJson$c, _thisClass$lastJson;
             var submit, _thisClass$confirmati, _thisClass$confirmati2, _thisClass$confirmati3, _thisClass$confirmati4, _thisClass$i18n$check, _thisClass$i18n, _thisClass$i18n$addac, _thisClass$i18n2, _thisClass$i18n$buymo, _thisClass$i18n3, popupNode;
             return _regeneratorRuntime().wrap(function _callee4$(_context4) {
@@ -20239,7 +18092,7 @@ function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.g
                       showLoaderOnConfirm: true,
                       footer: false,
                       didOpen: function () {
-                        var _didOpen = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee3() {
+                        var _didOpen = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee3() {
                           var _document$querySelect, _thisClass$lastJson2, _thisClass$lastJson$w, _thisClass$lastJson3, _thisClass$lastJson$w2, _thisClass$lastJson4, _thisClass$lastJson$w3, _thisClass$lastJson5, _thisClass$i18n$addwr, _thisClass$i18n4, _thisClass$config$cur, _thisClass$config, _thisClass$lastJson$w4, _thisClass$lastJson6, _thisClass$i18n$addwr2, _thisClass$i18n5, _thisClass$i18n$youma, _thisClass$i18n6;
                           var addition;
                           return _regeneratorRuntime().wrap(function _callee3$(_context3) {
@@ -20368,7 +18221,7 @@ function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.g
           };
         }());
         document.body.addEventListener('popup_submitting_failed', /*#__PURE__*/function () {
-          var _ref5 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee5(event) {
+          var _ref5 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee5(event) {
             var submit;
             return _regeneratorRuntime().wrap(function _callee5$(_context5) {
               while (1) switch (_context5.prev = _context5.next) {
@@ -20388,7 +18241,7 @@ function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.g
           };
         }());
         document.body.addEventListener('ajaxi18nloaded', /*#__PURE__*/function () {
-          var _ref6 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee6(event) {
+          var _ref6 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee6(event) {
             var _thisClass$lastJson$t, _thisClass$lastJson7;
             return _regeneratorRuntime().wrap(function _callee6$(_context6) {
               while (1) switch (_context6.prev = _context6.next) {
@@ -20412,7 +18265,7 @@ function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.g
           };
         }());
         document.body.addEventListener('namesuggestionloaded', /*#__PURE__*/function () {
-          var _ref7 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee7(event) {
+          var _ref7 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee7(event) {
             var _thisClass$lastJson$n, _thisClass$lastJson8;
             return _regeneratorRuntime().wrap(function _callee7$(_context7) {
               while (1) switch (_context7.prev = _context7.next) {
@@ -20435,7 +18288,7 @@ function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.g
           };
         }());
         document.body.addEventListener('wrapping_adding_success', /*#__PURE__*/function () {
-          var _ref8 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee8(event) {
+          var _ref8 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee8(event) {
             var _thisClass$i18n$remov, _thisClass$i18n8;
             return _regeneratorRuntime().wrap(function _callee8$(_context8) {
               while (1) switch (_context8.prev = _context8.next) {
@@ -20459,7 +18312,7 @@ function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.g
           };
         }());
         document.body.addEventListener('wrapping_removing_success', /*#__PURE__*/function () {
-          var _ref9 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee9(event) {
+          var _ref9 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee9(event) {
             var _thisClass$i18n$addwr3, _thisClass$i18n9;
             return _regeneratorRuntime().wrap(function _callee9$(_context9) {
               while (1) switch (_context9.prev = _context9.next) {
@@ -20549,7 +18402,6 @@ function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.g
             // console.log(err);
           }
         };
-
         $.ajax(ajax_args);
       }
     }, {
@@ -20690,7 +18542,6 @@ function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.g
                   }].concat(_toConsumableArray(gallery));
                   // console.log();
                 }
-
                 gallery.forEach(function (row, i) {
                   var card = document.createElement('div');
                   card.classList.add('uael-gallery__item', 'keen-slider__slide', 'number-slide' + (i + 1));
@@ -20757,7 +18608,6 @@ function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.g
               }
             }
           });
-
           document.querySelectorAll('.init_cusomizeaddtocartbtn:not([data-handled])').forEach(function (el) {
             el.dataset.handled = true;
             thisClass.resizeCartButtons(el);
@@ -20787,7 +18637,7 @@ function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.g
                 // backdrop: 'rgb(255 255 255 / 90%)',
                 showLoaderOnConfirm: true
               }, "allowOutsideClick", false), "html", html), "didOpen", function () {
-                var _didOpen2 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee10() {
+                var _didOpen2 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee10() {
                   var formdata;
                   return _regeneratorRuntime().wrap(function _callee10$(_context10) {
                     while (1) switch (_context10.prev = _context10.next) {
@@ -20818,7 +18668,7 @@ function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.g
                 }
                 return didOpen;
               }()), "preConfirm", function () {
-                var _preConfirm = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee11(login) {
+                var _preConfirm = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee11(login) {
                   return _regeneratorRuntime().wrap(function _callee11$(_context11) {
                     while (1) switch (_context11.prev = _context11.next) {
                       case 0:
@@ -20833,8 +18683,8 @@ function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.g
                   return _preConfirm.apply(this, arguments);
                 }
                 return preConfirm;
-              }())).then( /*#__PURE__*/function () {
-                var _ref12 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee12(result) {
+              }())).then(/*#__PURE__*/function () {
+                var _ref12 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee12(result) {
                   var _thisClass$i18n$somet2, _thisClass$i18n11;
                   return _regeneratorRuntime().wrap(function _callee12$(_context12) {
                     while (1) switch (_context12.prev = _context12.next) {
@@ -21107,7 +18957,6 @@ function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.g
         return (_navigator$userAgentD = navigator.userAgentData) === null || _navigator$userAgentD === void 0 ? void 0 : _navigator$userAgentD.mobile;
       }
     }]);
-    return FutureWordPress_Frontend;
   }(_popupcart__WEBPACK_IMPORTED_MODULE_2__["default"]);
   new FutureWordPress_Frontend();
 })(jQuery);
@@ -21124,13 +18973,15 @@ function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.g
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _modules_send2server__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../modules/send2server */ "./src/js/modules/send2server.js");
-function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof(obj); }
-function _regeneratorRuntime() { "use strict"; /*! regenerator-runtime -- Copyright (c) 2014-present, Facebook, Inc. -- license (MIT): https://github.com/facebook/regenerator/blob/main/LICENSE */ _regeneratorRuntime = function _regeneratorRuntime() { return exports; }; var exports = {}, Op = Object.prototype, hasOwn = Op.hasOwnProperty, defineProperty = Object.defineProperty || function (obj, key, desc) { obj[key] = desc.value; }, $Symbol = "function" == typeof Symbol ? Symbol : {}, iteratorSymbol = $Symbol.iterator || "@@iterator", asyncIteratorSymbol = $Symbol.asyncIterator || "@@asyncIterator", toStringTagSymbol = $Symbol.toStringTag || "@@toStringTag"; function define(obj, key, value) { return Object.defineProperty(obj, key, { value: value, enumerable: !0, configurable: !0, writable: !0 }), obj[key]; } try { define({}, ""); } catch (err) { define = function define(obj, key, value) { return obj[key] = value; }; } function wrap(innerFn, outerFn, self, tryLocsList) { var protoGenerator = outerFn && outerFn.prototype instanceof Generator ? outerFn : Generator, generator = Object.create(protoGenerator.prototype), context = new Context(tryLocsList || []); return defineProperty(generator, "_invoke", { value: makeInvokeMethod(innerFn, self, context) }), generator; } function tryCatch(fn, obj, arg) { try { return { type: "normal", arg: fn.call(obj, arg) }; } catch (err) { return { type: "throw", arg: err }; } } exports.wrap = wrap; var ContinueSentinel = {}; function Generator() {} function GeneratorFunction() {} function GeneratorFunctionPrototype() {} var IteratorPrototype = {}; define(IteratorPrototype, iteratorSymbol, function () { return this; }); var getProto = Object.getPrototypeOf, NativeIteratorPrototype = getProto && getProto(getProto(values([]))); NativeIteratorPrototype && NativeIteratorPrototype !== Op && hasOwn.call(NativeIteratorPrototype, iteratorSymbol) && (IteratorPrototype = NativeIteratorPrototype); var Gp = GeneratorFunctionPrototype.prototype = Generator.prototype = Object.create(IteratorPrototype); function defineIteratorMethods(prototype) { ["next", "throw", "return"].forEach(function (method) { define(prototype, method, function (arg) { return this._invoke(method, arg); }); }); } function AsyncIterator(generator, PromiseImpl) { function invoke(method, arg, resolve, reject) { var record = tryCatch(generator[method], generator, arg); if ("throw" !== record.type) { var result = record.arg, value = result.value; return value && "object" == _typeof(value) && hasOwn.call(value, "__await") ? PromiseImpl.resolve(value.__await).then(function (value) { invoke("next", value, resolve, reject); }, function (err) { invoke("throw", err, resolve, reject); }) : PromiseImpl.resolve(value).then(function (unwrapped) { result.value = unwrapped, resolve(result); }, function (error) { return invoke("throw", error, resolve, reject); }); } reject(record.arg); } var previousPromise; defineProperty(this, "_invoke", { value: function value(method, arg) { function callInvokeWithMethodAndArg() { return new PromiseImpl(function (resolve, reject) { invoke(method, arg, resolve, reject); }); } return previousPromise = previousPromise ? previousPromise.then(callInvokeWithMethodAndArg, callInvokeWithMethodAndArg) : callInvokeWithMethodAndArg(); } }); } function makeInvokeMethod(innerFn, self, context) { var state = "suspendedStart"; return function (method, arg) { if ("executing" === state) throw new Error("Generator is already running"); if ("completed" === state) { if ("throw" === method) throw arg; return doneResult(); } for (context.method = method, context.arg = arg;;) { var delegate = context.delegate; if (delegate) { var delegateResult = maybeInvokeDelegate(delegate, context); if (delegateResult) { if (delegateResult === ContinueSentinel) continue; return delegateResult; } } if ("next" === context.method) context.sent = context._sent = context.arg;else if ("throw" === context.method) { if ("suspendedStart" === state) throw state = "completed", context.arg; context.dispatchException(context.arg); } else "return" === context.method && context.abrupt("return", context.arg); state = "executing"; var record = tryCatch(innerFn, self, context); if ("normal" === record.type) { if (state = context.done ? "completed" : "suspendedYield", record.arg === ContinueSentinel) continue; return { value: record.arg, done: context.done }; } "throw" === record.type && (state = "completed", context.method = "throw", context.arg = record.arg); } }; } function maybeInvokeDelegate(delegate, context) { var method = delegate.iterator[context.method]; if (undefined === method) { if (context.delegate = null, "throw" === context.method) { if (delegate.iterator.return && (context.method = "return", context.arg = undefined, maybeInvokeDelegate(delegate, context), "throw" === context.method)) return ContinueSentinel; context.method = "throw", context.arg = new TypeError("The iterator does not provide a 'throw' method"); } return ContinueSentinel; } var record = tryCatch(method, delegate.iterator, context.arg); if ("throw" === record.type) return context.method = "throw", context.arg = record.arg, context.delegate = null, ContinueSentinel; var info = record.arg; return info ? info.done ? (context[delegate.resultName] = info.value, context.next = delegate.nextLoc, "return" !== context.method && (context.method = "next", context.arg = undefined), context.delegate = null, ContinueSentinel) : info : (context.method = "throw", context.arg = new TypeError("iterator result is not an object"), context.delegate = null, ContinueSentinel); } function pushTryEntry(locs) { var entry = { tryLoc: locs[0] }; 1 in locs && (entry.catchLoc = locs[1]), 2 in locs && (entry.finallyLoc = locs[2], entry.afterLoc = locs[3]), this.tryEntries.push(entry); } function resetTryEntry(entry) { var record = entry.completion || {}; record.type = "normal", delete record.arg, entry.completion = record; } function Context(tryLocsList) { this.tryEntries = [{ tryLoc: "root" }], tryLocsList.forEach(pushTryEntry, this), this.reset(!0); } function values(iterable) { if (iterable) { var iteratorMethod = iterable[iteratorSymbol]; if (iteratorMethod) return iteratorMethod.call(iterable); if ("function" == typeof iterable.next) return iterable; if (!isNaN(iterable.length)) { var i = -1, next = function next() { for (; ++i < iterable.length;) if (hasOwn.call(iterable, i)) return next.value = iterable[i], next.done = !1, next; return next.value = undefined, next.done = !0, next; }; return next.next = next; } } return { next: doneResult }; } function doneResult() { return { value: undefined, done: !0 }; } return GeneratorFunction.prototype = GeneratorFunctionPrototype, defineProperty(Gp, "constructor", { value: GeneratorFunctionPrototype, configurable: !0 }), defineProperty(GeneratorFunctionPrototype, "constructor", { value: GeneratorFunction, configurable: !0 }), GeneratorFunction.displayName = define(GeneratorFunctionPrototype, toStringTagSymbol, "GeneratorFunction"), exports.isGeneratorFunction = function (genFun) { var ctor = "function" == typeof genFun && genFun.constructor; return !!ctor && (ctor === GeneratorFunction || "GeneratorFunction" === (ctor.displayName || ctor.name)); }, exports.mark = function (genFun) { return Object.setPrototypeOf ? Object.setPrototypeOf(genFun, GeneratorFunctionPrototype) : (genFun.__proto__ = GeneratorFunctionPrototype, define(genFun, toStringTagSymbol, "GeneratorFunction")), genFun.prototype = Object.create(Gp), genFun; }, exports.awrap = function (arg) { return { __await: arg }; }, defineIteratorMethods(AsyncIterator.prototype), define(AsyncIterator.prototype, asyncIteratorSymbol, function () { return this; }), exports.AsyncIterator = AsyncIterator, exports.async = function (innerFn, outerFn, self, tryLocsList, PromiseImpl) { void 0 === PromiseImpl && (PromiseImpl = Promise); var iter = new AsyncIterator(wrap(innerFn, outerFn, self, tryLocsList), PromiseImpl); return exports.isGeneratorFunction(outerFn) ? iter : iter.next().then(function (result) { return result.done ? result.value : iter.next(); }); }, defineIteratorMethods(Gp), define(Gp, toStringTagSymbol, "Generator"), define(Gp, iteratorSymbol, function () { return this; }), define(Gp, "toString", function () { return "[object Generator]"; }), exports.keys = function (val) { var object = Object(val), keys = []; for (var key in object) keys.push(key); return keys.reverse(), function next() { for (; keys.length;) { var key = keys.pop(); if (key in object) return next.value = key, next.done = !1, next; } return next.done = !0, next; }; }, exports.values = values, Context.prototype = { constructor: Context, reset: function reset(skipTempReset) { if (this.prev = 0, this.next = 0, this.sent = this._sent = undefined, this.done = !1, this.delegate = null, this.method = "next", this.arg = undefined, this.tryEntries.forEach(resetTryEntry), !skipTempReset) for (var name in this) "t" === name.charAt(0) && hasOwn.call(this, name) && !isNaN(+name.slice(1)) && (this[name] = undefined); }, stop: function stop() { this.done = !0; var rootRecord = this.tryEntries[0].completion; if ("throw" === rootRecord.type) throw rootRecord.arg; return this.rval; }, dispatchException: function dispatchException(exception) { if (this.done) throw exception; var context = this; function handle(loc, caught) { return record.type = "throw", record.arg = exception, context.next = loc, caught && (context.method = "next", context.arg = undefined), !!caught; } for (var i = this.tryEntries.length - 1; i >= 0; --i) { var entry = this.tryEntries[i], record = entry.completion; if ("root" === entry.tryLoc) return handle("end"); if (entry.tryLoc <= this.prev) { var hasCatch = hasOwn.call(entry, "catchLoc"), hasFinally = hasOwn.call(entry, "finallyLoc"); if (hasCatch && hasFinally) { if (this.prev < entry.catchLoc) return handle(entry.catchLoc, !0); if (this.prev < entry.finallyLoc) return handle(entry.finallyLoc); } else if (hasCatch) { if (this.prev < entry.catchLoc) return handle(entry.catchLoc, !0); } else { if (!hasFinally) throw new Error("try statement without catch or finally"); if (this.prev < entry.finallyLoc) return handle(entry.finallyLoc); } } } }, abrupt: function abrupt(type, arg) { for (var i = this.tryEntries.length - 1; i >= 0; --i) { var entry = this.tryEntries[i]; if (entry.tryLoc <= this.prev && hasOwn.call(entry, "finallyLoc") && this.prev < entry.finallyLoc) { var finallyEntry = entry; break; } } finallyEntry && ("break" === type || "continue" === type) && finallyEntry.tryLoc <= arg && arg <= finallyEntry.finallyLoc && (finallyEntry = null); var record = finallyEntry ? finallyEntry.completion : {}; return record.type = type, record.arg = arg, finallyEntry ? (this.method = "next", this.next = finallyEntry.finallyLoc, ContinueSentinel) : this.complete(record); }, complete: function complete(record, afterLoc) { if ("throw" === record.type) throw record.arg; return "break" === record.type || "continue" === record.type ? this.next = record.arg : "return" === record.type ? (this.rval = this.arg = record.arg, this.method = "return", this.next = "end") : "normal" === record.type && afterLoc && (this.next = afterLoc), ContinueSentinel; }, finish: function finish(finallyLoc) { for (var i = this.tryEntries.length - 1; i >= 0; --i) { var entry = this.tryEntries[i]; if (entry.finallyLoc === finallyLoc) return this.complete(entry.completion, entry.afterLoc), resetTryEntry(entry), ContinueSentinel; } }, catch: function _catch(tryLoc) { for (var i = this.tryEntries.length - 1; i >= 0; --i) { var entry = this.tryEntries[i]; if (entry.tryLoc === tryLoc) { var record = entry.completion; if ("throw" === record.type) { var thrown = record.arg; resetTryEntry(entry); } return thrown; } } throw new Error("illegal catch attempt"); }, delegateYield: function delegateYield(iterable, resultName, nextLoc) { return this.delegate = { iterator: values(iterable), resultName: resultName, nextLoc: nextLoc }, "next" === this.method && (this.arg = undefined), ContinueSentinel; } }, exports; }
-function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
-function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
-function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); Object.defineProperty(Constructor, "prototype", { writable: false }); return Constructor; }
+function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
+function _regeneratorRuntime() { "use strict"; /*! regenerator-runtime -- Copyright (c) 2014-present, Facebook, Inc. -- license (MIT): https://github.com/facebook/regenerator/blob/main/LICENSE */ _regeneratorRuntime = function _regeneratorRuntime() { return e; }; var t, e = {}, r = Object.prototype, n = r.hasOwnProperty, o = Object.defineProperty || function (t, e, r) { t[e] = r.value; }, i = "function" == typeof Symbol ? Symbol : {}, a = i.iterator || "@@iterator", c = i.asyncIterator || "@@asyncIterator", u = i.toStringTag || "@@toStringTag"; function define(t, e, r) { return Object.defineProperty(t, e, { value: r, enumerable: !0, configurable: !0, writable: !0 }), t[e]; } try { define({}, ""); } catch (t) { define = function define(t, e, r) { return t[e] = r; }; } function wrap(t, e, r, n) { var i = e && e.prototype instanceof Generator ? e : Generator, a = Object.create(i.prototype), c = new Context(n || []); return o(a, "_invoke", { value: makeInvokeMethod(t, r, c) }), a; } function tryCatch(t, e, r) { try { return { type: "normal", arg: t.call(e, r) }; } catch (t) { return { type: "throw", arg: t }; } } e.wrap = wrap; var h = "suspendedStart", l = "suspendedYield", f = "executing", s = "completed", y = {}; function Generator() {} function GeneratorFunction() {} function GeneratorFunctionPrototype() {} var p = {}; define(p, a, function () { return this; }); var d = Object.getPrototypeOf, v = d && d(d(values([]))); v && v !== r && n.call(v, a) && (p = v); var g = GeneratorFunctionPrototype.prototype = Generator.prototype = Object.create(p); function defineIteratorMethods(t) { ["next", "throw", "return"].forEach(function (e) { define(t, e, function (t) { return this._invoke(e, t); }); }); } function AsyncIterator(t, e) { function invoke(r, o, i, a) { var c = tryCatch(t[r], t, o); if ("throw" !== c.type) { var u = c.arg, h = u.value; return h && "object" == _typeof(h) && n.call(h, "__await") ? e.resolve(h.__await).then(function (t) { invoke("next", t, i, a); }, function (t) { invoke("throw", t, i, a); }) : e.resolve(h).then(function (t) { u.value = t, i(u); }, function (t) { return invoke("throw", t, i, a); }); } a(c.arg); } var r; o(this, "_invoke", { value: function value(t, n) { function callInvokeWithMethodAndArg() { return new e(function (e, r) { invoke(t, n, e, r); }); } return r = r ? r.then(callInvokeWithMethodAndArg, callInvokeWithMethodAndArg) : callInvokeWithMethodAndArg(); } }); } function makeInvokeMethod(e, r, n) { var o = h; return function (i, a) { if (o === f) throw Error("Generator is already running"); if (o === s) { if ("throw" === i) throw a; return { value: t, done: !0 }; } for (n.method = i, n.arg = a;;) { var c = n.delegate; if (c) { var u = maybeInvokeDelegate(c, n); if (u) { if (u === y) continue; return u; } } if ("next" === n.method) n.sent = n._sent = n.arg;else if ("throw" === n.method) { if (o === h) throw o = s, n.arg; n.dispatchException(n.arg); } else "return" === n.method && n.abrupt("return", n.arg); o = f; var p = tryCatch(e, r, n); if ("normal" === p.type) { if (o = n.done ? s : l, p.arg === y) continue; return { value: p.arg, done: n.done }; } "throw" === p.type && (o = s, n.method = "throw", n.arg = p.arg); } }; } function maybeInvokeDelegate(e, r) { var n = r.method, o = e.iterator[n]; if (o === t) return r.delegate = null, "throw" === n && e.iterator.return && (r.method = "return", r.arg = t, maybeInvokeDelegate(e, r), "throw" === r.method) || "return" !== n && (r.method = "throw", r.arg = new TypeError("The iterator does not provide a '" + n + "' method")), y; var i = tryCatch(o, e.iterator, r.arg); if ("throw" === i.type) return r.method = "throw", r.arg = i.arg, r.delegate = null, y; var a = i.arg; return a ? a.done ? (r[e.resultName] = a.value, r.next = e.nextLoc, "return" !== r.method && (r.method = "next", r.arg = t), r.delegate = null, y) : a : (r.method = "throw", r.arg = new TypeError("iterator result is not an object"), r.delegate = null, y); } function pushTryEntry(t) { var e = { tryLoc: t[0] }; 1 in t && (e.catchLoc = t[1]), 2 in t && (e.finallyLoc = t[2], e.afterLoc = t[3]), this.tryEntries.push(e); } function resetTryEntry(t) { var e = t.completion || {}; e.type = "normal", delete e.arg, t.completion = e; } function Context(t) { this.tryEntries = [{ tryLoc: "root" }], t.forEach(pushTryEntry, this), this.reset(!0); } function values(e) { if (e || "" === e) { var r = e[a]; if (r) return r.call(e); if ("function" == typeof e.next) return e; if (!isNaN(e.length)) { var o = -1, i = function next() { for (; ++o < e.length;) if (n.call(e, o)) return next.value = e[o], next.done = !1, next; return next.value = t, next.done = !0, next; }; return i.next = i; } } throw new TypeError(_typeof(e) + " is not iterable"); } return GeneratorFunction.prototype = GeneratorFunctionPrototype, o(g, "constructor", { value: GeneratorFunctionPrototype, configurable: !0 }), o(GeneratorFunctionPrototype, "constructor", { value: GeneratorFunction, configurable: !0 }), GeneratorFunction.displayName = define(GeneratorFunctionPrototype, u, "GeneratorFunction"), e.isGeneratorFunction = function (t) { var e = "function" == typeof t && t.constructor; return !!e && (e === GeneratorFunction || "GeneratorFunction" === (e.displayName || e.name)); }, e.mark = function (t) { return Object.setPrototypeOf ? Object.setPrototypeOf(t, GeneratorFunctionPrototype) : (t.__proto__ = GeneratorFunctionPrototype, define(t, u, "GeneratorFunction")), t.prototype = Object.create(g), t; }, e.awrap = function (t) { return { __await: t }; }, defineIteratorMethods(AsyncIterator.prototype), define(AsyncIterator.prototype, c, function () { return this; }), e.AsyncIterator = AsyncIterator, e.async = function (t, r, n, o, i) { void 0 === i && (i = Promise); var a = new AsyncIterator(wrap(t, r, n, o), i); return e.isGeneratorFunction(r) ? a : a.next().then(function (t) { return t.done ? t.value : a.next(); }); }, defineIteratorMethods(g), define(g, u, "Generator"), define(g, a, function () { return this; }), define(g, "toString", function () { return "[object Generator]"; }), e.keys = function (t) { var e = Object(t), r = []; for (var n in e) r.push(n); return r.reverse(), function next() { for (; r.length;) { var t = r.pop(); if (t in e) return next.value = t, next.done = !1, next; } return next.done = !0, next; }; }, e.values = values, Context.prototype = { constructor: Context, reset: function reset(e) { if (this.prev = 0, this.next = 0, this.sent = this._sent = t, this.done = !1, this.delegate = null, this.method = "next", this.arg = t, this.tryEntries.forEach(resetTryEntry), !e) for (var r in this) "t" === r.charAt(0) && n.call(this, r) && !isNaN(+r.slice(1)) && (this[r] = t); }, stop: function stop() { this.done = !0; var t = this.tryEntries[0].completion; if ("throw" === t.type) throw t.arg; return this.rval; }, dispatchException: function dispatchException(e) { if (this.done) throw e; var r = this; function handle(n, o) { return a.type = "throw", a.arg = e, r.next = n, o && (r.method = "next", r.arg = t), !!o; } for (var o = this.tryEntries.length - 1; o >= 0; --o) { var i = this.tryEntries[o], a = i.completion; if ("root" === i.tryLoc) return handle("end"); if (i.tryLoc <= this.prev) { var c = n.call(i, "catchLoc"), u = n.call(i, "finallyLoc"); if (c && u) { if (this.prev < i.catchLoc) return handle(i.catchLoc, !0); if (this.prev < i.finallyLoc) return handle(i.finallyLoc); } else if (c) { if (this.prev < i.catchLoc) return handle(i.catchLoc, !0); } else { if (!u) throw Error("try statement without catch or finally"); if (this.prev < i.finallyLoc) return handle(i.finallyLoc); } } } }, abrupt: function abrupt(t, e) { for (var r = this.tryEntries.length - 1; r >= 0; --r) { var o = this.tryEntries[r]; if (o.tryLoc <= this.prev && n.call(o, "finallyLoc") && this.prev < o.finallyLoc) { var i = o; break; } } i && ("break" === t || "continue" === t) && i.tryLoc <= e && e <= i.finallyLoc && (i = null); var a = i ? i.completion : {}; return a.type = t, a.arg = e, i ? (this.method = "next", this.next = i.finallyLoc, y) : this.complete(a); }, complete: function complete(t, e) { if ("throw" === t.type) throw t.arg; return "break" === t.type || "continue" === t.type ? this.next = t.arg : "return" === t.type ? (this.rval = this.arg = t.arg, this.method = "return", this.next = "end") : "normal" === t.type && e && (this.next = e), y; }, finish: function finish(t) { for (var e = this.tryEntries.length - 1; e >= 0; --e) { var r = this.tryEntries[e]; if (r.finallyLoc === t) return this.complete(r.completion, r.afterLoc), resetTryEntry(r), y; } }, catch: function _catch(t) { for (var e = this.tryEntries.length - 1; e >= 0; --e) { var r = this.tryEntries[e]; if (r.tryLoc === t) { var n = r.completion; if ("throw" === n.type) { var o = n.arg; resetTryEntry(r); } return o; } } throw Error("illegal catch attempt"); }, delegateYield: function delegateYield(e, r, n) { return this.delegate = { iterator: values(e), resultName: r, nextLoc: n }, "next" === this.method && (this.arg = t), y; } }, e; }
+function asyncGeneratorStep(n, t, e, r, o, a, c) { try { var i = n[a](c), u = i.value; } catch (n) { return void e(n); } i.done ? t(u) : Promise.resolve(u).then(r, o); }
+function _asyncToGenerator(n) { return function () { var t = this, e = arguments; return new Promise(function (r, o) { var a = n.apply(t, e); function _next(n) { asyncGeneratorStep(a, r, o, _next, _throw, "next", n); } function _throw(n) { asyncGeneratorStep(a, r, o, _next, _throw, "throw", n); } _next(void 0); }); }; }
+function _classCallCheck(a, n) { if (!(a instanceof n)) throw new TypeError("Cannot call a class as a function"); }
+function _defineProperties(e, r) { for (var t = 0; t < r.length; t++) { var o = r[t]; o.enumerable = o.enumerable || !1, o.configurable = !0, "value" in o && (o.writable = !0), Object.defineProperty(e, _toPropertyKey(o.key), o); } }
+function _createClass(e, r, t) { return r && _defineProperties(e.prototype, r), t && _defineProperties(e, t), Object.defineProperty(e, "prototype", { writable: !1 }), e; }
+function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == _typeof(i) ? i : i + ""; }
+function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != _typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
 
 var popupCart = /*#__PURE__*/function () {
   function popupCart() {
@@ -21140,7 +18991,7 @@ var popupCart = /*#__PURE__*/function () {
     this.additionalPrices = [];
     this.ajaxUrl = false;
   }
-  _createClass(popupCart, [{
+  return _createClass(popupCart, [{
     key: "setBasePrice",
     value: function setBasePrice(price) {
       this.basePrice = price;
@@ -21272,8 +19123,8 @@ var popupCart = /*#__PURE__*/function () {
     key: "updateTotalPrice",
     value: function updateTotalPrice() {
       var _this = this;
-      document.querySelectorAll('.calculated-prices .price_amount').forEach( /*#__PURE__*/function () {
-        var _ref = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee(priceAlt) {
+      document.querySelectorAll('.calculated-prices .price_amount').forEach(/*#__PURE__*/function () {
+        var _ref = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee(priceAlt) {
           var _Intl;
           var local, priceAmount;
           return _regeneratorRuntime().wrap(function _callee$(_context) {
@@ -21308,7 +19159,6 @@ var popupCart = /*#__PURE__*/function () {
       }());
     }
   }]);
-  return popupCart;
 }();
 /* harmony default export */ __webpack_exports__["default"] = (popupCart);
 
@@ -21328,19 +19178,21 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _modules_slider__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../modules/slider */ "./src/js/modules/slider.js");
 /* harmony import */ var _modules_layeredcanvas__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../modules/layeredcanvas */ "./src/js/modules/layeredcanvas.js");
 var _this = undefined;
-function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); enumerableOnly && (symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
-function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = null != arguments[i] ? arguments[i] : {}; i % 2 ? ownKeys(Object(source), !0).forEach(function (key) { _defineProperty(target, key, source[key]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } return target; }
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread(); }
+function ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
+function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t = null != arguments[r] ? arguments[r] : {}; r % 2 ? ownKeys(Object(t), !0).forEach(function (r) { _defineProperty(e, r, t[r]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : ownKeys(Object(t)).forEach(function (r) { Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r)); }); } return e; }
+function _defineProperty(e, r, t) { return (r = _toPropertyKey(r)) in e ? Object.defineProperty(e, r, { value: t, enumerable: !0, configurable: !0, writable: !0 }) : e[r] = t, e; }
+function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == _typeof(i) ? i : i + ""; }
+function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != _typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
+function _toConsumableArray(r) { return _arrayWithoutHoles(r) || _iterableToArray(r) || _unsupportedIterableToArray(r) || _nonIterableSpread(); }
 function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
-function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
-function _iterableToArray(iter) { if (typeof Symbol !== "undefined" && iter[Symbol.iterator] != null || iter["@@iterator"] != null) return Array.from(iter); }
-function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) return _arrayLikeToArray(arr); }
-function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) arr2[i] = arr[i]; return arr2; }
-function _regeneratorRuntime() { "use strict"; /*! regenerator-runtime -- Copyright (c) 2014-present, Facebook, Inc. -- license (MIT): https://github.com/facebook/regenerator/blob/main/LICENSE */ _regeneratorRuntime = function _regeneratorRuntime() { return exports; }; var exports = {}, Op = Object.prototype, hasOwn = Op.hasOwnProperty, defineProperty = Object.defineProperty || function (obj, key, desc) { obj[key] = desc.value; }, $Symbol = "function" == typeof Symbol ? Symbol : {}, iteratorSymbol = $Symbol.iterator || "@@iterator", asyncIteratorSymbol = $Symbol.asyncIterator || "@@asyncIterator", toStringTagSymbol = $Symbol.toStringTag || "@@toStringTag"; function define(obj, key, value) { return Object.defineProperty(obj, key, { value: value, enumerable: !0, configurable: !0, writable: !0 }), obj[key]; } try { define({}, ""); } catch (err) { define = function define(obj, key, value) { return obj[key] = value; }; } function wrap(innerFn, outerFn, self, tryLocsList) { var protoGenerator = outerFn && outerFn.prototype instanceof Generator ? outerFn : Generator, generator = Object.create(protoGenerator.prototype), context = new Context(tryLocsList || []); return defineProperty(generator, "_invoke", { value: makeInvokeMethod(innerFn, self, context) }), generator; } function tryCatch(fn, obj, arg) { try { return { type: "normal", arg: fn.call(obj, arg) }; } catch (err) { return { type: "throw", arg: err }; } } exports.wrap = wrap; var ContinueSentinel = {}; function Generator() {} function GeneratorFunction() {} function GeneratorFunctionPrototype() {} var IteratorPrototype = {}; define(IteratorPrototype, iteratorSymbol, function () { return this; }); var getProto = Object.getPrototypeOf, NativeIteratorPrototype = getProto && getProto(getProto(values([]))); NativeIteratorPrototype && NativeIteratorPrototype !== Op && hasOwn.call(NativeIteratorPrototype, iteratorSymbol) && (IteratorPrototype = NativeIteratorPrototype); var Gp = GeneratorFunctionPrototype.prototype = Generator.prototype = Object.create(IteratorPrototype); function defineIteratorMethods(prototype) { ["next", "throw", "return"].forEach(function (method) { define(prototype, method, function (arg) { return this._invoke(method, arg); }); }); } function AsyncIterator(generator, PromiseImpl) { function invoke(method, arg, resolve, reject) { var record = tryCatch(generator[method], generator, arg); if ("throw" !== record.type) { var result = record.arg, value = result.value; return value && "object" == _typeof(value) && hasOwn.call(value, "__await") ? PromiseImpl.resolve(value.__await).then(function (value) { invoke("next", value, resolve, reject); }, function (err) { invoke("throw", err, resolve, reject); }) : PromiseImpl.resolve(value).then(function (unwrapped) { result.value = unwrapped, resolve(result); }, function (error) { return invoke("throw", error, resolve, reject); }); } reject(record.arg); } var previousPromise; defineProperty(this, "_invoke", { value: function value(method, arg) { function callInvokeWithMethodAndArg() { return new PromiseImpl(function (resolve, reject) { invoke(method, arg, resolve, reject); }); } return previousPromise = previousPromise ? previousPromise.then(callInvokeWithMethodAndArg, callInvokeWithMethodAndArg) : callInvokeWithMethodAndArg(); } }); } function makeInvokeMethod(innerFn, self, context) { var state = "suspendedStart"; return function (method, arg) { if ("executing" === state) throw new Error("Generator is already running"); if ("completed" === state) { if ("throw" === method) throw arg; return doneResult(); } for (context.method = method, context.arg = arg;;) { var delegate = context.delegate; if (delegate) { var delegateResult = maybeInvokeDelegate(delegate, context); if (delegateResult) { if (delegateResult === ContinueSentinel) continue; return delegateResult; } } if ("next" === context.method) context.sent = context._sent = context.arg;else if ("throw" === context.method) { if ("suspendedStart" === state) throw state = "completed", context.arg; context.dispatchException(context.arg); } else "return" === context.method && context.abrupt("return", context.arg); state = "executing"; var record = tryCatch(innerFn, self, context); if ("normal" === record.type) { if (state = context.done ? "completed" : "suspendedYield", record.arg === ContinueSentinel) continue; return { value: record.arg, done: context.done }; } "throw" === record.type && (state = "completed", context.method = "throw", context.arg = record.arg); } }; } function maybeInvokeDelegate(delegate, context) { var method = delegate.iterator[context.method]; if (undefined === method) { if (context.delegate = null, "throw" === context.method) { if (delegate.iterator.return && (context.method = "return", context.arg = undefined, maybeInvokeDelegate(delegate, context), "throw" === context.method)) return ContinueSentinel; context.method = "throw", context.arg = new TypeError("The iterator does not provide a 'throw' method"); } return ContinueSentinel; } var record = tryCatch(method, delegate.iterator, context.arg); if ("throw" === record.type) return context.method = "throw", context.arg = record.arg, context.delegate = null, ContinueSentinel; var info = record.arg; return info ? info.done ? (context[delegate.resultName] = info.value, context.next = delegate.nextLoc, "return" !== context.method && (context.method = "next", context.arg = undefined), context.delegate = null, ContinueSentinel) : info : (context.method = "throw", context.arg = new TypeError("iterator result is not an object"), context.delegate = null, ContinueSentinel); } function pushTryEntry(locs) { var entry = { tryLoc: locs[0] }; 1 in locs && (entry.catchLoc = locs[1]), 2 in locs && (entry.finallyLoc = locs[2], entry.afterLoc = locs[3]), this.tryEntries.push(entry); } function resetTryEntry(entry) { var record = entry.completion || {}; record.type = "normal", delete record.arg, entry.completion = record; } function Context(tryLocsList) { this.tryEntries = [{ tryLoc: "root" }], tryLocsList.forEach(pushTryEntry, this), this.reset(!0); } function values(iterable) { if (iterable) { var iteratorMethod = iterable[iteratorSymbol]; if (iteratorMethod) return iteratorMethod.call(iterable); if ("function" == typeof iterable.next) return iterable; if (!isNaN(iterable.length)) { var i = -1, next = function next() { for (; ++i < iterable.length;) if (hasOwn.call(iterable, i)) return next.value = iterable[i], next.done = !1, next; return next.value = undefined, next.done = !0, next; }; return next.next = next; } } return { next: doneResult }; } function doneResult() { return { value: undefined, done: !0 }; } return GeneratorFunction.prototype = GeneratorFunctionPrototype, defineProperty(Gp, "constructor", { value: GeneratorFunctionPrototype, configurable: !0 }), defineProperty(GeneratorFunctionPrototype, "constructor", { value: GeneratorFunction, configurable: !0 }), GeneratorFunction.displayName = define(GeneratorFunctionPrototype, toStringTagSymbol, "GeneratorFunction"), exports.isGeneratorFunction = function (genFun) { var ctor = "function" == typeof genFun && genFun.constructor; return !!ctor && (ctor === GeneratorFunction || "GeneratorFunction" === (ctor.displayName || ctor.name)); }, exports.mark = function (genFun) { return Object.setPrototypeOf ? Object.setPrototypeOf(genFun, GeneratorFunctionPrototype) : (genFun.__proto__ = GeneratorFunctionPrototype, define(genFun, toStringTagSymbol, "GeneratorFunction")), genFun.prototype = Object.create(Gp), genFun; }, exports.awrap = function (arg) { return { __await: arg }; }, defineIteratorMethods(AsyncIterator.prototype), define(AsyncIterator.prototype, asyncIteratorSymbol, function () { return this; }), exports.AsyncIterator = AsyncIterator, exports.async = function (innerFn, outerFn, self, tryLocsList, PromiseImpl) { void 0 === PromiseImpl && (PromiseImpl = Promise); var iter = new AsyncIterator(wrap(innerFn, outerFn, self, tryLocsList), PromiseImpl); return exports.isGeneratorFunction(outerFn) ? iter : iter.next().then(function (result) { return result.done ? result.value : iter.next(); }); }, defineIteratorMethods(Gp), define(Gp, toStringTagSymbol, "Generator"), define(Gp, iteratorSymbol, function () { return this; }), define(Gp, "toString", function () { return "[object Generator]"; }), exports.keys = function (val) { var object = Object(val), keys = []; for (var key in object) keys.push(key); return keys.reverse(), function next() { for (; keys.length;) { var key = keys.pop(); if (key in object) return next.value = key, next.done = !1, next; } return next.done = !0, next; }; }, exports.values = values, Context.prototype = { constructor: Context, reset: function reset(skipTempReset) { if (this.prev = 0, this.next = 0, this.sent = this._sent = undefined, this.done = !1, this.delegate = null, this.method = "next", this.arg = undefined, this.tryEntries.forEach(resetTryEntry), !skipTempReset) for (var name in this) "t" === name.charAt(0) && hasOwn.call(this, name) && !isNaN(+name.slice(1)) && (this[name] = undefined); }, stop: function stop() { this.done = !0; var rootRecord = this.tryEntries[0].completion; if ("throw" === rootRecord.type) throw rootRecord.arg; return this.rval; }, dispatchException: function dispatchException(exception) { if (this.done) throw exception; var context = this; function handle(loc, caught) { return record.type = "throw", record.arg = exception, context.next = loc, caught && (context.method = "next", context.arg = undefined), !!caught; } for (var i = this.tryEntries.length - 1; i >= 0; --i) { var entry = this.tryEntries[i], record = entry.completion; if ("root" === entry.tryLoc) return handle("end"); if (entry.tryLoc <= this.prev) { var hasCatch = hasOwn.call(entry, "catchLoc"), hasFinally = hasOwn.call(entry, "finallyLoc"); if (hasCatch && hasFinally) { if (this.prev < entry.catchLoc) return handle(entry.catchLoc, !0); if (this.prev < entry.finallyLoc) return handle(entry.finallyLoc); } else if (hasCatch) { if (this.prev < entry.catchLoc) return handle(entry.catchLoc, !0); } else { if (!hasFinally) throw new Error("try statement without catch or finally"); if (this.prev < entry.finallyLoc) return handle(entry.finallyLoc); } } } }, abrupt: function abrupt(type, arg) { for (var i = this.tryEntries.length - 1; i >= 0; --i) { var entry = this.tryEntries[i]; if (entry.tryLoc <= this.prev && hasOwn.call(entry, "finallyLoc") && this.prev < entry.finallyLoc) { var finallyEntry = entry; break; } } finallyEntry && ("break" === type || "continue" === type) && finallyEntry.tryLoc <= arg && arg <= finallyEntry.finallyLoc && (finallyEntry = null); var record = finallyEntry ? finallyEntry.completion : {}; return record.type = type, record.arg = arg, finallyEntry ? (this.method = "next", this.next = finallyEntry.finallyLoc, ContinueSentinel) : this.complete(record); }, complete: function complete(record, afterLoc) { if ("throw" === record.type) throw record.arg; return "break" === record.type || "continue" === record.type ? this.next = record.arg : "return" === record.type ? (this.rval = this.arg = record.arg, this.method = "return", this.next = "end") : "normal" === record.type && afterLoc && (this.next = afterLoc), ContinueSentinel; }, finish: function finish(finallyLoc) { for (var i = this.tryEntries.length - 1; i >= 0; --i) { var entry = this.tryEntries[i]; if (entry.finallyLoc === finallyLoc) return this.complete(entry.completion, entry.afterLoc), resetTryEntry(entry), ContinueSentinel; } }, catch: function _catch(tryLoc) { for (var i = this.tryEntries.length - 1; i >= 0; --i) { var entry = this.tryEntries[i]; if (entry.tryLoc === tryLoc) { var record = entry.completion; if ("throw" === record.type) { var thrown = record.arg; resetTryEntry(entry); } return thrown; } } throw new Error("illegal catch attempt"); }, delegateYield: function delegateYield(iterable, resultName, nextLoc) { return this.delegate = { iterator: values(iterable), resultName: resultName, nextLoc: nextLoc }, "next" === this.method && (this.arg = undefined), ContinueSentinel; } }, exports; }
-function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
-function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
-function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof(obj); }
+function _unsupportedIterableToArray(r, a) { if (r) { if ("string" == typeof r) return _arrayLikeToArray(r, a); var t = {}.toString.call(r).slice(8, -1); return "Object" === t && r.constructor && (t = r.constructor.name), "Map" === t || "Set" === t ? Array.from(r) : "Arguments" === t || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(t) ? _arrayLikeToArray(r, a) : void 0; } }
+function _iterableToArray(r) { if ("undefined" != typeof Symbol && null != r[Symbol.iterator] || null != r["@@iterator"]) return Array.from(r); }
+function _arrayWithoutHoles(r) { if (Array.isArray(r)) return _arrayLikeToArray(r); }
+function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length); for (var e = 0, n = Array(a); e < a; e++) n[e] = r[e]; return n; }
+function _regeneratorRuntime() { "use strict"; /*! regenerator-runtime -- Copyright (c) 2014-present, Facebook, Inc. -- license (MIT): https://github.com/facebook/regenerator/blob/main/LICENSE */ _regeneratorRuntime = function _regeneratorRuntime() { return e; }; var t, e = {}, r = Object.prototype, n = r.hasOwnProperty, o = Object.defineProperty || function (t, e, r) { t[e] = r.value; }, i = "function" == typeof Symbol ? Symbol : {}, a = i.iterator || "@@iterator", c = i.asyncIterator || "@@asyncIterator", u = i.toStringTag || "@@toStringTag"; function define(t, e, r) { return Object.defineProperty(t, e, { value: r, enumerable: !0, configurable: !0, writable: !0 }), t[e]; } try { define({}, ""); } catch (t) { define = function define(t, e, r) { return t[e] = r; }; } function wrap(t, e, r, n) { var i = e && e.prototype instanceof Generator ? e : Generator, a = Object.create(i.prototype), c = new Context(n || []); return o(a, "_invoke", { value: makeInvokeMethod(t, r, c) }), a; } function tryCatch(t, e, r) { try { return { type: "normal", arg: t.call(e, r) }; } catch (t) { return { type: "throw", arg: t }; } } e.wrap = wrap; var h = "suspendedStart", l = "suspendedYield", f = "executing", s = "completed", y = {}; function Generator() {} function GeneratorFunction() {} function GeneratorFunctionPrototype() {} var p = {}; define(p, a, function () { return this; }); var d = Object.getPrototypeOf, v = d && d(d(values([]))); v && v !== r && n.call(v, a) && (p = v); var g = GeneratorFunctionPrototype.prototype = Generator.prototype = Object.create(p); function defineIteratorMethods(t) { ["next", "throw", "return"].forEach(function (e) { define(t, e, function (t) { return this._invoke(e, t); }); }); } function AsyncIterator(t, e) { function invoke(r, o, i, a) { var c = tryCatch(t[r], t, o); if ("throw" !== c.type) { var u = c.arg, h = u.value; return h && "object" == _typeof(h) && n.call(h, "__await") ? e.resolve(h.__await).then(function (t) { invoke("next", t, i, a); }, function (t) { invoke("throw", t, i, a); }) : e.resolve(h).then(function (t) { u.value = t, i(u); }, function (t) { return invoke("throw", t, i, a); }); } a(c.arg); } var r; o(this, "_invoke", { value: function value(t, n) { function callInvokeWithMethodAndArg() { return new e(function (e, r) { invoke(t, n, e, r); }); } return r = r ? r.then(callInvokeWithMethodAndArg, callInvokeWithMethodAndArg) : callInvokeWithMethodAndArg(); } }); } function makeInvokeMethod(e, r, n) { var o = h; return function (i, a) { if (o === f) throw Error("Generator is already running"); if (o === s) { if ("throw" === i) throw a; return { value: t, done: !0 }; } for (n.method = i, n.arg = a;;) { var c = n.delegate; if (c) { var u = maybeInvokeDelegate(c, n); if (u) { if (u === y) continue; return u; } } if ("next" === n.method) n.sent = n._sent = n.arg;else if ("throw" === n.method) { if (o === h) throw o = s, n.arg; n.dispatchException(n.arg); } else "return" === n.method && n.abrupt("return", n.arg); o = f; var p = tryCatch(e, r, n); if ("normal" === p.type) { if (o = n.done ? s : l, p.arg === y) continue; return { value: p.arg, done: n.done }; } "throw" === p.type && (o = s, n.method = "throw", n.arg = p.arg); } }; } function maybeInvokeDelegate(e, r) { var n = r.method, o = e.iterator[n]; if (o === t) return r.delegate = null, "throw" === n && e.iterator.return && (r.method = "return", r.arg = t, maybeInvokeDelegate(e, r), "throw" === r.method) || "return" !== n && (r.method = "throw", r.arg = new TypeError("The iterator does not provide a '" + n + "' method")), y; var i = tryCatch(o, e.iterator, r.arg); if ("throw" === i.type) return r.method = "throw", r.arg = i.arg, r.delegate = null, y; var a = i.arg; return a ? a.done ? (r[e.resultName] = a.value, r.next = e.nextLoc, "return" !== r.method && (r.method = "next", r.arg = t), r.delegate = null, y) : a : (r.method = "throw", r.arg = new TypeError("iterator result is not an object"), r.delegate = null, y); } function pushTryEntry(t) { var e = { tryLoc: t[0] }; 1 in t && (e.catchLoc = t[1]), 2 in t && (e.finallyLoc = t[2], e.afterLoc = t[3]), this.tryEntries.push(e); } function resetTryEntry(t) { var e = t.completion || {}; e.type = "normal", delete e.arg, t.completion = e; } function Context(t) { this.tryEntries = [{ tryLoc: "root" }], t.forEach(pushTryEntry, this), this.reset(!0); } function values(e) { if (e || "" === e) { var r = e[a]; if (r) return r.call(e); if ("function" == typeof e.next) return e; if (!isNaN(e.length)) { var o = -1, i = function next() { for (; ++o < e.length;) if (n.call(e, o)) return next.value = e[o], next.done = !1, next; return next.value = t, next.done = !0, next; }; return i.next = i; } } throw new TypeError(_typeof(e) + " is not iterable"); } return GeneratorFunction.prototype = GeneratorFunctionPrototype, o(g, "constructor", { value: GeneratorFunctionPrototype, configurable: !0 }), o(GeneratorFunctionPrototype, "constructor", { value: GeneratorFunction, configurable: !0 }), GeneratorFunction.displayName = define(GeneratorFunctionPrototype, u, "GeneratorFunction"), e.isGeneratorFunction = function (t) { var e = "function" == typeof t && t.constructor; return !!e && (e === GeneratorFunction || "GeneratorFunction" === (e.displayName || e.name)); }, e.mark = function (t) { return Object.setPrototypeOf ? Object.setPrototypeOf(t, GeneratorFunctionPrototype) : (t.__proto__ = GeneratorFunctionPrototype, define(t, u, "GeneratorFunction")), t.prototype = Object.create(g), t; }, e.awrap = function (t) { return { __await: t }; }, defineIteratorMethods(AsyncIterator.prototype), define(AsyncIterator.prototype, c, function () { return this; }), e.AsyncIterator = AsyncIterator, e.async = function (t, r, n, o, i) { void 0 === i && (i = Promise); var a = new AsyncIterator(wrap(t, r, n, o), i); return e.isGeneratorFunction(r) ? a : a.next().then(function (t) { return t.done ? t.value : a.next(); }); }, defineIteratorMethods(g), define(g, u, "Generator"), define(g, a, function () { return this; }), define(g, "toString", function () { return "[object Generator]"; }), e.keys = function (t) { var e = Object(t), r = []; for (var n in e) r.push(n); return r.reverse(), function next() { for (; r.length;) { var t = r.pop(); if (t in e) return next.value = t, next.done = !1, next; } return next.done = !0, next; }; }, e.values = values, Context.prototype = { constructor: Context, reset: function reset(e) { if (this.prev = 0, this.next = 0, this.sent = this._sent = t, this.done = !1, this.delegate = null, this.method = "next", this.arg = t, this.tryEntries.forEach(resetTryEntry), !e) for (var r in this) "t" === r.charAt(0) && n.call(this, r) && !isNaN(+r.slice(1)) && (this[r] = t); }, stop: function stop() { this.done = !0; var t = this.tryEntries[0].completion; if ("throw" === t.type) throw t.arg; return this.rval; }, dispatchException: function dispatchException(e) { if (this.done) throw e; var r = this; function handle(n, o) { return a.type = "throw", a.arg = e, r.next = n, o && (r.method = "next", r.arg = t), !!o; } for (var o = this.tryEntries.length - 1; o >= 0; --o) { var i = this.tryEntries[o], a = i.completion; if ("root" === i.tryLoc) return handle("end"); if (i.tryLoc <= this.prev) { var c = n.call(i, "catchLoc"), u = n.call(i, "finallyLoc"); if (c && u) { if (this.prev < i.catchLoc) return handle(i.catchLoc, !0); if (this.prev < i.finallyLoc) return handle(i.finallyLoc); } else if (c) { if (this.prev < i.catchLoc) return handle(i.catchLoc, !0); } else { if (!u) throw Error("try statement without catch or finally"); if (this.prev < i.finallyLoc) return handle(i.finallyLoc); } } } }, abrupt: function abrupt(t, e) { for (var r = this.tryEntries.length - 1; r >= 0; --r) { var o = this.tryEntries[r]; if (o.tryLoc <= this.prev && n.call(o, "finallyLoc") && this.prev < o.finallyLoc) { var i = o; break; } } i && ("break" === t || "continue" === t) && i.tryLoc <= e && e <= i.finallyLoc && (i = null); var a = i ? i.completion : {}; return a.type = t, a.arg = e, i ? (this.method = "next", this.next = i.finallyLoc, y) : this.complete(a); }, complete: function complete(t, e) { if ("throw" === t.type) throw t.arg; return "break" === t.type || "continue" === t.type ? this.next = t.arg : "return" === t.type ? (this.rval = this.arg = t.arg, this.method = "return", this.next = "end") : "normal" === t.type && e && (this.next = e), y; }, finish: function finish(t) { for (var e = this.tryEntries.length - 1; e >= 0; --e) { var r = this.tryEntries[e]; if (r.finallyLoc === t) return this.complete(r.completion, r.afterLoc), resetTryEntry(r), y; } }, catch: function _catch(t) { for (var e = this.tryEntries.length - 1; e >= 0; --e) { var r = this.tryEntries[e]; if (r.tryLoc === t) { var n = r.completion; if ("throw" === n.type) { var o = n.arg; resetTryEntry(r); } return o; } } throw Error("illegal catch attempt"); }, delegateYield: function delegateYield(e, r, n) { return this.delegate = { iterator: values(e), resultName: r, nextLoc: n }, "next" === this.method && (this.arg = t), y; } }, e; }
+function asyncGeneratorStep(n, t, e, r, o, a, c) { try { var i = n[a](c), u = i.value; } catch (n) { return void e(n); } i.done ? t(u) : Promise.resolve(u).then(r, o); }
+function _asyncToGenerator(n) { return function () { var t = this, e = arguments; return new Promise(function (r, o) { var a = n.apply(t, e); function _next(n) { asyncGeneratorStep(a, r, o, _next, _throw, "next", n); } function _throw(n) { asyncGeneratorStep(a, r, o, _next, _throw, "throw", n); } _next(void 0); }); }; }
+function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
 // import Glide, { Controls, Breakpoints } from '@glidejs/glide/dist/glide.modular.esm'
 
 
@@ -21393,7 +19245,6 @@ var PROMPTS = {
         autoFirst: true
         // list: suggestions
       });
-
       input.addEventListener('input', function () {
         var query = input.value;
         var keyword = document.querySelector('#keyword_search');
@@ -21712,7 +19563,6 @@ var PROMPTS = {
       }
       // template.appendChild(header);
     }
-
     if (PROMPTS.groupSelected) {
       PROMPTS.generate_fields(thisClass, template);
     }
@@ -21781,7 +19631,7 @@ var PROMPTS = {
     btn.dataset.react = 'continue';
     btn.innerHTML = "<span>".concat((_PROMPTS$i18n$continu = (_PROMPTS$i18n7 = PROMPTS.i18n) === null || _PROMPTS$i18n7 === void 0 ? void 0 : _PROMPTS$i18n7.continue) !== null && _PROMPTS$i18n$continu !== void 0 ? _PROMPTS$i18n$continu : 'Continue', "</span><div class=\"spinner-circular-tube\"></div>");
     btn.addEventListener('click', /*#__PURE__*/function () {
-      var _ref = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee2(event) {
+      var _ref = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee2(event) {
         var formdata;
         return _regeneratorRuntime().wrap(function _callee2$(_context2) {
           while (1) switch (_context2.prev = _context2.next) {
@@ -21792,8 +19642,8 @@ var PROMPTS = {
               formdata = new FormData();
               formdata.append('action', 'teddy/ajax/cart/add');
               formdata.append('_nonce', thisClass.ajaxNonce);
-              PROMPTS.get_canvas(thisClass).then( /*#__PURE__*/function () {
-                var _ref2 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee(blob) {
+              PROMPTS.get_canvas(thisClass).then(/*#__PURE__*/function () {
+                var _ref2 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee(blob) {
                   var _blob$name;
                   return _regeneratorRuntime().wrap(function _callee$(_context) {
                     while (1) switch (_context.prev = _context.next) {
@@ -21890,7 +19740,6 @@ var PROMPTS = {
     return both ? fields : fields[PROMPTS.currentGroups];
     // return fields;
   },
-
   do_field: function do_field(field) {
     var _field$heading, _field$subtitle, _field$label, _field$placeholder, _field$fieldID2, _field$value, _field$placeholder2, _field$fieldID3, _field$value2, _field$fieldID4, _field$options, _field$title, _field$placeholder3, _field$fieldID6, _field$value3, _field$icon, _field$icon2, _field$cost, _field$groups, _PROMPTS$i18n$teddyfu, _PROMPTS$i18n10, _PROMPTS$i18n$teddyfu2, _PROMPTS$i18n11, _PROMPTS$i18n$choosea, _PROMPTS$i18n12, _PROMPTS$i18n$teddyfu3, _PROMPTS$i18n13, _PROMPTS$i18n$choosea2, _PROMPTS$i18n14, _PROMPTS$i18n$teddybi, _PROMPTS$i18n15, _PROMPTS$i18n$teddybi2, _PROMPTS$i18n16, _PROMPTS$i18n$teddy_r, _PROMPTS$i18n17, _PROMPTS$i18n$teddy_r2, _PROMPTS$i18n18, _PROMPTS$i18n$senders, _PROMPTS$i18n19, _PROMPTS$i18n$senders2, _PROMPTS$i18n20, _field$infos, _field$fieldID9, _thisClass$i18n$next, _thisClass$i18n3, _field$fieldID10, _PROMPTS$i18n$skip2, _PROMPTS$i18n21, _field$extra_fields;
     var child = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
@@ -22453,7 +20302,6 @@ var PROMPTS = {
               });
             });
           }
-
           inputsField.querySelectorAll('input:not([type="checkbox"]):not([type="radio"])').forEach(function (inputText) {
             inputText.addEventListener('change', function (event) {
               if (field.type == 'info') {
@@ -22578,7 +20426,7 @@ var PROMPTS = {
     return div;
   },
   do_submit: function () {
-    var _do_submit = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee3(thisClass, el) {
+    var _do_submit = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee3(thisClass, el) {
       var _data$max_tokens, _data$model;
       var data, args, _thisClass$popup$thef, _thisClass$popup$thef2, prompt;
       return _regeneratorRuntime().wrap(function _callee3$(_context3) {
@@ -22623,7 +20471,7 @@ var PROMPTS = {
     return do_submit;
   }(),
   do_pagination: function () {
-    var _do_pagination = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee4(plus, thisClass) {
+    var _do_pagination = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee4(plus, thisClass) {
       var _PROMPTS$currentStep;
       var step, root, header, field, back, data, submit, _PROMPTS$i18n$add_to_2, _PROMPTS$i18n25, _PROMPTS$i18n$continu2, _PROMPTS$i18n26, _field$fieldID11, _field, _find$steptitle, headerbgurl, _ref3, popup, popupParent, find, found;
       return _regeneratorRuntime().wrap(function _callee4$(_context4) {
@@ -22716,7 +20564,6 @@ var PROMPTS = {
                 //     jQuery(header).css('background-image', 'url('+field.headerbgurl+')');
                 // }
               }
-
               document.querySelectorAll(root + '.step_visible').forEach(function (el) {
                 el.classList.add('d-none');
                 el.classList.remove('step_visible');
@@ -22778,7 +20625,7 @@ var PROMPTS = {
     return do_pagination;
   }(),
   beforeSwitch: function () {
-    var _beforeSwitch = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee5(thisClass, plus) {
+    var _beforeSwitch = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee5(thisClass, plus) {
       var field, back, next, elem, last, _field$fieldID12, _field2, _elem$nextElementSibl, _elem$nextElementSibl2, data, step, prev, _current$returnStep, current, returnStep;
       return _regeneratorRuntime().wrap(function _callee5$(_context5) {
         while (1) switch (_context5.prev = _context5.next) {
@@ -22852,7 +20699,6 @@ var PROMPTS = {
                       // console.log(opt);
                     }
                   }
-
                   if (opt) {
                     prev.push(el.dataset.index);
                     if (!item.is_conditional && opt.next && opt.next != '') {
@@ -22942,7 +20788,7 @@ var PROMPTS = {
     return true;
   },
   do_search: function () {
-    var _do_search = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee6(field, thisClass) {
+    var _do_search = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee6(field, thisClass) {
       var submit, args, request, formdata;
       return _regeneratorRuntime().wrap(function _callee6$(_context6) {
         while (1) switch (_context6.prev = _context6.next) {
@@ -23003,7 +20849,7 @@ var PROMPTS = {
     return true;
   },
   get_formdata: function () {
-    var _get_formdata = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee7(thisClass) {
+    var _get_formdata = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee7(thisClass) {
       var formdata,
         dataset,
         _args7 = arguments;
@@ -23156,7 +21002,6 @@ var PROMPTS = {
                 //     jQuery(header).css('background-image', 'url('+field.headerbgurl+')');
                 // }
               }
-
               (_document$querySelect2 = document.querySelector('.popup_foot__wrap')) === null || _document$querySelect2 === void 0 || _document$querySelect2.classList.add('d-none');
             }
           });
@@ -23296,8 +21141,8 @@ var PROMPTS = {
             return args;
           }).filter(function (args) {
             return args.src != '' && args.src;
-          }).map( /*#__PURE__*/function () {
-            var _ref5 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee8(args) {
+          }).map(/*#__PURE__*/function () {
+            var _ref5 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee8(args) {
               return _regeneratorRuntime().wrap(function _callee8$(_context8) {
                 while (1) switch (_context8.prev = _context8.next) {
                   case 0:
@@ -23337,7 +21182,6 @@ var PROMPTS = {
       // resolve(layered);
     });
   },
-
   update_pop_n_canvas: function update_pop_n_canvas() {
     // 
     var _pop_n_canvas_options = function _pop_n_canvas_options(row) {
@@ -23497,15 +21341,18 @@ var keenSliderNavigation = function keenSliderNavigation(slider) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
-function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); Object.defineProperty(Constructor, "prototype", { writable: false }); return Constructor; }
+function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
+function _classCallCheck(a, n) { if (!(a instanceof n)) throw new TypeError("Cannot call a class as a function"); }
+function _defineProperties(e, r) { for (var t = 0; t < r.length; t++) { var o = r[t]; o.enumerable = o.enumerable || !1, o.configurable = !0, "value" in o && (o.writable = !0), Object.defineProperty(e, _toPropertyKey(o.key), o); } }
+function _createClass(e, r, t) { return r && _defineProperties(e.prototype, r), t && _defineProperties(e, t), Object.defineProperty(e, "prototype", { writable: !1 }), e; }
+function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == _typeof(i) ? i : i + ""; }
+function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != _typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
 var Tidio_Chat = /*#__PURE__*/function () {
   function Tidio_Chat() {
     _classCallCheck(this, Tidio_Chat);
     this.setup_hooks();
   }
-  _createClass(Tidio_Chat, [{
+  return _createClass(Tidio_Chat, [{
     key: "setup_hooks",
     value: function setup_hooks() {
       this.hide_brand_logo();
@@ -23529,7 +21376,6 @@ var Tidio_Chat = /*#__PURE__*/function () {
       }, 1000);
     }
   }]);
-  return Tidio_Chat;
 }();
 /* harmony default export */ __webpack_exports__["default"] = (Tidio_Chat);
 
@@ -23545,21 +21391,23 @@ var Tidio_Chat = /*#__PURE__*/function () {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _icons__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./icons */ "./src/js/frontend/icons.js");
-/* harmony import */ var wavesurfer_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! wavesurfer.js */ "./node_modules/wavesurfer.js/dist/wavesurfer.esm.js");
+/* harmony import */ var wavesurfer_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! wavesurfer.js */ "./node_modules/wavesurfer.js/dist/wavesurfer.js");
 /* harmony import */ var wavesurfer_js_dist_plugins_record_esm_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! wavesurfer.js/dist/plugins/record.esm.js */ "./node_modules/wavesurfer.js/dist/plugins/record.esm.js");
-function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof(obj); }
-function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread(); }
+function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
+function _toConsumableArray(r) { return _arrayWithoutHoles(r) || _iterableToArray(r) || _unsupportedIterableToArray(r) || _nonIterableSpread(); }
 function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
-function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
-function _iterableToArray(iter) { if (typeof Symbol !== "undefined" && iter[Symbol.iterator] != null || iter["@@iterator"] != null) return Array.from(iter); }
-function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) return _arrayLikeToArray(arr); }
-function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) arr2[i] = arr[i]; return arr2; }
-function _regeneratorRuntime() { "use strict"; /*! regenerator-runtime -- Copyright (c) 2014-present, Facebook, Inc. -- license (MIT): https://github.com/facebook/regenerator/blob/main/LICENSE */ _regeneratorRuntime = function _regeneratorRuntime() { return exports; }; var exports = {}, Op = Object.prototype, hasOwn = Op.hasOwnProperty, defineProperty = Object.defineProperty || function (obj, key, desc) { obj[key] = desc.value; }, $Symbol = "function" == typeof Symbol ? Symbol : {}, iteratorSymbol = $Symbol.iterator || "@@iterator", asyncIteratorSymbol = $Symbol.asyncIterator || "@@asyncIterator", toStringTagSymbol = $Symbol.toStringTag || "@@toStringTag"; function define(obj, key, value) { return Object.defineProperty(obj, key, { value: value, enumerable: !0, configurable: !0, writable: !0 }), obj[key]; } try { define({}, ""); } catch (err) { define = function define(obj, key, value) { return obj[key] = value; }; } function wrap(innerFn, outerFn, self, tryLocsList) { var protoGenerator = outerFn && outerFn.prototype instanceof Generator ? outerFn : Generator, generator = Object.create(protoGenerator.prototype), context = new Context(tryLocsList || []); return defineProperty(generator, "_invoke", { value: makeInvokeMethod(innerFn, self, context) }), generator; } function tryCatch(fn, obj, arg) { try { return { type: "normal", arg: fn.call(obj, arg) }; } catch (err) { return { type: "throw", arg: err }; } } exports.wrap = wrap; var ContinueSentinel = {}; function Generator() {} function GeneratorFunction() {} function GeneratorFunctionPrototype() {} var IteratorPrototype = {}; define(IteratorPrototype, iteratorSymbol, function () { return this; }); var getProto = Object.getPrototypeOf, NativeIteratorPrototype = getProto && getProto(getProto(values([]))); NativeIteratorPrototype && NativeIteratorPrototype !== Op && hasOwn.call(NativeIteratorPrototype, iteratorSymbol) && (IteratorPrototype = NativeIteratorPrototype); var Gp = GeneratorFunctionPrototype.prototype = Generator.prototype = Object.create(IteratorPrototype); function defineIteratorMethods(prototype) { ["next", "throw", "return"].forEach(function (method) { define(prototype, method, function (arg) { return this._invoke(method, arg); }); }); } function AsyncIterator(generator, PromiseImpl) { function invoke(method, arg, resolve, reject) { var record = tryCatch(generator[method], generator, arg); if ("throw" !== record.type) { var result = record.arg, value = result.value; return value && "object" == _typeof(value) && hasOwn.call(value, "__await") ? PromiseImpl.resolve(value.__await).then(function (value) { invoke("next", value, resolve, reject); }, function (err) { invoke("throw", err, resolve, reject); }) : PromiseImpl.resolve(value).then(function (unwrapped) { result.value = unwrapped, resolve(result); }, function (error) { return invoke("throw", error, resolve, reject); }); } reject(record.arg); } var previousPromise; defineProperty(this, "_invoke", { value: function value(method, arg) { function callInvokeWithMethodAndArg() { return new PromiseImpl(function (resolve, reject) { invoke(method, arg, resolve, reject); }); } return previousPromise = previousPromise ? previousPromise.then(callInvokeWithMethodAndArg, callInvokeWithMethodAndArg) : callInvokeWithMethodAndArg(); } }); } function makeInvokeMethod(innerFn, self, context) { var state = "suspendedStart"; return function (method, arg) { if ("executing" === state) throw new Error("Generator is already running"); if ("completed" === state) { if ("throw" === method) throw arg; return doneResult(); } for (context.method = method, context.arg = arg;;) { var delegate = context.delegate; if (delegate) { var delegateResult = maybeInvokeDelegate(delegate, context); if (delegateResult) { if (delegateResult === ContinueSentinel) continue; return delegateResult; } } if ("next" === context.method) context.sent = context._sent = context.arg;else if ("throw" === context.method) { if ("suspendedStart" === state) throw state = "completed", context.arg; context.dispatchException(context.arg); } else "return" === context.method && context.abrupt("return", context.arg); state = "executing"; var record = tryCatch(innerFn, self, context); if ("normal" === record.type) { if (state = context.done ? "completed" : "suspendedYield", record.arg === ContinueSentinel) continue; return { value: record.arg, done: context.done }; } "throw" === record.type && (state = "completed", context.method = "throw", context.arg = record.arg); } }; } function maybeInvokeDelegate(delegate, context) { var method = delegate.iterator[context.method]; if (undefined === method) { if (context.delegate = null, "throw" === context.method) { if (delegate.iterator.return && (context.method = "return", context.arg = undefined, maybeInvokeDelegate(delegate, context), "throw" === context.method)) return ContinueSentinel; context.method = "throw", context.arg = new TypeError("The iterator does not provide a 'throw' method"); } return ContinueSentinel; } var record = tryCatch(method, delegate.iterator, context.arg); if ("throw" === record.type) return context.method = "throw", context.arg = record.arg, context.delegate = null, ContinueSentinel; var info = record.arg; return info ? info.done ? (context[delegate.resultName] = info.value, context.next = delegate.nextLoc, "return" !== context.method && (context.method = "next", context.arg = undefined), context.delegate = null, ContinueSentinel) : info : (context.method = "throw", context.arg = new TypeError("iterator result is not an object"), context.delegate = null, ContinueSentinel); } function pushTryEntry(locs) { var entry = { tryLoc: locs[0] }; 1 in locs && (entry.catchLoc = locs[1]), 2 in locs && (entry.finallyLoc = locs[2], entry.afterLoc = locs[3]), this.tryEntries.push(entry); } function resetTryEntry(entry) { var record = entry.completion || {}; record.type = "normal", delete record.arg, entry.completion = record; } function Context(tryLocsList) { this.tryEntries = [{ tryLoc: "root" }], tryLocsList.forEach(pushTryEntry, this), this.reset(!0); } function values(iterable) { if (iterable) { var iteratorMethod = iterable[iteratorSymbol]; if (iteratorMethod) return iteratorMethod.call(iterable); if ("function" == typeof iterable.next) return iterable; if (!isNaN(iterable.length)) { var i = -1, next = function next() { for (; ++i < iterable.length;) if (hasOwn.call(iterable, i)) return next.value = iterable[i], next.done = !1, next; return next.value = undefined, next.done = !0, next; }; return next.next = next; } } return { next: doneResult }; } function doneResult() { return { value: undefined, done: !0 }; } return GeneratorFunction.prototype = GeneratorFunctionPrototype, defineProperty(Gp, "constructor", { value: GeneratorFunctionPrototype, configurable: !0 }), defineProperty(GeneratorFunctionPrototype, "constructor", { value: GeneratorFunction, configurable: !0 }), GeneratorFunction.displayName = define(GeneratorFunctionPrototype, toStringTagSymbol, "GeneratorFunction"), exports.isGeneratorFunction = function (genFun) { var ctor = "function" == typeof genFun && genFun.constructor; return !!ctor && (ctor === GeneratorFunction || "GeneratorFunction" === (ctor.displayName || ctor.name)); }, exports.mark = function (genFun) { return Object.setPrototypeOf ? Object.setPrototypeOf(genFun, GeneratorFunctionPrototype) : (genFun.__proto__ = GeneratorFunctionPrototype, define(genFun, toStringTagSymbol, "GeneratorFunction")), genFun.prototype = Object.create(Gp), genFun; }, exports.awrap = function (arg) { return { __await: arg }; }, defineIteratorMethods(AsyncIterator.prototype), define(AsyncIterator.prototype, asyncIteratorSymbol, function () { return this; }), exports.AsyncIterator = AsyncIterator, exports.async = function (innerFn, outerFn, self, tryLocsList, PromiseImpl) { void 0 === PromiseImpl && (PromiseImpl = Promise); var iter = new AsyncIterator(wrap(innerFn, outerFn, self, tryLocsList), PromiseImpl); return exports.isGeneratorFunction(outerFn) ? iter : iter.next().then(function (result) { return result.done ? result.value : iter.next(); }); }, defineIteratorMethods(Gp), define(Gp, toStringTagSymbol, "Generator"), define(Gp, iteratorSymbol, function () { return this; }), define(Gp, "toString", function () { return "[object Generator]"; }), exports.keys = function (val) { var object = Object(val), keys = []; for (var key in object) keys.push(key); return keys.reverse(), function next() { for (; keys.length;) { var key = keys.pop(); if (key in object) return next.value = key, next.done = !1, next; } return next.done = !0, next; }; }, exports.values = values, Context.prototype = { constructor: Context, reset: function reset(skipTempReset) { if (this.prev = 0, this.next = 0, this.sent = this._sent = undefined, this.done = !1, this.delegate = null, this.method = "next", this.arg = undefined, this.tryEntries.forEach(resetTryEntry), !skipTempReset) for (var name in this) "t" === name.charAt(0) && hasOwn.call(this, name) && !isNaN(+name.slice(1)) && (this[name] = undefined); }, stop: function stop() { this.done = !0; var rootRecord = this.tryEntries[0].completion; if ("throw" === rootRecord.type) throw rootRecord.arg; return this.rval; }, dispatchException: function dispatchException(exception) { if (this.done) throw exception; var context = this; function handle(loc, caught) { return record.type = "throw", record.arg = exception, context.next = loc, caught && (context.method = "next", context.arg = undefined), !!caught; } for (var i = this.tryEntries.length - 1; i >= 0; --i) { var entry = this.tryEntries[i], record = entry.completion; if ("root" === entry.tryLoc) return handle("end"); if (entry.tryLoc <= this.prev) { var hasCatch = hasOwn.call(entry, "catchLoc"), hasFinally = hasOwn.call(entry, "finallyLoc"); if (hasCatch && hasFinally) { if (this.prev < entry.catchLoc) return handle(entry.catchLoc, !0); if (this.prev < entry.finallyLoc) return handle(entry.finallyLoc); } else if (hasCatch) { if (this.prev < entry.catchLoc) return handle(entry.catchLoc, !0); } else { if (!hasFinally) throw new Error("try statement without catch or finally"); if (this.prev < entry.finallyLoc) return handle(entry.finallyLoc); } } } }, abrupt: function abrupt(type, arg) { for (var i = this.tryEntries.length - 1; i >= 0; --i) { var entry = this.tryEntries[i]; if (entry.tryLoc <= this.prev && hasOwn.call(entry, "finallyLoc") && this.prev < entry.finallyLoc) { var finallyEntry = entry; break; } } finallyEntry && ("break" === type || "continue" === type) && finallyEntry.tryLoc <= arg && arg <= finallyEntry.finallyLoc && (finallyEntry = null); var record = finallyEntry ? finallyEntry.completion : {}; return record.type = type, record.arg = arg, finallyEntry ? (this.method = "next", this.next = finallyEntry.finallyLoc, ContinueSentinel) : this.complete(record); }, complete: function complete(record, afterLoc) { if ("throw" === record.type) throw record.arg; return "break" === record.type || "continue" === record.type ? this.next = record.arg : "return" === record.type ? (this.rval = this.arg = record.arg, this.method = "return", this.next = "end") : "normal" === record.type && afterLoc && (this.next = afterLoc), ContinueSentinel; }, finish: function finish(finallyLoc) { for (var i = this.tryEntries.length - 1; i >= 0; --i) { var entry = this.tryEntries[i]; if (entry.finallyLoc === finallyLoc) return this.complete(entry.completion, entry.afterLoc), resetTryEntry(entry), ContinueSentinel; } }, catch: function _catch(tryLoc) { for (var i = this.tryEntries.length - 1; i >= 0; --i) { var entry = this.tryEntries[i]; if (entry.tryLoc === tryLoc) { var record = entry.completion; if ("throw" === record.type) { var thrown = record.arg; resetTryEntry(entry); } return thrown; } } throw new Error("illegal catch attempt"); }, delegateYield: function delegateYield(iterable, resultName, nextLoc) { return this.delegate = { iterator: values(iterable), resultName: resultName, nextLoc: nextLoc }, "next" === this.method && (this.arg = undefined), ContinueSentinel; } }, exports; }
-function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
-function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
-function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); Object.defineProperty(Constructor, "prototype", { writable: false }); return Constructor; }
+function _unsupportedIterableToArray(r, a) { if (r) { if ("string" == typeof r) return _arrayLikeToArray(r, a); var t = {}.toString.call(r).slice(8, -1); return "Object" === t && r.constructor && (t = r.constructor.name), "Map" === t || "Set" === t ? Array.from(r) : "Arguments" === t || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(t) ? _arrayLikeToArray(r, a) : void 0; } }
+function _iterableToArray(r) { if ("undefined" != typeof Symbol && null != r[Symbol.iterator] || null != r["@@iterator"]) return Array.from(r); }
+function _arrayWithoutHoles(r) { if (Array.isArray(r)) return _arrayLikeToArray(r); }
+function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length); for (var e = 0, n = Array(a); e < a; e++) n[e] = r[e]; return n; }
+function _regeneratorRuntime() { "use strict"; /*! regenerator-runtime -- Copyright (c) 2014-present, Facebook, Inc. -- license (MIT): https://github.com/facebook/regenerator/blob/main/LICENSE */ _regeneratorRuntime = function _regeneratorRuntime() { return e; }; var t, e = {}, r = Object.prototype, n = r.hasOwnProperty, o = Object.defineProperty || function (t, e, r) { t[e] = r.value; }, i = "function" == typeof Symbol ? Symbol : {}, a = i.iterator || "@@iterator", c = i.asyncIterator || "@@asyncIterator", u = i.toStringTag || "@@toStringTag"; function define(t, e, r) { return Object.defineProperty(t, e, { value: r, enumerable: !0, configurable: !0, writable: !0 }), t[e]; } try { define({}, ""); } catch (t) { define = function define(t, e, r) { return t[e] = r; }; } function wrap(t, e, r, n) { var i = e && e.prototype instanceof Generator ? e : Generator, a = Object.create(i.prototype), c = new Context(n || []); return o(a, "_invoke", { value: makeInvokeMethod(t, r, c) }), a; } function tryCatch(t, e, r) { try { return { type: "normal", arg: t.call(e, r) }; } catch (t) { return { type: "throw", arg: t }; } } e.wrap = wrap; var h = "suspendedStart", l = "suspendedYield", f = "executing", s = "completed", y = {}; function Generator() {} function GeneratorFunction() {} function GeneratorFunctionPrototype() {} var p = {}; define(p, a, function () { return this; }); var d = Object.getPrototypeOf, v = d && d(d(values([]))); v && v !== r && n.call(v, a) && (p = v); var g = GeneratorFunctionPrototype.prototype = Generator.prototype = Object.create(p); function defineIteratorMethods(t) { ["next", "throw", "return"].forEach(function (e) { define(t, e, function (t) { return this._invoke(e, t); }); }); } function AsyncIterator(t, e) { function invoke(r, o, i, a) { var c = tryCatch(t[r], t, o); if ("throw" !== c.type) { var u = c.arg, h = u.value; return h && "object" == _typeof(h) && n.call(h, "__await") ? e.resolve(h.__await).then(function (t) { invoke("next", t, i, a); }, function (t) { invoke("throw", t, i, a); }) : e.resolve(h).then(function (t) { u.value = t, i(u); }, function (t) { return invoke("throw", t, i, a); }); } a(c.arg); } var r; o(this, "_invoke", { value: function value(t, n) { function callInvokeWithMethodAndArg() { return new e(function (e, r) { invoke(t, n, e, r); }); } return r = r ? r.then(callInvokeWithMethodAndArg, callInvokeWithMethodAndArg) : callInvokeWithMethodAndArg(); } }); } function makeInvokeMethod(e, r, n) { var o = h; return function (i, a) { if (o === f) throw Error("Generator is already running"); if (o === s) { if ("throw" === i) throw a; return { value: t, done: !0 }; } for (n.method = i, n.arg = a;;) { var c = n.delegate; if (c) { var u = maybeInvokeDelegate(c, n); if (u) { if (u === y) continue; return u; } } if ("next" === n.method) n.sent = n._sent = n.arg;else if ("throw" === n.method) { if (o === h) throw o = s, n.arg; n.dispatchException(n.arg); } else "return" === n.method && n.abrupt("return", n.arg); o = f; var p = tryCatch(e, r, n); if ("normal" === p.type) { if (o = n.done ? s : l, p.arg === y) continue; return { value: p.arg, done: n.done }; } "throw" === p.type && (o = s, n.method = "throw", n.arg = p.arg); } }; } function maybeInvokeDelegate(e, r) { var n = r.method, o = e.iterator[n]; if (o === t) return r.delegate = null, "throw" === n && e.iterator.return && (r.method = "return", r.arg = t, maybeInvokeDelegate(e, r), "throw" === r.method) || "return" !== n && (r.method = "throw", r.arg = new TypeError("The iterator does not provide a '" + n + "' method")), y; var i = tryCatch(o, e.iterator, r.arg); if ("throw" === i.type) return r.method = "throw", r.arg = i.arg, r.delegate = null, y; var a = i.arg; return a ? a.done ? (r[e.resultName] = a.value, r.next = e.nextLoc, "return" !== r.method && (r.method = "next", r.arg = t), r.delegate = null, y) : a : (r.method = "throw", r.arg = new TypeError("iterator result is not an object"), r.delegate = null, y); } function pushTryEntry(t) { var e = { tryLoc: t[0] }; 1 in t && (e.catchLoc = t[1]), 2 in t && (e.finallyLoc = t[2], e.afterLoc = t[3]), this.tryEntries.push(e); } function resetTryEntry(t) { var e = t.completion || {}; e.type = "normal", delete e.arg, t.completion = e; } function Context(t) { this.tryEntries = [{ tryLoc: "root" }], t.forEach(pushTryEntry, this), this.reset(!0); } function values(e) { if (e || "" === e) { var r = e[a]; if (r) return r.call(e); if ("function" == typeof e.next) return e; if (!isNaN(e.length)) { var o = -1, i = function next() { for (; ++o < e.length;) if (n.call(e, o)) return next.value = e[o], next.done = !1, next; return next.value = t, next.done = !0, next; }; return i.next = i; } } throw new TypeError(_typeof(e) + " is not iterable"); } return GeneratorFunction.prototype = GeneratorFunctionPrototype, o(g, "constructor", { value: GeneratorFunctionPrototype, configurable: !0 }), o(GeneratorFunctionPrototype, "constructor", { value: GeneratorFunction, configurable: !0 }), GeneratorFunction.displayName = define(GeneratorFunctionPrototype, u, "GeneratorFunction"), e.isGeneratorFunction = function (t) { var e = "function" == typeof t && t.constructor; return !!e && (e === GeneratorFunction || "GeneratorFunction" === (e.displayName || e.name)); }, e.mark = function (t) { return Object.setPrototypeOf ? Object.setPrototypeOf(t, GeneratorFunctionPrototype) : (t.__proto__ = GeneratorFunctionPrototype, define(t, u, "GeneratorFunction")), t.prototype = Object.create(g), t; }, e.awrap = function (t) { return { __await: t }; }, defineIteratorMethods(AsyncIterator.prototype), define(AsyncIterator.prototype, c, function () { return this; }), e.AsyncIterator = AsyncIterator, e.async = function (t, r, n, o, i) { void 0 === i && (i = Promise); var a = new AsyncIterator(wrap(t, r, n, o), i); return e.isGeneratorFunction(r) ? a : a.next().then(function (t) { return t.done ? t.value : a.next(); }); }, defineIteratorMethods(g), define(g, u, "Generator"), define(g, a, function () { return this; }), define(g, "toString", function () { return "[object Generator]"; }), e.keys = function (t) { var e = Object(t), r = []; for (var n in e) r.push(n); return r.reverse(), function next() { for (; r.length;) { var t = r.pop(); if (t in e) return next.value = t, next.done = !1, next; } return next.done = !0, next; }; }, e.values = values, Context.prototype = { constructor: Context, reset: function reset(e) { if (this.prev = 0, this.next = 0, this.sent = this._sent = t, this.done = !1, this.delegate = null, this.method = "next", this.arg = t, this.tryEntries.forEach(resetTryEntry), !e) for (var r in this) "t" === r.charAt(0) && n.call(this, r) && !isNaN(+r.slice(1)) && (this[r] = t); }, stop: function stop() { this.done = !0; var t = this.tryEntries[0].completion; if ("throw" === t.type) throw t.arg; return this.rval; }, dispatchException: function dispatchException(e) { if (this.done) throw e; var r = this; function handle(n, o) { return a.type = "throw", a.arg = e, r.next = n, o && (r.method = "next", r.arg = t), !!o; } for (var o = this.tryEntries.length - 1; o >= 0; --o) { var i = this.tryEntries[o], a = i.completion; if ("root" === i.tryLoc) return handle("end"); if (i.tryLoc <= this.prev) { var c = n.call(i, "catchLoc"), u = n.call(i, "finallyLoc"); if (c && u) { if (this.prev < i.catchLoc) return handle(i.catchLoc, !0); if (this.prev < i.finallyLoc) return handle(i.finallyLoc); } else if (c) { if (this.prev < i.catchLoc) return handle(i.catchLoc, !0); } else { if (!u) throw Error("try statement without catch or finally"); if (this.prev < i.finallyLoc) return handle(i.finallyLoc); } } } }, abrupt: function abrupt(t, e) { for (var r = this.tryEntries.length - 1; r >= 0; --r) { var o = this.tryEntries[r]; if (o.tryLoc <= this.prev && n.call(o, "finallyLoc") && this.prev < o.finallyLoc) { var i = o; break; } } i && ("break" === t || "continue" === t) && i.tryLoc <= e && e <= i.finallyLoc && (i = null); var a = i ? i.completion : {}; return a.type = t, a.arg = e, i ? (this.method = "next", this.next = i.finallyLoc, y) : this.complete(a); }, complete: function complete(t, e) { if ("throw" === t.type) throw t.arg; return "break" === t.type || "continue" === t.type ? this.next = t.arg : "return" === t.type ? (this.rval = this.arg = t.arg, this.method = "return", this.next = "end") : "normal" === t.type && e && (this.next = e), y; }, finish: function finish(t) { for (var e = this.tryEntries.length - 1; e >= 0; --e) { var r = this.tryEntries[e]; if (r.finallyLoc === t) return this.complete(r.completion, r.afterLoc), resetTryEntry(r), y; } }, catch: function _catch(t) { for (var e = this.tryEntries.length - 1; e >= 0; --e) { var r = this.tryEntries[e]; if (r.tryLoc === t) { var n = r.completion; if ("throw" === n.type) { var o = n.arg; resetTryEntry(r); } return o; } } throw Error("illegal catch attempt"); }, delegateYield: function delegateYield(e, r, n) { return this.delegate = { iterator: values(e), resultName: r, nextLoc: n }, "next" === this.method && (this.arg = t), y; } }, e; }
+function asyncGeneratorStep(n, t, e, r, o, a, c) { try { var i = n[a](c), u = i.value; } catch (n) { return void e(n); } i.done ? t(u) : Promise.resolve(u).then(r, o); }
+function _asyncToGenerator(n) { return function () { var t = this, e = arguments; return new Promise(function (r, o) { var a = n.apply(t, e); function _next(n) { asyncGeneratorStep(a, r, o, _next, _throw, "next", n); } function _throw(n) { asyncGeneratorStep(a, r, o, _next, _throw, "throw", n); } _next(void 0); }); }; }
+function _classCallCheck(a, n) { if (!(a instanceof n)) throw new TypeError("Cannot call a class as a function"); }
+function _defineProperties(e, r) { for (var t = 0; t < r.length; t++) { var o = r[t]; o.enumerable = o.enumerable || !1, o.configurable = !0, "value" in o && (o.writable = !0), Object.defineProperty(e, _toPropertyKey(o.key), o); } }
+function _createClass(e, r, t) { return r && _defineProperties(e.prototype, r), t && _defineProperties(e, t), Object.defineProperty(e, "prototype", { writable: !1 }), e; }
+function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == _typeof(i) ? i : i + ""; }
+function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != _typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
 /**
  * Voice Recorder for frontend prompts.
  * 
@@ -23587,7 +21435,7 @@ var Voice = /*#__PURE__*/function () {
     this.RecordPlugin = wavesurfer_js_dist_plugins_record_esm_js__WEBPACK_IMPORTED_MODULE_2__["default"];
     this.product_id = (_thisClass$product = thisClass.product) === null || _thisClass$product === void 0 ? void 0 : _thisClass$product.id, this.init(thisClass, row, root);
   }
-  _createClass(Voice, [{
+  return _createClass(Voice, [{
     key: "init",
     value: function init(thisClass, row, root) {
       // if (!(this?.WaveSurfer && this?.RecordPlugin)) {return;}
@@ -23802,7 +21650,7 @@ var Voice = /*#__PURE__*/function () {
           _this.hideError();
           _this.record = _this.wave.registerPlugin(wavesurfer_js_dist_plugins_record_esm_js__WEBPACK_IMPORTED_MODULE_2__["default"].create());
           // 
-          _this.record.on('stopRecording', /*#__PURE__*/_asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee() {
+          _this.record.on('stopRecording', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee() {
             return _regeneratorRuntime().wrap(function _callee$(_context) {
               while (1) switch (_context.prev = _context.next) {
                 case 0:
@@ -23858,7 +21706,7 @@ var Voice = /*#__PURE__*/function () {
           _this.playButton.disabled = false;
           _this.recordButton.dataset.cost = _this.recordButton.dataset.cost == '' ? '0' : _this.recordButton.dataset.cost;
           // thisClass.addAdditionalPrice(this.meta_tag, parseFloat(this.recordButton.dataset.cost), false, this.product_id);
-          setTimeout( /*#__PURE__*/_asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee2() {
+          setTimeout(/*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee2() {
             return _regeneratorRuntime().wrap(function _callee2$(_context2) {
               while (1) switch (_context2.prev = _context2.next) {
                 case 0:
@@ -23984,7 +21832,7 @@ var Voice = /*#__PURE__*/function () {
   }, {
     key: "recordedFileName",
     value: function () {
-      var _recordedFileName = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee3() {
+      var _recordedFileName = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee3() {
         var _this$recordedBlob$ty, _this$recordedBlob;
         var unique, prefix, extension, mimeType, audioMimeTypeRegex, videoMimeTypeRegex, suffix, _suffix, _suffix2;
         return _regeneratorRuntime().wrap(function _callee3$(_context3) {
@@ -24035,7 +21883,7 @@ var Voice = /*#__PURE__*/function () {
   }, {
     key: "uploadAudio",
     value: function () {
-      var _uploadAudio = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee4(file, thisClass) {
+      var _uploadAudio = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee4(file, thisClass) {
         var _this3 = this;
         var _thisClass$i18n$audio3, _thisClass$i18n14, _thisClass$i18n$file_, _thisClass$i18n13, audioupload_instuction, _thisClass$i18n$maxup, _thisClass$i18n15, _thisClass$i18n$inval, _thisClass$i18n16, _thisClass$i18n$inval2, _thisClass$i18n17, loadingTimeouts, fileURL, _err$message2, errorText, _thisClass$i18n$audio5, _thisClass$i18n20;
         return _regeneratorRuntime().wrap(function _callee4$(_context4) {
@@ -24339,7 +22187,6 @@ var Voice = /*#__PURE__*/function () {
       });
     }
   }]);
-  return Voice;
 }();
 /* harmony default export */ __webpack_exports__["default"] = (Voice);
 
@@ -24354,9 +22201,12 @@ var Voice = /*#__PURE__*/function () {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
-function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); Object.defineProperty(Constructor, "prototype", { writable: false }); return Constructor; }
+function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
+function _classCallCheck(a, n) { if (!(a instanceof n)) throw new TypeError("Cannot call a class as a function"); }
+function _defineProperties(e, r) { for (var t = 0; t < r.length; t++) { var o = r[t]; o.enumerable = o.enumerable || !1, o.configurable = !0, "value" in o && (o.writable = !0), Object.defineProperty(e, _toPropertyKey(o.key), o); } }
+function _createClass(e, r, t) { return r && _defineProperties(e.prototype, r), t && _defineProperties(e, t), Object.defineProperty(e, "prototype", { writable: !1 }), e; }
+function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == _typeof(i) ? i : i + ""; }
+function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != _typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
 /**
  * LayeredCanvas attach and create customized image layers accordingly
  * 
@@ -24391,7 +22241,7 @@ var LayeredCanvas = /*#__PURE__*/function () {
    * @param {number} [h=false] - The height of the layer. If not provided, defaults to the height of the canvas.
    * @returns {Promise} A Promise that resolves when the layer is successfully added, and rejects if the image fails to load.
    */
-  _createClass(LayeredCanvas, [{
+  return _createClass(LayeredCanvas, [{
     key: "addLayer",
     value: function addLayer(src) {
       var _this = this;
@@ -24504,7 +22354,6 @@ var LayeredCanvas = /*#__PURE__*/function () {
       });
     }
   }]);
-  return LayeredCanvas;
 }();
 /* harmony default export */ __webpack_exports__["default"] = (LayeredCanvas);
 
@@ -24608,16 +22457,18 @@ var send2Server = function send2Server(ajax_url) {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _frontend_icons__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../frontend/icons */ "./src/js/frontend/icons.js");
-function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof(obj); }
-function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread(); }
+function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
+function _toConsumableArray(r) { return _arrayWithoutHoles(r) || _iterableToArray(r) || _unsupportedIterableToArray(r) || _nonIterableSpread(); }
 function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
-function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
-function _iterableToArray(iter) { if (typeof Symbol !== "undefined" && iter[Symbol.iterator] != null || iter["@@iterator"] != null) return Array.from(iter); }
-function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) return _arrayLikeToArray(arr); }
-function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) arr2[i] = arr[i]; return arr2; }
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
-function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); Object.defineProperty(Constructor, "prototype", { writable: false }); return Constructor; }
+function _unsupportedIterableToArray(r, a) { if (r) { if ("string" == typeof r) return _arrayLikeToArray(r, a); var t = {}.toString.call(r).slice(8, -1); return "Object" === t && r.constructor && (t = r.constructor.name), "Map" === t || "Set" === t ? Array.from(r) : "Arguments" === t || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(t) ? _arrayLikeToArray(r, a) : void 0; } }
+function _iterableToArray(r) { if ("undefined" != typeof Symbol && null != r[Symbol.iterator] || null != r["@@iterator"]) return Array.from(r); }
+function _arrayWithoutHoles(r) { if (Array.isArray(r)) return _arrayLikeToArray(r); }
+function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length); for (var e = 0, n = Array(a); e < a; e++) n[e] = r[e]; return n; }
+function _classCallCheck(a, n) { if (!(a instanceof n)) throw new TypeError("Cannot call a class as a function"); }
+function _defineProperties(e, r) { for (var t = 0; t < r.length; t++) { var o = r[t]; o.enumerable = o.enumerable || !1, o.configurable = !0, "value" in o && (o.writable = !0), Object.defineProperty(e, _toPropertyKey(o.key), o); } }
+function _createClass(e, r, t) { return r && _defineProperties(e.prototype, r), t && _defineProperties(e, t), Object.defineProperty(e, "prototype", { writable: !1 }), e; }
+function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == _typeof(i) ? i : i + ""; }
+function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != _typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
 /**
  * SliderJS class made by Remal Mahmud
  * 
@@ -24669,7 +22520,7 @@ var Slider = /*#__PURE__*/function () {
     this.init_elements();
     this.init_resize();
     this.transition();
-    this.init_drag__();
+    this.init_drag();
     this.autoplay();
     this.issues();
     this.update();
@@ -24681,7 +22532,7 @@ var Slider = /*#__PURE__*/function () {
    *
    * @returns {void} This function does not return any value. Its purpose is to initialize the image slider's container and slides.
    */
-  _createClass(Slider, [{
+  return _createClass(Slider, [{
     key: "init_objects",
     value: function init_objects() {
       var _this = this;
@@ -24984,28 +22835,29 @@ var Slider = /*#__PURE__*/function () {
       var startPos = 0;
       var currentTranslate = 0;
       var prevTranslate = 0;
+      var animationID;
       var touchStart = function touchStart(event) {
         if (!_this9.is_allowed_width()) return;
         isDragging = true;
         startPos = event.type.includes('mouse') ? event.pageX : event.touches[0].clientX;
         prevTranslate = _this9.currentIndex * -_this9.config.slides.children[0].offsetWidth;
         _this9.config.slides.style.transition = 'none';
+        animationID = requestAnimationFrame(_animation);
         event.preventDefault();
       };
       var touchMove = function touchMove(event) {
         if (!_this9.is_allowed_width() || !isDragging) return;
         var currentPosition = event.type.includes('mouse') ? event.pageX : event.touches[0].clientX;
         currentTranslate = prevTranslate + (currentPosition - startPos);
-        _this9.config.slides.style.transform = "translateX(".concat(currentTranslate, "px)");
         event.preventDefault();
       };
       var touchEnd = function touchEnd() {
         if (!_this9.is_allowed_width()) return;
         isDragging = false;
+        cancelAnimationFrame(animationID);
         var movedBy = currentTranslate - prevTranslate;
         var slideWidth = _this9.config.slides.children[0].offsetWidth + _this9.config.space;
         var movedSlides = Math.round(movedBy / slideWidth);
-        var movedNegative = movedBy < 0;
         _this9.currentIndex -= movedSlides;
         if (_this9.config.loop) {
           if (_this9.currentIndex >= _this9.totalSlides) {
@@ -25024,90 +22876,10 @@ var Slider = /*#__PURE__*/function () {
         _this9.config.slides.style.transform = "translateX(".concat(-_this9.currentIndex * slideWidth * (_this9.isRTL() ? -1 : 1), "px)");
         _this9.update();
       };
-      this.config.slides.addEventListener('mousedown', touchStart);
-      this.config.slides.addEventListener('mousemove', touchMove);
-      this.config.slides.addEventListener('mouseup', touchEnd);
-      this.config.slides.addEventListener('mouseleave', touchEnd);
-      this.config.slides.addEventListener('touchstart', touchStart);
-      this.config.slides.addEventListener('touchmove', touchMove);
-      this.config.slides.addEventListener('touchend', touchEnd);
-    }
-  }, {
-    key: "init_drag__",
-    value: function init_drag__() {
-      var _this10 = this;
-      if (this.config.drag === false) {
-        return;
-      }
-      var isDragging = false;
-      var startPos = 0;
-      var currentTranslate = 0;
-      var prevTranslate = 0;
-      var touchStart = function touchStart(event) {
-        if (!_this10.is_allowed_width()) {
-          return false;
-        }
-        isDragging = true;
-        startPos = event.type.includes('mouse') ? event.pageX : event.touches[0].clientX;
-        _this10.config.slides.style.transition = 'none';
-        // return (event) => {};
+      var _animation = function animation() {
+        _this9.config.slides.style.transform = "translateX(".concat(currentTranslate, "px)");
+        if (isDragging) requestAnimationFrame(_animation);
       };
-
-      var touchMove = function touchMove(event) {
-        if (!_this10.is_allowed_width()) {
-          return false;
-        }
-        if (isDragging === false) {
-          return false;
-        }
-        var currentPosition = event.type.includes('mouse') ? event.pageX : event.touches[0].clientX;
-        var movedBy = currentPosition - startPos;
-        var isNegative = movedBy < 0;
-        var toRight = !isNegative;
-        currentTranslate = prevTranslate + movedBy;
-        if (toRight) {
-          currentTranslate = Math.min(_this10.slides_width() - _this10.slide_width_binded() * _this10.config.view, currentTranslate);
-        } else {
-          currentTranslate = Math.max(0, currentTranslate);
-        }
-        _this10.get_current_slide(currentTranslate);
-        _this10.config.slides.style.transform = "translateX(".concat(currentTranslate, "px)");
-      };
-      var touchEnd = function touchEnd(event) {
-        if (!_this10.is_allowed_width()) {
-          return false;
-        }
-        isDragging = false;
-        _this10.config.slides.style.transition = "transform ".concat(_this10.config.transition, "s ease");
-        prevTranslate = -_this10.currentIndex * _this10.slide_width_binded() * (_this10.isRTL() ? -1 : 1);
-        _this10.update();
-        // if (!this.config.dragFree) {}
-        // if (this.allow_slides2visible()) {
-        //     this.config.slides.style.transform = `translateX(${prevTranslate}px)`;
-        // }
-        // this.update();
-        // 
-        // const movedBy = currentTranslate - prevTranslate;
-        // const isNegative = movedBy < 0;
-        // const toRight = !isNegative;
-        // // 
-        // console.log({
-        //     movedBy: movedBy,
-        //     isNegative: isNegative,
-        //     currentIndex: this.currentIndex,
-        //     totalSlides: this.totalSlides
-        // });
-        // // 
-        // if (!this.config.dragFree) {
-        //     this.config.slides.style.transition = `transform ${this.config.transition}s ease`;
-        //     prevTranslate = -this.currentIndex * (slideWidth + this.config.space) * (this.isRTL() ? -1 : 1);
-        //     if (this.allow_slides2visible()) {
-        //         this.config.slides.style.transform = `translateX(${prevTranslate}px)`;
-        //     }
-        //     this.update();
-        // }
-      };
-      // 
       this.config.slides.addEventListener('mousedown', touchStart);
       this.config.slides.addEventListener('mousemove', touchMove);
       this.config.slides.addEventListener('mouseup', touchEnd);
@@ -25168,7 +22940,7 @@ var Slider = /*#__PURE__*/function () {
   }, {
     key: "issues",
     value: function issues() {
-      var _this11 = this;
+      var _this10 = this;
       /**
        * Issue arrives when the container made through dom create element object and has not visible yet on screen.
        * 
@@ -25176,20 +22948,19 @@ var Slider = /*#__PURE__*/function () {
        */
       if (this.config.container.clientWidth <= 0) {
         var interval4Width = setInterval(function () {
-          if (_this11.config.container.clientWidth >= 1) {
-            _this11.config.container.classList.remove('zero-width');
-            _this11.update();
+          if (_this10.config.container.clientWidth >= 1) {
+            _this10.config.container.classList.remove('zero-width');
+            _this10.update();
             clearInterval(interval4Width);
           } else {
-            if (_this11.config.container.classList.contains('zero-width') == false) {
-              _this11.config.container.classList.add('zero-width');
+            if (_this10.config.container.classList.contains('zero-width') == false) {
+              _this10.config.container.classList.add('zero-width');
             }
           }
         }, 1000);
       }
     }
   }]);
-  return Slider;
 }(); // 
 /* harmony default export */ __webpack_exports__["default"] = (Slider);
 

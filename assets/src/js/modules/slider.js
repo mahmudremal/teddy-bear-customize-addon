@@ -44,7 +44,7 @@ class Slider {
         this.init_elements();
         this.init_resize();
         this.transition();
-        this.init_drag__();
+        this.init_drag();
         this.autoplay();
         this.issues();
         this.update();
@@ -297,6 +297,7 @@ class Slider {
         let startPos = 0;
         let currentTranslate = 0;
         let prevTranslate = 0;
+        let animationID;
     
         const touchStart = (event) => {
             if (!this.is_allowed_width()) return;
@@ -304,6 +305,7 @@ class Slider {
             startPos = event.type.includes('mouse') ? event.pageX : event.touches[0].clientX;
             prevTranslate = this.currentIndex * -this.config.slides.children[0].offsetWidth;
             this.config.slides.style.transition = 'none';
+            animationID = requestAnimationFrame(animation);
             event.preventDefault();
         };
     
@@ -311,17 +313,16 @@ class Slider {
             if (!this.is_allowed_width() || !isDragging) return;
             const currentPosition = event.type.includes('mouse') ? event.pageX : event.touches[0].clientX;
             currentTranslate = prevTranslate + (currentPosition - startPos);
-            this.config.slides.style.transform = `translateX(${currentTranslate}px)`;
             event.preventDefault();
         };
     
         const touchEnd = () => {
             if (!this.is_allowed_width()) return;
             isDragging = false;
+            cancelAnimationFrame(animationID);
             const movedBy = currentTranslate - prevTranslate;
             const slideWidth = this.config.slides.children[0].offsetWidth + this.config.space;
             const movedSlides = Math.round(movedBy / slideWidth);
-            const movedNegative = movedBy < 0;
     
             this.currentIndex -= movedSlides;
     
@@ -344,6 +345,11 @@ class Slider {
             this.update();
         };
     
+        const animation = () => {
+            this.config.slides.style.transform = `translateX(${currentTranslate}px)`;
+            if (isDragging) requestAnimationFrame(animation);
+        };
+    
         this.config.slides.addEventListener('mousedown', touchStart);
         this.config.slides.addEventListener('mousemove', touchMove);
         this.config.slides.addEventListener('mouseup', touchEnd);
@@ -353,83 +359,6 @@ class Slider {
         this.config.slides.addEventListener('touchend', touchEnd);
     }
     
-    init_drag__() {
-        if (this.config.drag === false) {return;}
-        let isDragging = false;
-        let startPos = 0;
-        let currentTranslate = 0;
-        let prevTranslate = 0;
-
-        const touchStart = (event) => {
-            if (!this.is_allowed_width()) {return false;}
-            isDragging = true;
-            startPos = event.type.includes('mouse') ? event.pageX : event.touches[0].clientX;
-            this.config.slides.style.transition = 'none';
-            // return (event) => {};
-        };
-
-        const touchMove = (event) => {
-            if (!this.is_allowed_width()) {return false;}
-            if (isDragging === false) {return false;}
-            const currentPosition = event.type.includes('mouse') ? event.pageX : event.touches[0].clientX;
-            let movedBy = currentPosition - startPos;
-            const isNegative = movedBy < 0;
-            const toRight = !isNegative;
-            currentTranslate = prevTranslate + movedBy;
-            if (toRight) {
-                currentTranslate = Math.min((
-                    this.slides_width() - (
-                        this.slide_width_binded()
-                    ) * this.config.view
-                ), currentTranslate);
-            } else {
-                currentTranslate = Math.max(0, currentTranslate);
-            }
-            this.get_current_slide(currentTranslate);
-            this.config.slides.style.transform = `translateX(${currentTranslate}px)`;
-        };
-
-        const touchEnd = (event) => {
-            if (!this.is_allowed_width()) {return false;}
-            isDragging = false;
-            this.config.slides.style.transition = `transform ${this.config.transition}s ease`;
-            prevTranslate = -this.currentIndex * this.slide_width_binded() * (this.isRTL() ? -1 : 1);
-            this.update();
-            // if (!this.config.dragFree) {}
-            // if (this.allow_slides2visible()) {
-            //     this.config.slides.style.transform = `translateX(${prevTranslate}px)`;
-            // }
-            // this.update();
-            // 
-            // const movedBy = currentTranslate - prevTranslate;
-            // const isNegative = movedBy < 0;
-            // const toRight = !isNegative;
-            // // 
-            // console.log({
-            //     movedBy: movedBy,
-            //     isNegative: isNegative,
-            //     currentIndex: this.currentIndex,
-            //     totalSlides: this.totalSlides
-            // });
-            // // 
-            // if (!this.config.dragFree) {
-            //     this.config.slides.style.transition = `transform ${this.config.transition}s ease`;
-            //     prevTranslate = -this.currentIndex * (slideWidth + this.config.space) * (this.isRTL() ? -1 : 1);
-            //     if (this.allow_slides2visible()) {
-            //         this.config.slides.style.transform = `translateX(${prevTranslate}px)`;
-            //     }
-            //     this.update();
-            // }
-        };
-        // 
-        this.config.slides.addEventListener('mousedown', touchStart);
-        this.config.slides.addEventListener('mousemove', touchMove);
-        this.config.slides.addEventListener('mouseup', touchEnd);
-        this.config.slides.addEventListener('mouseleave', touchEnd);
-        this.config.slides.addEventListener('touchstart', touchStart);
-        this.config.slides.addEventListener('touchmove', touchMove);
-        this.config.slides.addEventListener('touchend', touchEnd);
-    }
     is_allowed_width() {
         CONFIG.winWidth = window.innerWidth;
         return CONFIG.winWidth <= CONFIG.mobileWidth;

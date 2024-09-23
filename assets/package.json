@@ -1,11 +1,11 @@
 {
-	"name": "TeddyBear",
+	"name": "dubido",
 	"version": "1.0.0",
 	"description": "TeddyBear Plugin packages",
 	"main": "main.js",
 	"scripts": {
 		"prod": "cross-env NODE_ENV=production webpack --mode production --progress",
-		"dev": "cross-env NODE_ENV=development webpack --watch --mode development --progress",
+		"dev": "cross-env NODE_ENV=development NODE_OPTIONS=--openssl-legacy-provider webpack --watch --mode development --progress",
 		"clean": "rm -rf build/*",
 		"svg": "svgr -d src/js/icons src/icons",
 		"lint": "eslint src/js/*",
@@ -18,7 +18,7 @@
 		"wordpress",
 		"themes"
 	],
-	"author": "Imran Sayed",
+	"author": "Remal Mahmud",
 	"license": "MIT",
 	"private": true,
 	"devDependencies": {
@@ -67,13 +67,9 @@
 		"defaults"
 	],
 	"dependencies": {
-		"@glidejs/glide": "^3.6.0",
-		"@splidejs/splide": "^4.1.4",
 		"@sweetalert2/theme-wordpress-admin": "^5.0.15",
-		"autocompleter": "^9.3.0",
 		"awesomplete": "^1.1.5",
 		"axios": "^1.7.2",
-		"bootstrap": "^5.3.0",
 		"dompurify": "^3.0.3",
 		"dropzone": "^6.0.0-beta.2",
 		"flatpickr": "^4.6.13",
@@ -82,7 +78,6 @@
 		"json5": "^2.2.3",
 		"keen-slider": "^6.8.6",
 		"log": "^6.3.1",
-		"openai": "^3.2.1",
 		"raw-loader": "^4.0.2",
 		"recordrtc": "^5.6.2",
 		"sass": "^1.56.1",
