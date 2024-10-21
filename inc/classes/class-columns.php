@@ -39,12 +39,12 @@ class Columns {
 		switch ($column) {
 			case 'pops_actions':
 				$post_meta = (array) get_post_meta($post_id, '_teddy_custom_data', true);
-				$global_key = (isset($post_meta['product_type']) && $post_meta['product_type'] == 'sitting')?'sitting-global':'standing-global';
+				$global_key = (isset($post_meta['product_type']) && $post_meta['product_type'] == 'sitting')?'global-sitting':'global-standing';
 				$global_post_id = apply_filters('teddybear/project/system/getoption', $global_key, 0);
 				?>
 				<button class="fwp-button fwppopspopup-open" type="button" <?php echo esc_attr(
 					(
-						apply_filters('teddybear/project/system/isactive', 'standard-forceglobal') && 
+						apply_filters('teddybear/project/system/isactive', 'global-forceglobal') && 
 						$global_post_id != get_the_ID()
 					)?'disabled':''
 				); ?>><?php esc_html_e('Open', 'teddybearsprompts'); ?></button>
@@ -61,9 +61,9 @@ class Columns {
 			if ($teddy_Plushies->is_accessory($post->ID)) {return $actions;}
 			
 			$post_meta = (array) get_post_meta($post->ID, '_teddy_custom_data', true);
-			$global_key = (isset($post_meta['product_type']) && $post_meta['product_type'] == 'sitting')?'sitting-global':'standing-global';
+			$global_key = (isset($post_meta['product_type']) && $post_meta['product_type'] == 'sitting')?'global-sitting':'global-standing';
 			$global_post_id = apply_filters('teddybear/project/system/getoption', $global_key, 0);
-			if (!(apply_filters('teddybear/project/system/isactive', 'standard-forceglobal') && $global_post_id != get_the_ID())) {
+			if (!(apply_filters('teddybear/project/system/isactive', 'global-forceglobal') && $global_post_id != get_the_ID())) {
 				$config = ['id' => $post->ID];
 				$actions['pops_actions'] = '<a href="#" class="fwppopspopup-open" type="button" data-config="' . esc_attr(json_encode($config)) . '">' . esc_html__('Setup', 'teddybearsprompts') . '</a>';
 			}

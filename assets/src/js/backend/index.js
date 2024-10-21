@@ -5,7 +5,7 @@ import Toastify from 'toastify-js';
 import Sortable from 'sortablejs';
 import mediaImages from "./media";
 import WaveSurfer from 'wavesurfer.js';
-import EnvelopePlugin from 'wavesurfer.js/dist/plugins/envelope.js';
+// import EnvelopePlugin from 'wavesurfer.js/dist/plugins/envelope.js';
 import tippy from 'tippy.js';
 import he from 'he';
 import icons from "../frontend/icons";

@@ -87,10 +87,10 @@ class Product {
 	}
 	public function get_post_metadata($value, $post_id, $meta_key, $single) {
 		$post_meta = get_post_meta($post_id, '_teddy_custom_data', true);
-		$global_key = (isset($post_meta['product_type']) && $post_meta['product_type'] == 'sitting')?'sitting-global':'standing-global';
+		$global_key = (isset($post_meta['product_type']) && $post_meta['product_type'] == 'sitting')?'global-sitting':'global-standing';
 		$global_post_id = apply_filters('teddybear/project/system/getoption', $global_key, 0);
 		if ($single && $meta_key == '_product_custom_popup' && $post_id != $global_post_id) {
-			if (!$value || !is_array($value) || apply_filters('teddybear/project/system/isactive', 'standard-forceglobal')) {
+			if (!$value || !is_array($value) || apply_filters('teddybear/project/system/isactive', 'global-forceglobal')) {
 				$value = $this->hook_canvas_image_on_global_customization(
 					get_post_meta($global_post_id, '_product_custom_popup', true),
 					$value

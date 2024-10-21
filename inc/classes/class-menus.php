@@ -120,29 +120,6 @@ class Menus {
 				// 	'options'				=> $this->get_query(['post_type' => 'product', 'type' => 'option', 'limit' => 500])
 				// ],
 				[
-					'id' 					=> 'standing-global',
-					'label'					=> __('Global standing product', 'teddybearsprompts'),
-					'description'			=> __('Select a global standing product that will be replaced if requsted product doesn\'t have any customization popup set.', 'teddybearsprompts'),
-					'type'					=> 'select',
-					'default'				=> '',
-					'options'				=> $this->get_query(['post_type' => 'product', 'type' => 'option', 'limit' => 500, 'noaccessory' => true])
-				],
-				[
-					'id' 					=> 'sitting-global',
-					'label'					=> __('Global sitting product', 'teddybearsprompts'),
-					'description'			=> __('Select a global sitting product that will be replaced if requsted product doesn\'t have any customization popup set.', 'teddybearsprompts'),
-					'type'					=> 'select',
-					'default'				=> '',
-					'options'				=> $this->get_query(['post_type' => 'product', 'type' => 'option', 'limit' => 500, 'noaccessory' => true])
-				],
-				[
-					'id' 					=> 'standard-forceglobal',
-					'label'					=> __('Force global', 'teddybearsprompts'),
-					'description'			=> __('Forcefully globalize this product for all products whether there are customization exists or not.', 'teddybearsprompts'),
-					'type'					=> 'checkbox',
-					'default'				=> false
-				],
-				[
 					'id' 					=> 'standard-category',
 					'label'					=> __('Cross-sale category', 'teddybearsprompts'),
 					'description'			=> __('Select a cross sale category to suggest on added to cart confirmation popup. Each product under your selected category will be displayed to confirmation popup.', 'teddybearsprompts'),
@@ -178,6 +155,35 @@ class Menus {
 					'type'					=> 'text',
 					// 'options'				=> $this->get_query(['post_type' => 'page', 'type' => 'option', 'limit' => 500]),
 					'default'				=> ''
+				],
+			]
+		];
+		$args['global']	= [
+			'title'							=> __('General', 'teddybearsprompts'),
+			'description'					=> __('General settings for teddy-bear customization popup.', 'teddybearsprompts'),
+			'fields'						=> [
+				[
+					'id' 					=> 'global-standing',
+					'label'					=> __('Global standing product', 'teddybearsprompts'),
+					'description'			=> __('Select a global standing product that will be replaced if requsted product doesn\'t have any customization popup set.', 'teddybearsprompts'),
+					'type'					=> 'select',
+					'default'				=> '',
+					'options'				=> $this->get_query(['post_type' => 'product', 'type' => 'option', 'limit' => 500, 'noaccessory' => true])
+				],
+				[
+					'id' 					=> 'global-sitting',
+					'label'					=> __('Global sitting product', 'teddybearsprompts'),
+					'description'			=> __('Select a global sitting product that will be replaced if requsted product doesn\'t have any customization popup set.', 'teddybearsprompts'),
+					'type'					=> 'select',
+					'default'				=> '',
+					'options'				=> $this->get_query(['post_type' => 'product', 'type' => 'option', 'limit' => 500, 'noaccessory' => true])
+				],
+				[
+					'id' 					=> 'global-forceglobal',
+					'label'					=> __('Force global', 'teddybearsprompts'),
+					'description'			=> __('Forcefully globalize this product for all products whether there are customization exists or not.', 'teddybearsprompts'),
+					'type'					=> 'checkbox',
+					'default'				=> false
 				],
 			]
 		];

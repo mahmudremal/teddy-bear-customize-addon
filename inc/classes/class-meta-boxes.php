@@ -119,12 +119,12 @@ class Meta_Boxes {
 					<div class="fwp-tabs__content <?php echo esc_attr(($_opened_tab == 'custompops')?'active':''); ?>" id="the-custompops">
 						<?php
 							$post_meta = get_post_meta($post_id, '_teddy_custom_data', true);
-							$global_key = (isset($post_meta['product_type']) && $post_meta['product_type'] == 'sitting')?'sitting-global':'standing-global';
+							$global_key = (isset($post_meta['product_type']) && $post_meta['product_type'] == 'sitting')?'global-sitting':'global-standing';
 							$global_post_id = apply_filters('teddybear/project/system/getoption', $global_key, 0);
 						?>
 						<button class="fwp-button fwppopspopup-open" type="button" <?php echo esc_attr(
 							(
-								apply_filters('teddybear/project/system/isactive', 'standard-forceglobal') && 
+								apply_filters('teddybear/project/system/isactive', 'global-forceglobal') && 
 								$global_post_id != get_the_ID()
 							)?'disabled':''
 						); ?>><?php esc_html_e('Customize', 'teddybearsprompts'); ?></button>

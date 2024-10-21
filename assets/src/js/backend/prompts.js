@@ -1,7 +1,7 @@
 import iconLibrary from "./iconlibrary";
-import{ svgToDataURL } from "./svg-to-dataurl"
+// import{ svgToDataURL } from "./svg-to-dataurl"
 import Awesomplete from "awesomplete";
-import autocomplete from 'autocompleter';
+// import autocomplete from 'autocompleter';
 
 
 const PROMPTS = {
