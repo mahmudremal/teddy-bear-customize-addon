@@ -6,6 +6,7 @@
 	"scripts": {
 		"prod": "cross-env NODE_ENV=production webpack --mode production --progress",
 		"dev": "cross-env NODE_ENV=development NODE_OPTIONS=--openssl-legacy-provider webpack --watch --mode development --progress",
+		"tailwind": "npx tailwindcss -i ./src/input.css -o ./tailwind.css --watch",
 		"clean": "rm -rf build/*",
 		"svg": "svgr -d src/js/icons src/icons",
 		"lint": "eslint src/js/*",
@@ -59,6 +60,7 @@
 		"stylelint": "^13.13.1",
 		"stylelint-config-wordpress": "^17.0.0",
 		"stylelint-webpack-plugin": "^2.4.0",
+		"tailwindcss": "^3.4.16",
 		"uglifyjs-webpack-plugin": "^2.2.0",
 		"webpack": "^4.46.0",
 		"webpack-cli": "^3.3.12"
@@ -78,7 +80,11 @@
 		"json5": "^2.2.3",
 		"keen-slider": "^6.8.6",
 		"log": "^6.3.1",
+		"lucide-react": "^0.466.0",
 		"raw-loader": "^4.0.2",
+		"react": "^18.2.0",
+		"react-dom": "^18.2.0",
+		"react-slick": "^0.30.2",
 		"recordrtc": "^5.6.2",
 		"sass": "^1.56.1",
 		"sortablejs": "^1.15.0",
@@ -89,8 +95,6 @@
 		"toastify-js": "^1.12.0",
 		"twig": "^1.10.5",
 		"twig-loader": "^0.5.5",
-		"vex-dialog": "^1.1.0",
-		"vex-js": "^4.1.0",
 		"wavesurfer.js": "^7.0.3",
 		"zustand": "^4.1.4"
 	}

@@ -64,15 +64,15 @@ class Ajax {
 		wp_send_json_success( $res, 200 );
 	}
 	public function search_product() {
-		do_action('teddybear/project/nonce/check', $_POST['_nonce']);
+		// do_action('teddybear/project/nonce/check', $_POST['_nonce']);
 		// $json = json_decode(file_get_contents(TEDDY_BEAR_CUSTOMIZE_ADDON_DIR_PATH . '/templates/sample.product.json'));
 		// wp_send_json($json);
 		// check_ajax_referer('teddybear/project/teddybearpopupaddon/verify/nonce', '_nonce', true);
 		// $dataset = $request = json_decode(preg_replace('/[\x00-\x1F\x80-\xFF]/', '', stripslashes(html_entity_decode(isset($_POST['dataset'])?$_POST['dataset']:'{}'))), true);
-		$dataset = $request = json_decode(stripslashes(html_entity_decode($_POST['dataset']??'{}')), true);
+		// $dataset = $request = json_decode(stripslashes(html_entity_decode($_POST['dataset']??'{}')), true);
+		$request = $_POST;
 		$product_id = $request['product_id'];
 		
-
 		$json = $this->get_product_customizations((int) $product_id);
 		if ($json && !is_wp_error($json)) {
 			wp_send_json_success($json);

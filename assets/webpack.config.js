@@ -20,8 +20,9 @@ const SRC_DIR = path.resolve(__dirname, 'src');
 const entry = {
     public       : JS_DIR + '/public.js',
     admin        : JS_DIR + '/admin.js',
-    recorder : JS_DIR + '/recorder.js',
-    chat     : JS_DIR + '/chat.js',
+    popup        : JS_DIR + '/popup/index.js',
+    // recorder : JS_DIR + '/recorder.js',
+    // chat     : JS_DIR + '/chat.js',
 };
 
 const output = {
@@ -42,10 +43,6 @@ const plugins = (argv) => [
             {from: SRC_DIR + '/icons', to: BUILD_DIR + '/icons'},
         ]
     }),
-    new DependencyExtractionWebpackPlugin({
-        injectPolyfill: true,
-        combineAssets: true,
-    })
 ];
 
 const rules = [
@@ -126,13 +123,23 @@ module.exports = (env, argv) => ({
             })
         ]
     },
-    plugins: plugins(argv),
+    plugins: [
+        ...plugins(argv),
+        new DependencyExtractionWebpackPlugin({
+            injectPolyfill: true,
+            combineAssets: true,
+            useDefaults: true
+        })
+    ],
     externals: {
-        jquery: 'jQuery'
+        jquery: 'jQuery',
+        react: 'React',
+        'react-dom': 'ReactDOM',
+        'react-dom/client': 'ReactDOM'
     },
     watchOptions: {
-        aggregateTimeout: 300, // Delay the rebuild after the first change (milliseconds)
-        poll: 1000, // Check for changes every second
-        ignored: /node_modules|build/, // Ignore node_modules and build directories to prevent excessive rebuilds
+        aggregateTimeout: 300,
+        poll: 1000,
+        ignored: /node_modules|build/,
     },
 });

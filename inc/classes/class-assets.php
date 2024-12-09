@@ -32,9 +32,16 @@ class Assets {
 	}
 	public function register_scripts() {
 		// Register scripts.
-		$version = $this->filemtime(TEDDY_BEAR_CUSTOMIZE_ADDON_BUILD_JS_DIR_PATH.'/public.js');
-		wp_register_script('teddybearaddon-public', TEDDY_BEAR_CUSTOMIZE_ADDON_BUILD_JS_URI . '/public.js', ['jquery'], $version.'.'.rand(0, 999), true);
-		wp_enqueue_script('teddybearaddon-public');
+		// wp_enqueue_script('tailwindcss', 'https://cdn.tailwindcss.com', [], null, true);
+		wp_enqueue_script('react', 'https://unpkg.com/react@18/umd/react.development.js', [], null, true);
+		wp_enqueue_script('react-dom', 'https://unpkg.com/react-dom@18/umd/react-dom.development.js', ['react'], null, true);
+		wp_enqueue_script('teddybearaddon-public', TEDDY_BEAR_CUSTOMIZE_ADDON_BUILD_JS_URI . '/popup.js', ['jquery', 'react', 'react-dom'], $this->filemtime(TEDDY_BEAR_CUSTOMIZE_ADDON_BUILD_JS_DIR_PATH.'/popup.js'), true);
+		
+		wp_enqueue_style('teddybearaddon-tailwind', TEDDY_BEAR_CUSTOMIZE_ADDON_DIR_URI . '/assets/tailwind.css', [], $this->filemtime(TEDDY_BEAR_CUSTOMIZE_ADDON_DIR_PATH . '/assets/tailwind.css'), 'all');
+		
+		
+		// $version = $this->filemtime(TEDDY_BEAR_CUSTOMIZE_ADDON_BUILD_JS_DIR_PATH.'/public.js');
+		// wp_enqueue_script('teddybearaddon-public', TEDDY_BEAR_CUSTOMIZE_ADDON_BUILD_JS_URI . '/public.js', ['jquery'], $version.'.'.rand(0, 999), true);
 		wp_localize_script('teddybearaddon-public', 'fwpSiteConfig', apply_filters('teddybear/project/teddybearpopupaddon/javascript/siteconfig', []));
 	}
 	private function allow_enqueue() {

@@ -7,7 +7,7 @@ import './backend';
 // import './modules/qrcode';
 
 // Styles
-import '../sass/admin.scss';
+// import '../sass/admin.scss';
 
 // Images.
 import '../img/signature.png';

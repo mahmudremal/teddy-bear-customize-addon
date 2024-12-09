@@ -6,7 +6,7 @@ class Interface extends Post {
     constructor() {
         super();
         this.axios = axios;
-        this.base_url = "http://localhost:1234/v1";
+        this.base_url = "http://localhost:11434/v1";
         this.elements = {};
         this.init_frontend();
         this.init_interface();
