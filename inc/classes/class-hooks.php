@@ -12,6 +12,7 @@ use TEDDYBEAR_CUSTOMIZE_ADDON\inc\Traits\Singleton;
 class Hooks {
 	use Singleton;
 	protected function __construct() {
+    // wp_die('Hooks');
 		$this->setup_hooks();
 	}
 	protected function setup_hooks() {
@@ -29,6 +30,7 @@ class Hooks {
   public function woocommerce_after_add_to_cart_button() {
     global $product;global $teddy_Plushies;
     if(! apply_filters('teddybear/project/system/isactive', 'standard-enable')) {return;}
+    if(apply_filters('teddybear/project/system/isactive', 'standard-add2cart')) {return;}
     if($teddy_Plushies->is_accessory($product->get_id())) {return;}
     $config = ['id' => $product->get_id()];
     ?>

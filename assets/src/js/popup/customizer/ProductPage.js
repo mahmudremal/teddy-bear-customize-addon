@@ -28,9 +28,13 @@ const ProductCustomization = ({ product, updateProductData, closePopup }) => {
     const [blobFiles, setBlobFiles] = useState([]);
     const [visitedTabs, setVisitedTabs] = useState(new Set());
     const [confirmation, setConfirmation] = useState(null);
+    const [isSingleTab, setIsSingleTab] = useState(
+        product.custom_fields[product.custom_data.product_type]?.length === 1
+    );
 
     useEffect(() => {
         setSelectedType(product.custom_data.product_type);
+        setIsSingleTab(product.custom_fields[product.custom_data.product_type]?.length === 1);
         setCanvasImages([]);
         setIsLoading(false);
     }, [product]);
@@ -41,6 +45,7 @@ const ProductCustomization = ({ product, updateProductData, closePopup }) => {
 
     const handleSelectProductType = (type) => {
         setSelectedType(type);
+        setIsSingleTab(product.custom_fields[type]?.length === 1);
         setActiveTab(0);
         setVisitedTabs(prev => new Set(prev).add(0));
         setImgLayers({});
@@ -93,10 +98,11 @@ const ProductCustomization = ({ product, updateProductData, closePopup }) => {
                     setError(data.message);
                 }
             } else {
-                setError(data.message);
+                throw new Error(response.data?.data);
             }
         } catch (error) {
             console.error('Error:', error);
+            setError(error.message || 'Something went wrong');
         } finally {
             setAdd2CartLoading(false);
         }
@@ -127,6 +133,7 @@ const ProductCustomization = ({ product, updateProductData, closePopup }) => {
     };
 
     const handleOptionChange = (e, option, currentField) => {
+        console.log(e, option, currentField);
         if (e.target.checked) {
             let imageChanged = false;
             let newImgLayers = { ...imgLayers };
@@ -177,6 +184,7 @@ const ProductCustomization = ({ product, updateProductData, closePopup }) => {
 
             // Update canvas with all selected images
             if (imageChanged) {
+                console.log(newImgLayers);
                 setImgLayers(newImgLayers);
                 updateCanvasImages(Object.values(newImgLayers).flat());
             }
@@ -224,8 +232,6 @@ const ProductCustomization = ({ product, updateProductData, closePopup }) => {
     const combinedCart = {
         discountTotal, inTotal, setDiscountTotal, setInTotal, setBlobFiles
     };
-
-    
 
     return (
         <div className="tb_mx-auto tb_p-0">
@@ -294,14 +300,12 @@ const ProductCustomization = ({ product, updateProductData, closePopup }) => {
                                 </div>
                             )}
 
-                            
-                            {activeTab === null && ( <div className="tb_border-t tb_border-gray-300 tb_mb-2"></div> )}
+                            {activeTab === null && !isSingleTab && ( <div className="tb_border-t tb_border-gray-300 tb_mb-2"></div> )}
 
-                            
                             {currentFields.map((field, idx) => (
                                 <div 
                                     key={field.fieldID}
-                                    className={`tb_bg-gray-50 tb_p-6 tb_rounded-lg tb_shadow-md tb_mb-0 ${activeTab === idx ? '' : 'tb_hidden'}`}
+                                    className={`tb_bg-gray-50 tb_p-6 tb_rounded-lg ${ isSingleTab ? '' : 'tb_shadow-md'} tb_mb-0 ${isSingleTab ? '' : activeTab === idx ? '' : 'tb_hidden'}`}
                                 >
                                     {error && (
                                         <div className="tb_bg-primary-100 tb_border tb_border-primary-400 tb_text-primary-700 tb_px-4 tb_py-3 tb_rounded tb_relative tb_mb-4" role="alert">
@@ -318,12 +322,14 @@ const ProductCustomization = ({ product, updateProductData, closePopup }) => {
                                             {field.subtitle !== '' && <p className="tb_text-sm tb_text-gray-500">{field.subtitle}</p>}
                                             {field.heading !== '' && <p className="tb_text-sm tb_text-gray-500">{field.heading}</p>}
                                         </div>
-                                        <button
-                                            onClick={currentStep === (product.custom_fields[selectedType]?.length || 0) - 1 ? handleDone : handleNextStep}
-                                            className="tb_text-primary tb_font-medium tb_px-2 tb_rounded-md"
-                                        >
-                                            {currentStep === (product.custom_fields[selectedType]?.length || 0) - 1 ? 'Done' : 'Next'}
-                                        </button>
+                                        {!isSingleTab && (
+                                            <button
+                                                onClick={currentStep === (product.custom_fields[selectedType]?.length || 0) - 1 ? handleDone : handleNextStep}
+                                                className="tb_text-primary tb_font-medium tb_px-2 tb_rounded-md"
+                                            >
+                                                {currentStep === (product.custom_fields[selectedType]?.length || 0) - 1 ? 'Done' : 'Next'}
+                                            </button>
+                                        )}
                                     </div>
 
                                     {(() => {
@@ -346,7 +352,7 @@ const ProductCustomization = ({ product, updateProductData, closePopup }) => {
                                 </div>
                             ))}
 
-                            <div className={`tb_flex tb_justify-evenly ${activeTab !== null ? 'tb_hidden' : ''}`}>
+                            <div className={`tb_flex tb_justify-evenly ${activeTab !== null || isSingleTab ? 'tb_hidden' : ''}`}>
                                 {currentFields.map((field, idx) => (
                                     <div
                                         key={field.fieldID}
@@ -368,7 +374,7 @@ const ProductCustomization = ({ product, updateProductData, closePopup }) => {
                                 ))}
                             </div>
 
-                            { activeTab === null && (
+                            { (activeTab === null || isSingleTab) && (
                                 <div className="tb_flex tb_justify-center tb_p-4">
                                     <button onClick={addToCart} className="tb_w-full tb_bg-primary tb_text-white tb_px-4 tb_py-2 tb_rounded-lg tb_font-medium hover:tb_bg-primary-dark" disabled={add2CartLoading}>
                                         {add2CartLoading ? 'Adding...' : 'Add to Cart'}

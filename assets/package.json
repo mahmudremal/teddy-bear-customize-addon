@@ -84,6 +84,7 @@
 		"raw-loader": "^4.0.2",
 		"react": "^18.2.0",
 		"react-dom": "^18.2.0",
+		"react-hot-toast": "^2.4.1",
 		"react-slick": "^0.30.2",
 		"recordrtc": "^5.6.2",
 		"sass": "^1.56.1",

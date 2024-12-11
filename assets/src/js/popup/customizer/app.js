@@ -1,4 +1,24 @@
 import axios from 'axios';
+import { Toaster } from 'react-hot-toast';
+
+function removeAllClickListeners(element) {
+  // Get all click event listeners and remove them
+  const clone = element;
+  
+  // Remove standard click event listeners
+  clone.removeEventListener('click', null);
+  clone.removeEventListener('click', null, true);
+  
+  // Clear onclick property
+  clone.onclick = null;
+  
+  // Clear any jQuery click events if jQuery exists
+  if (typeof jQuery !== 'undefined') {
+    jQuery(clone).off('click');
+  }
+
+  return clone;
+}
 
 function App() {
   const { useState, useCallback, useEffect } = React;
@@ -10,13 +30,19 @@ function App() {
   const [visiblePopup, setVisiblePopup] = useState(false);
 
   useEffect(() => {
+    
     const handleButtonClick = async (e) => {
-      e.preventDefault();
+      e.preventDefault();e.stopPropagation();
       const button = e.currentTarget;
-      
+      // 
       try {
-        const config = JSON.parse(button.dataset.config);
-        const product_id = config.id;
+        let product_id = 0;
+        if (button.dataset?.config) {
+          const config = JSON.parse(button.dataset.config);
+          product_id = config.id;
+        } else {
+          product_id = parseInt(button.dataset.product_id || 0);
+        }
         setProductId(product_id);
         setIsLoading(true);
         setVisiblePopup(true);
@@ -49,11 +75,15 @@ function App() {
       } finally {
         setIsLoading(false);
       }
+      // Prevent default action
+      return false;
     };
 
-    const buttons = document.querySelectorAll('.init_cusomizeaddtocartbtn');
+    const buttons = document.querySelectorAll(
+      (fwpSiteConfig.onatc && fwpSiteConfig.onatc !== '') ? '.add_to_cart_button' : '.init_cusomizeaddtocartbtn'
+    );
     buttons.forEach(button => {
-      button.addEventListener('click', handleButtonClick);
+      removeAllClickListeners(button).addEventListener('click', handleButtonClick);
     });
 
     // Cleanup listeners
@@ -100,10 +130,11 @@ function App() {
     <div className="tb_App">
       {visiblePopup && (
         <div className='tb_absolute tb_inset-0 tb_z-[99999]'>
+          <Toaster position="top-right" reverseOrder={true} />
           <div className="tb_fixed tb_inset-0 tb_bg-gray-900 tb_bg-opacity-50 tb_z-40" onClick={closePopup} ></div>
-          <div className="tb_w-[90vw] tb_min-h-[400px] md:tb_min-h-[600px] tb_max-h-[95vh] tb_overflow-hidden tb_overflow-y-auto tb_fixed tb_top-1/2 tb_left-1/2 tb_transform tb_-translate-x-1/2 tb_-translate-y-1/2 tb_z-50 tb_bg-white tb_p-0 tb_rounded-lg tb_shadow-lg tb_max-w-full md:tb_w-[450px] md:tb_min-w-4xl">
+          <div className="tb_w-[90vw] tb_min-h-[400px] md:tb_min-h-[500px] tb_max-h-[95vh] tb_overflow-hidden tb_overflow-y-auto tb_fixed tb_top-1/2 tb_left-1/2 tb_transform tb_-translate-x-1/2 tb_-translate-y-1/2 tb_z-50 tb_bg-white tb_p-0 tb_rounded-lg tb_shadow-lg tb_max-w-full md:tb_w-[450px] md:tb_min-w-4xl">
             { isLoading ? (
-              <div className="tb_p-8 tb_text-center">
+              <div className="tb_p-8 tb_text-center tb_flex tb_absolute tb_w-full tb_h-full tb_items-center tb_justify-center tb_flex-col">
                 <div className="tb_animate-spin tb_rounded-full tb_h-8 tb_w-8 tb_border-b-2 tb_border-gray-900 tb_mx-auto"></div>
                 <p className="tb_mt-4 tb_text-gray-600">Loading product data...</p>
               </div>

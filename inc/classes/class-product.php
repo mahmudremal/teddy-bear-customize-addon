@@ -20,6 +20,10 @@ class Product {
 		add_action('uael_woo_products_add_to_cart_after', [$this, 'uael_woo_products_add_to_cart_after'], 10, 2);
 		add_action('uael_woo_products_before_summary_wrap', [$this, 'products_before_summary_wrap'], 10, 2);
 		// add_filter('get_post_metadata', [$this, 'get_post_metadata'], 99, 4);
+		
+		add_action('product_cat_edit_form_fields', [$this, 'add_global_product_field'], 10, 2);
+		add_action('edited_product_cat', [$this, 'save_global_product_field'], 10, 2);
+		// 
 	}
 	public function products_before_summary_wrap($product_id, $settings) {
 		// do_action('woocommerce_before_shop_loop_item');
@@ -86,6 +90,18 @@ class Product {
 		return $this->get_post_metadata($value, $post_id, $meta_key, $single);
 	}
 	public function get_post_metadata($value, $post_id, $meta_key, $single) {
+		// Get the categories of the product
+		$categories = wp_get_post_terms($post_id, 'product_cat');
+		foreach ($categories as $category) {
+			$global_product = get_term_meta($category->term_id, 'global_product', true);
+			if (!empty($global_product) && $global_product != 0) {
+				$_g_product = get_post_meta($global_product, '_product_custom_popup', true);
+				return $this->hook_canvas_image_on_global_customization($_g_product, $value);
+				break;
+			}
+		}
+		// 
+		
 		$post_meta = get_post_meta($post_id, '_teddy_custom_data', true);
 		$global_key = (isset($post_meta['product_type']) && $post_meta['product_type'] == 'sitting')?'global-sitting':'global-standing';
 		$global_post_id = apply_filters('teddybear/project/system/getoption', $global_key, 0);
@@ -341,5 +357,40 @@ class Product {
 		
 		return $global;
 	}
-	
+	public function add_global_product_field($term, $taxonomy) {
+		global $teddy_Plushies;
+		$product_id = get_term_meta($term->term_id, 'global_product', true);
+		$products = get_posts([
+			'post_type'		=> 'product',
+			'numberposts'	=> -1,
+			'fields'		=> 'ID, post_title'
+		]);
+		?>
+		<tr class="form-field">
+			<th scope="row" valign="top">
+				<label for="global_product"><?php _e('Global Product', 'textdomain'); ?></label>
+			</th>
+			<td>
+				<select name="global_product" id="global_product">
+					<option value="0" <?php selected($product_id, '0'); ?>><?php _e('Select product', 'textdomain'); ?></option>
+					<?php foreach ($products as $product) :
+						if ($teddy_Plushies->is_accessory($product->ID)) {continue;}
+						?>
+						<option value="<?php echo esc_attr($product->ID); ?>" <?php selected($product_id, $product->ID); ?>>
+							<?php echo esc_html($product->post_title); ?>
+						</option>
+					<?php endforeach; ?>
+				</select>
+				<p class="description"><?php _e('Select a product of customization for all products under this category', 'textdomain'); ?></p>
+			</td>
+		</tr>
+		<?php
+	}
+	public function save_global_product_field($term_id, $tt_id) {
+		if (isset($_POST['global_product']) && '' !== $_POST['global_product']) {
+			$global_product = intval($_POST['global_product']);
+			update_term_meta($term_id, 'global_product', $global_product);
+		}
+	}
+
 }

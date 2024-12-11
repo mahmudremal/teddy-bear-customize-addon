@@ -156,6 +156,13 @@ class Menus {
 					// 'options'				=> $this->get_query(['post_type' => 'page', 'type' => 'option', 'limit' => 500]),
 					'default'				=> ''
 				],
+				[
+					'id' 					=> 'standard-add2cart',
+					'label'					=> __('Replace ATC', 'teddybearsprompts'),
+					'description'			=> __('Replace Add to Cart button with customize button. Text will be same as ATC button.', 'teddybearsprompts'),
+					'type'					=> 'checkbox',
+					'default'				=> false
+				],
 			]
 		];
 		$args['global']	= [

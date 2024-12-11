@@ -1,6 +1,6 @@
 import React, { useState, useRef, useLayoutEffect, useEffect } from 'react';
 import WaveSurfer from 'wavesurfer.js';
-import RecordPlugin from 'wavesurfer.js/dist/plugins/record.js';
+import RecordPlugin from 'wavesurfer.js/dist/plugins/record.esm.js';
 import { Mic, Play, Pause, Square, Upload, Mail, SkipForward } from 'lucide-react';
 import { sprintf } from 'sprintf-js';
 
@@ -18,6 +18,7 @@ export default function Voice({ currentField, setError, updateProductData, combi
     const [timer, setTimer] = useState(0);
     const timerRef = useRef(null);
     const [hasVoiceOption, setHasVoiceOption] = useState(false);
+    const [recordingEnded, setRecordingEnded] = useState(false);
 
     useEffect(() => {
         if (!hasVoiceOption && (audioFile || showAddLaterMessage)) {
@@ -30,6 +31,15 @@ export default function Voice({ currentField, setError, updateProductData, combi
     }, [audioFile, showAddLaterMessage]);
 
     useLayoutEffect(() => {
+        initializeWaveSurfer();
+        return () => {
+            if (wavesurferRef.current) {
+                wavesurferRef.current.destroy();
+            }
+        };
+    }, []);
+
+    const initializeWaveSurfer = () => {
         if (waveformRef.current) {
             wavesurferRef.current = WaveSurfer.create({
                 container: waveformRef.current,
@@ -46,7 +56,14 @@ export default function Voice({ currentField, setError, updateProductData, combi
             wavesurferRef.current.registerPlugin(recordPluginRef.current);
 
             let timerInterval;
-            recordPluginRef.current.on('startRecording', () => {
+
+            // Add new event listeners
+            recordPluginRef.current.on('record-start', async () => {
+                setIsRecording(true);
+                setRecordingEnded(false);
+                setRecordingStatus('Recording started...');
+                setTimer(parseFloat(currentField.duration));
+
                 let startTime = Date.now();
                 timerInterval = setInterval(() => {
                     const currentTime = (Date.now() - startTime) / 1000;
@@ -54,45 +71,39 @@ export default function Voice({ currentField, setError, updateProductData, combi
                     setTimer(Math.abs(remainingTime));
                     if (remainingTime <= 0) {
                         clearInterval(timerInterval);
-                        timerInterval = null;
                         if (isRecording) {
-                            stopRecording().then(() => {
-                                setTimer(0);
-                            }).catch(err => {
-                                console.error('Error stopping recording:', err);
-                            });
+                            stopRecording();
                         }
                     }
                 }, 100);
             });
 
-            recordPluginRef.current.on('stopRecording', () => {
+            recordPluginRef.current.on('record-end', async (blob) => {
                 if (timerInterval) {
                     clearInterval(timerInterval);
                 }
-            });
-
-            recordPluginRef.current.on('startRecording', () => {
-                setIsRecording(true);
-                setRecordingStatus('Recording started...');
-                startTimer();
-                setTimer(parseFloat(currentField.duration));
-            });
-
-            recordPluginRef.current.on('stopRecording', async () => {
-                setIsRecording(false);
-                const audioUrl = recordPluginRef.current.getRecordedUrl();
+                
+                // recordPluginRef.current.getRecordedUrl();
+                const audioUrl = URL.createObjectURL(blob);
                 setAudioFile(audioUrl);
+                setIsRecording(false);
+                setRecordingEnded(true);
                 setRecordingStatus('Recording saved!');
+                
+                // Reinitialize wavesurfer before loading new audio
+                if (wavesurferRef.current) {
+                    wavesurferRef.current.destroy();
+                }
+                initializeWaveSurfer();
                 wavesurferRef.current.load(audioUrl);
-                stopTimer();
-                handleVoiceRecord(audioUrl); // Call handleVoiceRecord with the recorded audio URL
+                
+                handleVoiceRecord(audioUrl);
             });
 
             wavesurferRef.current.on('play', () => {
                 setIsPlaying(true);
-                startTimer();
             });
+
             wavesurferRef.current.on('audioprocess', () => {
                 const currentTime = wavesurferRef.current.getCurrentTime();
                 setTimer(currentTime);
@@ -100,12 +111,10 @@ export default function Voice({ currentField, setError, updateProductData, combi
 
             wavesurferRef.current.on('pause', () => {
                 setIsPlaying(false);
-                stopTimer();
             });
 
             wavesurferRef.current.on('finish', () => {
                 setIsPlaying(false);
-                stopTimer();
             });
 
             wavesurferRef.current.on('loading', () => {
@@ -115,25 +124,7 @@ export default function Voice({ currentField, setError, updateProductData, combi
             wavesurferRef.current.on('ready', () => {
                 setIsLoading(false);
             });
-            
         }
-
-        return () => {
-            if (wavesurferRef.current) {
-                wavesurferRef.current.destroy();
-            }
-        };
-    }, []);
-
-    const startTimer = () => {
-        // timerRef.current = setInterval(() => {
-        //     setTimer(prevTimer => prevTimer + 1);
-        // }, 1000);
-    };
-
-    const stopTimer = () => {
-        // clearInterval(timerRef.current);
-        // setTimer(0);
     };
 
     const startRecording = async () => {
@@ -142,12 +133,12 @@ export default function Voice({ currentField, setError, updateProductData, combi
                 throw new Error('Recording plugin not initialized');
             }
             await recordPluginRef.current.startRecording();
-            setIsRecording(true);
             setShowAddLaterMessage(false);
             setRecordingStatus(sprintf('Please record your voice up to %d seconds.', currentField.duration));
         } catch (err) {
             console.error('Error accessing microphone:', err);
             setRecordingStatus('Error accessing microphone');
+            setIsRecording(false);
         }
     };
 
@@ -155,10 +146,10 @@ export default function Voice({ currentField, setError, updateProductData, combi
         if (isRecording && recordPluginRef.current) {
             try {
                 await recordPluginRef.current.stopRecording();
-                setIsRecording(false);
             } catch (err) {
                 console.error('Error stopping the recording:', err);
                 setRecordingStatus('Error stopping the recording');
+                setIsRecording(false);
             }
         }
     };
@@ -199,7 +190,7 @@ export default function Voice({ currentField, setError, updateProductData, combi
                             if (wavesurferRef.current) {
                                 await wavesurferRef.current.load(audioUrl);
                             }
-                            handleVoiceRecord(audioUrl); // Call handleVoiceRecord with the uploaded audio URL
+                            handleVoiceRecord(audioUrl);
                         }
                     });
                 };
@@ -245,9 +236,9 @@ export default function Voice({ currentField, setError, updateProductData, combi
 
     const handleVoiceRecord = (recordingData) => {
         // Clear any existing voice recordings and set new one if exists
+        const timestamp = Date.now();
         setBlobFiles(prevFiles => {
             const filteredFiles = prevFiles.filter(file => !(file instanceof Blob && file.type.startsWith('audio/')));
-            const timestamp = Date.now();
             if (recordingData && recordingData !== 'later' && recordingData !== null) {
                 const blobName = recordingData.includes('/') ? 
                     `${timestamp}-recording.mp3` : // For recording

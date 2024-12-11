@@ -119,6 +119,7 @@ class Assets {
 			'local'				=> apply_filters('teddybear/project/system/get_locale', get_user_locale()),
 			'tooltip'			=> apply_filters('teddybear/project/system/isactive', 'addons-tooltip', false),
 			'print_request'		=> apply_filters('teddybear/project/system/isactive', 'addons-printcert', false),
+			'onatc'				=> apply_filters('teddybear/project/system/isactive', 'standard-add2cart', false),
 		], (array) $args);
 		
 		if ($is_admin) {

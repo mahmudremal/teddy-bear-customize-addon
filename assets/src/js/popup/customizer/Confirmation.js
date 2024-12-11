@@ -3,6 +3,7 @@ import Slider from 'react-slick';
 import PriceBlock from './blocks/priceBlock';
 import PreviewCanvas from './blocks/PreviewCanvas';
 import { X, Plus, Minus } from 'lucide-react';
+import toast from 'react-hot-toast';
 import axios from 'axios';
 
 const Confirmation = ({ data, closePopup, selectedType, canvasImages, setCanvasBlob, activeTab, product }) => {
@@ -42,6 +43,7 @@ const Confirmation = ({ data, closePopup, selectedType, canvasImages, setCanvasB
         try {
             const response = await axios.post(fwpSiteConfig.ajaxUrl, formdata);
             if (response.data.success) {
+                toast.success(response.data.data.message);
                 if (mode === 'add') {
                     setCartItems(prev => ({
                         ...prev,
@@ -54,9 +56,12 @@ const Confirmation = ({ data, closePopup, selectedType, canvasImages, setCanvasB
                         return newItems;
                     });
                 }
+            } else {
+                throw new Error(response.data?.data?.message || 'Something went wrong');
             }
         } catch (error) {
             console.error('Error:', error);
+            toast.error(error.message || 'Something went wrong');
         }
     }
 
@@ -93,7 +98,7 @@ const Confirmation = ({ data, closePopup, selectedType, canvasImages, setCanvasB
                             <div key={product.ID}>
                                 <div className="tb_p-1" title={product.title}>
                                     <div className="tb_relative tb_box-border tb_bg-[#eeeeeeba] tb_rounded-[7px] tb_border-[#c4c4c4] tb_border tb_p-1 hover:tb_cursor-pointer [&:hover::before]:tb_content-[''] [&:hover::before]:tb_absolute [&:hover::before]:tb_inset-0 [&:hover::before]:tb_bg-[rgba(81,81,81,0.22)] [&:hover::before]:tb_rounded-lg" onClick={() => handleProductClick(product)} >
-                                        <div className="tb_block tb_text-center tb_mb-2" dangerouslySetInnerHTML={{__html: product.thumbnail}} />
+                                        <div className="tb_block tb_text-center tb_mb-2 tb_w-full [&>img]:tb_w-full" dangerouslySetInnerHTML={{__html: product.thumbnail}} />
                                         <div className="tb_block tb_text-center" dangerouslySetInnerHTML={{__html: product.priceHtml}} />
                                         <div className="tb_absolute tb_top-1/2 tb_left-1/2 tb_-translate-x-1/2 tb_-translate-y-1/2 tb_z-[1] tb_opacity-0 hover:tb_opacity-100">
                                             {cartItems[product.ID] ? 

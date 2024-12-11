@@ -65,7 +65,8 @@ const PreviewCanvas = ({ images, baseImage, setCanvasBlob, activeTab }) => {
 
   return (
     <div className={`tb_relative md:tb_aspect-square ${activeTab === null ? 'tb_aspect-square' : ''}`}>
-      <div className="tb_absolute tb_inset-0 tb_z-1" onContextMenu={(e) => e.preventDefault()} />
+      {/* onContextMenu={(e) => e.preventDefault()} */}
+      <div className="tb_absolute tb_inset-0 tb_z-1" />
       <canvas ref={canvasRef} className="tb_w-full tb_h-full tb_m-auto tb_rounded-md" />
     </div>
   );
