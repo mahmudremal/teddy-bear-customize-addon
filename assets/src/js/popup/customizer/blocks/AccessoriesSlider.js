@@ -6,7 +6,7 @@ import { X } from 'lucide-react';
 
 
 export default function AccessoriesSlider({ currentField, selectedOutfit, handleOptionChange, combinedCart, updateObjRows }) {
-    const { setInTotal } = combinedCart;
+    const { setInTotal, setTotalCost } = combinedCart;
     const [selectedOptions, setSelectedOptions] = useState(new Set());
     
     const settings = {
@@ -101,7 +101,6 @@ export default function AccessoriesSlider({ currentField, selectedOutfit, handle
     
     const handleReset = () => {
       const currentGroup = currentField.groups[0];
-      const checkedInputs = document.querySelectorAll(`input[name="${currentGroup.title}"]:checked`);
       
       checkedInputs.forEach(input => {
         input.checked = false;
@@ -116,19 +115,20 @@ export default function AccessoriesSlider({ currentField, selectedOutfit, handle
       });
       
       setSelectedOptions(new Set());
+      setTotalCost();
     };
     
     return (
       <div className="tb_w-[calc(100%-40px)] tb_m-auto">
         <div className="slider-container tb_relative">
           {/* Reset button */}
-          <div className="tb_absolute tb_right-0 tb_-top-8 tb_z-10 tb_group">
+          <div className="tb_absolute tb_right-0 tb_-top-16 tb_z-10 tb_group tb_hidden">
             <button
               onClick={handleReset}
               className="tb_p-1 tb_rounded-full tb_text-gray-400 hover:tb_text-gray-600 tb_transition-colors"
             >
               <X className="tb_w-4 tb_h-4" />
-              <span className="tb_absolute tb_left-full tb_ml-2 tb_top-1/2 tb_-translate-y-1/2 tb_whitespace-nowrap tb_bg-gray-800 tb_text-white tb_text-xs tb_px-2 tb_py-1 tb_rounded tb_opacity-0 tb_invisible group-hover:tb_opacity-100 group-hover:tb_visible tb_transition-all">
+              <span className="tb_absolute tb_left-full tb_ml-2 tb_top-1/2 tb_-translate-y-1/2 tb_whitespace-nowrap tb_bg-gray-800 tb_text-white tb_text-xs tb_px-2 tb_py-1 tb_rounded tb_opacity-0 tb_invisible group-hover:tb_opacity-100 group-hover:tb_visible tb_transition-all tb_transform tb_translate-x-0 group-hover:tb_translate-x-full">
                 Reset
               </span>
             </button>
@@ -150,7 +150,7 @@ export default function AccessoriesSlider({ currentField, selectedOutfit, handle
                               id={inputId}
                               name={group.title}
                               className="tb_hidden peer"
-                              onChange={e => handleChange(e, option, currentField)}
+                              onChange={e => handleOptionChange(e, option, currentField, group.id)}
                             />
                           )}
                           {group.type === 'checkbox' && (
@@ -159,7 +159,7 @@ export default function AccessoriesSlider({ currentField, selectedOutfit, handle
                               id={inputId}
                               name={group.title}
                               className="tb_hidden peer"
-                              onChange={e => handleChange(e, option, currentField)}
+                              onChange={e => handleOptionChange(e, option, currentField, group.id)}
                             />
                           )}
                           {group.type === 'select' && (
@@ -168,7 +168,7 @@ export default function AccessoriesSlider({ currentField, selectedOutfit, handle
                               id={inputId}
                               name={group.title}
                               className="tb_hidden peer"
-                              onChange={e => handleChange(e, option, currentField)}
+                              onChange={e => handleOptionChange(e, option, currentField, group.id)}
                             />
                           )}
                           <label 

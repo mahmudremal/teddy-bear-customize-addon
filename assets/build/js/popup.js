@@ -88500,11 +88500,6 @@ function _toConsumableArray(r) { return _arrayWithoutHoles(r) || _iterableToArra
 function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
 function _iterableToArray(r) { if ("undefined" != typeof Symbol && null != r[Symbol.iterator] || null != r["@@iterator"]) return Array.from(r); }
 function _arrayWithoutHoles(r) { if (Array.isArray(r)) return _arrayLikeToArray(r); }
-function ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
-function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t = null != arguments[r] ? arguments[r] : {}; r % 2 ? ownKeys(Object(t), !0).forEach(function (r) { _defineProperty(e, r, t[r]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : ownKeys(Object(t)).forEach(function (r) { Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r)); }); } return e; }
-function _defineProperty(e, r, t) { return (r = _toPropertyKey(r)) in e ? Object.defineProperty(e, r, { value: t, enumerable: !0, configurable: !0, writable: !0 }) : e[r] = t, e; }
-function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == _typeof(i) ? i : i + ""; }
-function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != _typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
 function _regeneratorRuntime() { "use strict"; /*! regenerator-runtime -- Copyright (c) 2014-present, Facebook, Inc. -- license (MIT): https://github.com/facebook/regenerator/blob/main/LICENSE */ _regeneratorRuntime = function _regeneratorRuntime() { return e; }; var t, e = {}, r = Object.prototype, n = r.hasOwnProperty, o = Object.defineProperty || function (t, e, r) { t[e] = r.value; }, i = "function" == typeof Symbol ? Symbol : {}, a = i.iterator || "@@iterator", c = i.asyncIterator || "@@asyncIterator", u = i.toStringTag || "@@toStringTag"; function define(t, e, r) { return Object.defineProperty(t, e, { value: r, enumerable: !0, configurable: !0, writable: !0 }), t[e]; } try { define({}, ""); } catch (t) { define = function define(t, e, r) { return t[e] = r; }; } function wrap(t, e, r, n) { var i = e && e.prototype instanceof Generator ? e : Generator, a = Object.create(i.prototype), c = new Context(n || []); return o(a, "_invoke", { value: makeInvokeMethod(t, r, c) }), a; } function tryCatch(t, e, r) { try { return { type: "normal", arg: t.call(e, r) }; } catch (t) { return { type: "throw", arg: t }; } } e.wrap = wrap; var h = "suspendedStart", l = "suspendedYield", f = "executing", s = "completed", y = {}; function Generator() {} function GeneratorFunction() {} function GeneratorFunctionPrototype() {} var p = {}; define(p, a, function () { return this; }); var d = Object.getPrototypeOf, v = d && d(d(values([]))); v && v !== r && n.call(v, a) && (p = v); var g = GeneratorFunctionPrototype.prototype = Generator.prototype = Object.create(p); function defineIteratorMethods(t) { ["next", "throw", "return"].forEach(function (e) { define(t, e, function (t) { return this._invoke(e, t); }); }); } function AsyncIterator(t, e) { function invoke(r, o, i, a) { var c = tryCatch(t[r], t, o); if ("throw" !== c.type) { var u = c.arg, h = u.value; return h && "object" == _typeof(h) && n.call(h, "__await") ? e.resolve(h.__await).then(function (t) { invoke("next", t, i, a); }, function (t) { invoke("throw", t, i, a); }) : e.resolve(h).then(function (t) { u.value = t, i(u); }, function (t) { return invoke("throw", t, i, a); }); } a(c.arg); } var r; o(this, "_invoke", { value: function value(t, n) { function callInvokeWithMethodAndArg() { return new e(function (e, r) { invoke(t, n, e, r); }); } return r = r ? r.then(callInvokeWithMethodAndArg, callInvokeWithMethodAndArg) : callInvokeWithMethodAndArg(); } }); } function makeInvokeMethod(e, r, n) { var o = h; return function (i, a) { if (o === f) throw Error("Generator is already running"); if (o === s) { if ("throw" === i) throw a; return { value: t, done: !0 }; } for (n.method = i, n.arg = a;;) { var c = n.delegate; if (c) { var u = maybeInvokeDelegate(c, n); if (u) { if (u === y) continue; return u; } } if ("next" === n.method) n.sent = n._sent = n.arg;else if ("throw" === n.method) { if (o === h) throw o = s, n.arg; n.dispatchException(n.arg); } else "return" === n.method && n.abrupt("return", n.arg); o = f; var p = tryCatch(e, r, n); if ("normal" === p.type) { if (o = n.done ? s : l, p.arg === y) continue; return { value: p.arg, done: n.done }; } "throw" === p.type && (o = s, n.method = "throw", n.arg = p.arg); } }; } function maybeInvokeDelegate(e, r) { var n = r.method, o = e.iterator[n]; if (o === t) return r.delegate = null, "throw" === n && e.iterator.return && (r.method = "return", r.arg = t, maybeInvokeDelegate(e, r), "throw" === r.method) || "return" !== n && (r.method = "throw", r.arg = new TypeError("The iterator does not provide a '" + n + "' method")), y; var i = tryCatch(o, e.iterator, r.arg); if ("throw" === i.type) return r.method = "throw", r.arg = i.arg, r.delegate = null, y; var a = i.arg; return a ? a.done ? (r[e.resultName] = a.value, r.next = e.nextLoc, "return" !== r.method && (r.method = "next", r.arg = t), r.delegate = null, y) : a : (r.method = "throw", r.arg = new TypeError("iterator result is not an object"), r.delegate = null, y); } function pushTryEntry(t) { var e = { tryLoc: t[0] }; 1 in t && (e.catchLoc = t[1]), 2 in t && (e.finallyLoc = t[2], e.afterLoc = t[3]), this.tryEntries.push(e); } function resetTryEntry(t) { var e = t.completion || {}; e.type = "normal", delete e.arg, t.completion = e; } function Context(t) { this.tryEntries = [{ tryLoc: "root" }], t.forEach(pushTryEntry, this), this.reset(!0); } function values(e) { if (e || "" === e) { var r = e[a]; if (r) return r.call(e); if ("function" == typeof e.next) return e; if (!isNaN(e.length)) { var o = -1, i = function next() { for (; ++o < e.length;) if (n.call(e, o)) return next.value = e[o], next.done = !1, next; return next.value = t, next.done = !0, next; }; return i.next = i; } } throw new TypeError(_typeof(e) + " is not iterable"); } return GeneratorFunction.prototype = GeneratorFunctionPrototype, o(g, "constructor", { value: GeneratorFunctionPrototype, configurable: !0 }), o(GeneratorFunctionPrototype, "constructor", { value: GeneratorFunction, configurable: !0 }), GeneratorFunction.displayName = define(GeneratorFunctionPrototype, u, "GeneratorFunction"), e.isGeneratorFunction = function (t) { var e = "function" == typeof t && t.constructor; return !!e && (e === GeneratorFunction || "GeneratorFunction" === (e.displayName || e.name)); }, e.mark = function (t) { return Object.setPrototypeOf ? Object.setPrototypeOf(t, GeneratorFunctionPrototype) : (t.__proto__ = GeneratorFunctionPrototype, define(t, u, "GeneratorFunction")), t.prototype = Object.create(g), t; }, e.awrap = function (t) { return { __await: t }; }, defineIteratorMethods(AsyncIterator.prototype), define(AsyncIterator.prototype, c, function () { return this; }), e.AsyncIterator = AsyncIterator, e.async = function (t, r, n, o, i) { void 0 === i && (i = Promise); var a = new AsyncIterator(wrap(t, r, n, o), i); return e.isGeneratorFunction(r) ? a : a.next().then(function (t) { return t.done ? t.value : a.next(); }); }, defineIteratorMethods(g), define(g, u, "Generator"), define(g, a, function () { return this; }), define(g, "toString", function () { return "[object Generator]"; }), e.keys = function (t) { var e = Object(t), r = []; for (var n in e) r.push(n); return r.reverse(), function next() { for (; r.length;) { var t = r.pop(); if (t in e) return next.value = t, next.done = !1, next; } return next.done = !0, next; }; }, e.values = values, Context.prototype = { constructor: Context, reset: function reset(e) { if (this.prev = 0, this.next = 0, this.sent = this._sent = t, this.done = !1, this.delegate = null, this.method = "next", this.arg = t, this.tryEntries.forEach(resetTryEntry), !e) for (var r in this) "t" === r.charAt(0) && n.call(this, r) && !isNaN(+r.slice(1)) && (this[r] = t); }, stop: function stop() { this.done = !0; var t = this.tryEntries[0].completion; if ("throw" === t.type) throw t.arg; return this.rval; }, dispatchException: function dispatchException(e) { if (this.done) throw e; var r = this; function handle(n, o) { return a.type = "throw", a.arg = e, r.next = n, o && (r.method = "next", r.arg = t), !!o; } for (var o = this.tryEntries.length - 1; o >= 0; --o) { var i = this.tryEntries[o], a = i.completion; if ("root" === i.tryLoc) return handle("end"); if (i.tryLoc <= this.prev) { var c = n.call(i, "catchLoc"), u = n.call(i, "finallyLoc"); if (c && u) { if (this.prev < i.catchLoc) return handle(i.catchLoc, !0); if (this.prev < i.finallyLoc) return handle(i.finallyLoc); } else if (c) { if (this.prev < i.catchLoc) return handle(i.catchLoc, !0); } else { if (!u) throw Error("try statement without catch or finally"); if (this.prev < i.finallyLoc) return handle(i.finallyLoc); } } } }, abrupt: function abrupt(t, e) { for (var r = this.tryEntries.length - 1; r >= 0; --r) { var o = this.tryEntries[r]; if (o.tryLoc <= this.prev && n.call(o, "finallyLoc") && this.prev < o.finallyLoc) { var i = o; break; } } i && ("break" === t || "continue" === t) && i.tryLoc <= e && e <= i.finallyLoc && (i = null); var a = i ? i.completion : {}; return a.type = t, a.arg = e, i ? (this.method = "next", this.next = i.finallyLoc, y) : this.complete(a); }, complete: function complete(t, e) { if ("throw" === t.type) throw t.arg; return "break" === t.type || "continue" === t.type ? this.next = t.arg : "return" === t.type ? (this.rval = this.arg = t.arg, this.method = "return", this.next = "end") : "normal" === t.type && e && (this.next = e), y; }, finish: function finish(t) { for (var e = this.tryEntries.length - 1; e >= 0; --e) { var r = this.tryEntries[e]; if (r.finallyLoc === t) return this.complete(r.completion, r.afterLoc), resetTryEntry(r), y; } }, catch: function _catch(t) { for (var e = this.tryEntries.length - 1; e >= 0; --e) { var r = this.tryEntries[e]; if (r.tryLoc === t) { var n = r.completion; if ("throw" === n.type) { var o = n.arg; resetTryEntry(r); } return o; } } throw Error("illegal catch attempt"); }, delegateYield: function delegateYield(e, r, n) { return this.delegate = { iterator: values(e), resultName: r, nextLoc: n }, "next" === this.method && (this.arg = t), y; } }, e; }
 function asyncGeneratorStep(n, t, e, r, o, a, c) { try { var i = n[a](c), u = i.value; } catch (n) { return void e(n); } i.done ? t(u) : Promise.resolve(u).then(r, o); }
 function _asyncToGenerator(n) { return function () { var t = this, e = arguments; return new Promise(function (r, o) { var a = n.apply(t, e); function _next(n) { asyncGeneratorStep(a, r, o, _next, _throw, "next", n); } function _throw(n) { asyncGeneratorStep(a, r, o, _next, _throw, "throw", n); } _next(void 0); }); }; }
@@ -88514,6 +88509,11 @@ function _unsupportedIterableToArray(r, a) { if (r) { if ("string" == typeof r) 
 function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length); for (var e = 0, n = Array(a); e < a; e++) n[e] = r[e]; return n; }
 function _iterableToArrayLimit(r, l) { var t = null == r ? null : "undefined" != typeof Symbol && r[Symbol.iterator] || r["@@iterator"]; if (null != t) { var e, n, i, u, a = [], f = !0, o = !1; try { if (i = (t = t.call(r)).next, 0 === l) { if (Object(t) !== t) return; f = !1; } else for (; !(f = (e = i.call(t)).done) && (a.push(e.value), a.length !== l); f = !0); } catch (r) { o = !0, n = r; } finally { try { if (!f && null != t.return && (u = t.return(), Object(u) !== u)) return; } finally { if (o) throw n; } } return a; } }
 function _arrayWithHoles(r) { if (Array.isArray(r)) return r; }
+function ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
+function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t = null != arguments[r] ? arguments[r] : {}; r % 2 ? ownKeys(Object(t), !0).forEach(function (r) { _defineProperty(e, r, t[r]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : ownKeys(Object(t)).forEach(function (r) { Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r)); }); } return e; }
+function _defineProperty(e, r, t) { return (r = _toPropertyKey(r)) in e ? Object.defineProperty(e, r, { value: t, enumerable: !0, configurable: !0, writable: !0 }) : e[r] = t, e; }
+function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == _typeof(i) ? i : i + ""; }
+function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != _typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
 
 
 
@@ -88529,8 +88529,23 @@ function _arrayWithHoles(r) { if (Array.isArray(r)) return r; }
 var ProductCustomization = function ProductCustomization(_ref) {
   var _product$custom_field, _product$custom_field4;
   var product = _ref.product,
+    setProduct = _ref.setProduct,
     updateProductData = _ref.updateProductData,
     closePopup = _ref.closePopup;
+  var iFRows = product.custom_fields[product.custom_data.product_type].map(function (f) {
+    var nf = _objectSpread({}, f);
+    if (f.options) {
+      nf.options = [];
+    }
+    if (f.groups) {
+      nf.groups = f.groups.map(function (g) {
+        return _objectSpread(_objectSpread({}, g), {}, {
+          options: []
+        });
+      });
+    }
+    return nf;
+  });
   var _React = React,
     useEffect = _React.useEffect,
     useState = _React.useState;
@@ -88538,7 +88553,7 @@ var ProductCustomization = function ProductCustomization(_ref) {
     _useState2 = _slicedToArray(_useState, 2),
     canvasBlob = _useState2[0],
     setCanvasBlob = _useState2[1];
-  var _useState3 = useState([]),
+  var _useState3 = useState(iFRows),
     _useState4 = _slicedToArray(_useState3, 2),
     objRows = _useState4[0],
     setObjRows = _useState4[1];
@@ -88702,90 +88717,68 @@ var ProductCustomization = function ProductCustomization(_ref) {
     };
   }();
   var updateObjRows = function updateObjRows(field, selectedData) {
-    setObjRows(function (prevRows) {
-      // Find existing row with same fieldID
-      var existingRowIndex = prevRows.findIndex(function (row) {
-        return row.fieldID === field.fieldID;
-      });
-      var newRow = _objectSpread({
-        fieldID: field.fieldID,
-        type: field.type,
-        steptitle: field.steptitle,
-        headerbg: field.headerbg
-      }, selectedData);
-      if (existingRowIndex !== -1) {
-        // Update existing row
-        var updatedRows = _toConsumableArray(prevRows);
-        updatedRows[existingRowIndex] = newRow;
-        return updatedRows;
-      } else {
-        // Add new row
-        return [].concat(_toConsumableArray(prevRows), [newRow]);
-      }
+    var existingRowIndex = objRows.findIndex(function (row) {
+      return row.id === field.id;
     });
+    var newRow = _objectSpread(_objectSpread({}, field), selectedData);
+    // console.log('newRow', newRow, existingRowIndex, objRows[existingRowIndex]);
+    var newObj = existingRowIndex !== -1 ? objRows.map(function (row, index) {
+      return index === existingRowIndex ? newRow : row;
+    }) : [].concat(_toConsumableArray(objRows), [newRow]);
+    setObjRows(newObj);
+    // console.log('objRows', objRows);
+    setTotalCost(newObj);
   };
   var handleOptionChange = function handleOptionChange(e, option, currentField) {
-    console.log(e, option, currentField);
-    if (e.target.checked) {
+    var groupid = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : false;
+    // console.log('handleOptionChange', e, option, currentField);
+    var selectedInput = e.target;
+    if (selectedInput) {
       var imageChanged = false;
       var newImgLayers = _objectSpread({}, imgLayers);
-
-      // Handle outfit section with groups
-      if (currentField.groups) {
+      if (currentField !== null && currentField !== void 0 && currentField.groups) {
         currentField.groups.forEach(function (group) {
           if (group.type === 'radio' || group.type === 'select') {
             newImgLayers[group.title] = newImgLayers[group.title] || [];
-            var selectedInput = document.querySelector("input[name=\"".concat(group.title, "\"]:checked"));
-            if (selectedInput) {
-              var selectedLabel = selectedInput.id.replace('option-', '');
-              var selectedOption = group.options.find(function (opt) {
-                return opt.label === selectedLabel;
-              });
-              if (selectedOption !== null && selectedOption !== void 0 && selectedOption.thumbUrl && selectedOption !== null && selectedOption !== void 0 && selectedOption.imageUrl) {
-                if (selectedInput.type === 'radio') {
-                  newImgLayers[group.title] = [];
-                }
-                newImgLayers[group.title].push(selectedOption.imageUrl);
-                imageChanged = true;
+            if (option !== null && option !== void 0 && option.imageUrl && option.imageUrl !== '') {
+              if (selectedInput.type === 'radio') {
+                newImgLayers[group.title] = [];
               }
+              if (selectedInput.checked) {
+                newImgLayers[group.title].push(option.imageUrl);
+              } else {
+                newImgLayers[group.title] = newImgLayers[group.title].filter(function (img) {
+                  return img !== option.imageUrl;
+                });
+              }
+              imageChanged = true;
             }
           } else if (group.type === 'checkbox') {
             newImgLayers[group.title] = newImgLayers[group.title] || [];
-            var checkedInputs = document.querySelectorAll("input[name=\"".concat(group.title, "\"]:checked"));
-            newImgLayers[group.title] = []; // Reset checkbox group
-            checkedInputs.forEach(function (input) {
-              var checkedLabel = input.id.replace('option-', '');
-              var checkedOption = group.options.find(function (opt) {
-                return opt.label === checkedLabel;
+            if (selectedInput.checked) {
+              newImgLayers[group.title].push(option.imageUrl);
+            } else {
+              newImgLayers[group.title] = newImgLayers[group.title].filter(function (img) {
+                return img !== option.imageUrl;
               });
-              if (checkedOption !== null && checkedOption !== void 0 && checkedOption.thumbUrl && checkedOption !== null && checkedOption !== void 0 && checkedOption.imageUrl) {
-                newImgLayers[group.title].push(checkedOption.imageUrl);
-                imageChanged = true;
-              }
-            });
+            }
+            imageChanged = true;
           }
         });
-      }
-      // Handle other sections with direct options (like heart selection)
-      else if (currentField.options) {
-        newImgLayers[option.fieldID] = newImgLayers[option.fieldID] || [];
+      } else if (currentField !== null && currentField !== void 0 && currentField.options) {
+        newImgLayers[option.id] = newImgLayers[option.id] || [];
         if (currentField.type === 'radio') {
           if (option !== null && option !== void 0 && option.thumbUrl && option !== null && option !== void 0 && option.imageUrl) {
-            newImgLayers[option.fieldID] = [];
-            newImgLayers[option.fieldID].push(option.imageUrl);
+            newImgLayers[option.id] = [];
+            newImgLayers[option.id].push(option.imageUrl);
             imageChanged = true;
           }
         }
       }
-
-      // Update canvas with all selected images
       if (imageChanged) {
-        console.log(newImgLayers);
         setImgLayers(newImgLayers);
         updateCanvasImages(Object.values(newImgLayers).flat());
       }
-
-      // Track selection based on field type
       switch (currentField.type) {
         case 'radio':
           updateObjRows(currentField, {
@@ -88793,37 +88786,76 @@ var ProductCustomization = function ProductCustomization(_ref) {
           });
           break;
         case 'checkbox':
-          var checkedOptions = document.querySelectorAll("input[name=\"".concat(currentField.title, "\"]:checked"));
-          var selectedOptions = Array.from(checkedOptions).map(function (input) {
-            var label = input.id.replace('option-', '');
-            return currentField.options.find(function (opt) {
-              return opt.label === label;
-            });
-          });
-          updateObjRows(currentField, {
-            options: selectedOptions
-          });
+          // updateObjRows(currentField, {
+          //     options: selectedOptions
+          // });
           break;
         case 'outfit':
           var group = currentField.groups.find(function (g) {
-            return g.title === option.fieldID;
+            return g.id == groupid;
           });
           if (group) {
+            option.selected = true;
+            var updatedGroups = objRows.find(function (f) {
+              return f.id == currentField.id;
+            }).groups.map(function (g) {
+              if (g.id == groupid) {
+                g.options = g.options.filter(function (o) {
+                  return o.id === option.id;
+                });
+              }
+              return g;
+            });
             updateObjRows(currentField, {
-              groups: currentField.groups.map(function (g) {
-                return {
-                  type: g.type,
-                  layer: g.layer,
-                  title: g.title,
-                  rowtype: g.rowtype,
-                  options: g.title === option.fieldID ? [option] : []
-                };
-              })
+              groups: updatedGroups
+            });
+            console.log('updatedBlock', {
+              groups: updatedGroups
             });
           }
           break;
       }
     }
+  };
+  // 
+  var getTotalCost = function getTotalCost() {
+    var obj = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
+    var totalCostEstimate = 0;
+    if (!obj) {
+      obj = objRows;
+    }
+    console.log('getTotalCost', obj);
+    obj.forEach(function (field) {
+      var _field$attached, _field$attached2;
+      switch (field.type) {
+        case 'radio':
+        case 'select':
+        case 'checkbox':
+          totalCostEstimate += field.options.reduce(function (acc, opt) {
+            return acc + (parseFloat(opt.cost) || 0);
+          }, 0);
+          break;
+        case 'outfit':
+          totalCostEstimate += field.groups.reduce(function (acc, group) {
+            return acc + group.options.reduce(function (acc, opt) {
+              return acc + (parseFloat(opt.cost) || 0);
+            }, 0);
+          }, 0);
+          break;
+        case 'voice':
+          totalCostEstimate += field !== null && field !== void 0 && (_field$attached = field.attached) !== null && _field$attached !== void 0 && _field$attached.later || field !== null && field !== void 0 && (_field$attached2 = field.attached) !== null && _field$attached2 !== void 0 && _field$attached2.blob ? parseFloat(field === null || field === void 0 ? void 0 : field.cost) || 0 : 0;
+          break;
+        default:
+          // console.log('default', field);
+          break;
+      }
+    });
+    // console.log('totalCostEstimate', totalCostEstimate, objRows);
+    return totalCostEstimate;
+  };
+  var setTotalCost = function setTotalCost() {
+    var obj = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
+    return setInTotal(getTotalCost(obj));
   };
   var currentFields = ((_product$custom_field4 = product.custom_fields) === null || _product$custom_field4 === void 0 ? void 0 : _product$custom_field4[selectedType]) || [];
   var currentField = currentFields[currentStep];
@@ -88832,7 +88864,9 @@ var ProductCustomization = function ProductCustomization(_ref) {
     inTotal: inTotal,
     setDiscountTotal: setDiscountTotal,
     setInTotal: setInTotal,
-    setBlobFiles: setBlobFiles
+    setBlobFiles: setBlobFiles,
+    getTotalCost: getTotalCost,
+    setTotalCost: setTotalCost
   };
   return /*#__PURE__*/React.createElement("div", {
     className: "tb_mx-auto tb_p-0"
@@ -88906,7 +88940,7 @@ var ProductCustomization = function ProductCustomization(_ref) {
   }), /*#__PURE__*/React.createElement("p", {
     className: "tb_text-center tb_mt-2 tb_font-semibold"
   }, "Sitting"))), ['standing', 'sitting'].includes(selectedType) && /*#__PURE__*/React.createElement("div", {
-    className: "tb_m-auto tb_mb-8 tb_w-full tb_h-auto md:tb_w-[350px] md:tb_h-[350px]"
+    className: "tb_m-auto tb_mb-8 tb_h-auto ".concat(activeTab === null ? 'tb_w-full md:tb_w-[350px]' : 'tb_w-[70%] md:tb_w-[250px]')
   }, /*#__PURE__*/React.createElement(_blocks_PreviewCanvas__WEBPACK_IMPORTED_MODULE_1__["default"], {
     images: canvasImages,
     baseImage: product.custom_data._canvas,
@@ -88915,16 +88949,14 @@ var ProductCustomization = function ProductCustomization(_ref) {
   })), activeTab === null && !isSingleTab && /*#__PURE__*/React.createElement("div", {
     className: "tb_border-t tb_border-gray-300 tb_mb-2"
   }), currentFields.map(function (field, idx) {
-    var _product$custom_field5, _product$custom_field6;
+    var _currentFields$curren, _product$custom_field5, _product$custom_field6;
     return /*#__PURE__*/React.createElement("div", {
-      key: field.fieldID,
-      className: "tb_bg-gray-50 tb_p-6 tb_rounded-lg ".concat(isSingleTab ? '' : 'tb_shadow-md', " tb_mb-0 ").concat(isSingleTab ? '' : activeTab === idx ? '' : 'tb_hidden')
+      key: idx,
+      className: "tb_bg-gray-50 tb_px-6 tb_pt-4 tb_pb-2 tb_rounded-lg ".concat(isSingleTab || ((_currentFields$curren = currentFields[currentStep]) === null || _currentFields$curren === void 0 ? void 0 : _currentFields$curren.type) === 'info' ? '' : 'tb_shadow-md', " tb_mb-0 ").concat(isSingleTab ? '' : activeTab === idx ? '' : 'tb_hidden')
     }, error && /*#__PURE__*/React.createElement("div", {
-      className: "tb_bg-primary-100 tb_border tb_border-primary-400 tb_text-primary-700 tb_px-4 tb_py-3 tb_rounded tb_relative tb_mb-4",
+      className: "tb_bg-primary-100 tb_border tb_border-primary-400 tb_text-primary-700 tb_px-4 tb_py-3 tb_rounded tb_relative tb_mb-2",
       role: "alert"
-    }, /*#__PURE__*/React.createElement("strong", {
-      className: "tb_font-bold"
-    }, "Error: "), /*#__PURE__*/React.createElement("span", {
+    }, /*#__PURE__*/React.createElement("span", {
       className: "tb_block tb_sm:inline"
     }, error), function () {
       setTimeout(function () {
@@ -88965,9 +88997,9 @@ var ProductCustomization = function ProductCustomization(_ref) {
           return /*#__PURE__*/React.createElement(_blocks_outfit__WEBPACK_IMPORTED_MODULE_3__["default"], {
             setError: setError,
             currentField: field,
+            handleOptionChange: handleOptionChange,
             selectedOutfit: selectedOutfit,
             setSelectedOutfit: setSelectedOutfit,
-            handleOptionChange: handleOptionChange,
             updateProductData: updateProductData,
             combinedCart: combinedCart,
             updateObjRows: updateObjRows
@@ -88976,6 +89008,7 @@ var ProductCustomization = function ProductCustomization(_ref) {
           return /*#__PURE__*/React.createElement(_blocks_voice__WEBPACK_IMPORTED_MODULE_2__["default"], {
             setError: setError,
             currentField: field,
+            handleOptionChange: handleOptionChange,
             setActiveTab: setActiveTab,
             updateProductData: updateProductData,
             combinedCart: combinedCart,
@@ -88985,6 +89018,7 @@ var ProductCustomization = function ProductCustomization(_ref) {
           return /*#__PURE__*/React.createElement(_blocks_info__WEBPACK_IMPORTED_MODULE_5__["default"], {
             setError: setError,
             currentField: field,
+            handleOptionChange: handleOptionChange,
             setActiveTab: setActiveTab,
             updateProductData: updateProductData,
             combinedCart: combinedCart,
@@ -88994,6 +89028,7 @@ var ProductCustomization = function ProductCustomization(_ref) {
           return /*#__PURE__*/React.createElement(_blocks_input__WEBPACK_IMPORTED_MODULE_10__["default"], {
             setError: setError,
             currentField: field,
+            handleOptionChange: handleOptionChange,
             setActiveTab: setActiveTab,
             updateProductData: updateProductData,
             combinedCart: combinedCart,
@@ -89002,10 +89037,10 @@ var ProductCustomization = function ProductCustomization(_ref) {
       }
     }());
   }), /*#__PURE__*/React.createElement("div", {
-    className: "tb_flex tb_justify-evenly ".concat(activeTab !== null || isSingleTab ? 'tb_hidden' : '')
+    className: "tb_flex tb_justify-center tb_gap-2 tb_px-2 ".concat(activeTab !== null || isSingleTab ? 'tb_hidden' : '')
   }, currentFields.map(function (field, idx) {
     return /*#__PURE__*/React.createElement("div", {
-      key: field.fieldID,
+      key: idx,
       className: "tb_relative tb_cursor-pointer tb_p-2 tb_rounded-md ".concat(activeTab === idx ? 'tb_bg-blue-500 tb_text-white' : 'tb_bg-gray-200'),
       onClick: function onClick() {
         return handleTabClick(idx);
@@ -89118,7 +89153,7 @@ function App() {
   useEffect(function () {
     var handleButtonClick = /*#__PURE__*/function () {
       var _ref = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee(e) {
-        var button, _button$dataset, product_id, config, formData, response;
+        var button, _button$dataset, product_id, config, formData, response, data, uniqueID;
         return _regeneratorRuntime().wrap(function _callee$(_context) {
           while (1) switch (_context.prev = _context.next) {
             case 0:
@@ -89158,27 +89193,56 @@ function App() {
               }
               throw new Error('Invalid response format');
             case 20:
-              setProductData(response.data.data.product);
+              data = response.data.data;
+              uniqueID = 0;
+              Object.keys(data.product.custom_fields).forEach(function (fieldsKey) {
+                var fields = data.product.custom_fields[fieldsKey];
+                fields.forEach(function (field) {
+                  field.id = uniqueID++;
+                  switch (field.type) {
+                    case 'radio':
+                    case 'select':
+                    case 'checkbox':
+                      field.options.forEach(function (opt) {
+                        opt.id = uniqueID++;
+                      });
+                      break;
+                    case 'outfit':
+                      field.groups.forEach(function (group) {
+                        group.id = uniqueID++;
+                        group.options.forEach(function (opt) {
+                          opt.id = uniqueID++;
+                        });
+                      });
+                      break;
+                    default:
+                      break;
+                  }
+                });
+                data.product.custom_fields[fieldsKey] = fields;
+              });
+              // 
+              setProductData(data.product);
               setError(null);
-              _context.next = 29;
+              _context.next = 32;
               break;
-            case 24:
-              _context.prev = 24;
+            case 27:
+              _context.prev = 27;
               _context.t0 = _context["catch"](3);
               console.error('Error:', _context.t0);
               setError(_context.t0.message === 'Invalid button configuration' ? 'Invalid button configuration' : 'Product not found or there was an error loading the data');
               setProductData(null);
-            case 29:
-              _context.prev = 29;
-              setIsLoading(false);
-              return _context.finish(29);
             case 32:
+              _context.prev = 32;
+              setIsLoading(false);
+              return _context.finish(32);
+            case 35:
               return _context.abrupt("return", false);
-            case 33:
+            case 36:
             case "end":
               return _context.stop();
           }
-        }, _callee, null, [[3, 24, 29, 32]]);
+        }, _callee, null, [[3, 27, 32, 35]]);
       }));
       return function handleButtonClick(_x) {
         return _ref.apply(this, arguments);
@@ -89257,6 +89321,7 @@ function App() {
     ReactDOM: ReactDOM,
     product_id: productId,
     product: productData,
+    setProduct: setProductData,
     updateProductData: updateProductData,
     closePopup: closePopup
   }) : null)));
@@ -89308,7 +89373,8 @@ function AccessoriesSlider(_ref) {
     handleOptionChange = _ref.handleOptionChange,
     combinedCart = _ref.combinedCart,
     updateObjRows = _ref.updateObjRows;
-  var setInTotal = combinedCart.setInTotal;
+  var setInTotal = combinedCart.setInTotal,
+    setTotalCost = combinedCart.setTotalCost;
   var _useState = Object(react__WEBPACK_IMPORTED_MODULE_0__["useState"])(new Set()),
     _useState2 = _slicedToArray(_useState, 2),
     selectedOptions = _useState2[0],
@@ -89346,8 +89412,8 @@ function AccessoriesSlider(_ref) {
         });
 
         // Get all currently selected options
-        var checkedInputs = document.querySelectorAll("input[name=\"".concat(currentGroup.title, "\"]:checked"));
-        var selectedOpts = Array.from(checkedInputs).map(function (input) {
+        var _checkedInputs = document.querySelectorAll("input[name=\"".concat(currentGroup.title, "\"]:checked"));
+        var selectedOpts = Array.from(_checkedInputs).map(function (input) {
           var label = input.id.replace('option-', '');
           return currentGroup.options.find(function (opt) {
             return opt.label === label;
@@ -89372,8 +89438,8 @@ function AccessoriesSlider(_ref) {
         });
 
         // Get remaining selected options
-        var _checkedInputs = document.querySelectorAll("input[name=\"".concat(currentGroup.title, "\"]:checked"));
-        var remainingOpts = Array.from(_checkedInputs).map(function (input) {
+        var _checkedInputs2 = document.querySelectorAll("input[name=\"".concat(currentGroup.title, "\"]:checked"));
+        var remainingOpts = Array.from(_checkedInputs2).map(function (input) {
           var label = input.id.replace('option-', '');
           return currentGroup.options.find(function (opt) {
             return opt.label === label;
@@ -89419,7 +89485,6 @@ function AccessoriesSlider(_ref) {
   };
   var handleReset = function handleReset() {
     var currentGroup = currentField.groups[0];
-    var checkedInputs = document.querySelectorAll("input[name=\"".concat(currentGroup.title, "\"]:checked"));
     checkedInputs.forEach(function (input) {
       input.checked = false;
       var label = input.id.replace('option-', '');
@@ -89435,20 +89500,21 @@ function AccessoriesSlider(_ref) {
       handleChange(event, option, currentField);
     });
     setSelectedOptions(new Set());
+    setTotalCost();
   };
   return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
     className: "tb_w-[calc(100%-40px)] tb_m-auto"
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
     className: "slider-container tb_relative"
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-    className: "tb_absolute tb_right-0 tb_-top-8 tb_z-10 tb_group"
+    className: "tb_absolute tb_right-0 tb_-top-16 tb_z-10 tb_group tb_hidden"
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
     onClick: handleReset,
     className: "tb_p-1 tb_rounded-full tb_text-gray-400 hover:tb_text-gray-600 tb_transition-colors"
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(lucide_react__WEBPACK_IMPORTED_MODULE_2__["X"], {
     className: "tb_w-4 tb_h-4"
   }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", {
-    className: "tb_absolute tb_left-full tb_ml-2 tb_top-1/2 tb_-translate-y-1/2 tb_whitespace-nowrap tb_bg-gray-800 tb_text-white tb_text-xs tb_px-2 tb_py-1 tb_rounded tb_opacity-0 tb_invisible group-hover:tb_opacity-100 group-hover:tb_visible tb_transition-all"
+    className: "tb_absolute tb_left-full tb_ml-2 tb_top-1/2 tb_-translate-y-1/2 tb_whitespace-nowrap tb_bg-gray-800 tb_text-white tb_text-xs tb_px-2 tb_py-1 tb_rounded tb_opacity-0 tb_invisible group-hover:tb_opacity-100 group-hover:tb_visible tb_transition-all tb_transform tb_translate-x-0 group-hover:tb_translate-x-full"
   }, "Reset"))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_slick__WEBPACK_IMPORTED_MODULE_1___default.a, settings, currentField.groups[0].options.map(function (option) {
     var group = currentField.groups[0];
     var inputId = "".concat(group.title, "-").concat(option.label, "-").concat(currentField.fieldID);
@@ -89465,7 +89531,7 @@ function AccessoriesSlider(_ref) {
       name: group.title,
       className: "tb_hidden peer",
       onChange: function onChange(e) {
-        return handleChange(e, option, currentField);
+        return handleOptionChange(e, option, currentField, group.id);
       }
     }), group.type === 'checkbox' && /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
       type: "checkbox",
@@ -89473,7 +89539,7 @@ function AccessoriesSlider(_ref) {
       name: group.title,
       className: "tb_hidden peer",
       onChange: function onChange(e) {
-        return handleChange(e, option, currentField);
+        return handleOptionChange(e, option, currentField, group.id);
       }
     }), group.type === 'select' && /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
       type: "radio",
@@ -89481,7 +89547,7 @@ function AccessoriesSlider(_ref) {
       name: group.title,
       className: "tb_hidden peer",
       onChange: function onChange(e) {
-        return handleChange(e, option, currentField);
+        return handleOptionChange(e, option, currentField, group.id);
       }
     }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", {
       htmlFor: inputId,
@@ -89550,6 +89616,7 @@ var PreviewCanvas = function PreviewCanvas(_ref) {
     baseImage = _ref.baseImage,
     setCanvasBlob = _ref.setCanvasBlob,
     activeTab = _ref.activeTab;
+  // console.log('PreviewCanvas', images, baseImage);
   var _React = React,
     useRef = _React.useRef,
     useEffect = _React.useEffect;
@@ -89599,71 +89666,78 @@ var PreviewCanvas = function PreviewCanvas(_ref) {
   }();
   var drawImagesOnCanvas = /*#__PURE__*/function () {
     var _ref3 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee2(images) {
-      var canvas, context, baseImg, _iterator, _step, imageSrc, img;
+      var canvas, context, displayWidth, displayHeight, baseImg, _iterator, _step, imageSrc, img;
       return _regeneratorRuntime().wrap(function _callee2$(_context2) {
         while (1) switch (_context2.prev = _context2.next) {
           case 0:
             canvas = canvasRef.current;
-            context = canvas.getContext("2d");
-            context.clearRect(0, 0, canvas.width, canvas.height);
-            _context2.prev = 3;
-            _context2.next = 6;
+            context = canvas.getContext("2d"); // Set canvas dimensions to 2x for high resolution
+            displayWidth = canvas.clientWidth;
+            displayHeight = canvas.clientHeight; // Set actual canvas dimensions to 2x for retina/high DPI displays
+            canvas.width = displayWidth * 2;
+            canvas.height = displayHeight * 2;
+
+            // Scale context to ensure proper resolution
+            context.scale(2, 2);
+            context.clearRect(0, 0, displayWidth, displayHeight);
+            _context2.prev = 8;
+            _context2.next = 11;
             return loadBaseImage();
-          case 6:
+          case 11:
             baseImg = _context2.sent;
             if (baseImg) {
-              context.drawImage(baseImg, 0, 0, canvas.width, canvas.height);
+              context.drawImage(baseImg, 0, 0, displayWidth, displayHeight);
             }
 
             // Then draw other images
             if (!(images && images.length > 0)) {
-              _context2.next = 28;
+              _context2.next = 33;
               break;
             }
             _iterator = _createForOfIteratorHelper(images);
-            _context2.prev = 10;
+            _context2.prev = 15;
             _iterator.s();
-          case 12:
+          case 17:
             if ((_step = _iterator.n()).done) {
-              _context2.next = 20;
+              _context2.next = 25;
               break;
             }
             imageSrc = _step.value;
-            _context2.next = 16;
+            _context2.next = 21;
             return loadImage(imageSrc);
-          case 16:
+          case 21:
             img = _context2.sent;
-            context.drawImage(img, 0, 0, canvas.width, canvas.height);
-          case 18:
-            _context2.next = 12;
+            context.drawImage(img, 0, 0, displayWidth, displayHeight);
+          case 23:
+            _context2.next = 17;
             break;
-          case 20:
-            _context2.next = 25;
-            break;
-          case 22:
-            _context2.prev = 22;
-            _context2.t0 = _context2["catch"](10);
-            _iterator.e(_context2.t0);
           case 25:
-            _context2.prev = 25;
+            _context2.next = 30;
+            break;
+          case 27:
+            _context2.prev = 27;
+            _context2.t0 = _context2["catch"](15);
+            _iterator.e(_context2.t0);
+          case 30:
+            _context2.prev = 30;
             _iterator.f();
-            return _context2.finish(25);
-          case 28:
-            // Convert canvas to blob and set screenshot
+            return _context2.finish(30);
+          case 33:
+            // Convert canvas to blob with high quality
             canvas.toBlob(function (blob) {
               setCanvasBlob(blob);
-            });
-            _context2.next = 34;
+            }, 'image/png', 1.0); // Use PNG format with max quality
+            _context2.next = 39;
             break;
-          case 31:
-            _context2.prev = 31;
-            _context2.t1 = _context2["catch"](3);
+          case 36:
+            _context2.prev = 36;
+            _context2.t1 = _context2["catch"](8);
             console.error("Error loading images:", _context2.t1);
-          case 34:
+          case 39:
           case "end":
             return _context2.stop();
         }
-      }, _callee2, null, [[3, 31], [10, 22, 25, 28]]);
+      }, _callee2, null, [[8, 36], [15, 27, 30, 33]]);
     }));
     return function drawImagesOnCanvas(_x) {
       return _ref3.apply(this, arguments);
@@ -89678,7 +89752,11 @@ var PreviewCanvas = function PreviewCanvas(_ref) {
     className: "tb_absolute tb_inset-0 tb_z-1"
   }), /*#__PURE__*/React.createElement("canvas", {
     ref: canvasRef,
-    className: "tb_w-full tb_h-full tb_m-auto tb_rounded-md"
+    className: "tb_w-full tb_h-full tb_m-auto tb_rounded-md",
+    style: {
+      width: '100%',
+      height: '100%'
+    } // Ensure canvas scales properly
   }));
 };
 /* harmony default export */ __webpack_exports__["default"] = (PreviewCanvas);
@@ -89712,7 +89790,7 @@ function Checkbox(_ref) {
   return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
     className: "tb_mt-4"
   }, currentField.options.length <= 3 && currentField.options.some(function (opt) {
-    return opt.imageUrl;
+    return opt.thumbUrl;
   }) ? /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
     className: "tb_grid ".concat(currentField.options.length === 1 ? 'tb_grid-cols-1' : currentField.options.length === 2 ? 'tb_grid-cols-2' : 'tb_grid-cols-3', " tb_gap-4 tb_justify-center tb_items-center")
   }, currentField.options.map(function (option) {
@@ -89731,8 +89809,8 @@ function Checkbox(_ref) {
       onChange: function onChange(e) {
         return handleOptionChange(e, option, currentField);
       }
-    }), option.imageUrl && /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("img", {
-      src: option.imageUrl,
+    }), option.thumbUrl && /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("img", {
+      src: option.thumbUrl,
       alt: option.label,
       className: "tb_absolute tb_inset-0 tb_w-full tb_h-full tb_object-contain tb_p-2"
     })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
@@ -89758,8 +89836,8 @@ function Checkbox(_ref) {
       }
     }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", {
       className: "tb_font-medium"
-    }, option.label), option.imageUrl && /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("img", {
-      src: option.imageUrl,
+    }, option.label), option.thumbUrl && /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("img", {
+      src: option.thumbUrl,
       alt: option.label,
       className: "tb_w-12 tb_h-12 tb_rounded-full"
     }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", {
@@ -89921,6 +89999,7 @@ function Info(_ref) {
         }
       }
     }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", {
+      className: "tb_mt-4",
       title: "Choose a name for me"
     }, "Choose a name for me"))));
   }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
@@ -90195,7 +90274,7 @@ function Radio(_ref) {
   return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
     className: "tb_mt-4"
   }, currentField.options.length <= 3 && currentField.options.some(function (opt) {
-    return opt.imageUrl;
+    return opt.thumbUrl;
   }) ? /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
     className: "tb_grid ".concat(currentField.options.length === 1 ? 'tb_grid-cols-1' : currentField.options.length === 2 ? 'tb_grid-cols-2' : 'tb_grid-cols-3', " tb_gap-4 tb_justify-center tb_items-center")
   }, currentField.options.map(function (option) {
@@ -90214,8 +90293,8 @@ function Radio(_ref) {
       onChange: function onChange(e) {
         return handleOptionChange(e, option, currentField);
       }
-    }), option.imageUrl && /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("img", {
-      src: option.imageUrl,
+    }), option.thumbUrl && /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("img", {
+      src: option.thumbUrl,
       alt: option.label,
       className: "tb_absolute tb_inset-0 tb_w-full tb_h-full tb_object-contain tb_p-2"
     })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
@@ -90241,8 +90320,8 @@ function Radio(_ref) {
       }
     }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", {
       className: "tb_font-medium"
-    }, option.label), option.imageUrl && /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("img", {
-      src: option.imageUrl,
+    }, option.label), option.thumbUrl && /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("img", {
+      src: option.thumbUrl,
       alt: option.label,
       className: "tb_w-12 tb_h-12 tb_rounded-full"
     }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", {
@@ -90295,9 +90374,9 @@ function Voice(_ref) {
     updateProductData = _ref.updateProductData,
     combinedCart = _ref.combinedCart,
     updateObjRows = _ref.updateObjRows;
-  var inTotal = combinedCart.inTotal,
-    setInTotal = combinedCart.setInTotal,
-    setBlobFiles = combinedCart.setBlobFiles;
+  var setInTotal = combinedCart.setInTotal,
+    setBlobFiles = combinedCart.setBlobFiles,
+    setTotalCost = combinedCart.setTotalCost;
   var _useState = Object(react__WEBPACK_IMPORTED_MODULE_0__["useState"])(false),
     _useState2 = _slicedToArray(_useState, 2),
     isRecording = _useState2[0],
@@ -90393,10 +90472,11 @@ function Voice(_ref) {
                 var remainingTime = parseFloat(currentField.duration) - currentTime;
                 setTimer(Math.abs(remainingTime));
                 if (remainingTime <= 0) {
-                  clearInterval(timerInterval);
                   if (isRecording) {
                     stopRecording();
+                    console.log('stopRecording');
                   }
+                  clearInterval(timerInterval);
                 }
               }, 100);
             case 6:
@@ -90607,8 +90687,8 @@ function Voice(_ref) {
           case 16:
             _context6.prev = 16;
             _context6.t0 = _context6["catch"](3);
-            console.error('Error uploading file:', _context6.t0);
             setError(_context6.t0.message);
+            console.error('Error uploading file:', _context6.t0);
           case 20:
           case "end":
             return _context6.stop();
@@ -90676,9 +90756,6 @@ function Voice(_ref) {
       return filteredFiles;
     });
     updateObjRows(currentField, {
-      product: currentField.product,
-      duration: currentField.duration,
-      cost: currentField.cost,
       attached: recordingData === 'later' ? {
         later: true
       } : recordingData === null ? null : {
@@ -90700,7 +90777,7 @@ function Voice(_ref) {
     className: "tb_flex tb_flex-col tb_items-center"
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
     onClick: isRecording ? stopRecording : startRecording,
-    className: "tb_flex tb_items-center tb_justify-center tb_w-16 tb_h-16 tb_rounded-lg ".concat(isRecording ? 'tb_bg-primary-500' : 'tb_bg-gray-200', " tb_text-white tb_shadow-sm")
+    className: "tb_flex tb_items-center tb_justify-center tb_w-16 tb_h-16 tb_rounded-lg ".concat(isRecording ? 'tb_bg-primary-500' : 'tb_bg-gray-200', " tb_text-gray-600 tb_shadow-sm")
   }, isRecording ? /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(lucide_react__WEBPACK_IMPORTED_MODULE_3__["Square"], {
     className: "tb_w-6 tb_h-6"
   }) : /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(lucide_react__WEBPACK_IMPORTED_MODULE_3__["Mic"], {
@@ -90749,7 +90826,7 @@ function Voice(_ref) {
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
     onClick: togglePlay,
     disabled: isLoading,
-    className: "tb_w-10 tb_h-10 tb_flex tb_items-center tb_justify-center tb_rounded-full ".concat(isLoading ? 'tb_bg-gray-300' : 'tb_bg-gray-200')
+    className: "tb_w-10 tb_h-10 ".concat(isRecording ? 'tb_hidden' : 'tb_flex', " tb_items-center tb_justify-center tb_rounded-full ").concat(isLoading ? 'tb_bg-gray-300' : 'tb_bg-gray-200')
   }, isLoading ? /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
     className: "tb_w-5 tb_h-5 tb_border-4 tb_border-t-transparent tb_border-blue-500 tb_border-solid tb_rounded-full tb_animate-spin"
   }) : isPlaying ? /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(lucide_react__WEBPACK_IMPORTED_MODULE_3__["Pause"], {

@@ -42,6 +42,7 @@ class Project {
 		global $teddy_Meta_Boxes;$teddy_Meta_Boxes = Meta_Boxes::get_instance();
 		global $teddy_Certificate;$teddy_Certificate = Certificate::get_instance();
 		global $teddy_Icon_Library;$teddy_Icon_Library = Icon_Library::get_instance();
+		global $teddy_Category_Edit;$teddy_Category_Edit = Category_Edit::get_instance();
 		// 
 		$this->setup_hooks();
 	}

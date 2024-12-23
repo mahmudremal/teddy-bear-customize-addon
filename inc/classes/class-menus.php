@@ -166,8 +166,8 @@ class Menus {
 			]
 		];
 		$args['global']	= [
-			'title'							=> __('General', 'teddybearsprompts'),
-			'description'					=> __('General settings for teddy-bear customization popup.', 'teddybearsprompts'),
+			'title'							=> __('Global', 'teddybearsprompts'),
+			'description'					=> __('Global settings for teddy-bear customization popup.', 'teddybearsprompts'),
 			'fields'						=> [
 				[
 					'id' 					=> 'global-standing',

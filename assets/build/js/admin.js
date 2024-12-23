@@ -26497,16 +26497,18 @@ __webpack_require__.r(__webpack_exports__);
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _backend__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./backend */ "./src/js/backend/index.js");
-/* harmony import */ var _img_signature_png__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../img/signature.png */ "./src/img/signature.png");
-/* harmony import */ var _img_blank_certificate_jpg__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../img/blank_certificate.jpg */ "./src/img/blank_certificate.jpg");
-/* harmony import */ var _img_certificate_email_sky_jpg__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../img/certificate_email_sky.jpg */ "./src/img/certificate_email_sky.jpg");
-/* harmony import */ var _img_certificate_email_header_png__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../img/certificate_email_header.png */ "./src/img/certificate_email_header.png");
-/* harmony import */ var _img_reactangle_bg_png__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../img/reactangle-bg.png */ "./src/img/reactangle-bg.png");
-/* harmony import */ var _img_stickers24jpg_06_png__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../img/stickers24jpg-06.png */ "./src/img/stickers24jpg-06.png");
-/* harmony import */ var _img_certificate_hebrew_jpg__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../img/certificate_hebrew.jpg */ "./src/img/certificate_hebrew.jpg");
-/* harmony import */ var _img_dubido_certificate_png__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../img/dubido_certificate.png */ "./src/img/dubido_certificate.png");
-/* harmony import */ var _img_english_birth_certificate_png__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../img/english-birth-certificate.png */ "./src/img/english-birth-certificate.png");
-/* harmony import */ var _img_hebrew_birth_certificate_png__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../img/hebrew-birth-certificate.png */ "./src/img/hebrew-birth-certificate.png");
+/* harmony import */ var _sass_admin_scss__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../sass/admin.scss */ "./src/sass/admin.scss");
+/* harmony import */ var _sass_admin_scss__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_sass_admin_scss__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _img_signature_png__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../img/signature.png */ "./src/img/signature.png");
+/* harmony import */ var _img_blank_certificate_jpg__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../img/blank_certificate.jpg */ "./src/img/blank_certificate.jpg");
+/* harmony import */ var _img_certificate_email_sky_jpg__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../img/certificate_email_sky.jpg */ "./src/img/certificate_email_sky.jpg");
+/* harmony import */ var _img_certificate_email_header_png__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../img/certificate_email_header.png */ "./src/img/certificate_email_header.png");
+/* harmony import */ var _img_reactangle_bg_png__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../img/reactangle-bg.png */ "./src/img/reactangle-bg.png");
+/* harmony import */ var _img_stickers24jpg_06_png__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../img/stickers24jpg-06.png */ "./src/img/stickers24jpg-06.png");
+/* harmony import */ var _img_certificate_hebrew_jpg__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../img/certificate_hebrew.jpg */ "./src/img/certificate_hebrew.jpg");
+/* harmony import */ var _img_dubido_certificate_png__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../img/dubido_certificate.png */ "./src/img/dubido_certificate.png");
+/* harmony import */ var _img_english_birth_certificate_png__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../img/english-birth-certificate.png */ "./src/img/english-birth-certificate.png");
+/* harmony import */ var _img_hebrew_birth_certificate_png__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ../img/hebrew-birth-certificate.png */ "./src/img/hebrew-birth-certificate.png");
 // https://kinsta.com/blog/http-status-codes/
 // Scripts
 // import './frontend';
@@ -26516,7 +26518,7 @@ __webpack_require__.r(__webpack_exports__);
 // import './modules/qrcode';
 
 // Styles
-// import '../sass/admin.scss';
+
 
 // Images.
 
@@ -31043,6 +31045,17 @@ Object.keys(icons).forEach(function (key) {
   icons[key] = "<span class=\"svg_icon svg_icon__" + key + "\">" + icons[key] + "</span>";
 });
 /* harmony default export */ __webpack_exports__["default"] = (icons);
+
+/***/ }),
+
+/***/ "./src/sass/admin.scss":
+/*!*****************************!*\
+  !*** ./src/sass/admin.scss ***!
+  \*****************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+// extracted by mini-css-extract-plugin
 
 /***/ })
 

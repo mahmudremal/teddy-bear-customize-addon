@@ -10,10 +10,26 @@ import PriceBlock from './blocks/priceBlock';
 import Checkbox from './blocks/checkbox';
 import Input from './blocks/input';
 import Confirmation from './Confirmation';
-const ProductCustomization = ({ product, updateProductData, closePopup }) => {
+const ProductCustomization = ({ product, setProduct, updateProductData, closePopup }) => {
+
+    const iFRows = product.custom_fields[product.custom_data.product_type].map(f => {
+        const nf = { ...f };
+        if (f.options) {
+            nf.options = [];
+        }
+        if (f.groups) {
+            nf.groups = f.groups.map(g => ({
+                ...g,
+                options: []
+            }));
+        }
+        return nf;
+    });
+    
+    
     const { useEffect, useState } = React;
     const [canvasBlob, setCanvasBlob] = useState(null);
-    const [objRows, setObjRows] = useState([]);
+    const [objRows, setObjRows] = useState(iFRows);
     const [activeTab, setActiveTab] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
     const [currentStep, setCurrentStep] = useState(0);
@@ -109,87 +125,63 @@ const ProductCustomization = ({ product, updateProductData, closePopup }) => {
     };
 
     const updateObjRows = (field, selectedData) => {
-        setObjRows(prevRows => {
-            // Find existing row with same fieldID
-            const existingRowIndex = prevRows.findIndex(row => row.fieldID === field.fieldID);
-            const newRow = {
-                fieldID: field.fieldID,
-                type: field.type,
-                steptitle: field.steptitle,
-                headerbg: field.headerbg,
-                ...selectedData
-            };
-
-            if (existingRowIndex !== -1) {
-                // Update existing row
-                const updatedRows = [...prevRows];
-                updatedRows[existingRowIndex] = newRow;
-                return updatedRows;
-            } else {
-                // Add new row
-                return [...prevRows, newRow];
-            }
-        });
+        const existingRowIndex = objRows.findIndex(row => row.id === field.id);
+        const newRow = { ...field, ...selectedData };
+        // console.log('newRow', newRow, existingRowIndex, objRows[existingRowIndex]);
+        const newObj = existingRowIndex !== -1 ? objRows.map((row, index) => index === existingRowIndex ? newRow : row) : [...objRows, newRow];
+        setObjRows(newObj);
+        // console.log('objRows', objRows);
+        setTotalCost(newObj);
     };
 
-    const handleOptionChange = (e, option, currentField) => {
-        console.log(e, option, currentField);
-        if (e.target.checked) {
+    const handleOptionChange = (e, option, currentField, groupid = false) => {
+        // console.log('handleOptionChange', e, option, currentField);
+        const selectedInput = e.target;
+        if (selectedInput) {
             let imageChanged = false;
             let newImgLayers = { ...imgLayers };
 
-            // Handle outfit section with groups
-            if (currentField.groups) {
+            if (currentField?.groups) {
                 currentField.groups.forEach(group => {
                     if (group.type === 'radio' || group.type === 'select') {
                         newImgLayers[group.title] = newImgLayers[group.title] || [];
-                        const selectedInput = document.querySelector(`input[name="${group.title}"]:checked`);
-                        if (selectedInput) {
-                            const selectedLabel = selectedInput.id.replace('option-', '');
-                            const selectedOption = group.options.find(opt => opt.label === selectedLabel);
-                            if (selectedOption?.thumbUrl && selectedOption?.imageUrl) {
-                                if (selectedInput.type === 'radio') {
-                                    newImgLayers[group.title] = [];
-                                }
-                                newImgLayers[group.title].push(selectedOption.imageUrl);
-                                imageChanged = true;
+                        if (option?.imageUrl && option.imageUrl !== '') {
+                            if (selectedInput.type === 'radio') {
+                                newImgLayers[group.title] = [];
                             }
+                            if (selectedInput.checked) {
+                                newImgLayers[group.title].push(option.imageUrl);
+                            } else {
+                                newImgLayers[group.title] = newImgLayers[group.title].filter(img => img !== option.imageUrl);
+                            }
+                            imageChanged = true;
                         }
                     } else if (group.type === 'checkbox') {
                         newImgLayers[group.title] = newImgLayers[group.title] || [];
-                        const checkedInputs = document.querySelectorAll(`input[name="${group.title}"]:checked`);
-                        newImgLayers[group.title] = []; // Reset checkbox group
-                        checkedInputs.forEach(input => {
-                            const checkedLabel = input.id.replace('option-', '');
-                            const checkedOption = group.options.find(opt => opt.label === checkedLabel);
-                            if (checkedOption?.thumbUrl && checkedOption?.imageUrl) {
-                                newImgLayers[group.title].push(checkedOption.imageUrl);
-                                imageChanged = true;
-                            }
-                        });
+                        if (selectedInput.checked) {
+                            newImgLayers[group.title].push(option.imageUrl);
+                        } else {
+                            newImgLayers[group.title] = newImgLayers[group.title].filter(img => img !== option.imageUrl);
+                        }
+                        imageChanged = true;
                     }
                 });
-            }
-            // Handle other sections with direct options (like heart selection)
-            else if (currentField.options) {
-                newImgLayers[option.fieldID] = newImgLayers[option.fieldID] || [];
+            } else if (currentField?.options) {
+                newImgLayers[option.id] = newImgLayers[option.id] || [];
                 if (currentField.type === 'radio') {
                     if (option?.thumbUrl && option?.imageUrl) {
-                        newImgLayers[option.fieldID] = [];
-                        newImgLayers[option.fieldID].push(option.imageUrl);
+                        newImgLayers[option.id] = [];
+                        newImgLayers[option.id].push(option.imageUrl);
                         imageChanged = true;
                     }
                 }
             }
 
-            // Update canvas with all selected images
             if (imageChanged) {
-                console.log(newImgLayers);
                 setImgLayers(newImgLayers);
                 updateCanvasImages(Object.values(newImgLayers).flat());
             }
 
-            // Track selection based on field type
             switch (currentField.type) {
                 case 'radio':
                     updateObjRows(currentField, {
@@ -198,39 +190,65 @@ const ProductCustomization = ({ product, updateProductData, closePopup }) => {
                     break;
                     
                 case 'checkbox':
-                    const checkedOptions = document.querySelectorAll(`input[name="${currentField.title}"]:checked`);
-                    const selectedOptions = Array.from(checkedOptions).map(input => {
-                        const label = input.id.replace('option-', '');
-                        return currentField.options.find(opt => opt.label === label);
-                    });
-                    updateObjRows(currentField, {
-                        options: selectedOptions
-                    });
+                    // updateObjRows(currentField, {
+                    //     options: selectedOptions
+                    // });
                     break;
                     
                 case 'outfit':
-                    const group = currentField.groups.find(g => g.title === option.fieldID);
+                    const group = currentField.groups.find(g => g.id == groupid);
                     if (group) {
+                        option.selected = true;
+                        const updatedGroups = objRows.find(f => f.id == currentField.id).groups.map(g => {
+                            if (g.id == groupid) {
+                                g.options = g.options.filter(o => o.id === option.id)
+                            }
+                            return g;
+                        });
                         updateObjRows(currentField, {
-                            groups: currentField.groups.map(g => ({
-                                type: g.type,
-                                layer: g.layer,
-                                title: g.title,
-                                rowtype: g.rowtype,
-                                options: g.title === option.fieldID ? [option] : []
-                            }))
+                            groups: updatedGroups
+                        });
+                        console.log('updatedBlock', {
+                            groups: updatedGroups
                         });
                     }
                     break;
             }
         }
     };
+    // 
+    const getTotalCost = (obj = false) => {
+        let totalCostEstimate = 0;
+        if (! obj) {obj = objRows;}
+        console.log('getTotalCost', obj);
+        obj.forEach(field => {
+            switch (field.type) {
+                case 'radio':
+                case 'select':
+                case 'checkbox':
+                    totalCostEstimate += field.options.reduce((acc, opt) => acc + (parseFloat(opt.cost) || 0), 0);
+                    break;
+                case 'outfit':
+                    totalCostEstimate += field.groups.reduce((acc, group) => acc + group.options.reduce((acc, opt) => acc + (parseFloat(opt.cost) || 0), 0), 0);
+                    break;
+                case 'voice':
+                    totalCostEstimate += (field?.attached?.later || field?.attached?.blob) ? (parseFloat(field?.cost) || 0) : 0;
+                    break;
+                default:
+                    // console.log('default', field);
+                    break;
+            }
+        });
+        // console.log('totalCostEstimate', totalCostEstimate, objRows);
+        return totalCostEstimate;
+    };
+    const setTotalCost = (obj = false) => setInTotal(getTotalCost(obj));
 
     const currentFields = product.custom_fields?.[selectedType] || [];
     const currentField = currentFields[currentStep];
 
     const combinedCart = {
-        discountTotal, inTotal, setDiscountTotal, setInTotal, setBlobFiles
+        discountTotal, inTotal, setDiscountTotal, setInTotal, setBlobFiles, getTotalCost, setTotalCost
     };
 
     return (
@@ -295,7 +313,7 @@ const ProductCustomization = ({ product, updateProductData, closePopup }) => {
                             )}
 
                             {['standing', 'sitting'].includes(selectedType) && (
-                                <div className="tb_m-auto tb_mb-8 tb_w-full tb_h-auto md:tb_w-[350px] md:tb_h-[350px]">
+                                <div className={ `tb_m-auto tb_mb-8 tb_h-auto ${activeTab === null ? 'tb_w-full md:tb_w-[350px]' : 'tb_w-[70%] md:tb_w-[250px]'}` }>
                                     <PreviewCanvas images={canvasImages} baseImage={product.custom_data._canvas} setCanvasBlob={setCanvasBlob} activeTab={activeTab} />
                                 </div>
                             )}
@@ -304,12 +322,12 @@ const ProductCustomization = ({ product, updateProductData, closePopup }) => {
 
                             {currentFields.map((field, idx) => (
                                 <div 
-                                    key={field.fieldID}
-                                    className={`tb_bg-gray-50 tb_p-6 tb_rounded-lg ${ isSingleTab ? '' : 'tb_shadow-md'} tb_mb-0 ${isSingleTab ? '' : activeTab === idx ? '' : 'tb_hidden'}`}
+                                    key={idx}
+                                    className={`tb_bg-gray-50 tb_px-6 tb_pt-4 tb_pb-2 tb_rounded-lg ${ isSingleTab || currentFields[currentStep]?.type === 'info' ? '' : 'tb_shadow-md'} tb_mb-0 ${isSingleTab ? '' : activeTab === idx ? '' : 'tb_hidden'}`}
                                 >
                                     {error && (
-                                        <div className="tb_bg-primary-100 tb_border tb_border-primary-400 tb_text-primary-700 tb_px-4 tb_py-3 tb_rounded tb_relative tb_mb-4" role="alert">
-                                            <strong className="tb_font-bold">Error: </strong>
+                                        <div className="tb_bg-primary-100 tb_border tb_border-primary-400 tb_text-primary-700 tb_px-4 tb_py-3 tb_rounded tb_relative tb_mb-2" role="alert">
+                                            {/* <strong className="tb_font-bold">Error: </strong> */}
                                             <span className="tb_block tb_sm:inline">{error}</span>
                                             {(() => {
                                                 setTimeout(() => setError(null), 10000)
@@ -339,23 +357,23 @@ const ProductCustomization = ({ product, updateProductData, closePopup }) => {
                                             case 'checkbox':
                                                 return <Checkbox setError={setError} currentField={field} handleOptionChange={handleOptionChange} updateProductData={updateProductData} combinedCart={combinedCart} updateObjRows={updateObjRows} />
                                             case 'outfit':
-                                                return <Outfit setError={setError} currentField={field} selectedOutfit={selectedOutfit} setSelectedOutfit={setSelectedOutfit} handleOptionChange={handleOptionChange} updateProductData={updateProductData} combinedCart={combinedCart} updateObjRows={updateObjRows} />
+                                                return <Outfit setError={setError} currentField={field} handleOptionChange={handleOptionChange} selectedOutfit={selectedOutfit} setSelectedOutfit={setSelectedOutfit} updateProductData={updateProductData} combinedCart={combinedCart} updateObjRows={updateObjRows} />
                                             case 'voice':
-                                                return <Voice setError={setError} currentField={field} setActiveTab={setActiveTab} updateProductData={updateProductData} combinedCart={combinedCart} updateObjRows={updateObjRows} />
+                                                return <Voice setError={setError} currentField={field} handleOptionChange={handleOptionChange} setActiveTab={setActiveTab} updateProductData={updateProductData} combinedCart={combinedCart} updateObjRows={updateObjRows} />
                                             case 'info':
-                                                return <Info setError={setError} currentField={field} setActiveTab={setActiveTab} updateProductData={updateProductData} combinedCart={combinedCart} updateObjRows={updateObjRows} />
+                                                return <Info setError={setError} currentField={field} handleOptionChange={handleOptionChange} setActiveTab={setActiveTab} updateProductData={updateProductData} combinedCart={combinedCart} updateObjRows={updateObjRows} />
                                             default:
-                                                return <Input setError={setError} currentField={field} setActiveTab={setActiveTab} updateProductData={updateProductData} combinedCart={combinedCart} updateObjRows={updateObjRows} />
+                                                return <Input setError={setError} currentField={field} handleOptionChange={handleOptionChange} setActiveTab={setActiveTab} updateProductData={updateProductData} combinedCart={combinedCart} updateObjRows={updateObjRows} />
                                         }
                                     })()}
                                     
                                 </div>
                             ))}
 
-                            <div className={`tb_flex tb_justify-evenly ${activeTab !== null || isSingleTab ? 'tb_hidden' : ''}`}>
+                            <div className={`tb_flex tb_justify-center tb_gap-2 tb_px-2 ${activeTab !== null || isSingleTab ? 'tb_hidden' : ''}`}>
                                 {currentFields.map((field, idx) => (
                                     <div
-                                        key={field.fieldID}
+                                        key={idx}
                                         className={`tb_relative tb_cursor-pointer tb_p-2 tb_rounded-md ${activeTab === idx ? 'tb_bg-blue-500 tb_text-white' : 'tb_bg-gray-200'}`}
                                         onClick={() => handleTabClick(idx)}
                                     >

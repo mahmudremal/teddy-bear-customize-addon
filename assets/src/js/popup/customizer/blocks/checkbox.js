@@ -7,7 +7,7 @@ import Slider from 'react-slick';
 export default function Checkbox({ currentField, handleOptionChange, updateProductData, updateObjRows }) {
     return (
         <div className="tb_mt-4">
-            {currentField.options.length <= 3 && currentField.options.some(opt => opt.imageUrl) ? (
+            {currentField.options.length <= 3 && currentField.options.some(opt => opt.thumbUrl) ? (
                 <div className={`tb_grid ${currentField.options.length === 1 ? 'tb_grid-cols-1' : currentField.options.length === 2 ? 'tb_grid-cols-2' : 'tb_grid-cols-3'} tb_gap-4 tb_justify-center tb_items-center`}>
                     {currentField.options.map((option) => (
                         <div key={option.label} className="tb_text-center">
@@ -20,9 +20,9 @@ export default function Checkbox({ currentField, handleOptionChange, updateProdu
                                         className="tb_hidden"
                                         onChange={e => handleOptionChange(e, option, currentField)}
                                     />
-                                    {option.imageUrl && (
+                                    {option.thumbUrl && (
                                         <img
-                                            src={option.imageUrl}
+                                            src={option.thumbUrl}
                                             alt={option.label}
                                             className="tb_absolute tb_inset-0 tb_w-full tb_h-full tb_object-contain tb_p-2"
                                         />
@@ -50,9 +50,9 @@ export default function Checkbox({ currentField, handleOptionChange, updateProdu
                                 onChange={e => handleOptionChange(e, option, currentField)}
                             />
                             <span className="tb_font-medium">{option.label}</span>
-                            {option.imageUrl && (
+                            {option.thumbUrl && (
                                 <img
-                                    src={option.imageUrl}
+                                    src={option.thumbUrl}
                                     alt={option.label}
                                     className="tb_w-12 tb_h-12 tb_rounded-full"
                                 />

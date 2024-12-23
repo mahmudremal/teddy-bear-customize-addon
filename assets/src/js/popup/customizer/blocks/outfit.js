@@ -45,7 +45,6 @@ export default function Outfit({ currentField, selectedOutfit, setSelectedOutfit
                     </h4>
                 ))}
             </div>
-
             
             {currentField.groups.map((group, idx) => (
                 <div key={idx} className={`${selectedOutfit === group.title ? 'tb_block' : 'tb_hidden'} tb_min-h-[150px]`}>

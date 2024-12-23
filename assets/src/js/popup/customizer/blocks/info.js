@@ -89,7 +89,7 @@ export default function Info({ currentField, setActiveTab, setError, updateProdu
                                             }
                                         }}
                                     />
-                                    <span title="Choose a name for me">Choose a name for me</span>
+                                    <span className="tb_mt-4" title="Choose a name for me">Choose a name for me</span>
                                 </label>
                             )}
                         </fieldset>

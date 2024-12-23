@@ -5,7 +5,7 @@ import { Mic, Play, Pause, Square, Upload, Mail, SkipForward } from 'lucide-reac
 import { sprintf } from 'sprintf-js';
 
 export default function Voice({ currentField, setError, updateProductData, combinedCart, updateObjRows }) {
-    const { inTotal, setInTotal, setBlobFiles } = combinedCart;
+    const { setInTotal, setBlobFiles, setTotalCost } = combinedCart;
     const [isRecording, setIsRecording] = useState(false);
     const [audioFile, setAudioFile] = useState(null);
     const [recordingStatus, setRecordingStatus] = useState('');
@@ -70,10 +70,8 @@ export default function Voice({ currentField, setError, updateProductData, combi
                     const remainingTime = parseFloat(currentField.duration) - currentTime;
                     setTimer(Math.abs(remainingTime));
                     if (remainingTime <= 0) {
+                        if (isRecording) {stopRecording();console.log('stopRecording');}
                         clearInterval(timerInterval);
-                        if (isRecording) {
-                            stopRecording();
-                        }
                     }
                 }, 100);
             });
@@ -196,8 +194,8 @@ export default function Voice({ currentField, setError, updateProductData, combi
                 };
                 fileReader.readAsArrayBuffer(file);
             } catch (err) {
-                console.error('Error uploading file:', err);
                 setError(err.message);
+                console.error('Error uploading file:', err);
             }
         }
     };
@@ -259,9 +257,6 @@ export default function Voice({ currentField, setError, updateProductData, combi
             return filteredFiles;
         });
         updateObjRows(currentField, {
-            product: currentField.product,
-            duration: currentField.duration,
-            cost: currentField.cost,
             attached: recordingData === 'later' ? {later: true} : recordingData === null ? null : {
                 blob: recordingData.includes('/') ? // Check if it's a URL (recording) or filename (upload)
                     `${timestamp}-recording.mp3` : // For recording
@@ -276,7 +271,7 @@ export default function Voice({ currentField, setError, updateProductData, combi
             <div className="tb_space-y-4">
                 <div className="tb_grid tb_grid-cols-4 tb_gap-5 tb_justify-items-center">
                     <div className="tb_flex tb_flex-col tb_items-center">
-                        <button onClick={isRecording ? stopRecording : startRecording} className={`tb_flex tb_items-center tb_justify-center tb_w-16 tb_h-16 tb_rounded-lg ${isRecording ? 'tb_bg-primary-500' : 'tb_bg-gray-200'} tb_text-white tb_shadow-sm`}>
+                        <button onClick={isRecording ? stopRecording : startRecording} className={`tb_flex tb_items-center tb_justify-center tb_w-16 tb_h-16 tb_rounded-lg ${isRecording ? 'tb_bg-primary-500' : 'tb_bg-gray-200'} tb_text-gray-600 tb_shadow-sm`}>
                             {isRecording ? <Square className="tb_w-6 tb_h-6" /> : <Mic className="tb_w-6 tb_h-6" />}
                         </button>
                         <span className="tb_mt-2 tb_text-xs tb_text-gray-600">Record</span>
@@ -320,7 +315,7 @@ export default function Voice({ currentField, setError, updateProductData, combi
                 ) : null}
 
                 <div className={`tb_flex tb_items-center tb_gap-4 ${!audioFile ? (isRecording ? '' : 'tb_hidden') : ''}`}>
-                    <button onClick={togglePlay} disabled={isLoading} className={`tb_w-10 tb_h-10 tb_flex tb_items-center tb_justify-center tb_rounded-full ${isLoading ? 'tb_bg-gray-300' : 'tb_bg-gray-200'}`} >
+                    <button onClick={togglePlay} disabled={isLoading} className={`tb_w-10 tb_h-10 ${isRecording ? 'tb_hidden' : 'tb_flex'} tb_items-center tb_justify-center tb_rounded-full ${isLoading ? 'tb_bg-gray-300' : 'tb_bg-gray-200'}`} >
                         {isLoading ? (
                             <div className="tb_w-5 tb_h-5 tb_border-4 tb_border-t-transparent tb_border-blue-500 tb_border-solid tb_rounded-full tb_animate-spin" />
                         ) : isPlaying ? (

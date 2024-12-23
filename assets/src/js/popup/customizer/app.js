@@ -30,7 +30,6 @@ function App() {
   const [visiblePopup, setVisiblePopup] = useState(false);
 
   useEffect(() => {
-    
     const handleButtonClick = async (e) => {
       e.preventDefault();e.stopPropagation();
       const button = e.currentTarget;
@@ -62,8 +61,36 @@ function App() {
         if (!response.data || !response.data.data || !response.data.data.product) {
           throw new Error('Invalid response format');
         }
+        const data = response.data.data;let uniqueID = 0;
 
-        setProductData(response.data.data.product);
+        Object.keys(data.product.custom_fields).forEach(fieldsKey => {
+          const fields = data.product.custom_fields[fieldsKey];
+          fields.forEach(field => {
+            field.id = uniqueID++;
+            switch (field.type) {
+              case 'radio':
+              case 'select':
+              case 'checkbox':
+                field.options.forEach(opt => {
+                  opt.id = uniqueID++;
+                });
+                break;
+              case 'outfit':
+                field.groups.forEach(group => {
+                  group.id = uniqueID++;
+                  group.options.forEach(opt => {
+                    opt.id = uniqueID++;
+                  });
+                });
+                break;
+              default:
+                break;
+            }
+          });
+          data.product.custom_fields[fieldsKey] = fields;
+        });
+        // 
+        setProductData(data.product);
         setError(null);
       } catch (err) {
         console.error('Error:', err);
@@ -144,6 +171,7 @@ function App() {
                 ReactDOM={ReactDOM} 
                 product_id={productId} 
                 product={productData} 
+                setProduct={setProductData}
                 updateProductData={updateProductData} 
                 closePopup={closePopup} 
               />
