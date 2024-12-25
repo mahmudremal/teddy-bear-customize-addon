@@ -10,7 +10,7 @@ import PriceBlock from './blocks/priceBlock';
 import Checkbox from './blocks/checkbox';
 import Input from './blocks/input';
 import Confirmation from './Confirmation';
-const ProductCustomization = ({ product, setProduct, updateProductData, closePopup }) => {
+const ProductCustomization = ({ product, setProduct, updateProductData, closePopup, setAllowClose }) => {
 
     const iFRows = product.custom_fields[product.custom_data.product_type].map(f => {
         const nf = { ...f };
@@ -27,9 +27,10 @@ const ProductCustomization = ({ product, setProduct, updateProductData, closePop
     });
     
     
-    const { useEffect, useState } = React;
+    const { useEffect, useState, useRef } = React;
     const [canvasBlob, setCanvasBlob] = useState(null);
-    const [objRows, setObjRows] = useState(iFRows);
+    // const [objRows, setObjRows] = useState(iFRows);
+    const objRows = useRef(iFRows);
     const [activeTab, setActiveTab] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
     const [currentStep, setCurrentStep] = useState(0);
@@ -97,7 +98,7 @@ const ProductCustomization = ({ product, setProduct, updateProductData, closePop
         formData.append('product_id', product.id);
         formData.append('quantity', 1);
 
-        formData.append('dataset', JSON.stringify(objRows));
+        formData.append('dataset', JSON.stringify(objRows.current));
 
         formData.append('_blobs', blobFiles);
         formData.append('_canvas', canvasBlob);
@@ -110,6 +111,7 @@ const ProductCustomization = ({ product, setProduct, updateProductData, closePop
                 const data = response.data.data;
                 if (data?.confirmation && data.confirmation?.title) {
                     setConfirmation(data.confirmation);
+                    setAllowClose(true);
                 } else {
                     setError(data.message);
                 }
@@ -125,11 +127,12 @@ const ProductCustomization = ({ product, setProduct, updateProductData, closePop
     };
 
     const updateObjRows = (field, selectedData) => {
-        const existingRowIndex = objRows.findIndex(row => row.id === field.id);
+        const existingRowIndex = objRows.current.findIndex(row => row.id === field.id);
         const newRow = { ...field, ...selectedData };
         // console.log('newRow', newRow, existingRowIndex, objRows[existingRowIndex]);
-        const newObj = existingRowIndex !== -1 ? objRows.map((row, index) => index === existingRowIndex ? newRow : row) : [...objRows, newRow];
-        setObjRows(newObj);
+        const newObj = existingRowIndex !== -1 ? objRows.current.map((row, index) => index === existingRowIndex ? newRow : row) : [...objRows, newRow];
+        // setObjRows(newObj);
+        objRows.current = newObj;
         // console.log('objRows', objRows);
         setTotalCost(newObj);
     };
@@ -198,19 +201,18 @@ const ProductCustomization = ({ product, setProduct, updateProductData, closePop
                 case 'outfit':
                     const group = currentField.groups.find(g => g.id == groupid);
                     if (group) {
-                        option.selected = true;
-                        const updatedGroups = objRows.find(f => f.id == currentField.id).groups.map(g => {
+                        // console.log(group)
+                        const updatedGroups = objRows.current.find(f => f.id == currentField.id).groups.map(g => {
                             if (g.id == groupid) {
-                                g.options = g.options.filter(o => o.id === option.id)
+                                // console.log('option found', group.options.filter(o => o.id === option.id))
+                                g.options = group.options.filter(o => o.id === option.id)
                             }
                             return g;
                         });
                         updateObjRows(currentField, {
                             groups: updatedGroups
                         });
-                        console.log('updatedBlock', {
-                            groups: updatedGroups
-                        });
+                        // console.log('updatedBlock', updatedGroups.map(g => g.options));
                     }
                     break;
             }
@@ -220,7 +222,7 @@ const ProductCustomization = ({ product, setProduct, updateProductData, closePop
     const getTotalCost = (obj = false) => {
         let totalCostEstimate = 0;
         if (! obj) {obj = objRows;}
-        console.log('getTotalCost', obj);
+        // console.log('getTotalCost', obj);
         obj.forEach(field => {
             switch (field.type) {
                 case 'radio':
@@ -252,13 +254,13 @@ const ProductCustomization = ({ product, setProduct, updateProductData, closePop
     };
 
     return (
-        <div className="tb_mx-auto tb_p-0">
+        <div className="tb_mx-auto tb_p-0 tb_select-none">
             <link rel="stylesheet" type="text/css" charSet="UTF-8" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.6.0/slick.min.css" />
             <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.6.0/slick-theme.min.css" />
             
             { confirmation === null ? (
-                <div>
-                    <div className="tb_flex tb_justify-between tb_items-center tb_w-full tb_flex-nowrap tb_h-[50px] tb_overflow-hidden tb_mx-auto tb_px-[15px] tb_py-[10px] tb_border-b tb_border-[#eee] tb_box-border">
+                <div >
+                    <div className="tb_flex tb_justify-between tb_items-center tb_w-full tb_flex-nowrap tb_h-[60px] tb_overflow-hidden tb_mx-auto tb_px-[15px] tb_py-[10px] tb_border-b tb_border-[#eee] tb_box-border">
                         <div className="tb_w-1/3 tb_flex tb_justify-start">
                             <button 
                                 onClick={closePopup}
@@ -277,14 +279,14 @@ const ProductCustomization = ({ product, setProduct, updateProductData, closePop
                             />
                         </div>
                         <div className="tb_w-1/3 tb_flex tb_justify-end">
-                            <div className="tb_text-sm tb_font-semibold price_amount tb_px-2 tb_py-1 tb_text-primary tb_bg-primary-100">
+                            <div className="tb_text-sm tb_font-semibold price_amount tb_rounded tb_px-6 tb_py-2 tb_text-black tb_bg-primary-100">
                                 <PriceBlock price_html={product.priceHtml} inTotal={inTotal} discountTotal={discountTotal} />
                             </div>
                         </div>
                     </div>
 
                     { isLoading ? ( <div className="tb_flex tb_justify-center tb_items-center tb_h-auto"><Loading /> </div> ) : (
-                        <div className="tb_relative">
+                        <div className="tb_relative tb_min-h-96">
                             {!['standing', 'sitting'].includes(selectedType) && (
                                 <div className="tb_flex tb_justify-between tb_mb-8">
                                     <div
@@ -293,10 +295,10 @@ const ProductCustomization = ({ product, setProduct, updateProductData, closePop
                                     >
                                         <img
                                             src={product.positions.standing}
-                                            alt="Standing"
+                                            alt={__('standingplushies', 'Standing')}
                                             className="tb_w-full tb_h-auto tb_rounded-md"
                                         />
-                                        <p className="tb_text-center tb_mt-2 tb_font-semibold">Standing</p>
+                                        <p className="tb_text-center tb_mt-2 tb_font-semibold">{__('standingplushies', 'Standing')}</p>
                                     </div>
                                     <div
                                         className="tb_cursor-pointer tb_p-4 tb_border-2 tb_border-gray-300 tb_rounded-md tb_hover:bg-gray-100"
@@ -304,16 +306,16 @@ const ProductCustomization = ({ product, setProduct, updateProductData, closePop
                                     >
                                         <img
                                             src={product.positions.sitting}
-                                            alt="Sitting"
+                                            alt={__('sittingplushies', 'Sitting')}
                                             className="tb_w-full tb_h-auto tb_rounded-md"
                                         />
-                                        <p className="tb_text-center tb_mt-2 tb_font-semibold">Sitting</p>
+                                        <p className="tb_text-center tb_mt-2 tb_font-semibold">{__('sittingplushies', 'Sitting')}</p>
                                     </div>
                                 </div>
                             )}
 
                             {['standing', 'sitting'].includes(selectedType) && (
-                                <div className={ `tb_m-auto tb_mb-8 tb_h-auto ${activeTab === null ? 'tb_w-full md:tb_w-[350px]' : 'tb_w-[70%] md:tb_w-[250px]'}` }>
+                                <div className={ `tb_m-auto tb_mb-8 tb_h-auto ${activeTab === null ? 'tb_w-60 md:tb_w-[350px]' : 'tb_w-36 md:tb_w-52'}` }>
                                     <PreviewCanvas images={canvasImages} baseImage={product.custom_data._canvas} setCanvasBlob={setCanvasBlob} activeTab={activeTab} />
                                 </div>
                             )}
@@ -323,7 +325,7 @@ const ProductCustomization = ({ product, setProduct, updateProductData, closePop
                             {currentFields.map((field, idx) => (
                                 <div 
                                     key={idx}
-                                    className={`tb_bg-gray-50 tb_px-6 tb_pt-4 tb_pb-2 tb_rounded-lg ${ isSingleTab || currentFields[currentStep]?.type === 'info' ? '' : 'tb_shadow-md'} tb_mb-0 ${isSingleTab ? '' : activeTab === idx ? '' : 'tb_hidden'}`}
+                                    className={`tb_border tb_border-gray-200 tb_px-6 tb_pt-4 tb_pb-2 tb_rounded-lg tb_w-[90%] tb_m-auto ${ isSingleTab || currentFields[currentStep]?.type === 'info' ? '' : 'tb_shadow-md'} tb_mb-0 ${isSingleTab ? '' : activeTab === idx ? '' : 'tb_hidden'}`}
                                 >
                                     {error && (
                                         <div className="tb_bg-primary-100 tb_border tb_border-primary-400 tb_text-primary-700 tb_px-4 tb_py-3 tb_rounded tb_relative tb_mb-2" role="alert">
@@ -345,7 +347,7 @@ const ProductCustomization = ({ product, setProduct, updateProductData, closePop
                                                 onClick={currentStep === (product.custom_fields[selectedType]?.length || 0) - 1 ? handleDone : handleNextStep}
                                                 className="tb_text-primary tb_font-medium tb_px-2 tb_rounded-md"
                                             >
-                                                {currentStep === (product.custom_fields[selectedType]?.length || 0) - 1 ? 'Done' : 'Next'}
+                                                {currentStep === (product.custom_fields[selectedType]?.length || 0) - 1 ? __('done', 'Done') : __('next', 'Next')}
                                             </button>
                                         )}
                                     </div>
@@ -370,11 +372,11 @@ const ProductCustomization = ({ product, setProduct, updateProductData, closePop
                                 </div>
                             ))}
 
-                            <div className={`tb_flex tb_justify-center tb_gap-2 tb_px-2 ${activeTab !== null || isSingleTab ? 'tb_hidden' : ''}`}>
+                            <div className={`tb_flex tb_justify-center tb_gap-2 tb_px-4 ${activeTab !== null || isSingleTab ? 'tb_hidden' : ''}`}>
                                 {currentFields.map((field, idx) => (
                                     <div
                                         key={idx}
-                                        className={`tb_relative tb_cursor-pointer tb_p-2 tb_rounded-md ${activeTab === idx ? 'tb_bg-blue-500 tb_text-white' : 'tb_bg-gray-200'}`}
+                                        className={`tb_relative tb_cursor-pointer tb_p-2 tb_rounded-md tb_border ${activeTab === idx ? 'tb_border-blue-500 tb_text-white' : 'tb_border-gray-200'}`}
                                         onClick={() => handleTabClick(idx)}
                                     >
                                         <img
@@ -395,7 +397,7 @@ const ProductCustomization = ({ product, setProduct, updateProductData, closePop
                             { (activeTab === null || isSingleTab) && (
                                 <div className="tb_flex tb_justify-center tb_p-4">
                                     <button onClick={addToCart} className="tb_w-full tb_bg-primary tb_text-white tb_px-4 tb_py-2 tb_rounded-lg tb_font-medium hover:tb_bg-primary-dark" disabled={add2CartLoading}>
-                                        {add2CartLoading ? 'Adding...' : 'Add to Cart'}
+                                        {add2CartLoading ? __('adding_', 'Adding...') : __('add_to_cart', 'Add to Cart')}
                                     </button>
                                 </div>
                             )}

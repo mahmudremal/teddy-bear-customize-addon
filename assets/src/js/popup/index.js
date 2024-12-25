@@ -15,6 +15,10 @@ const root = document.createElement('div');
 document.body.appendChild(root);
 const reactRoot = createRoot(root);
 
+window.__ = (str, def = '') => {
+    return fwpSiteConfig.i18n[str] || def;
+}
+
 reactRoot.render(
     <React.StrictMode>
         <App />

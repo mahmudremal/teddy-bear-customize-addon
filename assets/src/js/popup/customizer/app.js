@@ -28,6 +28,7 @@ function App() {
   const [error, setError] = useState(null);
   const [productId, setProductId] = useState(null);
   const [visiblePopup, setVisiblePopup] = useState(false);
+  const [allowClose, setAllowClose] = useState(null);
 
   useEffect(() => {
     const handleButtonClick = async (e) => {
@@ -95,7 +96,7 @@ function App() {
       } catch (err) {
         console.error('Error:', err);
         setError(err.message === 'Invalid button configuration' 
-          ? 'Invalid button configuration'
+          ? __('somethingwentwrong', 'Invalid button configuration')
           : 'Product not found or there was an error loading the data'
         );
         setProductData(null);
@@ -129,7 +130,7 @@ function App() {
   }, []);
 
   const closePopup = (showConfirmation = true) => {
-    const userConfirmed = showConfirmation ? window.confirm("Are you sure you want to close it? Any unsaved changes will be lost.") : true;
+    const userConfirmed = (showConfirmation && !allowClose) ? window.confirm("Are you sure you want to close it? Any unsaved changes will be lost.") : true;
     if (userConfirmed) {
       setProductId(null);
       setProductData(null);
@@ -145,7 +146,7 @@ function App() {
             <svg className="tb_mx-auto tb_h-12 tb_w-12 tb_text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
-            <h3 className="tb_mt-2 tb_text-lg tb_font-medium tb_text-gray-900">Product Not Found</h3>
+            <h3 className="tb_mt-2 tb_text-lg tb_font-medium tb_text-gray-900">{__('somethingwentwrong', 'Product Not Found')}</h3>
             <p className="tb_mt-1 tb_text-sm tb_text-gray-500">{error}</p>
           </div>
         </div>
@@ -163,7 +164,7 @@ function App() {
             { isLoading ? (
               <div className="tb_p-8 tb_text-center tb_flex tb_absolute tb_w-full tb_h-full tb_items-center tb_justify-center tb_flex-col">
                 <div className="tb_animate-spin tb_rounded-full tb_h-8 tb_w-8 tb_border-b-2 tb_border-gray-900 tb_mx-auto"></div>
-                <p className="tb_mt-4 tb_text-gray-600">Loading product data...</p>
+                <p className="tb_mt-4 tb_text-gray-600">{__('pls_wait', 'Loading product data...')}</p>
               </div>
             ) : productData ? (
               <ProductPage 
@@ -173,7 +174,8 @@ function App() {
                 product={productData} 
                 setProduct={setProductData}
                 updateProductData={updateProductData} 
-                closePopup={closePopup} 
+                closePopup={closePopup}
+                setAllowClose={setAllowClose}
               />
             ) : null }
           </div>

@@ -470,6 +470,16 @@ class I18n {
 			'certificates' => __('Certificates', 'teddybearsprompts'),
 			'voices' => __('Voices', 'teddybearsprompts'),
 
+			'done' => __('Done', 'teddybearsprompts'),
+			'adding_' => __('Adding...', 'teddybearsprompts'),
+			'loading_' => __('Loading...', 'teddybearsprompts'),
+			'previous' => __('Previous', 'teddybearsprompts'),
+			'recinterrupted' => __('Error stopping the recording', 'teddybearsprompts'),
+			'mic_erraccess' => __('Error accessing microphone', 'teddybearsprompts'),
+			'nomicplugin' => __('Recording plugin not initialized', 'teddybearsprompts'),
+			'recsaved' => __('Recording saved!', 'teddybearsprompts'),
+			'recstarted' => __('Recording started...', 'teddybearsprompts'),
+			'plsrecvoice' => __('Please record your voice.', 'teddybearsprompts'),
 
 			
 			// 'audioupload_instuction'		=> apply_filters('teddybear/project/system/translate/string', apply_filters('teddybear/project/system/getoption', 'translate-audioupload_instuction', ''), 'teddybearsprompts', apply_filters('teddybear/project/system/getoption', 'translate-audioupload_instuction', '') . ' - input field'),

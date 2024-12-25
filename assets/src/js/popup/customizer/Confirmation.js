@@ -57,11 +57,11 @@ const Confirmation = ({ data, closePopup, selectedType, canvasImages, setCanvasB
                     });
                 }
             } else {
-                throw new Error(response.data?.data?.message || 'Something went wrong');
+                throw new Error(response.data?.data?.message || __('somethingwentwrong', 'Something went wrong'));
             }
         } catch (error) {
             console.error('Error:', error);
-            toast.error(error.message || 'Something went wrong');
+            toast.error(error.message || __('somethingwentwrong', 'Something went wrong'));
         }
     }
 
@@ -88,8 +88,7 @@ const Confirmation = ({ data, closePopup, selectedType, canvasImages, setCanvasB
                     </div>
                 )}
 
-                {/* You may also like section */}
-                <h3 className="tb_text-2xl tb_font-semibold tb_mb-4 tb_text-center">You may also like</h3>
+                <h3 className="tb_text-2xl tb_font-semibold tb_mb-4 tb_text-center">{__('youmayalsolike', 'You may also like')}</h3>
                 
                 {/* Product Carousel */}
                 <div className="tb_mb-8">
@@ -116,15 +115,15 @@ const Confirmation = ({ data, closePopup, selectedType, canvasImages, setCanvasB
                 {/* Action Buttons */}
                 <div className="tb_flex tb_justify-center tb_gap-2">
                     <button onClick={e => closePopup(false)} className="tb_px-4 tb_py-2 tb_rounded-lg tb_bg-primary tb_text-white tb_transition-colors tb_text-nowrap">
-                        Buy more plushies
+                        {__('buymoreplushies', 'Buy more plushies')}
                     </button>
                     
                     <a href={data.accessoriesUrl} className="tb_px-4 tb_py-2 tb_rounded-lg tb_bg-primary tb_text-white hover:tb_text-white tb_transition-colors tb_text-nowrap">
-                        Add accessories
+                        {__('addaccessories', 'Add accessories')}
                     </a>
 
                     <a href={data.checkoutUrl} className="tb_px-4 tb_py-2 tb_rounded-lg tb_bg-secondary tb_text-primary tb_transition-colors tb_text-nowrap">
-                        Checkout
+                        {__('checkout', 'Checkout')}
                     </a>
                 </div>
             </div>

@@ -47,7 +47,7 @@ export default function PriceBlock({ price_html = '', discountTotal = 0, inTotal
             }
           `}
         </style>
-        {originalPrice > finalPrice && (
+        {/* {originalPrice > finalPrice && (
           <>
             <del className="td_hidden" aria-hidden="true">
               <span className="woocommerce-Price-amount amount">
@@ -59,7 +59,7 @@ export default function PriceBlock({ price_html = '', discountTotal = 0, inTotal
             </del>
             <span className="screen-reader-text">Original price was: ${originalPrice.toFixed(2)}.</span>
           </>
-        )}
+        )} */}
         <ins aria-hidden="true">
           <span className="woocommerce-Price-amount amount">
             <bdi>

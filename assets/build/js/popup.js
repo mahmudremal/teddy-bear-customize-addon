@@ -88382,7 +88382,7 @@ var Confirmation = function Confirmation(_ref) {
             _context.next = 21;
             break;
           case 20:
-            throw new Error(((_response$data = response.data) === null || _response$data === void 0 || (_response$data = _response$data.data) === null || _response$data === void 0 ? void 0 : _response$data.message) || 'Something went wrong');
+            throw new Error(((_response$data = response.data) === null || _response$data === void 0 || (_response$data = _response$data.data) === null || _response$data === void 0 ? void 0 : _response$data.message) || __('somethingwentwrong', 'Something went wrong'));
           case 21:
             _context.next = 27;
             break;
@@ -88390,7 +88390,7 @@ var Confirmation = function Confirmation(_ref) {
             _context.prev = 23;
             _context.t0 = _context["catch"](11);
             console.error('Error:', _context.t0);
-            react_hot_toast__WEBPACK_IMPORTED_MODULE_5___default.a.error(_context.t0.message || 'Something went wrong');
+            react_hot_toast__WEBPACK_IMPORTED_MODULE_5___default.a.error(_context.t0.message || __('somethingwentwrong', 'Something went wrong'));
           case 27:
           case "end":
             return _context.stop();
@@ -88421,7 +88421,7 @@ var Confirmation = function Confirmation(_ref) {
     activeTab: activeTab
   })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h3", {
     className: "tb_text-2xl tb_font-semibold tb_mb-4 tb_text-center"
-  }, "You may also like"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+  }, __('youmayalsolike', 'You may also like')), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
     className: "tb_mb-8"
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_slick__WEBPACK_IMPORTED_MODULE_1___default.a, settings, data.suggestion.map(function (product) {
     return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
@@ -88460,13 +88460,13 @@ var Confirmation = function Confirmation(_ref) {
       return closePopup(false);
     },
     className: "tb_px-4 tb_py-2 tb_rounded-lg tb_bg-primary tb_text-white tb_transition-colors tb_text-nowrap"
-  }, "Buy more plushies"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
+  }, __('buymoreplushies', 'Buy more plushies')), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
     href: data.accessoriesUrl,
     className: "tb_px-4 tb_py-2 tb_rounded-lg tb_bg-primary tb_text-white hover:tb_text-white tb_transition-colors tb_text-nowrap"
-  }, "Add accessories"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
+  }, __('addaccessories', 'Add accessories')), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
     href: data.checkoutUrl,
     className: "tb_px-4 tb_py-2 tb_rounded-lg tb_bg-secondary tb_text-primary tb_transition-colors tb_text-nowrap"
-  }, "Checkout"))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("style", {
+  }, __('checkout', 'Checkout')))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("style", {
     jsx: true
   }, ".slick-next:before, .slick-prev:before {color: #e63f51;} del {display: none;}"));
 };
@@ -88531,7 +88531,8 @@ var ProductCustomization = function ProductCustomization(_ref) {
   var product = _ref.product,
     setProduct = _ref.setProduct,
     updateProductData = _ref.updateProductData,
-    closePopup = _ref.closePopup;
+    closePopup = _ref.closePopup,
+    setAllowClose = _ref.setAllowClose;
   var iFRows = product.custom_fields[product.custom_data.product_type].map(function (f) {
     var nf = _objectSpread({}, f);
     if (f.options) {
@@ -88548,75 +88549,74 @@ var ProductCustomization = function ProductCustomization(_ref) {
   });
   var _React = React,
     useEffect = _React.useEffect,
-    useState = _React.useState;
+    useState = _React.useState,
+    useRef = _React.useRef;
   var _useState = useState(null),
     _useState2 = _slicedToArray(_useState, 2),
     canvasBlob = _useState2[0],
     setCanvasBlob = _useState2[1];
-  var _useState3 = useState(iFRows),
+  // const [objRows, setObjRows] = useState(iFRows);
+  var objRows = useRef(iFRows);
+  var _useState3 = useState(null),
     _useState4 = _slicedToArray(_useState3, 2),
-    objRows = _useState4[0],
-    setObjRows = _useState4[1];
-  var _useState5 = useState(null),
+    activeTab = _useState4[0],
+    setActiveTab = _useState4[1];
+  var _useState5 = useState(false),
     _useState6 = _slicedToArray(_useState5, 2),
-    activeTab = _useState6[0],
-    setActiveTab = _useState6[1];
-  var _useState7 = useState(false),
+    isLoading = _useState6[0],
+    setIsLoading = _useState6[1];
+  var _useState7 = useState(0),
     _useState8 = _slicedToArray(_useState7, 2),
-    isLoading = _useState8[0],
-    setIsLoading = _useState8[1];
-  var _useState9 = useState(0),
+    currentStep = _useState8[0],
+    setCurrentStep = _useState8[1];
+  var _useState9 = useState(null),
     _useState10 = _slicedToArray(_useState9, 2),
-    currentStep = _useState10[0],
-    setCurrentStep = _useState10[1];
+    error = _useState10[0],
+    setError = _useState10[1];
   var _useState11 = useState(null),
     _useState12 = _slicedToArray(_useState11, 2),
-    error = _useState12[0],
-    setError = _useState12[1];
-  var _useState13 = useState(null),
+    selectedOutfit = _useState12[0],
+    setSelectedOutfit = _useState12[1];
+  var _useState13 = useState({}),
     _useState14 = _slicedToArray(_useState13, 2),
-    selectedOutfit = _useState14[0],
-    setSelectedOutfit = _useState14[1];
-  var _useState15 = useState({}),
+    imgLayers = _useState14[0],
+    setImgLayers = _useState14[1];
+  var _useState15 = useState([]),
     _useState16 = _slicedToArray(_useState15, 2),
-    imgLayers = _useState16[0],
-    setImgLayers = _useState16[1];
-  var _useState17 = useState([]),
+    canvasImages = _useState16[0],
+    setCanvasImages = _useState16[1];
+  var _useState17 = useState(null),
     _useState18 = _slicedToArray(_useState17, 2),
-    canvasImages = _useState18[0],
-    setCanvasImages = _useState18[1];
-  var _useState19 = useState(null),
+    selectedType = _useState18[0],
+    setSelectedType = _useState18[1];
+  var _useState19 = useState(0),
     _useState20 = _slicedToArray(_useState19, 2),
-    selectedType = _useState20[0],
-    setSelectedType = _useState20[1];
+    discountTotal = _useState20[0],
+    setDiscountTotal = _useState20[1];
   var _useState21 = useState(0),
     _useState22 = _slicedToArray(_useState21, 2),
-    discountTotal = _useState22[0],
-    setDiscountTotal = _useState22[1];
-  var _useState23 = useState(0),
+    inTotal = _useState22[0],
+    setInTotal = _useState22[1];
+  var _useState23 = useState(false),
     _useState24 = _slicedToArray(_useState23, 2),
-    inTotal = _useState24[0],
-    setInTotal = _useState24[1];
-  var _useState25 = useState(false),
+    add2CartLoading = _useState24[0],
+    setAdd2CartLoading = _useState24[1];
+  var _useState25 = useState([]),
     _useState26 = _slicedToArray(_useState25, 2),
-    add2CartLoading = _useState26[0],
-    setAdd2CartLoading = _useState26[1];
-  var _useState27 = useState([]),
+    blobFiles = _useState26[0],
+    setBlobFiles = _useState26[1];
+  var _useState27 = useState(new Set()),
     _useState28 = _slicedToArray(_useState27, 2),
-    blobFiles = _useState28[0],
-    setBlobFiles = _useState28[1];
-  var _useState29 = useState(new Set()),
+    visitedTabs = _useState28[0],
+    setVisitedTabs = _useState28[1];
+  var _useState29 = useState(null),
     _useState30 = _slicedToArray(_useState29, 2),
-    visitedTabs = _useState30[0],
-    setVisitedTabs = _useState30[1];
-  var _useState31 = useState(null),
+    confirmation = _useState30[0],
+    setConfirmation = _useState30[1];
+  var _useState31 = useState(((_product$custom_field = product.custom_fields[product.custom_data.product_type]) === null || _product$custom_field === void 0 ? void 0 : _product$custom_field.length) === 1),
     _useState32 = _slicedToArray(_useState31, 2),
-    confirmation = _useState32[0],
-    setConfirmation = _useState32[1];
-  var _useState33 = useState(((_product$custom_field = product.custom_fields[product.custom_data.product_type]) === null || _product$custom_field === void 0 ? void 0 : _product$custom_field.length) === 1),
-    _useState34 = _slicedToArray(_useState33, 2),
-    isSingleTab = _useState34[0],
-    setIsSingleTab = _useState34[1];
+    isSingleTab = _useState32[0],
+    setIsSingleTab = _useState32[1];
   useEffect(function () {
     var _product$custom_field2;
     setSelectedType(product.custom_data.product_type);
@@ -88670,7 +88670,7 @@ var ProductCustomization = function ProductCustomization(_ref) {
             formData.append('_nonce', fwpSiteConfig.ajax_nonce);
             formData.append('product_id', product.id);
             formData.append('quantity', 1);
-            formData.append('dataset', JSON.stringify(objRows));
+            formData.append('dataset', JSON.stringify(objRows.current));
             formData.append('_blobs', blobFiles);
             formData.append('_canvas', canvasBlob);
             _context.prev = 9;
@@ -88687,6 +88687,7 @@ var ProductCustomization = function ProductCustomization(_ref) {
             data = response.data.data;
             if (data !== null && data !== void 0 && data.confirmation && (_data$confirmation = data.confirmation) !== null && _data$confirmation !== void 0 && _data$confirmation.title) {
               setConfirmation(data.confirmation);
+              setAllowClose(true);
             } else {
               setError(data.message);
             }
@@ -88717,15 +88718,16 @@ var ProductCustomization = function ProductCustomization(_ref) {
     };
   }();
   var updateObjRows = function updateObjRows(field, selectedData) {
-    var existingRowIndex = objRows.findIndex(function (row) {
+    var existingRowIndex = objRows.current.findIndex(function (row) {
       return row.id === field.id;
     });
     var newRow = _objectSpread(_objectSpread({}, field), selectedData);
     // console.log('newRow', newRow, existingRowIndex, objRows[existingRowIndex]);
-    var newObj = existingRowIndex !== -1 ? objRows.map(function (row, index) {
+    var newObj = existingRowIndex !== -1 ? objRows.current.map(function (row, index) {
       return index === existingRowIndex ? newRow : row;
     }) : [].concat(_toConsumableArray(objRows), [newRow]);
-    setObjRows(newObj);
+    // setObjRows(newObj);
+    objRows.current = newObj;
     // console.log('objRows', objRows);
     setTotalCost(newObj);
   };
@@ -88795,12 +88797,13 @@ var ProductCustomization = function ProductCustomization(_ref) {
             return g.id == groupid;
           });
           if (group) {
-            option.selected = true;
-            var updatedGroups = objRows.find(function (f) {
+            // console.log(group)
+            var updatedGroups = objRows.current.find(function (f) {
               return f.id == currentField.id;
             }).groups.map(function (g) {
               if (g.id == groupid) {
-                g.options = g.options.filter(function (o) {
+                // console.log('option found', group.options.filter(o => o.id === option.id))
+                g.options = group.options.filter(function (o) {
                   return o.id === option.id;
                 });
               }
@@ -88809,9 +88812,7 @@ var ProductCustomization = function ProductCustomization(_ref) {
             updateObjRows(currentField, {
               groups: updatedGroups
             });
-            console.log('updatedBlock', {
-              groups: updatedGroups
-            });
+            // console.log('updatedBlock', updatedGroups.map(g => g.options));
           }
           break;
       }
@@ -88824,7 +88825,7 @@ var ProductCustomization = function ProductCustomization(_ref) {
     if (!obj) {
       obj = objRows;
     }
-    console.log('getTotalCost', obj);
+    // console.log('getTotalCost', obj);
     obj.forEach(function (field) {
       var _field$attached, _field$attached2;
       switch (field.type) {
@@ -88869,7 +88870,7 @@ var ProductCustomization = function ProductCustomization(_ref) {
     setTotalCost: setTotalCost
   };
   return /*#__PURE__*/React.createElement("div", {
-    className: "tb_mx-auto tb_p-0"
+    className: "tb_mx-auto tb_p-0 tb_select-none"
   }, /*#__PURE__*/React.createElement("link", {
     rel: "stylesheet",
     type: "text/css",
@@ -88880,7 +88881,7 @@ var ProductCustomization = function ProductCustomization(_ref) {
     type: "text/css",
     href: "https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.6.0/slick-theme.min.css"
   }), confirmation === null ? /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("div", {
-    className: "tb_flex tb_justify-between tb_items-center tb_w-full tb_flex-nowrap tb_h-[50px] tb_overflow-hidden tb_mx-auto tb_px-[15px] tb_py-[10px] tb_border-b tb_border-[#eee] tb_box-border"
+    className: "tb_flex tb_justify-between tb_items-center tb_w-full tb_flex-nowrap tb_h-[60px] tb_overflow-hidden tb_mx-auto tb_px-[15px] tb_py-[10px] tb_border-b tb_border-[#eee] tb_box-border"
   }, /*#__PURE__*/React.createElement("div", {
     className: "tb_w-1/3 tb_flex tb_justify-start"
   }, /*#__PURE__*/React.createElement("button", {
@@ -88906,7 +88907,7 @@ var ProductCustomization = function ProductCustomization(_ref) {
   })), /*#__PURE__*/React.createElement("div", {
     className: "tb_w-1/3 tb_flex tb_justify-end"
   }, /*#__PURE__*/React.createElement("div", {
-    className: "tb_text-sm tb_font-semibold price_amount tb_px-2 tb_py-1 tb_text-primary tb_bg-primary-100"
+    className: "tb_text-sm tb_font-semibold price_amount tb_rounded tb_px-6 tb_py-2 tb_text-black tb_bg-primary-100"
   }, /*#__PURE__*/React.createElement(_blocks_priceBlock__WEBPACK_IMPORTED_MODULE_8__["default"], {
     price_html: product.priceHtml,
     inTotal: inTotal,
@@ -88914,7 +88915,7 @@ var ProductCustomization = function ProductCustomization(_ref) {
   })))), isLoading ? /*#__PURE__*/React.createElement("div", {
     className: "tb_flex tb_justify-center tb_items-center tb_h-auto"
   }, /*#__PURE__*/React.createElement(_blocks_Loading__WEBPACK_IMPORTED_MODULE_7__["default"], null), " ") : /*#__PURE__*/React.createElement("div", {
-    className: "tb_relative"
+    className: "tb_relative tb_min-h-96"
   }, !['standing', 'sitting'].includes(selectedType) && /*#__PURE__*/React.createElement("div", {
     className: "tb_flex tb_justify-between tb_mb-8"
   }, /*#__PURE__*/React.createElement("div", {
@@ -88924,23 +88925,23 @@ var ProductCustomization = function ProductCustomization(_ref) {
     }
   }, /*#__PURE__*/React.createElement("img", {
     src: product.positions.standing,
-    alt: "Standing",
+    alt: __('standingplushies', 'Standing'),
     className: "tb_w-full tb_h-auto tb_rounded-md"
   }), /*#__PURE__*/React.createElement("p", {
     className: "tb_text-center tb_mt-2 tb_font-semibold"
-  }, "Standing")), /*#__PURE__*/React.createElement("div", {
+  }, __('standingplushies', 'Standing'))), /*#__PURE__*/React.createElement("div", {
     className: "tb_cursor-pointer tb_p-4 tb_border-2 tb_border-gray-300 tb_rounded-md tb_hover:bg-gray-100",
     onClick: function onClick() {
       return handleSelectProductType('sitting');
     }
   }, /*#__PURE__*/React.createElement("img", {
     src: product.positions.sitting,
-    alt: "Sitting",
+    alt: __('sittingplushies', 'Sitting'),
     className: "tb_w-full tb_h-auto tb_rounded-md"
   }), /*#__PURE__*/React.createElement("p", {
     className: "tb_text-center tb_mt-2 tb_font-semibold"
-  }, "Sitting"))), ['standing', 'sitting'].includes(selectedType) && /*#__PURE__*/React.createElement("div", {
-    className: "tb_m-auto tb_mb-8 tb_h-auto ".concat(activeTab === null ? 'tb_w-full md:tb_w-[350px]' : 'tb_w-[70%] md:tb_w-[250px]')
+  }, __('sittingplushies', 'Sitting')))), ['standing', 'sitting'].includes(selectedType) && /*#__PURE__*/React.createElement("div", {
+    className: "tb_m-auto tb_mb-8 tb_h-auto ".concat(activeTab === null ? 'tb_w-60 md:tb_w-[350px]' : 'tb_w-36 md:tb_w-52')
   }, /*#__PURE__*/React.createElement(_blocks_PreviewCanvas__WEBPACK_IMPORTED_MODULE_1__["default"], {
     images: canvasImages,
     baseImage: product.custom_data._canvas,
@@ -88952,7 +88953,7 @@ var ProductCustomization = function ProductCustomization(_ref) {
     var _currentFields$curren, _product$custom_field5, _product$custom_field6;
     return /*#__PURE__*/React.createElement("div", {
       key: idx,
-      className: "tb_bg-gray-50 tb_px-6 tb_pt-4 tb_pb-2 tb_rounded-lg ".concat(isSingleTab || ((_currentFields$curren = currentFields[currentStep]) === null || _currentFields$curren === void 0 ? void 0 : _currentFields$curren.type) === 'info' ? '' : 'tb_shadow-md', " tb_mb-0 ").concat(isSingleTab ? '' : activeTab === idx ? '' : 'tb_hidden')
+      className: "tb_border tb_border-gray-200 tb_px-6 tb_pt-4 tb_pb-2 tb_rounded-lg tb_w-[90%] tb_m-auto ".concat(isSingleTab || ((_currentFields$curren = currentFields[currentStep]) === null || _currentFields$curren === void 0 ? void 0 : _currentFields$curren.type) === 'info' ? '' : 'tb_shadow-md', " tb_mb-0 ").concat(isSingleTab ? '' : activeTab === idx ? '' : 'tb_hidden')
     }, error && /*#__PURE__*/React.createElement("div", {
       className: "tb_bg-primary-100 tb_border tb_border-primary-400 tb_text-primary-700 tb_px-4 tb_py-3 tb_rounded tb_relative tb_mb-2",
       role: "alert"
@@ -88973,7 +88974,7 @@ var ProductCustomization = function ProductCustomization(_ref) {
     }, field.heading)), !isSingleTab && /*#__PURE__*/React.createElement("button", {
       onClick: currentStep === (((_product$custom_field5 = product.custom_fields[selectedType]) === null || _product$custom_field5 === void 0 ? void 0 : _product$custom_field5.length) || 0) - 1 ? handleDone : handleNextStep,
       className: "tb_text-primary tb_font-medium tb_px-2 tb_rounded-md"
-    }, currentStep === (((_product$custom_field6 = product.custom_fields[selectedType]) === null || _product$custom_field6 === void 0 ? void 0 : _product$custom_field6.length) || 0) - 1 ? 'Done' : 'Next')), function () {
+    }, currentStep === (((_product$custom_field6 = product.custom_fields[selectedType]) === null || _product$custom_field6 === void 0 ? void 0 : _product$custom_field6.length) || 0) - 1 ? __('done', 'Done') : __('next', 'Next'))), function () {
       switch (field.type) {
         case 'radio':
           return /*#__PURE__*/React.createElement(_blocks_radio__WEBPACK_IMPORTED_MODULE_4__["default"], {
@@ -89037,11 +89038,11 @@ var ProductCustomization = function ProductCustomization(_ref) {
       }
     }());
   }), /*#__PURE__*/React.createElement("div", {
-    className: "tb_flex tb_justify-center tb_gap-2 tb_px-2 ".concat(activeTab !== null || isSingleTab ? 'tb_hidden' : '')
+    className: "tb_flex tb_justify-center tb_gap-2 tb_px-4 ".concat(activeTab !== null || isSingleTab ? 'tb_hidden' : '')
   }, currentFields.map(function (field, idx) {
     return /*#__PURE__*/React.createElement("div", {
       key: idx,
-      className: "tb_relative tb_cursor-pointer tb_p-2 tb_rounded-md ".concat(activeTab === idx ? 'tb_bg-blue-500 tb_text-white' : 'tb_bg-gray-200'),
+      className: "tb_relative tb_cursor-pointer tb_p-2 tb_rounded-md tb_border ".concat(activeTab === idx ? 'tb_border-blue-500 tb_text-white' : 'tb_border-gray-200'),
       onClick: function onClick() {
         return handleTabClick(idx);
       }
@@ -89062,7 +89063,7 @@ var ProductCustomization = function ProductCustomization(_ref) {
     onClick: addToCart,
     className: "tb_w-full tb_bg-primary tb_text-white tb_px-4 tb_py-2 tb_rounded-lg tb_font-medium hover:tb_bg-primary-dark",
     disabled: add2CartLoading
-  }, add2CartLoading ? 'Adding...' : 'Add to Cart')))) : /*#__PURE__*/React.createElement("div", {
+  }, add2CartLoading ? __('adding_', 'Adding...') : __('add_to_cart', 'Add to Cart'))))) : /*#__PURE__*/React.createElement("div", {
     className: "tb_h-full"
   }, /*#__PURE__*/React.createElement(_Confirmation__WEBPACK_IMPORTED_MODULE_11__["default"], {
     data: confirmation,
@@ -89150,6 +89151,10 @@ function App() {
     _useState10 = _slicedToArray(_useState9, 2),
     visiblePopup = _useState10[0],
     setVisiblePopup = _useState10[1];
+  var _useState11 = useState(null),
+    _useState12 = _slicedToArray(_useState11, 2),
+    allowClose = _useState12[0],
+    setAllowClose = _useState12[1];
   useEffect(function () {
     var handleButtonClick = /*#__PURE__*/function () {
       var _ref = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee(e) {
@@ -89230,7 +89235,7 @@ function App() {
               _context.prev = 27;
               _context.t0 = _context["catch"](3);
               console.error('Error:', _context.t0);
-              setError(_context.t0.message === 'Invalid button configuration' ? 'Invalid button configuration' : 'Product not found or there was an error loading the data');
+              setError(_context.t0.message === 'Invalid button configuration' ? __('somethingwentwrong', 'Invalid button configuration') : 'Product not found or there was an error loading the data');
               setProductData(null);
             case 32:
               _context.prev = 32;
@@ -89267,7 +89272,7 @@ function App() {
   }, []);
   var closePopup = function closePopup() {
     var showConfirmation = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : true;
-    var userConfirmed = showConfirmation ? window.confirm("Are you sure you want to close it? Any unsaved changes will be lost.") : true;
+    var userConfirmed = showConfirmation && !allowClose ? window.confirm("Are you sure you want to close it? Any unsaved changes will be lost.") : true;
     if (userConfirmed) {
       setProductId(null);
       setProductData(null);
@@ -89294,7 +89299,7 @@ function App() {
       d: "M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
     })), /*#__PURE__*/React.createElement("h3", {
       className: "tb_mt-2 tb_text-lg tb_font-medium tb_text-gray-900"
-    }, "Product Not Found"), /*#__PURE__*/React.createElement("p", {
+    }, __('somethingwentwrong', 'Product Not Found')), /*#__PURE__*/React.createElement("p", {
       className: "tb_mt-1 tb_text-sm tb_text-gray-500"
     }, error))));
   }
@@ -89316,14 +89321,15 @@ function App() {
     className: "tb_animate-spin tb_rounded-full tb_h-8 tb_w-8 tb_border-b-2 tb_border-gray-900 tb_mx-auto"
   }), /*#__PURE__*/React.createElement("p", {
     className: "tb_mt-4 tb_text-gray-600"
-  }, "Loading product data...")) : productData ? /*#__PURE__*/React.createElement(ProductPage, {
+  }, __('pls_wait', 'Loading product data...'))) : productData ? /*#__PURE__*/React.createElement(ProductPage, {
     React: React,
     ReactDOM: ReactDOM,
     product_id: productId,
     product: productData,
     setProduct: setProductData,
     updateProductData: updateProductData,
-    closePopup: closePopup
+    closePopup: closePopup,
+    setAllowClose: setAllowClose
   }) : null)));
 }
 /* harmony default export */ __webpack_exports__["default"] = (App);
@@ -89388,12 +89394,14 @@ function AccessoriesSlider(_ref) {
     nextArrow: /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
       type: "button",
       className: "slick-next tb_-translate-y-5",
-      slidecount: 3
+      slidecount: 3,
+      title: __('next', 'Next')
     }, "\u2192"),
     prevArrow: /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
       type: "button",
       className: "slick-prev tb_-translate-y-5",
-      slidecount: 3
+      slidecount: 3,
+      title: __('previous', 'Previous')
     }, "\u2190")
   };
   var handleChange = function handleChange(e, option, field) {
@@ -89563,7 +89571,7 @@ function AccessoriesSlider(_ref) {
     }, "$", option.cost))));
   })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("style", {
     jsx: true
-  }, ".slick-next:before, .slick-prev:before {color: #ff4545;}.slider-container .slick-next {right: -15px;}.slider-container .slick-prev {left: -15px;}")));
+  }, ".slick-next:before, .slick-prev:before {color: #ff4545;}.slider-container .slick-next {right: -15px;}.slider-container .slick-prev {left: -15px;}.slick-next, .slick-prev {-webkit-transform: translate(0,-100%);-ms-transform: translate(0,-100%);transform: translate(0,-100%);}")));
 }
 
 /***/ }),
@@ -89589,7 +89597,7 @@ var Loading = function Loading() {
     className: "tb_animate-spin tb_h-12 tb_w-12 tb_text-primary-light"
   }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("p", {
     className: "tb_mt-4 tb_text-gray-500"
-  }, "Loading..."));
+  }, __('loading_', 'Loading...')));
 };
 /* harmony default export */ __webpack_exports__["default"] = (Loading);
 
@@ -89988,7 +89996,7 @@ function Info(_ref) {
         }
       }
     }), currentStep.key === 'teddy_name' && /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", {
-      className: "tb_flex tb_items-center tb_space-x-2"
+      className: "tb_flex tb_items-center tb_space-x-2 tb_mt-4"
     }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
       type: "checkbox",
       onChange: function onChange(event) {
@@ -89999,7 +90007,6 @@ function Info(_ref) {
         }
       }
     }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", {
-      className: "tb_mt-4",
       title: "Choose a name for me"
     }, "Choose a name for me"))));
   }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
@@ -90225,16 +90232,7 @@ function PriceBlock(_ref) {
     className: "tb_flex tb_flex-col tb_gap-2"
   }, /*#__PURE__*/React.createElement("div", {
     className: "price_amount ".concat(isBlinking ? 'tb_animate-blink' : '')
-  }, /*#__PURE__*/React.createElement("style", null, "\n            @keyframes blink {\n              0% { opacity: 1; }\n              50% { opacity: 0.3; }\n              100% { opacity: 1; }\n            }\n            .tb_animate-blink {\n              animation: blink 0.5s ease-in-out;\n            }\n          "), originalPrice > finalPrice && /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("del", {
-    className: "td_hidden",
-    "aria-hidden": "true"
-  }, /*#__PURE__*/React.createElement("span", {
-    className: "woocommerce-Price-amount amount"
-  }, /*#__PURE__*/React.createElement("bdi", null, /*#__PURE__*/React.createElement("span", {
-    className: "woocommerce-Price-currencySymbol"
-  }, "$"), originalPrice.toFixed(2)))), /*#__PURE__*/React.createElement("span", {
-    className: "screen-reader-text"
-  }, "Original price was: $", originalPrice.toFixed(2), ".")), /*#__PURE__*/React.createElement("ins", {
+  }, /*#__PURE__*/React.createElement("style", null, "\n            @keyframes blink {\n              0% { opacity: 1; }\n              50% { opacity: 0.3; }\n              100% { opacity: 1; }\n            }\n            .tb_animate-blink {\n              animation: blink 0.5s ease-in-out;\n            }\n          "), /*#__PURE__*/React.createElement("ins", {
     "aria-hidden": "true"
   }, /*#__PURE__*/React.createElement("span", {
     className: "woocommerce-Price-amount amount"
@@ -90350,10 +90348,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var sprintf_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! sprintf-js */ "./node_modules/sprintf-js/src/sprintf.js");
 /* harmony import */ var sprintf_js__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(sprintf_js__WEBPACK_IMPORTED_MODULE_4__);
 function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
-function _toConsumableArray(r) { return _arrayWithoutHoles(r) || _iterableToArray(r) || _unsupportedIterableToArray(r) || _nonIterableSpread(); }
-function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
-function _iterableToArray(r) { if ("undefined" != typeof Symbol && null != r[Symbol.iterator] || null != r["@@iterator"]) return Array.from(r); }
-function _arrayWithoutHoles(r) { if (Array.isArray(r)) return _arrayLikeToArray(r); }
 function _regeneratorRuntime() { "use strict"; /*! regenerator-runtime -- Copyright (c) 2014-present, Facebook, Inc. -- license (MIT): https://github.com/facebook/regenerator/blob/main/LICENSE */ _regeneratorRuntime = function _regeneratorRuntime() { return e; }; var t, e = {}, r = Object.prototype, n = r.hasOwnProperty, o = Object.defineProperty || function (t, e, r) { t[e] = r.value; }, i = "function" == typeof Symbol ? Symbol : {}, a = i.iterator || "@@iterator", c = i.asyncIterator || "@@asyncIterator", u = i.toStringTag || "@@toStringTag"; function define(t, e, r) { return Object.defineProperty(t, e, { value: r, enumerable: !0, configurable: !0, writable: !0 }), t[e]; } try { define({}, ""); } catch (t) { define = function define(t, e, r) { return t[e] = r; }; } function wrap(t, e, r, n) { var i = e && e.prototype instanceof Generator ? e : Generator, a = Object.create(i.prototype), c = new Context(n || []); return o(a, "_invoke", { value: makeInvokeMethod(t, r, c) }), a; } function tryCatch(t, e, r) { try { return { type: "normal", arg: t.call(e, r) }; } catch (t) { return { type: "throw", arg: t }; } } e.wrap = wrap; var h = "suspendedStart", l = "suspendedYield", f = "executing", s = "completed", y = {}; function Generator() {} function GeneratorFunction() {} function GeneratorFunctionPrototype() {} var p = {}; define(p, a, function () { return this; }); var d = Object.getPrototypeOf, v = d && d(d(values([]))); v && v !== r && n.call(v, a) && (p = v); var g = GeneratorFunctionPrototype.prototype = Generator.prototype = Object.create(p); function defineIteratorMethods(t) { ["next", "throw", "return"].forEach(function (e) { define(t, e, function (t) { return this._invoke(e, t); }); }); } function AsyncIterator(t, e) { function invoke(r, o, i, a) { var c = tryCatch(t[r], t, o); if ("throw" !== c.type) { var u = c.arg, h = u.value; return h && "object" == _typeof(h) && n.call(h, "__await") ? e.resolve(h.__await).then(function (t) { invoke("next", t, i, a); }, function (t) { invoke("throw", t, i, a); }) : e.resolve(h).then(function (t) { u.value = t, i(u); }, function (t) { return invoke("throw", t, i, a); }); } a(c.arg); } var r; o(this, "_invoke", { value: function value(t, n) { function callInvokeWithMethodAndArg() { return new e(function (e, r) { invoke(t, n, e, r); }); } return r = r ? r.then(callInvokeWithMethodAndArg, callInvokeWithMethodAndArg) : callInvokeWithMethodAndArg(); } }); } function makeInvokeMethod(e, r, n) { var o = h; return function (i, a) { if (o === f) throw Error("Generator is already running"); if (o === s) { if ("throw" === i) throw a; return { value: t, done: !0 }; } for (n.method = i, n.arg = a;;) { var c = n.delegate; if (c) { var u = maybeInvokeDelegate(c, n); if (u) { if (u === y) continue; return u; } } if ("next" === n.method) n.sent = n._sent = n.arg;else if ("throw" === n.method) { if (o === h) throw o = s, n.arg; n.dispatchException(n.arg); } else "return" === n.method && n.abrupt("return", n.arg); o = f; var p = tryCatch(e, r, n); if ("normal" === p.type) { if (o = n.done ? s : l, p.arg === y) continue; return { value: p.arg, done: n.done }; } "throw" === p.type && (o = s, n.method = "throw", n.arg = p.arg); } }; } function maybeInvokeDelegate(e, r) { var n = r.method, o = e.iterator[n]; if (o === t) return r.delegate = null, "throw" === n && e.iterator.return && (r.method = "return", r.arg = t, maybeInvokeDelegate(e, r), "throw" === r.method) || "return" !== n && (r.method = "throw", r.arg = new TypeError("The iterator does not provide a '" + n + "' method")), y; var i = tryCatch(o, e.iterator, r.arg); if ("throw" === i.type) return r.method = "throw", r.arg = i.arg, r.delegate = null, y; var a = i.arg; return a ? a.done ? (r[e.resultName] = a.value, r.next = e.nextLoc, "return" !== r.method && (r.method = "next", r.arg = t), r.delegate = null, y) : a : (r.method = "throw", r.arg = new TypeError("iterator result is not an object"), r.delegate = null, y); } function pushTryEntry(t) { var e = { tryLoc: t[0] }; 1 in t && (e.catchLoc = t[1]), 2 in t && (e.finallyLoc = t[2], e.afterLoc = t[3]), this.tryEntries.push(e); } function resetTryEntry(t) { var e = t.completion || {}; e.type = "normal", delete e.arg, t.completion = e; } function Context(t) { this.tryEntries = [{ tryLoc: "root" }], t.forEach(pushTryEntry, this), this.reset(!0); } function values(e) { if (e || "" === e) { var r = e[a]; if (r) return r.call(e); if ("function" == typeof e.next) return e; if (!isNaN(e.length)) { var o = -1, i = function next() { for (; ++o < e.length;) if (n.call(e, o)) return next.value = e[o], next.done = !1, next; return next.value = t, next.done = !0, next; }; return i.next = i; } } throw new TypeError(_typeof(e) + " is not iterable"); } return GeneratorFunction.prototype = GeneratorFunctionPrototype, o(g, "constructor", { value: GeneratorFunctionPrototype, configurable: !0 }), o(GeneratorFunctionPrototype, "constructor", { value: GeneratorFunction, configurable: !0 }), GeneratorFunction.displayName = define(GeneratorFunctionPrototype, u, "GeneratorFunction"), e.isGeneratorFunction = function (t) { var e = "function" == typeof t && t.constructor; return !!e && (e === GeneratorFunction || "GeneratorFunction" === (e.displayName || e.name)); }, e.mark = function (t) { return Object.setPrototypeOf ? Object.setPrototypeOf(t, GeneratorFunctionPrototype) : (t.__proto__ = GeneratorFunctionPrototype, define(t, u, "GeneratorFunction")), t.prototype = Object.create(g), t; }, e.awrap = function (t) { return { __await: t }; }, defineIteratorMethods(AsyncIterator.prototype), define(AsyncIterator.prototype, c, function () { return this; }), e.AsyncIterator = AsyncIterator, e.async = function (t, r, n, o, i) { void 0 === i && (i = Promise); var a = new AsyncIterator(wrap(t, r, n, o), i); return e.isGeneratorFunction(r) ? a : a.next().then(function (t) { return t.done ? t.value : a.next(); }); }, defineIteratorMethods(g), define(g, u, "Generator"), define(g, a, function () { return this; }), define(g, "toString", function () { return "[object Generator]"; }), e.keys = function (t) { var e = Object(t), r = []; for (var n in e) r.push(n); return r.reverse(), function next() { for (; r.length;) { var t = r.pop(); if (t in e) return next.value = t, next.done = !1, next; } return next.done = !0, next; }; }, e.values = values, Context.prototype = { constructor: Context, reset: function reset(e) { if (this.prev = 0, this.next = 0, this.sent = this._sent = t, this.done = !1, this.delegate = null, this.method = "next", this.arg = t, this.tryEntries.forEach(resetTryEntry), !e) for (var r in this) "t" === r.charAt(0) && n.call(this, r) && !isNaN(+r.slice(1)) && (this[r] = t); }, stop: function stop() { this.done = !0; var t = this.tryEntries[0].completion; if ("throw" === t.type) throw t.arg; return this.rval; }, dispatchException: function dispatchException(e) { if (this.done) throw e; var r = this; function handle(n, o) { return a.type = "throw", a.arg = e, r.next = n, o && (r.method = "next", r.arg = t), !!o; } for (var o = this.tryEntries.length - 1; o >= 0; --o) { var i = this.tryEntries[o], a = i.completion; if ("root" === i.tryLoc) return handle("end"); if (i.tryLoc <= this.prev) { var c = n.call(i, "catchLoc"), u = n.call(i, "finallyLoc"); if (c && u) { if (this.prev < i.catchLoc) return handle(i.catchLoc, !0); if (this.prev < i.finallyLoc) return handle(i.finallyLoc); } else if (c) { if (this.prev < i.catchLoc) return handle(i.catchLoc, !0); } else { if (!u) throw Error("try statement without catch or finally"); if (this.prev < i.finallyLoc) return handle(i.finallyLoc); } } } }, abrupt: function abrupt(t, e) { for (var r = this.tryEntries.length - 1; r >= 0; --r) { var o = this.tryEntries[r]; if (o.tryLoc <= this.prev && n.call(o, "finallyLoc") && this.prev < o.finallyLoc) { var i = o; break; } } i && ("break" === t || "continue" === t) && i.tryLoc <= e && e <= i.finallyLoc && (i = null); var a = i ? i.completion : {}; return a.type = t, a.arg = e, i ? (this.method = "next", this.next = i.finallyLoc, y) : this.complete(a); }, complete: function complete(t, e) { if ("throw" === t.type) throw t.arg; return "break" === t.type || "continue" === t.type ? this.next = t.arg : "return" === t.type ? (this.rval = this.arg = t.arg, this.method = "return", this.next = "end") : "normal" === t.type && e && (this.next = e), y; }, finish: function finish(t) { for (var e = this.tryEntries.length - 1; e >= 0; --e) { var r = this.tryEntries[e]; if (r.finallyLoc === t) return this.complete(r.completion, r.afterLoc), resetTryEntry(r), y; } }, catch: function _catch(t) { for (var e = this.tryEntries.length - 1; e >= 0; --e) { var r = this.tryEntries[e]; if (r.tryLoc === t) { var n = r.completion; if ("throw" === n.type) { var o = n.arg; resetTryEntry(r); } return o; } } throw Error("illegal catch attempt"); }, delegateYield: function delegateYield(e, r, n) { return this.delegate = { iterator: values(e), resultName: r, nextLoc: n }, "next" === this.method && (this.arg = t), y; } }, e; }
 function asyncGeneratorStep(n, t, e, r, o, a, c) { try { var i = n[a](c), u = i.value; } catch (n) { return void e(n); } i.done ? t(u) : Promise.resolve(u).then(r, o); }
 function _asyncToGenerator(n) { return function () { var t = this, e = arguments; return new Promise(function (r, o) { var a = n.apply(t, e); function _next(n) { asyncGeneratorStep(a, r, o, _next, _throw, "next", n); } function _throw(n) { asyncGeneratorStep(a, r, o, _next, _throw, "throw", n); } _next(void 0); }); }; }
@@ -90464,7 +90458,7 @@ function Voice(_ref) {
             case 0:
               setIsRecording(true);
               setRecordingEnded(false);
-              setRecordingStatus('Recording started...');
+              setRecordingStatus(__('recstarted', 'Recording started...'));
               setTimer(parseFloat(currentField.duration));
               startTime = Date.now();
               timerInterval = setInterval(function () {
@@ -90474,7 +90468,6 @@ function Voice(_ref) {
                 if (remainingTime <= 0) {
                   if (isRecording) {
                     stopRecording();
-                    console.log('stopRecording');
                   }
                   clearInterval(timerInterval);
                 }
@@ -90500,7 +90493,7 @@ function Voice(_ref) {
                 setAudioFile(audioUrl);
                 setIsRecording(false);
                 setRecordingEnded(true);
-                setRecordingStatus('Recording saved!');
+                setRecordingStatus(__('recsaved', 'Recording saved!'));
 
                 // Reinitialize wavesurfer before loading new audio
                 if (wavesurferRef.current) {
@@ -90550,20 +90543,20 @@ function Voice(_ref) {
               _context3.next = 3;
               break;
             }
-            throw new Error('Recording plugin not initialized');
+            throw new Error(__('nomicplugin', 'Recording plugin not initialized'));
           case 3:
             _context3.next = 5;
             return recordPluginRef.current.startRecording();
           case 5:
             setShowAddLaterMessage(false);
-            setRecordingStatus(Object(sprintf_js__WEBPACK_IMPORTED_MODULE_4__["sprintf"])('Please record your voice up to %d seconds.', currentField.duration));
+            setRecordingStatus(Object(sprintf_js__WEBPACK_IMPORTED_MODULE_4__["sprintf"])(__('audiorecord_instuction', 'Please record your voice up to %s seconds.'), currentField.duration));
             _context3.next = 14;
             break;
           case 9:
             _context3.prev = 9;
             _context3.t0 = _context3["catch"](0);
             console.error('Error accessing microphone:', _context3.t0);
-            setRecordingStatus('Error accessing microphone');
+            setRecordingStatus(__('mic_erraccess', 'Error accessing microphone'));
             setIsRecording(false);
           case 14:
           case "end":
@@ -90594,7 +90587,7 @@ function Voice(_ref) {
             _context4.prev = 6;
             _context4.t0 = _context4["catch"](1);
             console.error('Error stopping the recording:', _context4.t0);
-            setRecordingStatus('Error stopping the recording');
+            setRecordingStatus(__('recinterrupted', 'Error stopping the recording'));
             setIsRecording(false);
           case 11:
           case "end":
@@ -90625,19 +90618,19 @@ function Voice(_ref) {
               _context6.next = 6;
               break;
             }
-            throw new Error('Oh! The file you are trying to upload is too heavy. The file must be up to 20Mb');
+            throw new Error(__('maxuploadmb', 'Oh! The file you are trying to upload is too heavy. The file must be up to 20Mb'));
           case 6:
             if (file.type) {
               _context6.next = 8;
               break;
             }
-            throw new Error('Invalid file');
+            throw new Error(__('invalid_file', 'Invalid file'));
           case 8:
             if (!(!file.type.startsWith('video/') && !file.type.startsWith('audio/'))) {
               _context6.next = 10;
               break;
             }
-            throw new Error('File is not audio, nor video.');
+            throw new Error(__('invalid_file', 'File is not audio, nor video.'));
           case 10:
             audioContext = new (window.AudioContext || window.webkitAudioContext)();
             fileReader = new FileReader();
@@ -90653,7 +90646,7 @@ function Voice(_ref) {
                           _context5.next = 5;
                           break;
                         }
-                        setError(Object(sprintf_js__WEBPACK_IMPORTED_MODULE_4__["sprintf"])('Office! The file I uploaded is too long. Note ♥ The length of the recording does not exceed %s seconds.', currentField.duration));
+                        setError(Object(sprintf_js__WEBPACK_IMPORTED_MODULE_4__["sprintf"])(__('audioexcedduration', 'Office! The file I uploaded is too long. Note ♥ The length of the recording does not exceed %s seconds.'), currentField.duration));
                         _context5.next = 14;
                         break;
                       case 5:
@@ -90702,7 +90695,7 @@ function Voice(_ref) {
   var handleSkip = function handleSkip() {
     setAudioFile(null);
     setShowAddLaterMessage(false);
-    setRecordingStatus('Skipped voice recording');
+    setRecordingStatus(__('voice_skipped', 'Skipped voice recording'));
     setIsPlaying(false);
     if (wavesurferRef.current) {
       wavesurferRef.current.empty();
@@ -90729,32 +90722,25 @@ function Voice(_ref) {
     }
   };
   var handleVoiceRecord = function handleVoiceRecord(recordingData) {
-    // Clear any existing voice recordings and set new one if exists
     var timestamp = Date.now();
-    setBlobFiles(function (prevFiles) {
-      var filteredFiles = prevFiles.filter(function (file) {
-        return !(file instanceof Blob && file.type.startsWith('audio/'));
-      });
-      if (recordingData && recordingData !== 'later' && recordingData !== null) {
-        var blobName = recordingData.includes('/') ? "".concat(timestamp, "-recording.mp3") : // For recording
-        "".concat(timestamp, "-").concat(recordingData.split('/').pop()); // For upload
+    if (recordingData && recordingData !== 'later' && recordingData !== null) {
+      var blobName = recordingData.includes('/') ? "".concat(timestamp, "-recording.mp3") : // For recording
+      "".concat(timestamp, "-").concat(recordingData.split('/').pop()); // For upload
 
-        // Convert blob URL to actual Blob object
-        fetch(recordingData).then(function (response) {
-          return response.blob();
-        }).then(function (blob) {
-          // Create new Blob with audio type and name
-          var audioBlob = new Blob([blob], {
-            type: 'audio/mpeg'
-          });
-          Object.defineProperty(audioBlob, 'name', {
-            value: blobName
-          });
-          return [].concat(_toConsumableArray(filteredFiles), [audioBlob]);
+      fetch(recordingData).then(function (response) {
+        return response.blob();
+      }).then(function (blob) {
+        var audioBlob = new Blob([blob], {
+          type: 'audio/mpeg'
         });
-      }
-      return filteredFiles;
-    });
+        Object.defineProperty(audioBlob, 'name', {
+          value: blobName
+        });
+        // const filteredFiles = prevFiles.filter(file => !(file instanceof Blob && file.type.startsWith('audio/')));
+        // return [...filteredFiles, audioBlob];
+        setBlobFiles([audioBlob]);
+      });
+    }
     updateObjRows(currentField, {
       attached: recordingData === 'later' ? {
         later: true
@@ -90784,7 +90770,7 @@ function Voice(_ref) {
     className: "tb_w-6 tb_h-6"
   })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", {
     className: "tb_mt-2 tb_text-xs tb_text-gray-600"
-  }, "Record")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+  }, __('record', 'Record'))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
     className: "tb_flex tb_flex-col tb_items-center"
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", {
     className: "tb_cursor-pointer"
@@ -90808,7 +90794,7 @@ function Voice(_ref) {
     className: "tb_w-6 tb_h-6 tb_text-gray-600"
   })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", {
     className: "tb_mt-2 tb_text-xs tb_text-gray-600"
-  }, "Add Later")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+  }, __('add_later', 'Add Later'))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
     className: "tb_flex tb_flex-col tb_items-center"
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
     onClick: handleSkip,
@@ -90817,11 +90803,14 @@ function Voice(_ref) {
     className: "tb_w-6 tb_h-6 tb_text-gray-600"
   })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", {
     className: "tb_mt-2 tb_text-xs tb_text-gray-600"
-  }, "Skip"))), recordingStatus && /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("p", {
+  }, __('skip', 'Skip')))), recordingStatus && /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("p", {
     className: "tb_text-sm tb_text-gray-600 tb_text-center"
   }, recordingStatus), showAddLaterMessage ? /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("p", {
-    className: "tb_text-sm tb_text-gray-600"
-  }, "1. Receive instructions & button in order email.", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("br", null), "2. Upload audio file anytime later.", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("br", null), "3. We will ship when your audio file is received.") : null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+    className: "tb_text-sm tb_text-gray-600",
+    dangerouslySetInnerHTML: {
+      __html: __('audiolater_instuction', '1. Receive instructions & button in order email.\n2. Upload audio file anytime later.\n3. We will ship when your audio file is received.').replaceAll("\\n", '<br />')
+    }
+  }) : null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
     className: "tb_flex tb_items-center tb_gap-4 ".concat(!audioFile ? isRecording ? '' : 'tb_hidden' : '')
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
     onClick: togglePlay,
@@ -90842,9 +90831,9 @@ function Voice(_ref) {
     className: "tb_text-sm tb_text-gray-600"
   }, "".concat(Math.floor(timer), ":").concat(('00' + Math.floor(timer % 1 * 1000)).slice(-2))))), isRecording && /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
     className: "tb_max-h-36 tb_overflow-y-auto tb_text-sm tb_text-gray-500 tb_mt-4"
-  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("p", null, "You are permitted to record any message of your liking up to 20 seconds, with the exclusion of profanity or copyrighted materials, which are prohibited. Please note your recording may be reviewed and screened (discreetly) by our DubiDo staff. We will not modify or edit your recording. In the event of copyright infringement, profanity, hate speech or recordings of the sort, we reserve the right to decline your recording and we will notify you of this decision within 48h of the submission of your recording. You will be given the opportunity to record a new message for additional review. For further information on your rights and privacy, please refer to our Privacy Policy. Please also refer to our Disclaimer for additional information on DubiDo's liability with regard to recordings.")), !showAddLaterMessage && !audioFile && !isRecording && /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("p", {
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("p", null, Object(sprintf_js__WEBPACK_IMPORTED_MODULE_4__["sprintf"])(__('audioupload_instuction', "You are permitted to record any message of your liking up to %s seconds, with the exclusion of profanity or copyrighted materials, which are prohibited. Please note your recording may be reviewed and screened (discreetly) by our DubiDo staff. We will not modify or edit your recording. In the event of copyright infringement, profanity, hate speech or recordings of the sort, we reserve the right to decline your recording and we will notify you of this decision within 48h of the submission of your recording. You will be given the opportunity to record a new message for additional review. For further information on your rights and privacy, please refer to our Privacy Policy. Please also refer to our Disclaimer for additional information on DubiDo's liability with regard to recordings."), currentField.duration))), !showAddLaterMessage && !audioFile && !isRecording && /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("p", {
     className: "tb_text-sm tb_text-gray-500 tb_text-center"
-  }, "Please record your voice up to 20 seconds.")));
+  }, __('plsrecvoice', 'Please record your voice.'))));
 }
 
 /***/ }),
@@ -90877,6 +90866,10 @@ __webpack_require__.r(__webpack_exports__);
 var root = document.createElement('div');
 document.body.appendChild(root);
 var reactRoot = Object(react_dom_client__WEBPACK_IMPORTED_MODULE_1__["createRoot"])(root);
+window.__ = function (str) {
+  var def = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : '';
+  return fwpSiteConfig.i18n[str] || def;
+};
 reactRoot.render(/*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react__WEBPACK_IMPORTED_MODULE_0___default.a.StrictMode, null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_customizer_app__WEBPACK_IMPORTED_MODULE_2__["default"], null)));
 
 /***/ }),

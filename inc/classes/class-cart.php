@@ -281,7 +281,7 @@ class Cart {
 		// if (isset($cart_item['_additional_charges_applied'])) {return $item_name;}
 		if (isset($cart_item['custom_dataset']) && !in_array($cart_item_key, $this->showedAlready)) {
 			foreach ($cart_item['custom_dataset'] as $dataRow) {
-				if ($dataRow && is_array($dataRow)) {
+				if ($dataRow && is_array($dataRow) && isset($dataRow['type'])) {
 					try {
 						switch ($dataRow['type']) {
 							case 'radio':

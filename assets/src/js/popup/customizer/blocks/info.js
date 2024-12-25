@@ -78,7 +78,7 @@ export default function Info({ currentField, setActiveTab, setError, updateProdu
                             }}
                             />
                             {currentStep.key === 'teddy_name' && (
-                                <label className="tb_flex tb_items-center tb_space-x-2">
+                                <label className="tb_flex tb_items-center tb_space-x-2 tb_mt-4">
                                     <input
                                         type="checkbox"
                                         onChange={(event) => {
@@ -89,7 +89,7 @@ export default function Info({ currentField, setActiveTab, setError, updateProdu
                                             }
                                         }}
                                     />
-                                    <span className="tb_mt-4" title="Choose a name for me">Choose a name for me</span>
+                                    <span title="Choose a name for me">Choose a name for me</span>
                                 </label>
                             )}
                         </fieldset>

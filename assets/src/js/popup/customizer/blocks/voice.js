@@ -61,7 +61,7 @@ export default function Voice({ currentField, setError, updateProductData, combi
             recordPluginRef.current.on('record-start', async () => {
                 setIsRecording(true);
                 setRecordingEnded(false);
-                setRecordingStatus('Recording started...');
+                setRecordingStatus(__('recstarted', 'Recording started...'));
                 setTimer(parseFloat(currentField.duration));
 
                 let startTime = Date.now();
@@ -70,7 +70,9 @@ export default function Voice({ currentField, setError, updateProductData, combi
                     const remainingTime = parseFloat(currentField.duration) - currentTime;
                     setTimer(Math.abs(remainingTime));
                     if (remainingTime <= 0) {
-                        if (isRecording) {stopRecording();console.log('stopRecording');}
+                        if (isRecording) {
+                            stopRecording();
+                        }
                         clearInterval(timerInterval);
                     }
                 }, 100);
@@ -86,7 +88,7 @@ export default function Voice({ currentField, setError, updateProductData, combi
                 setAudioFile(audioUrl);
                 setIsRecording(false);
                 setRecordingEnded(true);
-                setRecordingStatus('Recording saved!');
+                setRecordingStatus(__('recsaved', 'Recording saved!'));
                 
                 // Reinitialize wavesurfer before loading new audio
                 if (wavesurferRef.current) {
@@ -128,14 +130,14 @@ export default function Voice({ currentField, setError, updateProductData, combi
     const startRecording = async () => {
         try {
             if (!recordPluginRef.current) {
-                throw new Error('Recording plugin not initialized');
+                throw new Error(__('nomicplugin', 'Recording plugin not initialized'));
             }
             await recordPluginRef.current.startRecording();
             setShowAddLaterMessage(false);
-            setRecordingStatus(sprintf('Please record your voice up to %d seconds.', currentField.duration));
+            setRecordingStatus(sprintf(__('audiorecord_instuction', 'Please record your voice up to %s seconds.'), currentField.duration));
         } catch (err) {
             console.error('Error accessing microphone:', err);
-            setRecordingStatus('Error accessing microphone');
+            setRecordingStatus(__('mic_erraccess', 'Error accessing microphone'));
             setIsRecording(false);
         }
     };
@@ -146,7 +148,7 @@ export default function Voice({ currentField, setError, updateProductData, combi
                 await recordPluginRef.current.stopRecording();
             } catch (err) {
                 console.error('Error stopping the recording:', err);
-                setRecordingStatus('Error stopping the recording');
+                setRecordingStatus(__('recinterrupted', 'Error stopping the recording'));
                 setIsRecording(false);
             }
         }
@@ -161,15 +163,15 @@ export default function Voice({ currentField, setError, updateProductData, combi
 
             try {
                 if (file.size > (1024 * 1024 * 20)) {
-                    throw new Error('Oh! The file you are trying to upload is too heavy. The file must be up to 20Mb');
+                    throw new Error(__('maxuploadmb', 'Oh! The file you are trying to upload is too heavy. The file must be up to 20Mb'));
                 }
 
                 if (!file.type) {
-                    throw new Error('Invalid file');
+                    throw new Error(__('invalid_file', 'Invalid file'));
                 }
 
                 if (!file.type.startsWith('video/') && !file.type.startsWith('audio/')) {
-                    throw new Error('File is not audio, nor video.');
+                    throw new Error(__('invalid_file', 'File is not audio, nor video.'));
                 }
 
                 const audioContext = new (window.AudioContext || window.webkitAudioContext)();
@@ -178,7 +180,7 @@ export default function Voice({ currentField, setError, updateProductData, combi
                     audioContext.decodeAudioData(event.target.result, async (buffer) => {
                         const duration = buffer.duration;
                         if (duration && duration > 1 && duration > parseFloat(currentField.duration)) {
-                            setError(sprintf('Office! The file I uploaded is too long. Note ♥ The length of the recording does not exceed %s seconds.', currentField.duration));
+                            setError(sprintf(__('audioexcedduration', 'Office! The file I uploaded is too long. Note ♥ The length of the recording does not exceed %s seconds.'), currentField.duration));
                         } else {
                             const audioUrl = URL.createObjectURL(file);
                             setAudioFile(audioUrl);
@@ -203,7 +205,7 @@ export default function Voice({ currentField, setError, updateProductData, combi
     const handleSkip = () => {
         setAudioFile(null);
         setShowAddLaterMessage(false);
-        setRecordingStatus('Skipped voice recording');
+        setRecordingStatus(__('voice_skipped', 'Skipped voice recording'));
         setIsPlaying(false);
         if (wavesurferRef.current) {
             wavesurferRef.current.empty();
@@ -233,29 +235,24 @@ export default function Voice({ currentField, setError, updateProductData, combi
     };
 
     const handleVoiceRecord = (recordingData) => {
-        // Clear any existing voice recordings and set new one if exists
         const timestamp = Date.now();
-        setBlobFiles(prevFiles => {
-            const filteredFiles = prevFiles.filter(file => !(file instanceof Blob && file.type.startsWith('audio/')));
-            if (recordingData && recordingData !== 'later' && recordingData !== null) {
-                const blobName = recordingData.includes('/') ? 
-                    `${timestamp}-recording.mp3` : // For recording
-                    `${timestamp}-${recordingData.split('/').pop()}`; // For upload
+        if (recordingData && recordingData !== 'later' && recordingData !== null) {
+            const blobName = recordingData.includes('/') ? 
+                `${timestamp}-recording.mp3` : // For recording
+                `${timestamp}-${recordingData.split('/').pop()}`; // For upload
 
-                // Convert blob URL to actual Blob object
-                fetch(recordingData)
-                    .then(response => response.blob())
-                    .then(blob => {
-                        // Create new Blob with audio type and name
-                        const audioBlob = new Blob([blob], { type: 'audio/mpeg' });
-                        Object.defineProperty(audioBlob, 'name', {
-                            value: blobName
-                        });
-                        return [...filteredFiles, audioBlob];
+            fetch(recordingData)
+                .then(response => response.blob())
+                .then(blob => {
+                    const audioBlob = new Blob([blob], { type: 'audio/mpeg' });
+                    Object.defineProperty(audioBlob, 'name', {
+                        value: blobName
                     });
-            }
-            return filteredFiles;
-        });
+                    // const filteredFiles = prevFiles.filter(file => !(file instanceof Blob && file.type.startsWith('audio/')));
+                    // return [...filteredFiles, audioBlob];
+                    setBlobFiles([audioBlob]);
+                });
+        }
         updateObjRows(currentField, {
             attached: recordingData === 'later' ? {later: true} : recordingData === null ? null : {
                 blob: recordingData.includes('/') ? // Check if it's a URL (recording) or filename (upload)
@@ -274,7 +271,7 @@ export default function Voice({ currentField, setError, updateProductData, combi
                         <button onClick={isRecording ? stopRecording : startRecording} className={`tb_flex tb_items-center tb_justify-center tb_w-16 tb_h-16 tb_rounded-lg ${isRecording ? 'tb_bg-primary-500' : 'tb_bg-gray-200'} tb_text-gray-600 tb_shadow-sm`}>
                             {isRecording ? <Square className="tb_w-6 tb_h-6" /> : <Mic className="tb_w-6 tb_h-6" />}
                         </button>
-                        <span className="tb_mt-2 tb_text-xs tb_text-gray-600">Record</span>
+                        <span className="tb_mt-2 tb_text-xs tb_text-gray-600">{__('record', 'Record')}</span>
                     </div>
 
                     <div className="tb_flex tb_flex-col tb_items-center">
@@ -291,14 +288,14 @@ export default function Voice({ currentField, setError, updateProductData, combi
                         <button onClick={handleAddLater} className="tb_w-16 tb_h-16 tb_flex tb_items-center tb_justify-center tb_rounded-lg tb_bg-gray-200 tb_shadow-sm">
                             <Mail className="tb_w-6 tb_h-6 tb_text-gray-600" />
                         </button>
-                        <span className="tb_mt-2 tb_text-xs tb_text-gray-600">Add Later</span>
+                        <span className="tb_mt-2 tb_text-xs tb_text-gray-600">{__('add_later', 'Add Later')}</span>
                     </div>
 
                     <div className="tb_flex tb_flex-col tb_items-center">
                         <button onClick={handleSkip} className="tb_w-16 tb_h-16 tb_flex tb_items-center tb_justify-center tb_rounded-lg tb_bg-gray-200 tb_shadow-sm">
                             <SkipForward className="tb_w-6 tb_h-6 tb_text-gray-600" />
                         </button>
-                        <span className="tb_mt-2 tb_text-xs tb_text-gray-600">Skip</span>
+                        <span className="tb_mt-2 tb_text-xs tb_text-gray-600">{__('skip', 'Skip')}</span>
                     </div>
                 </div>
 
@@ -307,10 +304,7 @@ export default function Voice({ currentField, setError, updateProductData, combi
                 )}
 
                 {showAddLaterMessage ? (
-                    <p className="tb_text-sm tb_text-gray-600">
-                        1. Receive instructions & button in order email.<br/>
-                        2. Upload audio file anytime later.<br/>
-                        3. We will ship when your audio file is received.
+                    <p className="tb_text-sm tb_text-gray-600" dangerouslySetInnerHTML={{__html: __('audiolater_instuction', '1. Receive instructions & button in order email.\n2. Upload audio file anytime later.\n3. We will ship when your audio file is received.').replaceAll("\\n", '<br />')}}>
                     </p>
                 ) : null}
 
@@ -335,14 +329,14 @@ export default function Voice({ currentField, setError, updateProductData, combi
                 {isRecording && (
                     <div className="tb_max-h-36 tb_overflow-y-auto tb_text-sm tb_text-gray-500 tb_mt-4">
                         <p>
-                            You are permitted to record any message of your liking up to 20 seconds, with the exclusion of profanity or copyrighted materials, which are prohibited. Please note your recording may be reviewed and screened (discreetly) by our DubiDo staff. We will not modify or edit your recording. In the event of copyright infringement, profanity, hate speech or recordings of the sort, we reserve the right to decline your recording and we will notify you of this decision within 48h of the submission of your recording. You will be given the opportunity to record a new message for additional review. For further information on your rights and privacy, please refer to our Privacy Policy. Please also refer to our Disclaimer for additional information on DubiDo's liability with regard to recordings.
+                            {sprintf(__('audioupload_instuction', "You are permitted to record any message of your liking up to %s seconds, with the exclusion of profanity or copyrighted materials, which are prohibited. Please note your recording may be reviewed and screened (discreetly) by our DubiDo staff. We will not modify or edit your recording. In the event of copyright infringement, profanity, hate speech or recordings of the sort, we reserve the right to decline your recording and we will notify you of this decision within 48h of the submission of your recording. You will be given the opportunity to record a new message for additional review. For further information on your rights and privacy, please refer to our Privacy Policy. Please also refer to our Disclaimer for additional information on DubiDo's liability with regard to recordings."), currentField.duration)}
                         </p>
                     </div>
                 )}
 
                 {!showAddLaterMessage && !audioFile && !isRecording && (
                     <p className="tb_text-sm tb_text-gray-500 tb_text-center">
-                        Please record your voice up to 20 seconds.
+                        {__('plsrecvoice', 'Please record your voice.')}
                     </p>
                 )}
             </div>

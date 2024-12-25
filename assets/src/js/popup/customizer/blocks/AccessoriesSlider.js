@@ -15,8 +15,8 @@ export default function AccessoriesSlider({ currentField, selectedOutfit, handle
       infinite: true,
       slidesToShow: 3,
       slidesToScroll: 3,
-      nextArrow: <button type="button" className="slick-next tb_-translate-y-5" slidecount={3}>→</button>,
-      prevArrow: <button type="button" className="slick-prev tb_-translate-y-5" slidecount={3}>←</button>
+      nextArrow: <button type="button" className="slick-next tb_-translate-y-5" slidecount={3} title={__('next', 'Next')}>→</button>,
+      prevArrow: <button type="button" className="slick-prev tb_-translate-y-5" slidecount={3} title={__('previous', 'Previous')}>←</button>
     };
 
     const handleChange = (e, option, field) => {
@@ -193,7 +193,7 @@ export default function AccessoriesSlider({ currentField, selectedOutfit, handle
               );
             })}
           </Slider>
-          <style jsx>{`.slick-next:before, .slick-prev:before {color: #ff4545;}.slider-container .slick-next {right: -15px;}.slider-container .slick-prev {left: -15px;}`}</style>
+          <style jsx>{`.slick-next:before, .slick-prev:before {color: #ff4545;}.slider-container .slick-next {right: -15px;}.slider-container .slick-prev {left: -15px;}.slick-next, .slick-prev {-webkit-transform: translate(0,-100%);-ms-transform: translate(0,-100%);transform: translate(0,-100%);}`}</style>
         </div>
       </div>
     );
