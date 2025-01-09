@@ -73,6 +73,7 @@ class Cart {
 			// 
 			$dataset = json_decode(stripslashes(html_entity_decode($_POST['dataset']??'{}')), true);
 			$charges = json_decode(stripslashes(html_entity_decode($_POST['charges']??'{}')), true);
+
 			if (isset($_FILES['_blobs'])) {
 				if (isset($_FILES['_blobs']['name'])) {
 					$_FILES['_blobs'] = [$_FILES['_blobs']];
@@ -138,7 +139,7 @@ class Cart {
 					case 'voice':
 						$_option = $_row;
 						if (
-							isset($_option['attaced']) && !isset($_option['attaced']['skip'])
+							isset($_option['attached']) && !isset($_option['attached']['skip'])
 														&&
 							isset($_option['product']) && !empty($_option['product'])
 						) {
@@ -322,7 +323,7 @@ class Cart {
 								break;
 							case 'voice':
 								if (
-									isset($dataRow['attaced']) && count($dataRow['attaced']) >= 1 && !isset($dataRow['attaced']['skip']) && $dataRow['cost']
+									isset($dataRow['attached']) && count($dataRow['attached']) >= 1 && !isset($dataRow['attached']['skip']) && $dataRow['cost']
 								) {
 									$option = $dataRow;
 									if (!isset($option['product']) || empty($option['product'])) {
@@ -415,7 +416,7 @@ class Cart {
 								break;
 							case 'voice':
 								if (
-									isset($dataRow['attaced']) && count($dataRow['attaced']) >= 1 && !isset($dataRow['attaced']['skip']) && $dataRow['cost']
+									isset($dataRow['attached']) && count($dataRow['attached']) >= 1 && !isset($dataRow['attached']['skip']) && $dataRow['cost']
 									&& (
 										!isset($dataRow['product']) || empty($dataRow['product'])
 									)
@@ -501,7 +502,8 @@ class Cart {
 		$upload_dir = wp_upload_dir();$custom_dir = 'custom_popup';
 		$target_dir = $upload_dir['basedir'].'/'.$custom_dir.'/';
 		if (!file_exists($target_dir)) {mkdir($target_dir, 0755, true);}
-		$file_name = $file['name'];$file_tmp = $file['tmp_name'];$file_type = $file['type'];
+		$file_name = ($file['name'] !== 'blob') ? $file['name'] : uniqid() . '.png';
+		$file_tmp = $file['tmp_name'];$file_type = $file['type'];
 		$target_file = $target_dir . $file_name;
 		if (!move_uploaded_file($file_tmp, $target_file)) {
 			throw new \Exception(__('Error uploading file.', 'teddybearsprompts'));

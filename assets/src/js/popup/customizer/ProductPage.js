@@ -42,12 +42,17 @@ const ProductCustomization = ({ product, setProduct, updateProductData, closePop
     const [discountTotal, setDiscountTotal] = useState(0);
     const [inTotal, setInTotal] = useState(0);
     const [add2CartLoading, setAdd2CartLoading] = useState(false);
-    const [blobFiles, setBlobFiles] = useState([]);
+    const blobFiles = useRef(null);
     const [visitedTabs, setVisitedTabs] = useState(new Set());
     const [confirmation, setConfirmation] = useState(null);
     const [isSingleTab, setIsSingleTab] = useState(
         product.custom_fields[product.custom_data.product_type]?.length === 1
     );
+
+    const setBlobFiles = (data) => {
+        // console.log('Adding blob file...')
+        blobFiles.current = data;
+    }
 
     useEffect(() => {
         setSelectedType(product.custom_data.product_type);
@@ -100,7 +105,10 @@ const ProductCustomization = ({ product, setProduct, updateProductData, closePop
 
         formData.append('dataset', JSON.stringify(objRows.current));
 
-        formData.append('_blobs', blobFiles);
+        if (blobFiles.current) {
+            formData.append('_blobs', blobFiles.current, blobFiles.current?.name??'voice.mp3');
+        }
+        
         formData.append('_canvas', canvasBlob);
         
         try {
@@ -254,13 +262,13 @@ const ProductCustomization = ({ product, setProduct, updateProductData, closePop
     };
 
     return (
-        <div className="tb_mx-auto tb_p-0 tb_select-none">
+        <div className="tb_mx-auto tb_h-full tb_p-0 tb_select-none">
             <link rel="stylesheet" type="text/css" charSet="UTF-8" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.6.0/slick.min.css" />
             <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.6.0/slick-theme.min.css" />
             
             { confirmation === null ? (
-                <div >
-                    <div className="tb_flex tb_justify-between tb_items-center tb_w-full tb_flex-nowrap tb_h-[60px] tb_overflow-hidden tb_mx-auto tb_px-[15px] tb_py-[10px] tb_border-b tb_border-[#eee] tb_box-border">
+                <div className="tb_h-full">
+                    <div className="tb_flex tb_justify-between tb_items-center tb_w-full tb_flex-nowrap tb_h-[60px] tb_overflow-hidden tb_mx-auto tb_px-[15px] tb_py-[10px] tb_border-b tb_border-[#eee] tb_box-border height-500-640:tb_h-12">
                         <div className="tb_w-1/3 tb_flex tb_justify-start">
                             <button 
                                 onClick={closePopup}
@@ -286,7 +294,7 @@ const ProductCustomization = ({ product, setProduct, updateProductData, closePop
                     </div>
 
                     { isLoading ? ( <div className="tb_flex tb_justify-center tb_items-center tb_h-auto"><Loading /> </div> ) : (
-                        <div className="tb_relative tb_min-h-96">
+                        <div className="tb_relative tb_min-h-96 tb_flex tb_flex-col tb_justify-between tb_h-[calc(100%-60px)]">
                             {!['standing', 'sitting'].includes(selectedType) && (
                                 <div className="tb_flex tb_justify-between tb_mb-8">
                                     <div
@@ -315,7 +323,7 @@ const ProductCustomization = ({ product, setProduct, updateProductData, closePop
                             )}
 
                             {['standing', 'sitting'].includes(selectedType) && (
-                                <div className={ `tb_m-auto tb_mb-8 tb_h-auto ${activeTab === null ? 'tb_w-60 md:tb_w-[350px]' : 'tb_w-36 md:tb_w-52'}` }>
+                                <div className={ `tb_m-auto tb_mb-4 tb_h-auto ${activeTab === null ? 'height-500-640:tb_w-52 tb_w-96 md:tb_w-[320px]' : 'height-500-640:tb_w-48 tb_w-48 md:tb_w-52'}` }>
                                     <PreviewCanvas images={canvasImages} baseImage={product.custom_data._canvas} setCanvasBlob={setCanvasBlob} activeTab={activeTab} />
                                 </div>
                             )}
@@ -325,7 +333,8 @@ const ProductCustomization = ({ product, setProduct, updateProductData, closePop
                             {currentFields.map((field, idx) => (
                                 <div 
                                     key={idx}
-                                    className={`tb_border tb_border-gray-200 tb_px-6 tb_pt-4 tb_pb-2 tb_rounded-lg tb_w-[90%] tb_m-auto ${ isSingleTab || currentFields[currentStep]?.type === 'info' ? '' : 'tb_shadow-md'} tb_mb-0 ${isSingleTab ? '' : activeTab === idx ? '' : 'tb_hidden'}`}
+                                    className={`tb_border tb_border-gray-200 tb_px-6 height-500-640:tb_px-3 tb_pt-4 height-500-640:tb_pt-2 tb_pb-2 tb_rounded-lg tb_w-[90%] tb_m-auto ${ isSingleTab || currentFields[currentStep]?.type === 'info' ? '' : 'tb_shadow-md'} tb_mb-0 ${isSingleTab ? '' : activeTab === idx ? '' : 'tb_hidden'}`}
+                                    style={{ boxShadow: '0 -2px 15px #33333324' }}
                                 >
                                     {error && (
                                         <div className="tb_bg-primary-100 tb_border tb_border-primary-400 tb_text-primary-700 tb_px-4 tb_py-3 tb_rounded tb_relative tb_mb-2" role="alert">
@@ -372,35 +381,36 @@ const ProductCustomization = ({ product, setProduct, updateProductData, closePop
                                 </div>
                             ))}
 
-                            <div className={`tb_flex tb_justify-center tb_gap-2 tb_px-4 ${activeTab !== null || isSingleTab ? 'tb_hidden' : ''}`}>
-                                {currentFields.map((field, idx) => (
-                                    <div
-                                        key={idx}
-                                        className={`tb_relative tb_cursor-pointer tb_p-2 tb_rounded-md tb_border ${activeTab === idx ? 'tb_border-blue-500 tb_text-white' : 'tb_border-gray-200'}`}
-                                        onClick={() => handleTabClick(idx)}
-                                    >
-                                        <img
-                                            src={field.stepicon}
-                                            alt={field.steptitle}
-                                            className="tb_w-8 tb_h-8 tb_mx-auto"
-                                        />
-                                        {visitedTabs.has(idx) && (
-                                            <div className="tb_absolute tb_top-0 tb_right-0">
-                                                <Check color='#e63f51' />
-                                            </div>
-                                        )}
-                                        <p className="tb_text-center tb_mt-2 tb_text-sm">{field.steptitle}</p>
-                                    </div>
-                                ))}
-                            </div>
-
-                            { (activeTab === null || isSingleTab) && (
-                                <div className="tb_flex tb_justify-center tb_p-4">
-                                    <button onClick={addToCart} className="tb_w-full tb_bg-primary tb_text-white tb_px-4 tb_py-2 tb_rounded-lg tb_font-medium hover:tb_bg-primary-dark" disabled={add2CartLoading}>
-                                        {add2CartLoading ? __('adding_', 'Adding...') : __('add_to_cart', 'Add to Cart')}
-                                    </button>
+                            <div className="">
+                                <div className={`tb_flex tb_justify-center tb_gap-2 tb_px-4 ${activeTab !== null || isSingleTab ? 'tb_hidden' : ''}`}>
+                                    {currentFields.map((field, idx) => (
+                                        <div
+                                            key={idx}
+                                            className={`tb_relative tb_cursor-pointer tb_p-2 tb_rounded-md tb_border ${activeTab === idx ? 'tb_border-blue-500 tb_text-white' : 'tb_border-gray-200'}`}
+                                            onClick={() => handleTabClick(idx)}
+                                        >
+                                            <img
+                                                src={field.stepicon}
+                                                alt={field.steptitle}
+                                                className="tb_w-8 tb_h-8 tb_mx-auto"
+                                            />
+                                            {visitedTabs.has(idx) && (
+                                                <div className="tb_absolute tb_top-0 tb_right-0">
+                                                    <Check color='#e63f51' />
+                                                </div>
+                                            )}
+                                            <p className="tb_text-center tb_mt-2 tb_text-sm">{field.steptitle}</p>
+                                        </div>
+                                    ))}
                                 </div>
-                            )}
+                                { (activeTab === null || isSingleTab) && (
+                                    <div className="tb_flex tb_justify-center tb_p-4">
+                                        <button onClick={addToCart} className="tb_w-full tb_bg-primary tb_text-white tb_px-4 tb_py-2 tb_rounded-lg tb_font-medium hover:tb_bg-primary-dark" disabled={add2CartLoading}>
+                                            {add2CartLoading ? __('adding_', 'Adding...') : __('add_to_cart', 'Add to Cart')}
+                                        </button>
+                                    </div>
+                                )}
+                            </div>
 
                         </div>
                     ) }

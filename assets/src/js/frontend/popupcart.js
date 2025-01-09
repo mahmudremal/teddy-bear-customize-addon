@@ -71,7 +71,7 @@ class popupCart {
                     row.options.filter(opt => opt?.selected).reduce((total, item) => total + parseFloat(item.cost), 0)
                 ).reduce((total, item) => total + parseFloat(item), 0);
             } else if (step.type == 'voice') {
-                step = (step?.attaced && !(step.attaced?.skip))?parseFloat(step.cost):0;
+                step = (step?.attached && !(step.attached?.skip))?parseFloat(step.cost):0;
             } else if (step?.cost) {
                 step = parseFloat(step.cost);
             } else {

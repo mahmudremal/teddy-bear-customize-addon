@@ -88402,9 +88402,9 @@ var Confirmation = function Confirmation(_ref) {
     };
   }();
   return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-    className: "tb_inset-0 tb_flex tb_items-center tb_justify-center"
+    className: "tb_inset-0 tb_flex tb_items-center tb_justify-center tb_h-full tb_p-2"
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-    className: "tb_w-full tb_max-w-3xl tb_mx-auto tb_p-6"
+    className: "tb_w-[calc(100%-30px)] tb_mx-auto tb_p-6 tb_pb-0"
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
     onClick: closePopup,
     className: "tb_absolute tb_top-[5px] tb_right-[5px] tb_text-gray-400 hover:tb_text-gray-600 hover:tb_bg-none"
@@ -88601,22 +88601,23 @@ var ProductCustomization = function ProductCustomization(_ref) {
     _useState24 = _slicedToArray(_useState23, 2),
     add2CartLoading = _useState24[0],
     setAdd2CartLoading = _useState24[1];
-  var _useState25 = useState([]),
+  var blobFiles = useRef(null);
+  var _useState25 = useState(new Set()),
     _useState26 = _slicedToArray(_useState25, 2),
-    blobFiles = _useState26[0],
-    setBlobFiles = _useState26[1];
-  var _useState27 = useState(new Set()),
+    visitedTabs = _useState26[0],
+    setVisitedTabs = _useState26[1];
+  var _useState27 = useState(null),
     _useState28 = _slicedToArray(_useState27, 2),
-    visitedTabs = _useState28[0],
-    setVisitedTabs = _useState28[1];
-  var _useState29 = useState(null),
+    confirmation = _useState28[0],
+    setConfirmation = _useState28[1];
+  var _useState29 = useState(((_product$custom_field = product.custom_fields[product.custom_data.product_type]) === null || _product$custom_field === void 0 ? void 0 : _product$custom_field.length) === 1),
     _useState30 = _slicedToArray(_useState29, 2),
-    confirmation = _useState30[0],
-    setConfirmation = _useState30[1];
-  var _useState31 = useState(((_product$custom_field = product.custom_fields[product.custom_data.product_type]) === null || _product$custom_field === void 0 ? void 0 : _product$custom_field.length) === 1),
-    _useState32 = _slicedToArray(_useState31, 2),
-    isSingleTab = _useState32[0],
-    setIsSingleTab = _useState32[1];
+    isSingleTab = _useState30[0],
+    setIsSingleTab = _useState30[1];
+  var setBlobFiles = function setBlobFiles(data) {
+    // console.log('Adding blob file...')
+    blobFiles.current = data;
+  };
   useEffect(function () {
     var _product$custom_field2;
     setSelectedType(product.custom_data.product_type);
@@ -88660,7 +88661,7 @@ var ProductCustomization = function ProductCustomization(_ref) {
   };
   var addToCart = /*#__PURE__*/function () {
     var _ref2 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee() {
-      var formData, response, _data$confirmation, data, _response$data;
+      var formData, _blobFiles$current$na, _blobFiles$current, response, _data$confirmation, data, _response$data;
       return _regeneratorRuntime().wrap(function _callee$(_context) {
         while (1) switch (_context.prev = _context.next) {
           case 0:
@@ -88671,7 +88672,9 @@ var ProductCustomization = function ProductCustomization(_ref) {
             formData.append('product_id', product.id);
             formData.append('quantity', 1);
             formData.append('dataset', JSON.stringify(objRows.current));
-            formData.append('_blobs', blobFiles);
+            if (blobFiles.current) {
+              formData.append('_blobs', blobFiles.current, (_blobFiles$current$na = (_blobFiles$current = blobFiles.current) === null || _blobFiles$current === void 0 ? void 0 : _blobFiles$current.name) !== null && _blobFiles$current$na !== void 0 ? _blobFiles$current$na : 'voice.mp3');
+            }
             formData.append('_canvas', canvasBlob);
             _context.prev = 9;
             _context.next = 12;
@@ -88870,7 +88873,7 @@ var ProductCustomization = function ProductCustomization(_ref) {
     setTotalCost: setTotalCost
   };
   return /*#__PURE__*/React.createElement("div", {
-    className: "tb_mx-auto tb_p-0 tb_select-none"
+    className: "tb_mx-auto tb_h-full tb_p-0 tb_select-none"
   }, /*#__PURE__*/React.createElement("link", {
     rel: "stylesheet",
     type: "text/css",
@@ -88880,8 +88883,10 @@ var ProductCustomization = function ProductCustomization(_ref) {
     rel: "stylesheet",
     type: "text/css",
     href: "https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.6.0/slick-theme.min.css"
-  }), confirmation === null ? /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("div", {
-    className: "tb_flex tb_justify-between tb_items-center tb_w-full tb_flex-nowrap tb_h-[60px] tb_overflow-hidden tb_mx-auto tb_px-[15px] tb_py-[10px] tb_border-b tb_border-[#eee] tb_box-border"
+  }), confirmation === null ? /*#__PURE__*/React.createElement("div", {
+    className: "tb_h-full"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "tb_flex tb_justify-between tb_items-center tb_w-full tb_flex-nowrap tb_h-[60px] tb_overflow-hidden tb_mx-auto tb_px-[15px] tb_py-[10px] tb_border-b tb_border-[#eee] tb_box-border height-500-640:tb_h-12"
   }, /*#__PURE__*/React.createElement("div", {
     className: "tb_w-1/3 tb_flex tb_justify-start"
   }, /*#__PURE__*/React.createElement("button", {
@@ -88915,7 +88920,7 @@ var ProductCustomization = function ProductCustomization(_ref) {
   })))), isLoading ? /*#__PURE__*/React.createElement("div", {
     className: "tb_flex tb_justify-center tb_items-center tb_h-auto"
   }, /*#__PURE__*/React.createElement(_blocks_Loading__WEBPACK_IMPORTED_MODULE_7__["default"], null), " ") : /*#__PURE__*/React.createElement("div", {
-    className: "tb_relative tb_min-h-96"
+    className: "tb_relative tb_min-h-96 tb_flex tb_flex-col tb_justify-between tb_h-[calc(100%-60px)]"
   }, !['standing', 'sitting'].includes(selectedType) && /*#__PURE__*/React.createElement("div", {
     className: "tb_flex tb_justify-between tb_mb-8"
   }, /*#__PURE__*/React.createElement("div", {
@@ -88941,7 +88946,7 @@ var ProductCustomization = function ProductCustomization(_ref) {
   }), /*#__PURE__*/React.createElement("p", {
     className: "tb_text-center tb_mt-2 tb_font-semibold"
   }, __('sittingplushies', 'Sitting')))), ['standing', 'sitting'].includes(selectedType) && /*#__PURE__*/React.createElement("div", {
-    className: "tb_m-auto tb_mb-8 tb_h-auto ".concat(activeTab === null ? 'tb_w-60 md:tb_w-[350px]' : 'tb_w-36 md:tb_w-52')
+    className: "tb_m-auto tb_mb-4 tb_h-auto ".concat(activeTab === null ? 'height-500-640:tb_w-52 tb_w-96 md:tb_w-[320px]' : 'height-500-640:tb_w-48 tb_w-48 md:tb_w-52')
   }, /*#__PURE__*/React.createElement(_blocks_PreviewCanvas__WEBPACK_IMPORTED_MODULE_1__["default"], {
     images: canvasImages,
     baseImage: product.custom_data._canvas,
@@ -88953,7 +88958,10 @@ var ProductCustomization = function ProductCustomization(_ref) {
     var _currentFields$curren, _product$custom_field5, _product$custom_field6;
     return /*#__PURE__*/React.createElement("div", {
       key: idx,
-      className: "tb_border tb_border-gray-200 tb_px-6 tb_pt-4 tb_pb-2 tb_rounded-lg tb_w-[90%] tb_m-auto ".concat(isSingleTab || ((_currentFields$curren = currentFields[currentStep]) === null || _currentFields$curren === void 0 ? void 0 : _currentFields$curren.type) === 'info' ? '' : 'tb_shadow-md', " tb_mb-0 ").concat(isSingleTab ? '' : activeTab === idx ? '' : 'tb_hidden')
+      className: "tb_border tb_border-gray-200 tb_px-6 height-500-640:tb_px-3 tb_pt-4 height-500-640:tb_pt-2 tb_pb-2 tb_rounded-lg tb_w-[90%] tb_m-auto ".concat(isSingleTab || ((_currentFields$curren = currentFields[currentStep]) === null || _currentFields$curren === void 0 ? void 0 : _currentFields$curren.type) === 'info' ? '' : 'tb_shadow-md', " tb_mb-0 ").concat(isSingleTab ? '' : activeTab === idx ? '' : 'tb_hidden'),
+      style: {
+        boxShadow: '0 -2px 15px #33333324'
+      }
     }, error && /*#__PURE__*/React.createElement("div", {
       className: "tb_bg-primary-100 tb_border tb_border-primary-400 tb_text-primary-700 tb_px-4 tb_py-3 tb_rounded tb_relative tb_mb-2",
       role: "alert"
@@ -89038,6 +89046,8 @@ var ProductCustomization = function ProductCustomization(_ref) {
       }
     }());
   }), /*#__PURE__*/React.createElement("div", {
+    className: ""
+  }, /*#__PURE__*/React.createElement("div", {
     className: "tb_flex tb_justify-center tb_gap-2 tb_px-4 ".concat(activeTab !== null || isSingleTab ? 'tb_hidden' : '')
   }, currentFields.map(function (field, idx) {
     return /*#__PURE__*/React.createElement("div", {
@@ -89063,7 +89073,7 @@ var ProductCustomization = function ProductCustomization(_ref) {
     onClick: addToCart,
     className: "tb_w-full tb_bg-primary tb_text-white tb_px-4 tb_py-2 tb_rounded-lg tb_font-medium hover:tb_bg-primary-dark",
     disabled: add2CartLoading
-  }, add2CartLoading ? __('adding_', 'Adding...') : __('add_to_cart', 'Add to Cart'))))) : /*#__PURE__*/React.createElement("div", {
+  }, add2CartLoading ? __('adding_', 'Adding...') : __('add_to_cart', 'Add to Cart')))))) : /*#__PURE__*/React.createElement("div", {
     className: "tb_h-full"
   }, /*#__PURE__*/React.createElement(_Confirmation__WEBPACK_IMPORTED_MODULE_11__["default"], {
     data: confirmation,
@@ -89124,6 +89134,16 @@ function removeAllClickListeners(element) {
     jQuery(clone).off('click');
   }
   return clone;
+}
+function freezeBody() {
+  var freeze = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
+  if (freeze) {
+    document.body.style.overflowY = 'hidden';
+    document.body.style.maxHeight = 'unset';
+  } else {
+    document.body.style.overflowY = 'auto';
+    document.body.style.maxHeight = '90vh';
+  }
 }
 function App() {
   var _React = React,
@@ -89227,27 +89247,29 @@ function App() {
                 data.product.custom_fields[fieldsKey] = fields;
               });
               // 
-              setProductData(data.product);
+              // 
               setError(null);
-              _context.next = 32;
+              setProductData(data.product);
+              freezeBody(true);
+              _context.next = 33;
               break;
-            case 27:
-              _context.prev = 27;
+            case 28:
+              _context.prev = 28;
               _context.t0 = _context["catch"](3);
               console.error('Error:', _context.t0);
               setError(_context.t0.message === 'Invalid button configuration' ? __('somethingwentwrong', 'Invalid button configuration') : 'Product not found or there was an error loading the data');
               setProductData(null);
-            case 32:
-              _context.prev = 32;
+            case 33:
+              _context.prev = 33;
               setIsLoading(false);
-              return _context.finish(32);
-            case 35:
-              return _context.abrupt("return", false);
+              return _context.finish(33);
             case 36:
+              return _context.abrupt("return", false);
+            case 37:
             case "end":
               return _context.stop();
           }
-        }, _callee, null, [[3, 27, 32, 35]]);
+        }, _callee, null, [[3, 28, 33, 36]]);
       }));
       return function handleButtonClick(_x) {
         return _ref.apply(this, arguments);
@@ -89277,6 +89299,7 @@ function App() {
       setProductId(null);
       setProductData(null);
       setVisiblePopup(false);
+      freezeBody(false);
     }
   };
   if (error) {
@@ -89311,10 +89334,10 @@ function App() {
     position: "top-right",
     reverseOrder: true
   }), /*#__PURE__*/React.createElement("div", {
-    className: "tb_fixed tb_inset-0 tb_bg-gray-900 tb_bg-opacity-50 tb_z-40",
+    className: "tb_fixed tb_inset-0 tb_bg-gray-900 tb_bg-opacity-95 tb_z-40",
     onClick: closePopup
   }), /*#__PURE__*/React.createElement("div", {
-    className: "tb_w-[90vw] tb_min-h-[400px] md:tb_min-h-[500px] tb_max-h-[95vh] tb_overflow-hidden tb_overflow-y-auto tb_fixed tb_top-1/2 tb_left-1/2 tb_transform tb_-translate-x-1/2 tb_-translate-y-1/2 tb_z-50 tb_bg-white tb_p-0 tb_rounded-lg tb_shadow-lg tb_max-w-full md:tb_w-[450px] md:tb_min-w-4xl"
+    className: "tb_w-[90vw] tb_h-[650px] tb_max-h-[95vh] tb_overflow-hidden tb_overflow-y-auto tb_fixed tb_top-1/2 tb_left-1/2 tb_transform tb_-translate-x-1/2 tb_-translate-y-1/2 tb_z-50 tb_bg-white tb_p-0 tb_rounded-lg tb_shadow-lg tb_max-w-full md:tb_w-[450px] md:tb_min-w-4xl"
   }, isLoading ? /*#__PURE__*/React.createElement("div", {
     className: "tb_p-8 tb_text-center tb_flex tb_absolute tb_w-full tb_h-full tb_items-center tb_justify-center tb_flex-col"
   }, /*#__PURE__*/React.createElement("div", {
@@ -90130,13 +90153,13 @@ function Outfit(_ref) {
     });
   };
   return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-    className: "tb_mt-4 tb_space-y-6"
+    className: "tb_mt-4 height-500-640:tb_mt-2 tb_space-y-6 height-500-640:tb_space-y-2"
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
     className: "tb_flex tb_justify-center tb_gap-2.5 tb_border-b tb_border-gray-300"
   }, !selectedOutfit && ((_currentField$groups$ = currentField.groups[0]) === null || _currentField$groups$ === void 0 ? void 0 : _currentField$groups$.title) && setSelectedOutfit(currentField.groups[0].title), currentField.groups.map(function (group, idx) {
     return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h4", {
       key: idx,
-      className: "tb_text-xl tb_cursor-pointer tb_py-2 tb_px-2.5 tb_text-primary tb_rounded-t-lg tb_border-solid tb_border tb_border-b-0 ".concat(selectedOutfit === group.title ? 'tb_border-primary' : 'tb_border-gray-300'),
+      className: "tb_text-xl tb_cursor-pointer tb_py-1 tb_px-2.5 tb_text-primary tb_rounded-t-lg tb_border-solid tb_border tb_border-b-0 ".concat(selectedOutfit === group.title ? 'tb_border-primary' : 'tb_border-gray-300'),
       onClick: function onClick() {
         return setSelectedOutfit(group.title);
       }
@@ -90144,7 +90167,7 @@ function Outfit(_ref) {
   })), currentField.groups.map(function (group, idx) {
     return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
       key: idx,
-      className: "".concat(selectedOutfit === group.title ? 'tb_block' : 'tb_hidden', " tb_min-h-[150px]")
+      className: "".concat(selectedOutfit === group.title ? 'tb_block' : 'tb_hidden', " tb_h-32 height-500-640:tb_h-38")
     }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_AccessoriesSlider__WEBPACK_IMPORTED_MODULE_1__["default"], {
       currentField: _objectSpread(_objectSpread({}, currentField), {}, {
         groups: [group] // Pass only the current group
@@ -90274,11 +90297,11 @@ function Radio(_ref) {
   }, currentField.options.length <= 3 && currentField.options.some(function (opt) {
     return opt.thumbUrl;
   }) ? /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-    className: "tb_grid ".concat(currentField.options.length === 1 ? 'tb_grid-cols-1' : currentField.options.length === 2 ? 'tb_grid-cols-2' : 'tb_grid-cols-3', " tb_gap-4 tb_justify-center tb_items-center")
+    className: "tb_flex tb_flex-wrap ".concat(currentField.options.length === 1 ? 'tb_flex-cols-1' : currentField.options.length === 2 ? 'tb_flex-cols-2' : 'tb_flex-cols-3', " tb_gap-4 tb_justify-center tb_items-center")
   }, currentField.options.map(function (option) {
     return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
       key: option.label,
-      className: "tb_text-center"
+      className: "tb_text-center tb_w-28"
     }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", {
       className: "tb_cursor-pointer"
     }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
@@ -90342,9 +90365,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return Voice; });
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "react");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var wavesurfer_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! wavesurfer.js */ "./node_modules/wavesurfer.js/dist/wavesurfer.js");
-/* harmony import */ var wavesurfer_js_dist_plugins_record_esm_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! wavesurfer.js/dist/plugins/record.esm.js */ "./node_modules/wavesurfer.js/dist/plugins/record.esm.js");
-/* harmony import */ var lucide_react__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! lucide-react */ "./node_modules/lucide-react/dist/esm/lucide-react.js");
+/* harmony import */ var lucide_react__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! lucide-react */ "./node_modules/lucide-react/dist/esm/lucide-react.js");
+/* harmony import */ var wavesurfer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! wavesurfer.js */ "./node_modules/wavesurfer.js/dist/wavesurfer.js");
+/* harmony import */ var wavesurfer_js_dist_plugins_record_esm_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! wavesurfer.js/dist/plugins/record.esm.js */ "./node_modules/wavesurfer.js/dist/plugins/record.esm.js");
 /* harmony import */ var sprintf_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! sprintf-js */ "./node_modules/sprintf-js/src/sprintf.js");
 /* harmony import */ var sprintf_js__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(sprintf_js__WEBPACK_IMPORTED_MODULE_4__);
 function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
@@ -90362,478 +90385,550 @@ function _arrayWithHoles(r) { if (Array.isArray(r)) return r; }
 
 
 
+var BUTTON_STATES = {
+  NONE: 'none',
+  RECORDING: 'recording',
+  UPLOADED: 'uploaded',
+  ADD_LATER: 'add_later',
+  SKIPPED: 'skipped'
+};
+var MAX_FILE_SIZE = 20 * 1024 * 1024; // 20MB
+
 function Voice(_ref) {
   var currentField = _ref.currentField,
     setError = _ref.setError,
-    updateProductData = _ref.updateProductData,
     combinedCart = _ref.combinedCart,
     updateObjRows = _ref.updateObjRows;
   var setInTotal = combinedCart.setInTotal,
-    setBlobFiles = combinedCart.setBlobFiles,
-    setTotalCost = combinedCart.setTotalCost;
-  var _useState = Object(react__WEBPACK_IMPORTED_MODULE_0__["useState"])(false),
+    setBlobFiles = combinedCart.setBlobFiles;
+
+  // State
+  var _useState = Object(react__WEBPACK_IMPORTED_MODULE_0__["useState"])(BUTTON_STATES.NONE),
     _useState2 = _slicedToArray(_useState, 2),
-    isRecording = _useState2[0],
-    setIsRecording = _useState2[1];
-  var _useState3 = Object(react__WEBPACK_IMPORTED_MODULE_0__["useState"])(null),
+    activeButton = _useState2[0],
+    setActiveButton = _useState2[1];
+  var _useState3 = Object(react__WEBPACK_IMPORTED_MODULE_0__["useState"])(false),
     _useState4 = _slicedToArray(_useState3, 2),
-    audioFile = _useState4[0],
-    setAudioFile = _useState4[1];
-  var _useState5 = Object(react__WEBPACK_IMPORTED_MODULE_0__["useState"])(''),
+    isRecording = _useState4[0],
+    setIsRecording = _useState4[1];
+  var _useState5 = Object(react__WEBPACK_IMPORTED_MODULE_0__["useState"])(null),
     _useState6 = _slicedToArray(_useState5, 2),
-    recordingStatus = _useState6[0],
-    setRecordingStatus = _useState6[1];
-  var _useState7 = Object(react__WEBPACK_IMPORTED_MODULE_0__["useState"])(false),
+    audioFile = _useState6[0],
+    setAudioFile = _useState6[1];
+  var _useState7 = Object(react__WEBPACK_IMPORTED_MODULE_0__["useState"])(''),
     _useState8 = _slicedToArray(_useState7, 2),
-    isPlaying = _useState8[0],
-    setIsPlaying = _useState8[1];
+    recordingStatus = _useState8[0],
+    setRecordingStatus = _useState8[1];
   var _useState9 = Object(react__WEBPACK_IMPORTED_MODULE_0__["useState"])(false),
     _useState10 = _slicedToArray(_useState9, 2),
-    showAddLaterMessage = _useState10[0],
-    setShowAddLaterMessage = _useState10[1];
+    isPlaying = _useState10[0],
+    setIsPlaying = _useState10[1];
+  var _useState11 = Object(react__WEBPACK_IMPORTED_MODULE_0__["useState"])(0),
+    _useState12 = _slicedToArray(_useState11, 2),
+    timer = _useState12[0],
+    setTimer = _useState12[1];
+  var _useState13 = Object(react__WEBPACK_IMPORTED_MODULE_0__["useState"])(false),
+    _useState14 = _slicedToArray(_useState13, 2),
+    hasVoiceOption = _useState14[0],
+    setHasVoiceOption = _useState14[1];
+  var audioData = Object(react__WEBPACK_IMPORTED_MODULE_0__["useRef"])(null);
+  var setAudioData = function setAudioData(audio_blob) {
+    audioData.current = audio_blob;
+  };
+
+  // Refs
   var waveformRef = Object(react__WEBPACK_IMPORTED_MODULE_0__["useRef"])(null);
   var wavesurferRef = Object(react__WEBPACK_IMPORTED_MODULE_0__["useRef"])(null);
   var recordPluginRef = Object(react__WEBPACK_IMPORTED_MODULE_0__["useRef"])(null);
-  var _useState11 = Object(react__WEBPACK_IMPORTED_MODULE_0__["useState"])(false),
-    _useState12 = _slicedToArray(_useState11, 2),
-    isLoading = _useState12[0],
-    setIsLoading = _useState12[1];
-  var _useState13 = Object(react__WEBPACK_IMPORTED_MODULE_0__["useState"])(0),
-    _useState14 = _slicedToArray(_useState13, 2),
-    timer = _useState14[0],
-    setTimer = _useState14[1];
-  var timerRef = Object(react__WEBPACK_IMPORTED_MODULE_0__["useRef"])(null);
-  var _useState15 = Object(react__WEBPACK_IMPORTED_MODULE_0__["useState"])(false),
-    _useState16 = _slicedToArray(_useState15, 2),
-    hasVoiceOption = _useState16[0],
-    setHasVoiceOption = _useState16[1];
-  var _useState17 = Object(react__WEBPACK_IMPORTED_MODULE_0__["useState"])(false),
-    _useState18 = _slicedToArray(_useState17, 2),
-    recordingEnded = _useState18[0],
-    setRecordingEnded = _useState18[1];
+  var audioRef = Object(react__WEBPACK_IMPORTED_MODULE_0__["useRef"])(null);
+  var timerIntervalRef = Object(react__WEBPACK_IMPORTED_MODULE_0__["useRef"])(null);
+
+  // Cost management effect
   Object(react__WEBPACK_IMPORTED_MODULE_0__["useEffect"])(function () {
-    if (!hasVoiceOption && (audioFile || showAddLaterMessage)) {
+    var shouldCharge = activeButton !== BUTTON_STATES.NONE && activeButton !== BUTTON_STATES.SKIPPED;
+    if (!hasVoiceOption && shouldCharge) {
       setHasVoiceOption(true);
       setInTotal(function (prevTotal) {
         var _currentField$cost;
         return prevTotal + parseFloat((_currentField$cost = currentField === null || currentField === void 0 ? void 0 : currentField.cost) !== null && _currentField$cost !== void 0 ? _currentField$cost : '0');
       });
-    } else if (hasVoiceOption && !audioFile && !showAddLaterMessage) {
+    } else if (hasVoiceOption && !shouldCharge) {
       setHasVoiceOption(false);
       setInTotal(function (prevTotal) {
         var _currentField$cost2;
         return prevTotal - parseFloat((_currentField$cost2 = currentField === null || currentField === void 0 ? void 0 : currentField.cost) !== null && _currentField$cost2 !== void 0 ? _currentField$cost2 : '0');
       });
     }
-  }, [audioFile, showAddLaterMessage]);
-  Object(react__WEBPACK_IMPORTED_MODULE_0__["useLayoutEffect"])(function () {
-    _initializeWaveSurfer();
-    return function () {
-      if (wavesurferRef.current) {
-        wavesurferRef.current.destroy();
-      }
-    };
-  }, []);
-  var _initializeWaveSurfer = function initializeWaveSurfer() {
-    if (waveformRef.current) {
-      wavesurferRef.current = wavesurfer_js__WEBPACK_IMPORTED_MODULE_1__["default"].create({
-        container: waveformRef.current,
-        progressColor: '#e63f51',
-        waveColor: '#fec52e',
-        responsive: true,
-        barRadius: 5,
-        barWidth: 5,
-        barGap: 1,
-        height: 20
-      });
-      recordPluginRef.current = wavesurfer_js_dist_plugins_record_esm_js__WEBPACK_IMPORTED_MODULE_2__["default"].create();
-      wavesurferRef.current.registerPlugin(recordPluginRef.current);
-      var timerInterval;
-
-      // Add new event listeners
-      recordPluginRef.current.on('record-start', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee() {
-        var startTime;
-        return _regeneratorRuntime().wrap(function _callee$(_context) {
-          while (1) switch (_context.prev = _context.next) {
-            case 0:
-              setIsRecording(true);
-              setRecordingEnded(false);
-              setRecordingStatus(__('recstarted', 'Recording started...'));
-              setTimer(parseFloat(currentField.duration));
-              startTime = Date.now();
-              timerInterval = setInterval(function () {
-                var currentTime = (Date.now() - startTime) / 1000;
-                var remainingTime = parseFloat(currentField.duration) - currentTime;
-                setTimer(Math.abs(remainingTime));
-                if (remainingTime <= 0) {
-                  if (isRecording) {
-                    stopRecording();
-                  }
-                  clearInterval(timerInterval);
-                }
-              }, 100);
-            case 6:
-            case "end":
-              return _context.stop();
-          }
-        }, _callee);
-      })));
-      recordPluginRef.current.on('record-end', /*#__PURE__*/function () {
-        var _ref3 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee2(blob) {
-          var audioUrl;
-          return _regeneratorRuntime().wrap(function _callee2$(_context2) {
-            while (1) switch (_context2.prev = _context2.next) {
-              case 0:
-                if (timerInterval) {
-                  clearInterval(timerInterval);
-                }
-
-                // recordPluginRef.current.getRecordedUrl();
-                audioUrl = URL.createObjectURL(blob);
-                setAudioFile(audioUrl);
-                setIsRecording(false);
-                setRecordingEnded(true);
-                setRecordingStatus(__('recsaved', 'Recording saved!'));
-
-                // Reinitialize wavesurfer before loading new audio
-                if (wavesurferRef.current) {
-                  wavesurferRef.current.destroy();
-                }
-                _initializeWaveSurfer();
-                wavesurferRef.current.load(audioUrl);
-                handleVoiceRecord(audioUrl);
-              case 10:
-              case "end":
-                return _context2.stop();
-            }
-          }, _callee2);
-        }));
-        return function (_x) {
-          return _ref3.apply(this, arguments);
-        };
-      }());
-      wavesurferRef.current.on('play', function () {
-        setIsPlaying(true);
-      });
-      wavesurferRef.current.on('audioprocess', function () {
-        var currentTime = wavesurferRef.current.getCurrentTime();
-        setTimer(currentTime);
-      });
-      wavesurferRef.current.on('pause', function () {
-        setIsPlaying(false);
-      });
-      wavesurferRef.current.on('finish', function () {
-        setIsPlaying(false);
-      });
-      wavesurferRef.current.on('loading', function () {
-        setIsLoading(true);
-      });
-      wavesurferRef.current.on('ready', function () {
-        setIsLoading(false);
-      });
-    }
-  };
-  var startRecording = /*#__PURE__*/function () {
-    var _ref4 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee3() {
+  }, [activeButton, hasVoiceOption]);
+  var _initializeWaveSurfer = /*#__PURE__*/function () {
+    var _ref2 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee3() {
+      var forRecording,
+        _args3 = arguments;
       return _regeneratorRuntime().wrap(function _callee3$(_context3) {
         while (1) switch (_context3.prev = _context3.next) {
           case 0:
-            _context3.prev = 0;
-            if (recordPluginRef.current) {
-              _context3.next = 3;
-              break;
-            }
-            throw new Error(__('nomicplugin', 'Recording plugin not initialized'));
-          case 3:
-            _context3.next = 5;
-            return recordPluginRef.current.startRecording();
-          case 5:
-            setShowAddLaterMessage(false);
-            setRecordingStatus(Object(sprintf_js__WEBPACK_IMPORTED_MODULE_4__["sprintf"])(__('audiorecord_instuction', 'Please record your voice up to %s seconds.'), currentField.duration));
-            _context3.next = 14;
-            break;
-          case 9:
-            _context3.prev = 9;
-            _context3.t0 = _context3["catch"](0);
-            console.error('Error accessing microphone:', _context3.t0);
-            setRecordingStatus(__('mic_erraccess', 'Error accessing microphone'));
-            setIsRecording(false);
-          case 14:
+            forRecording = _args3.length > 0 && _args3[0] !== undefined ? _args3[0] : false;
+            return _context3.abrupt("return", new Promise(/*#__PURE__*/function () {
+              var _ref3 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee2(resolve, reject) {
+                return _regeneratorRuntime().wrap(function _callee2$(_context2) {
+                  while (1) switch (_context2.prev = _context2.next) {
+                    case 0:
+                      _context2.prev = 0;
+                      _context2.prev = 1;
+                      if (!wavesurferRef.current) {
+                        _context2.next = 6;
+                        break;
+                      }
+                      _context2.next = 5;
+                      return wavesurferRef.current.destroy();
+                    case 5:
+                      wavesurferRef.current = null;
+                    case 6:
+                      _context2.next = 10;
+                      break;
+                    case 8:
+                      _context2.prev = 8;
+                      _context2.t0 = _context2["catch"](1);
+                    case 10:
+                      _context2.next = 12;
+                      return wavesurfer_js__WEBPACK_IMPORTED_MODULE_2__["default"].create({
+                        container: waveformRef.current,
+                        waveColor: '#fec52e',
+                        progressColor: '#e63f51',
+                        cursorColor: 'transparent',
+                        barWidth: 2,
+                        barRadius: 3,
+                        barGap: 3,
+                        height: 40,
+                        responsive: true,
+                        interact: !forRecording
+                      });
+                    case 12:
+                      wavesurferRef.current = _context2.sent;
+                      if (!forRecording) {
+                        _context2.next = 20;
+                        break;
+                      }
+                      _context2.next = 16;
+                      return wavesurfer_js_dist_plugins_record_esm_js__WEBPACK_IMPORTED_MODULE_3__["default"].create({
+                        mediaRecorder: {
+                          audioBitsPerSecond: 128000,
+                          mimeType: 'audio/wav'
+                        }
+                      });
+                    case 16:
+                      recordPluginRef.current = _context2.sent;
+                      // 
+                      wavesurferRef.current.registerPlugin(recordPluginRef.current);
+                      // 
+                      // Set up Record events
+                      recordPluginRef.current.on('record-start', function () {
+                        setIsRecording(true);
+                        setRecordingStatus('Recording started...');
+                        startTimer();
+                      });
+                      recordPluginRef.current.on('record-end', /*#__PURE__*/function () {
+                        var _ref4 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee(blob) {
+                          var audioUrl;
+                          return _regeneratorRuntime().wrap(function _callee$(_context) {
+                            while (1) switch (_context.prev = _context.next) {
+                              case 0:
+                                // console.log('Record end triggired');
+                                clearInterval(timerIntervalRef.current);
+                                _context.next = 3;
+                                return URL.createObjectURL(blob);
+                              case 3:
+                                audioUrl = _context.sent;
+                                setAudioFile(audioUrl);
+                                setError(null);
+                                setAudioData(blob);
+                                setIsRecording(false);
+                                setRecordingStatus('Recording saved!');
+                                handleVoiceRecord(audioUrl);
+
+                                // Reinitialize WaveSurfer for playback
+                                _context.next = 12;
+                                return _initializeWaveSurfer();
+                              case 12:
+                                _context.next = 14;
+                                return wavesurferRef.current.load(audioUrl);
+                              case 14:
+                              case "end":
+                                return _context.stop();
+                            }
+                          }, _callee);
+                        }));
+                        return function (_x3) {
+                          return _ref4.apply(this, arguments);
+                        };
+                      }());
+                    case 20:
+                      // Set up WaveSurfer events
+                      wavesurferRef.current.on('play', function () {
+                        return setIsPlaying(true);
+                      });
+                      wavesurferRef.current.on('pause', function () {
+                        return setIsPlaying(false);
+                      });
+                      wavesurferRef.current.on('finish', function () {
+                        return setIsPlaying(false);
+                      });
+                      // 
+                      resolve(true);
+                      _context2.next = 30;
+                      break;
+                    case 26:
+                      _context2.prev = 26;
+                      _context2.t1 = _context2["catch"](0);
+                      console.error('Error initializing WaveSurfer:', _context2.t1);
+                      setRecordingStatus('Error initializing audio recorder');
+                    case 30:
+                    case "end":
+                      return _context2.stop();
+                  }
+                }, _callee2, null, [[0, 26], [1, 8]]);
+              }));
+              return function (_x, _x2) {
+                return _ref3.apply(this, arguments);
+              };
+            }()));
+          case 2:
           case "end":
             return _context3.stop();
         }
-      }, _callee3, null, [[0, 9]]);
+      }, _callee3);
     }));
-    return function startRecording() {
-      return _ref4.apply(this, arguments);
+    return function initializeWaveSurfer() {
+      return _ref2.apply(this, arguments);
     };
   }();
-  var stopRecording = /*#__PURE__*/function () {
-    var _ref5 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee4() {
-      return _regeneratorRuntime().wrap(function _callee4$(_context4) {
-        while (1) switch (_context4.prev = _context4.next) {
-          case 0:
-            if (!(isRecording && recordPluginRef.current)) {
-              _context4.next = 11;
-              break;
-            }
-            _context4.prev = 1;
-            _context4.next = 4;
-            return recordPluginRef.current.stopRecording();
-          case 4:
-            _context4.next = 11;
-            break;
-          case 6:
-            _context4.prev = 6;
-            _context4.t0 = _context4["catch"](1);
-            console.error('Error stopping the recording:', _context4.t0);
-            setRecordingStatus(__('recinterrupted', 'Error stopping the recording'));
-            setIsRecording(false);
-          case 11:
-          case "end":
-            return _context4.stop();
-        }
-      }, _callee4, null, [[1, 6]]);
-    }));
-    return function stopRecording() {
-      return _ref5.apply(this, arguments);
-    };
-  }();
-  var handleFileUpload = /*#__PURE__*/function () {
-    var _ref6 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee6(event) {
-      var file, audioContext, fileReader;
+
+  // Initialize on mount and cleanup on unmount
+  Object(react__WEBPACK_IMPORTED_MODULE_0__["useEffect"])(/*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee5() {
+    return _regeneratorRuntime().wrap(function _callee5$(_context5) {
+      while (1) switch (_context5.prev = _context5.next) {
+        case 0:
+          _context5.next = 2;
+          return _initializeWaveSurfer();
+        case 2:
+          return _context5.abrupt("return", /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee4() {
+            return _regeneratorRuntime().wrap(function _callee4$(_context4) {
+              while (1) switch (_context4.prev = _context4.next) {
+                case 0:
+                  clearInterval(timerIntervalRef.current);
+                  _context4.prev = 1;
+                  if (!wavesurferRef.current) {
+                    _context4.next = 6;
+                    break;
+                  }
+                  _context4.next = 5;
+                  return wavesurferRef.current.destroy();
+                case 5:
+                  wavesurferRef.current = null;
+                case 6:
+                  _context4.next = 10;
+                  break;
+                case 8:
+                  _context4.prev = 8;
+                  _context4.t0 = _context4["catch"](1);
+                case 10:
+                case "end":
+                  return _context4.stop();
+              }
+            }, _callee4, null, [[1, 8]]);
+          })));
+        case 3:
+        case "end":
+          return _context5.stop();
+      }
+    }, _callee5);
+  })), []);
+  var startRecording = /*#__PURE__*/function () {
+    var _ref7 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee6() {
       return _regeneratorRuntime().wrap(function _callee6$(_context6) {
         while (1) switch (_context6.prev = _context6.next) {
           case 0:
-            file = event.target.files[0];
-            if (!file) {
-              _context6.next = 20;
-              break;
-            }
-            if (isPlaying && wavesurferRef.current) {
-              wavesurferRef.current.pause();
-            }
-            _context6.prev = 3;
-            if (!(file.size > 1024 * 1024 * 20)) {
+            _context6.prev = 0;
+            console.log(recordPluginRef.current, wavesurferRef.current);
+            // Initialize for recording first
+            _context6.next = 4;
+            return _initializeWaveSurfer(true);
+          case 4:
+            if (recordPluginRef.current) {
               _context6.next = 6;
               break;
             }
-            throw new Error(__('maxuploadmb', 'Oh! The file you are trying to upload is too heavy. The file must be up to 20Mb'));
+            throw new Error('Recording plugin not initialized');
           case 6:
-            if (file.type) {
-              _context6.next = 8;
-              break;
-            }
-            throw new Error(__('invalid_file', 'Invalid file'));
+            _context6.next = 8;
+            return recordPluginRef.current.startRecording();
           case 8:
-            if (!(!file.type.startsWith('video/') && !file.type.startsWith('audio/'))) {
-              _context6.next = 10;
-              break;
-            }
-            throw new Error(__('invalid_file', 'File is not audio, nor video.'));
-          case 10:
-            audioContext = new (window.AudioContext || window.webkitAudioContext)();
-            fileReader = new FileReader();
-            fileReader.onload = function (event) {
-              audioContext.decodeAudioData(event.target.result, /*#__PURE__*/function () {
-                var _ref7 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee5(buffer) {
-                  var duration, audioUrl;
-                  return _regeneratorRuntime().wrap(function _callee5$(_context5) {
-                    while (1) switch (_context5.prev = _context5.next) {
-                      case 0:
-                        duration = buffer.duration;
-                        if (!(duration && duration > 1 && duration > parseFloat(currentField.duration))) {
-                          _context5.next = 5;
-                          break;
-                        }
-                        setError(Object(sprintf_js__WEBPACK_IMPORTED_MODULE_4__["sprintf"])(__('audioexcedduration', 'Office! The file I uploaded is too long. Note ♥ The length of the recording does not exceed %s seconds.'), currentField.duration));
-                        _context5.next = 14;
-                        break;
-                      case 5:
-                        audioUrl = URL.createObjectURL(file);
-                        setAudioFile(audioUrl);
-                        setShowAddLaterMessage(false);
-                        setRecordingStatus('Audio file uploaded!');
-                        setIsPlaying(false);
-                        if (!wavesurferRef.current) {
-                          _context5.next = 13;
-                          break;
-                        }
-                        _context5.next = 13;
-                        return wavesurferRef.current.load(audioUrl);
-                      case 13:
-                        handleVoiceRecord(audioUrl);
-                      case 14:
-                      case "end":
-                        return _context5.stop();
-                    }
-                  }, _callee5);
-                }));
-                return function (_x3) {
-                  return _ref7.apply(this, arguments);
-                };
-              }());
-            };
-            fileReader.readAsArrayBuffer(file);
-            _context6.next = 20;
+            setActiveButton(BUTTON_STATES.RECORDING);
+            setRecordingStatus("Please record your voice up to ".concat(currentField.duration, " seconds."));
+            _context6.next = 17;
             break;
-          case 16:
-            _context6.prev = 16;
-            _context6.t0 = _context6["catch"](3);
-            setError(_context6.t0.message);
-            console.error('Error uploading file:', _context6.t0);
-          case 20:
+          case 12:
+            _context6.prev = 12;
+            _context6.t0 = _context6["catch"](0);
+            console.error('Error accessing microphone:', _context6.t0);
+            setRecordingStatus('Error accessing microphone. Please ensure microphone permissions are granted.');
+            setIsRecording(false);
+          case 17:
           case "end":
             return _context6.stop();
         }
-      }, _callee6, null, [[3, 16]]);
+      }, _callee6, null, [[0, 12]]);
     }));
-    return function handleFileUpload(_x2) {
-      return _ref6.apply(this, arguments);
+    return function startRecording() {
+      return _ref7.apply(this, arguments);
     };
   }();
-  var handleSkip = function handleSkip() {
-    setAudioFile(null);
-    setShowAddLaterMessage(false);
-    setRecordingStatus(__('voice_skipped', 'Skipped voice recording'));
-    setIsPlaying(false);
-    if (wavesurferRef.current) {
-      wavesurferRef.current.empty();
+  var stopRecording = function stopRecording() {
+    if (recordPluginRef.current && isRecording) {
+      recordPluginRef.current.stopRecording();
+      clearInterval(timerIntervalRef.current);
     }
-    handleVoiceRecord(null);
   };
-  var handleAddLater = function handleAddLater() {
-    setAudioFile(null);
-    setShowAddLaterMessage(true);
-    setRecordingStatus('Will add voice later');
-    setIsPlaying(false);
-    if (wavesurferRef.current) {
-      wavesurferRef.current.empty();
-    }
-    handleVoiceRecord('later');
-  };
-  var togglePlay = function togglePlay() {
-    if (wavesurferRef.current) {
-      if (isPlaying) {
-        wavesurferRef.current.pause();
-      } else {
-        wavesurferRef.current.play();
+  var startTimer = function startTimer() {
+    var duration = parseFloat(currentField.duration);
+    setTimer(duration);
+    var startTime = Date.now();
+    timerIntervalRef.current = setInterval(function () {
+      var currentTime = (Date.now() - startTime) / 1000;
+      var remainingTime = duration - currentTime;
+      setTimer(Math.max(0, remainingTime));
+      if (remainingTime <= 0) {
+        stopRecording();
+        clearInterval(timerIntervalRef.current);
       }
-    }
+    }, 100);
   };
-  var handleVoiceRecord = function handleVoiceRecord(recordingData) {
-    var timestamp = Date.now();
-    if (recordingData && recordingData !== 'later' && recordingData !== null) {
-      var blobName = recordingData.includes('/') ? "".concat(timestamp, "-recording.mp3") : // For recording
-      "".concat(timestamp, "-").concat(recordingData.split('/').pop()); // For upload
+  var validateFile = /*#__PURE__*/function () {
+    var _ref8 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee7(file) {
+      return _regeneratorRuntime().wrap(function _callee7$(_context7) {
+        while (1) switch (_context7.prev = _context7.next) {
+          case 0:
+            if (!(file.size > MAX_FILE_SIZE)) {
+              _context7.next = 2;
+              break;
+            }
+            throw new Error('File size must be up to 20Mb');
+          case 2:
+            if (!(!file.type || !file.type.startsWith('video/') && !file.type.startsWith('audio/'))) {
+              _context7.next = 4;
+              break;
+            }
+            throw new Error('Invalid file type');
+          case 4:
+          case "end":
+            return _context7.stop();
+        }
+      }, _callee7);
+    }));
+    return function validateFile(_x4) {
+      return _ref8.apply(this, arguments);
+    };
+  }();
+  var handleFileUpload = /*#__PURE__*/function () {
+    var _ref9 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee8(event) {
+      var file, _err$message, audioContext, arrayBuffer, audioBuffer, audioUrl;
+      return _regeneratorRuntime().wrap(function _callee8$(_context8) {
+        while (1) switch (_context8.prev = _context8.next) {
+          case 0:
+            file = event.target.files[0];
+            if (file) {
+              _context8.next = 3;
+              break;
+            }
+            return _context8.abrupt("return");
+          case 3:
+            _context8.prev = 3;
+            _context8.prev = 4;
+            _context8.next = 7;
+            return validateFile(file);
+          case 7:
+            _context8.next = 13;
+            break;
+          case 9:
+            _context8.prev = 9;
+            _context8.t0 = _context8["catch"](4);
+            setError((_err$message = _context8.t0 === null || _context8.t0 === void 0 ? void 0 : _context8.t0.message) !== null && _err$message !== void 0 ? _err$message : 'Something went wrong.');
+            return _context8.abrupt("return");
+          case 13:
+            audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            _context8.next = 16;
+            return file.arrayBuffer();
+          case 16:
+            arrayBuffer = _context8.sent;
+            _context8.next = 19;
+            return audioContext.decodeAudioData(arrayBuffer);
+          case 19:
+            audioBuffer = _context8.sent;
+            if (!(audioBuffer.duration > parseFloat(currentField.duration))) {
+              _context8.next = 23;
+              break;
+            }
+            // throw new Error(`File duration exceeds ${currentField.duration} seconds`);
+            setError(Object(sprintf_js__WEBPACK_IMPORTED_MODULE_4__["sprintf"])(__('audioexcedduration', "File duration exceeds %s seconds"), currentField.duration));
+            return _context8.abrupt("return");
+          case 23:
+            audioUrl = URL.createObjectURL(file);
+            setAudioFile(audioUrl);
+            setError(null);
+            setAudioData(file);
+            setActiveButton(BUTTON_STATES.UPLOADED);
+            setRecordingStatus('Audio file uploaded!');
 
-      fetch(recordingData).then(function (response) {
-        return response.blob();
-      }).then(function (blob) {
-        var audioBlob = new Blob([blob], {
-          type: 'audio/mpeg'
-        });
-        Object.defineProperty(audioBlob, 'name', {
-          value: blobName
-        });
-        // const filteredFiles = prevFiles.filter(file => !(file instanceof Blob && file.type.startsWith('audio/')));
-        // return [...filteredFiles, audioBlob];
-        setBlobFiles([audioBlob]);
-      });
-    }
-    updateObjRows(currentField, {
-      attached: recordingData === 'later' ? {
-        later: true
-      } : recordingData === null ? null : {
-        blob: recordingData.includes('/') ? // Check if it's a URL (recording) or filename (upload)
-        "".concat(timestamp, "-recording.mp3") : // For recording
-        "".concat(timestamp, "-").concat(recordingData.split('/').pop()),
-        // For upload
-        method: recordingData.includes('/') ? 'record' : 'upload'
-      }
-    });
+            // Reinitialize WaveSurfer for the uploaded file
+            _context8.next = 31;
+            return _initializeWaveSurfer();
+          case 31:
+            _context8.next = 33;
+            return wavesurferRef.current.load(audioUrl);
+          case 33:
+            handleVoiceRecord(audioUrl);
+            _context8.next = 40;
+            break;
+          case 36:
+            _context8.prev = 36;
+            _context8.t1 = _context8["catch"](3);
+            // err.message
+            setError(__('erroruploadvoice', "Oopsi, we couldn't load your file"));
+            console.error('Error uploading file:', _context8.t1);
+          case 40:
+          case "end":
+            return _context8.stop();
+        }
+      }, _callee8, null, [[3, 36], [4, 9]]);
+    }));
+    return function handleFileUpload(_x5) {
+      return _ref9.apply(this, arguments);
+    };
+  }();
+  var handleVoiceRecord = /*#__PURE__*/function () {
+    var _ref10 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee9(audioBlobUrl) {
+      var timestamp, isLater, blobName, audioBlob;
+      return _regeneratorRuntime().wrap(function _callee9$(_context9) {
+        while (1) switch (_context9.prev = _context9.next) {
+          case 0:
+            if (audioBlobUrl) {
+              _context9.next = 3;
+              break;
+            }
+            updateObjRows(currentField, {
+              attached: null
+            });
+            return _context9.abrupt("return");
+          case 3:
+            timestamp = Date.now();
+            isLater = audioBlobUrl === 'later';
+            if (!isLater && audioData.current) {
+              blobName = "".concat(timestamp, "-").concat(audioBlobUrl.includes('/') ? 'recording.mp3' : audioBlobUrl.split('/').pop());
+              audioBlob = new Blob([audioData.current], {
+                type: 'audio/mpeg'
+              });
+              Object.defineProperty(audioBlob, 'name', {
+                value: blobName,
+                writable: false
+              });
+              setBlobFiles(audioBlob);
+            } else {
+              // console.log('Unfortunately this has been skipped')
+            }
+            updateObjRows(currentField, {
+              attached: isLater ? {
+                later: true
+              } : {
+                blob: "".concat(timestamp, "-").concat(audioBlobUrl.includes('/') ? 'recording.mp3' : audioBlobUrl.split('/').pop()),
+                method: audioBlobUrl.includes('/') ? 'record' : 'upload'
+              }
+            });
+          case 7:
+          case "end":
+            return _context9.stop();
+        }
+      }, _callee9);
+    }));
+    return function handleVoiceRecord(_x6) {
+      return _ref10.apply(this, arguments);
+    };
+  }();
+  var renderActionButton = function renderActionButton(icon, label, onClick, isActive) {
+    return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      className: "tb_flex tb_flex-col tb_items-center"
+    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
+      onClick: onClick,
+      className: "tb_flex tb_items-center tb_justify-center tb_w-16 tb_h-16 tb_rounded-lg \n          ".concat(isActive ? 'tb_border-2 tb_border-primary-500' : 'tb_bg-gray-200', " \n          tb_text-gray-600 tb_shadow-sm")
+    }, icon), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", {
+      className: "tb_mt-2 tb_text-xs tb_text-gray-600"
+    }, label));
   };
+  var shouldShowWaveform = ![BUTTON_STATES.ADD_LATER, BUTTON_STATES.SKIPPED, BUTTON_STATES.NONE].includes(activeButton);
   return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
     className: "tb_p-2"
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
     className: "tb_space-y-4"
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
     className: "tb_grid tb_grid-cols-4 tb_gap-5 tb_justify-items-center"
-  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-    className: "tb_flex tb_flex-col tb_items-center"
-  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
-    onClick: isRecording ? stopRecording : startRecording,
-    className: "tb_flex tb_items-center tb_justify-center tb_w-16 tb_h-16 tb_rounded-lg ".concat(isRecording ? 'tb_bg-primary-500' : 'tb_bg-gray-200', " tb_text-gray-600 tb_shadow-sm")
-  }, isRecording ? /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(lucide_react__WEBPACK_IMPORTED_MODULE_3__["Square"], {
+  }, renderActionButton(isRecording ? /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(lucide_react__WEBPACK_IMPORTED_MODULE_1__["Square"], {
     className: "tb_w-6 tb_h-6"
-  }) : /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(lucide_react__WEBPACK_IMPORTED_MODULE_3__["Mic"], {
+  }) : /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(lucide_react__WEBPACK_IMPORTED_MODULE_1__["Mic"], {
     className: "tb_w-6 tb_h-6"
-  })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", {
-    className: "tb_mt-2 tb_text-xs tb_text-gray-600"
-  }, __('record', 'Record'))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+  }), 'Record', isRecording ? stopRecording : startRecording, activeButton === BUTTON_STATES.RECORDING), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
     className: "tb_flex tb_flex-col tb_items-center"
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", {
     className: "tb_cursor-pointer"
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-    className: "tb_w-16 tb_h-16 tb_flex tb_items-center tb_justify-center tb_rounded-lg tb_bg-gray-200 tb_shadow-sm"
-  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(lucide_react__WEBPACK_IMPORTED_MODULE_3__["Upload"], {
+    className: "tb_w-16 tb_h-16 tb_flex tb_items-center tb_justify-center tb_rounded-lg \n                ".concat(activeButton === BUTTON_STATES.UPLOADED ? 'tb_border-2 tb_border-primary-500' : 'tb_bg-gray-200')
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(lucide_react__WEBPACK_IMPORTED_MODULE_1__["Upload"], {
     className: "tb_w-6 tb_h-6 tb_text-gray-600"
   })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", {
     className: "tb_mt-2 tb_text-xs tb_text-gray-600 tb_block tb_text-center"
   }, "Upload"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
-    type: "file",
-    accept: "audio/*",
+    type: "file"
+    // accept="audio/*"
+    ,
+    accept: ".mp3,.wav,.aac,.m4a,.ogg,.opus,.flac,.alac,.aiff,.amr,.wma",
     onChange: handleFileUpload,
     className: "tb_hidden"
-  }))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-    className: "tb_flex tb_flex-col tb_items-center"
-  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
-    onClick: handleAddLater,
-    className: "tb_w-16 tb_h-16 tb_flex tb_items-center tb_justify-center tb_rounded-lg tb_bg-gray-200 tb_shadow-sm"
-  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(lucide_react__WEBPACK_IMPORTED_MODULE_3__["Mail"], {
-    className: "tb_w-6 tb_h-6 tb_text-gray-600"
-  })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", {
-    className: "tb_mt-2 tb_text-xs tb_text-gray-600"
-  }, __('add_later', 'Add Later'))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-    className: "tb_flex tb_flex-col tb_items-center"
-  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
-    onClick: handleSkip,
-    className: "tb_w-16 tb_h-16 tb_flex tb_items-center tb_justify-center tb_rounded-lg tb_bg-gray-200 tb_shadow-sm"
-  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(lucide_react__WEBPACK_IMPORTED_MODULE_3__["SkipForward"], {
-    className: "tb_w-6 tb_h-6 tb_text-gray-600"
-  })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", {
-    className: "tb_mt-2 tb_text-xs tb_text-gray-600"
-  }, __('skip', 'Skip')))), recordingStatus && /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("p", {
+  }))), renderActionButton(/*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(lucide_react__WEBPACK_IMPORTED_MODULE_1__["Mail"], {
+    className: "tb_w-6 tb_h-6"
+  }), 'Add Later', function () {
+    setActiveButton(BUTTON_STATES.ADD_LATER);
+    handleVoiceRecord('later');
+  }, activeButton === BUTTON_STATES.ADD_LATER), renderActionButton(/*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(lucide_react__WEBPACK_IMPORTED_MODULE_1__["SkipForward"], {
+    className: "tb_w-6 tb_h-6"
+  }), 'Skip', function () {
+    setActiveButton(BUTTON_STATES.SKIPPED);
+    handleVoiceRecord(null);
+  }, activeButton === BUTTON_STATES.SKIPPED)), recordingStatus && /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("p", {
     className: "tb_text-sm tb_text-gray-600 tb_text-center"
-  }, recordingStatus), showAddLaterMessage ? /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("p", {
-    className: "tb_text-sm tb_text-gray-600",
-    dangerouslySetInnerHTML: {
-      __html: __('audiolater_instuction', '1. Receive instructions & button in order email.\n2. Upload audio file anytime later.\n3. We will ship when your audio file is received.').replaceAll("\\n", '<br />')
-    }
-  }) : null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-    className: "tb_flex tb_items-center tb_gap-4 ".concat(!audioFile ? isRecording ? '' : 'tb_hidden' : '')
-  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
-    onClick: togglePlay,
-    disabled: isLoading,
-    className: "tb_w-10 tb_h-10 ".concat(isRecording ? 'tb_hidden' : 'tb_flex', " tb_items-center tb_justify-center tb_rounded-full ").concat(isLoading ? 'tb_bg-gray-300' : 'tb_bg-gray-200')
-  }, isLoading ? /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-    className: "tb_w-5 tb_h-5 tb_border-4 tb_border-t-transparent tb_border-blue-500 tb_border-solid tb_rounded-full tb_animate-spin"
-  }) : isPlaying ? /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(lucide_react__WEBPACK_IMPORTED_MODULE_3__["Pause"], {
+  }, recordingStatus), activeButton === BUTTON_STATES.ADD_LATER && /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("p", {
+    className: "tb_text-sm tb_text-gray-600"
+  }, "1. Receive instructions & button in order email.", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("br", null), "2. Upload audio file anytime later.", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("br", null), "3. We will ship when your audio file is received."), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+    className: "tb_flex tb_items-center tb_gap-4 ".concat(!shouldShowWaveform && 'tb_hidden')
+  }, audioFile && !isRecording && /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
+    onClick: function onClick() {
+      var _wavesurferRef$curren;
+      return (_wavesurferRef$curren = wavesurferRef.current) === null || _wavesurferRef$curren === void 0 ? void 0 : _wavesurferRef$curren[isPlaying ? 'pause' : 'play']();
+    },
+    className: "tb_w-10 tb_h-10 tb_flex tb_items-center tb_justify-center tb_rounded-full tb_bg-gray-200"
+  }, isPlaying ? /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(lucide_react__WEBPACK_IMPORTED_MODULE_1__["Pause"], {
     className: "tb_w-5 tb_h-5"
-  }) : /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(lucide_react__WEBPACK_IMPORTED_MODULE_3__["Play"], {
+  }) : /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(lucide_react__WEBPACK_IMPORTED_MODULE_1__["Play"], {
     className: "tb_w-5 tb_h-5"
   })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
     ref: waveformRef,
-    className: "tb_w-full tb_h-[20px] tb_bg-gray-50 tb_rounded"
-  }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-    className: "tb_flex tb_items-center tb_gap-4"
-  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", {
+    className: "tb_w-full tb_h-[40px]"
+  }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", {
     className: "tb_text-sm tb_text-gray-600"
-  }, "".concat(Math.floor(timer), ":").concat(('00' + Math.floor(timer % 1 * 1000)).slice(-2))))), isRecording && /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+  }, "".concat(Math.floor(timer), ":").concat(('00' + Math.floor(timer % 1 * 1000)).slice(-2)))), isRecording && /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
     className: "tb_max-h-36 tb_overflow-y-auto tb_text-sm tb_text-gray-500 tb_mt-4"
-  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("p", null, Object(sprintf_js__WEBPACK_IMPORTED_MODULE_4__["sprintf"])(__('audioupload_instuction', "You are permitted to record any message of your liking up to %s seconds, with the exclusion of profanity or copyrighted materials, which are prohibited. Please note your recording may be reviewed and screened (discreetly) by our DubiDo staff. We will not modify or edit your recording. In the event of copyright infringement, profanity, hate speech or recordings of the sort, we reserve the right to decline your recording and we will notify you of this decision within 48h of the submission of your recording. You will be given the opportunity to record a new message for additional review. For further information on your rights and privacy, please refer to our Privacy Policy. Please also refer to our Disclaimer for additional information on DubiDo's liability with regard to recordings."), currentField.duration))), !showAddLaterMessage && !audioFile && !isRecording && /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("p", {
-    className: "tb_text-sm tb_text-gray-500 tb_text-center"
-  }, __('plsrecvoice', 'Please record your voice.'))));
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("p", null, "You are permitted to record any message of your liking up to ", currentField.duration, " seconds, with the exclusion of profanity or copyrighted materials, which are prohibited.")), activeButton === BUTTON_STATES.SKIPPED && /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("p", {
+    className: "tb_text-sm tb_text-primary-500 tb_text-center"
+  }, __('plsrecvoice', 'Please record your voice.'), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("br", null), __('rusurenot2advoice', 'Are you sure you choose not to add your voice?')), activeButton === BUTTON_STATES.NONE && /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("p", {
+    className: "tb_text-sm tb_text-primary-500 tb_text-center"
+  }, "Please record your voice.")));
 }
 
 /***/ }),

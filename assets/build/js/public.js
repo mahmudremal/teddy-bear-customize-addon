@@ -19093,8 +19093,8 @@ var popupCart = /*#__PURE__*/function () {
             return total + parseFloat(item);
           }, 0);
         } else if (step.type == 'voice') {
-          var _step, _step$attaced;
-          step = (_step = step) !== null && _step !== void 0 && _step.attaced && !((_step$attaced = step.attaced) !== null && _step$attaced !== void 0 && _step$attaced.skip) ? parseFloat(step.cost) : 0;
+          var _step, _step$attached;
+          step = (_step = step) !== null && _step !== void 0 && _step.attached && !((_step$attached = step.attached) !== null && _step$attached !== void 0 && _step$attached.skip) ? parseFloat(step.cost) : 0;
         } else if ((_step2 = step) !== null && _step2 !== void 0 && _step2.cost) {
           step = parseFloat(step.cost);
         } else {
@@ -20870,11 +20870,11 @@ var PROMPTS = {
                   });
                   step = PROMPTS.propertiesFilter(step, ['cost', 'fieldID', 'headerbg', 'groups', 'steptitle', 'type']);
                 } else if (step.type == 'voice') {
-                  var _step, _step$attaced;
-                  step = PROMPTS.propertiesFilter(step, ['cost', 'duration', 'fieldID', 'headerbg', 'product', 'attaced', 'steptitle', 'type']);
-                  if ((_step = step) !== null && _step !== void 0 && _step.attaced && (_step$attaced = step.attaced) !== null && _step$attaced !== void 0 && _step$attaced.blob) {
+                  var _step, _step$attached;
+                  step = PROMPTS.propertiesFilter(step, ['cost', 'duration', 'fieldID', 'headerbg', 'product', 'attached', 'steptitle', 'type']);
+                  if ((_step = step) !== null && _step !== void 0 && _step.attached && (_step$attached = step.attached) !== null && _step$attached !== void 0 && _step$attached.blob) {
                     var _blob_file$type, _blob_file$name;
-                    var blob_file = step.attaced.blob,
+                    var blob_file = step.attached.blob,
                       blob_id = Date.now(),
                       blob_ext = 'mp3';
                     // 
@@ -20885,11 +20885,11 @@ var PROMPTS = {
                       blob_file.name = "recorded.".concat(blob_ext);
                     }
                     // 
-                    // console.log(step, step.attaced)
+                    // console.log(step, step.attached)
                     // console.log(blob_ext, blob_file)
                     // 
-                    step.attaced.blob = "".concat(blob_id, "-").concat((_blob_file$name = blob_file === null || blob_file === void 0 ? void 0 : blob_file.name) !== null && _blob_file$name !== void 0 ? _blob_file$name : ".".concat(blob_ext));
-                    formdata.append('_blobs', blob_file, "".concat(step.attaced.blob));
+                    step.attached.blob = "".concat(blob_id, "-").concat((_blob_file$name = blob_file === null || blob_file === void 0 ? void 0 : blob_file.name) !== null && _blob_file$name !== void 0 ? _blob_file$name : ".".concat(blob_ext));
+                    formdata.append('_blobs', blob_file, "".concat(step.attached.blob));
                   }
                 } else {
                   step = step;
@@ -21434,26 +21434,26 @@ var Voice = /*#__PURE__*/function () {
   }, {
     key: "do_store",
     value: function do_store(mode) {
-      var _this$row$attaced, _this$row;
+      var _this$row$attached, _this$row;
       var attach = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
       var thisClass = arguments.length > 2 ? arguments[2] : undefined;
-      this.row.attaced = (_this$row$attaced = (_this$row = this.row) === null || _this$row === void 0 ? void 0 : _this$row.attaced) !== null && _this$row$attaced !== void 0 ? _this$row$attaced : {};
+      this.row.attached = (_this$row$attached = (_this$row = this.row) === null || _this$row === void 0 ? void 0 : _this$row.attached) !== null && _this$row$attached !== void 0 ? _this$row$attached : {};
       switch (mode) {
         case 'skip':
         case 'durExceed':
         case 'sizeExceed':
-          this.row.attaced = {
+          this.row.attached = {
             skip: true
           };
           break;
         case 'later':
-          this.row.attaced = {
+          this.row.attached = {
             later: true
           };
           break;
         case 'record':
         case 'upload':
-          this.row.attaced = {
+          this.row.attached = {
             blob: attach,
             method: mode
           };

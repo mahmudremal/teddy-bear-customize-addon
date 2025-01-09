@@ -1141,10 +1141,10 @@ const PROMPTS = {
                     ]);
                 } else if (step.type == 'voice') {
                     step = PROMPTS.propertiesFilter(step, [
-                        'cost', 'duration', 'fieldID', 'headerbg', 'product', 'attaced', 'steptitle', 'type'
+                        'cost', 'duration', 'fieldID', 'headerbg', 'product', 'attached', 'steptitle', 'type'
                     ]);
-                    if (step?.attaced && step.attaced?.blob) {
-                        var blob_file = step.attaced.blob, blob_id = Date.now(), blob_ext = 'mp3';
+                    if (step?.attached && step.attached?.blob) {
+                        var blob_file = step.attached.blob, blob_id = Date.now(), blob_ext = 'mp3';
                         // 
                         if (!(blob_file?.name) && blob_file?.type && blob_file.type?.split('/')[1]) {
                             blob_ext = blob_file.type.split('/')[1];
@@ -1153,11 +1153,11 @@ const PROMPTS = {
                             blob_file.name = `recorded.${blob_ext}`;
                         } 
                         // 
-                        // console.log(step, step.attaced)
+                        // console.log(step, step.attached)
                         // console.log(blob_ext, blob_file)
                         // 
-                        step.attaced.blob = `${blob_id}-${blob_file?.name??`.${blob_ext}`}`;
-                        formdata.append('_blobs', blob_file, `${step.attaced.blob}`);
+                        step.attached.blob = `${blob_id}-${blob_file?.name??`.${blob_ext}`}`;
+                        formdata.append('_blobs', blob_file, `${step.attached.blob}`);
                     }
                 } else {
                     step = step;

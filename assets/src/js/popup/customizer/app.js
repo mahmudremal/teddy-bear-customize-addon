@@ -19,6 +19,15 @@ function removeAllClickListeners(element) {
 
   return clone;
 }
+function freezeBody(freeze = false) {
+  if (freeze) {
+    document.body.style.overflowY = 'hidden';
+    document.body.style.maxHeight = 'unset';
+  } else {
+    document.body.style.overflowY = 'auto';
+    document.body.style.maxHeight = '90vh';
+  }
+}
 
 function App() {
   const { useState, useCallback, useEffect } = React;
@@ -91,8 +100,10 @@ function App() {
           data.product.custom_fields[fieldsKey] = fields;
         });
         // 
-        setProductData(data.product);
+        // 
         setError(null);
+        setProductData(data.product);
+        freezeBody(true);
       } catch (err) {
         console.error('Error:', err);
         setError(err.message === 'Invalid button configuration' 
@@ -135,6 +146,7 @@ function App() {
       setProductId(null);
       setProductData(null);
       setVisiblePopup(false);
+      freezeBody(false);
     }
   };
 
@@ -159,8 +171,8 @@ function App() {
       {visiblePopup && (
         <div className='tb_absolute tb_inset-0 tb_z-[99999]'>
           <Toaster position="top-right" reverseOrder={true} />
-          <div className="tb_fixed tb_inset-0 tb_bg-gray-900 tb_bg-opacity-50 tb_z-40" onClick={closePopup} ></div>
-          <div className="tb_w-[90vw] tb_min-h-[400px] md:tb_min-h-[500px] tb_max-h-[95vh] tb_overflow-hidden tb_overflow-y-auto tb_fixed tb_top-1/2 tb_left-1/2 tb_transform tb_-translate-x-1/2 tb_-translate-y-1/2 tb_z-50 tb_bg-white tb_p-0 tb_rounded-lg tb_shadow-lg tb_max-w-full md:tb_w-[450px] md:tb_min-w-4xl">
+          <div className="tb_fixed tb_inset-0 tb_bg-gray-900 tb_bg-opacity-95 tb_z-40" onClick={closePopup} ></div>
+          <div className="tb_w-[90vw] tb_h-[650px] tb_max-h-[95vh] tb_overflow-hidden tb_overflow-y-auto tb_fixed tb_top-1/2 tb_left-1/2 tb_transform tb_-translate-x-1/2 tb_-translate-y-1/2 tb_z-50 tb_bg-white tb_p-0 tb_rounded-lg tb_shadow-lg tb_max-w-full md:tb_w-[450px] md:tb_min-w-4xl">
             { isLoading ? (
               <div className="tb_p-8 tb_text-center tb_flex tb_absolute tb_w-full tb_h-full tb_items-center tb_justify-center tb_flex-col">
                 <div className="tb_animate-spin tb_rounded-full tb_h-8 tb_w-8 tb_border-b-2 tb_border-gray-900 tb_mx-auto"></div>

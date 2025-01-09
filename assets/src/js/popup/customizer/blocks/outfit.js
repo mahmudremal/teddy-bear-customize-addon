@@ -27,14 +27,14 @@ export default function Outfit({ currentField, selectedOutfit, setSelectedOutfit
     };
 
     return (
-        <div className="tb_mt-4 tb_space-y-6">
+        <div className="tb_mt-4 height-500-640:tb_mt-2 tb_space-y-6 height-500-640:tb_space-y-2">
 
             <div className="tb_flex tb_justify-center tb_gap-2.5 tb_border-b tb_border-gray-300">
                 {!selectedOutfit && currentField.groups[0]?.title && setSelectedOutfit(currentField.groups[0].title)}
                 {currentField.groups.map((group, idx) => (
                     <h4
                         key={idx}
-                        className={`tb_text-xl tb_cursor-pointer tb_py-2 tb_px-2.5 tb_text-primary tb_rounded-t-lg tb_border-solid tb_border tb_border-b-0 ${
+                        className={`tb_text-xl tb_cursor-pointer tb_py-1 tb_px-2.5 tb_text-primary tb_rounded-t-lg tb_border-solid tb_border tb_border-b-0 ${
                             selectedOutfit === group.title
                                 ? 'tb_border-primary'
                                 : 'tb_border-gray-300'
@@ -47,7 +47,7 @@ export default function Outfit({ currentField, selectedOutfit, setSelectedOutfit
             </div>
             
             {currentField.groups.map((group, idx) => (
-                <div key={idx} className={`${selectedOutfit === group.title ? 'tb_block' : 'tb_hidden'} tb_min-h-[150px]`}>
+                <div key={idx} className={`${selectedOutfit === group.title ? 'tb_block' : 'tb_hidden'} tb_h-32 height-500-640:tb_h-38`}>
                     <AccessoriesSlider 
                         currentField={{
                             ...currentField,

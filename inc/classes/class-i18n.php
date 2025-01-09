@@ -451,7 +451,7 @@ class I18n {
 
 			'maxuploadmb' => __('Oh! The file you are trying to upload is too heavy. Put ♥ - the file must be up to %sMb', 'teddybearsprompts'),
 
-			'audioexcedduration' => __('Office! The file I uploaded is too long. Note ♥ The length of the recording does not exceed %s seconds.', 'teddybearsprompts'),
+			'audioexcedduration' => __('Oops! the file you uploaded is too long. ❤Note: The length of the recording cannot exceed %s seconds.', 'teddybearsprompts'),
 			'audiofile_invalid' => __("Invalid file selected. It seems you didn't select a valid audio file or file is not in these following format (%s).", 'teddybearsprompts'),
 
 			'translations' => __('Translations', 'teddybearsprompts'),
@@ -480,6 +480,10 @@ class I18n {
 			'recsaved' => __('Recording saved!', 'teddybearsprompts'),
 			'recstarted' => __('Recording started...', 'teddybearsprompts'),
 			'plsrecvoice' => __('Please record your voice.', 'teddybearsprompts'),
+			'rusurenot2advoice' => __('Are you sure you choose not to add your voice?', 'teddybearsprompts'),
+			'willadlater' => __('Will add voice later', 'teddybearsprompts'),
+			'audiofileuped' => __('Audio file uploaded!', 'teddybearsprompts'),
+			'erroruploadvoice' => __("Oopsi, we couldn't load your file", 'teddybearsprompts'),
 
 			
 			// 'audioupload_instuction'		=> apply_filters('teddybear/project/system/translate/string', apply_filters('teddybear/project/system/getoption', 'translate-audioupload_instuction', ''), 'teddybearsprompts', apply_filters('teddybear/project/system/getoption', 'translate-audioupload_instuction', '') . ' - input field'),

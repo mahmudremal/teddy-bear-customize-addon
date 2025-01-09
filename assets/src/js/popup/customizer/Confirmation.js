@@ -66,8 +66,9 @@ const Confirmation = ({ data, closePopup, selectedType, canvasImages, setCanvasB
     }
 
     return (
-        <div className="tb_inset-0 tb_flex tb_items-center tb_justify-center">
-            <div className="tb_w-full tb_max-w-3xl tb_mx-auto tb_p-6">
+        <div className="tb_inset-0 tb_flex tb_items-center tb_justify-center tb_h-full tb_p-2">
+            {/* tb_max-w-3xl  */}
+            <div className="tb_w-[calc(100%-30px)] tb_mx-auto tb_p-6 tb_pb-0">
                 {/* Close button */}
                 <button onClick={closePopup} className="tb_absolute tb_top-[5px] tb_right-[5px] tb_text-gray-400 hover:tb_text-gray-600 hover:tb_bg-none">
                     <X size={24} />

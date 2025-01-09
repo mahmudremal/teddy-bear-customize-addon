@@ -34,8 +34,16 @@ module.exports = {
             800: "#665213",
             900: "#33290a",
           }
-        }
+        },
+        screens: {
+          // 'min-h-500': { 'raw': '(min-height: 500px)' },
+          // 'max-h-640': { 'raw': '(max-height: 640px)' },
+          'height-500-640': { 'raw': '(min-height: 500px) and (max-height: 640px)' },
+        },
       },
     },
+    // variants: {
+    //   extend: {},
+    // },
     plugins: [],
 }

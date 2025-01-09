@@ -89,12 +89,12 @@ class Columns {
 						if (!$_dataset) {continue;}
 						foreach ($_dataset as $row) {
 							if (!is_array($row) || !isset($row['type']) || $row['type'] != 'voice') {continue;}
-							if (!isset($row['attaced']) || empty($row['attaced'])) {continue;}
-							if (isset($row['attaced']['blob']) && !empty($row['attaced']['blob'])) {
-								// $row['attaced']['blob'] = apply_filters('teddybear/project/slashes/fix', TEDDY_BEAR_CUSTOMIZE_ADDON_UPLOAD_DIR . $row['attaced']['blob']);
-								// if (file_exists($row['attaced']['blob']) && !is_dir($row['attaced']['blob'])) {}
+							if (!isset($row['attached']) || empty($row['attached'])) {continue;}
+							if (isset($row['attached']['blob']) && !empty($row['attached']['blob'])) {
+								// $row['attached']['blob'] = apply_filters('teddybear/project/slashes/fix', TEDDY_BEAR_CUSTOMIZE_ADDON_UPLOAD_DIR . $row['attached']['blob']);
+								// if (file_exists($row['attached']['blob']) && !is_dir($row['attached']['blob'])) {}
 								$voices[] = 'exists';
-							} else if (isset($row['attaced']['later']) && $row['attaced']['later']) {
+							} else if (isset($row['attached']['later']) && $row['attached']['later']) {
 								$voices[] = 'later';
 							} else {
 								$voices[] = 'skipped';

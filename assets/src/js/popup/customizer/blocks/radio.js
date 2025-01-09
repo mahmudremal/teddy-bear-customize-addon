@@ -8,9 +8,9 @@ export default function Radio({ currentField, handleOptionChange, updateProductD
     return (
         <div className="tb_mt-4">
             {currentField.options.length <= 3 && currentField.options.some(opt => opt.thumbUrl) ? (
-                <div className={`tb_grid ${currentField.options.length === 1 ? 'tb_grid-cols-1' : currentField.options.length === 2 ? 'tb_grid-cols-2' : 'tb_grid-cols-3'} tb_gap-4 tb_justify-center tb_items-center`}>
+                <div className={`tb_flex tb_flex-wrap ${currentField.options.length === 1 ? 'tb_flex-cols-1' : currentField.options.length === 2 ? 'tb_flex-cols-2' : 'tb_flex-cols-3'} tb_gap-4 tb_justify-center tb_items-center`}>
                     {currentField.options.map((option) => (
-                        <div key={option.label} className="tb_text-center">
+                        <div key={option.label} className="tb_text-center tb_w-28">
                             <label className="tb_cursor-pointer">
                                 <div className="tb_relative tb_pb-[100%] tb_bg-white tb_border tb_border-gray-200 tb_rounded-lg has-[:checked]:tb_border-primary">
                                     <input

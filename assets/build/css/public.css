@@ -2528,7 +2528,7 @@ body .elementor-element .uael-woo-product-wrapper .uael-woo-products-summary-wra
 }
 
 body.woocommerce.single-product .single_add_to_cart_button, body.woocommerce.single-product .init_cusomizeaddtocartbtn {
-  width: 35%;
+  width: 75%;
   clear: both;
   margin: auto;
   text-wrap: nowrap;

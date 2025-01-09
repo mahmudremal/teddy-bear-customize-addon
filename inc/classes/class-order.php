@@ -174,17 +174,16 @@ class Order {
 											'product'		=> isset($option['product'])?$option['product']:false,
 											'cost'			=> isset($option['cost'])?floatval($option['cost']):0,
 											'label'			=> isset($option['label'])?$option['label']:false,
-											'attaced'		=> isset($option['attaced'])?$option['attaced']:[],
+											'attached'		=> isset($option['attached'])?$option['attached']:[],
 											'type'			=> $dataRow['type']
 										];
 										break;
 									default:
-										$option = $dataRow;
 										$_object[] = [
 											'product'		=> isset($option['product'])?$option['product']:false,
 											'cost'			=> isset($option['cost'])?floatval($option['cost']):0,
 											'label'			=> isset($option['label'])?$option['label']:false,
-											'attaced'		=> isset($option['attaced'])?$option['attaced']:[],
+											'attached'		=> isset($option['attached'])?$option['attached']:[],
 											'infos'			=> isset($option['infos'])?$option['infos']:false,
 											'type'			=> $dataRow['type'],
 										];
@@ -218,18 +217,18 @@ class Order {
 									<?php
 									switch ($_row['type']) {
 										case 'voice':
-											if (isset($_row['attaced']) && is_array($_row['attaced'])) {
-												if (isset($_row['attaced']['later'])) {
+											if (isset($_row['attached']) && is_array($_row['attached'])) {
+												if (isset($_row['attached']['later'])) {
 													?>
 													<span><?php echo esc_html(__('Voice will be sent through email.', 'teddybearsprompts')); ?></span>
 													<?php
-												} elseif (isset($_row['attaced']['skip'])) {
+												} elseif (isset($_row['attached']['skip'])) {
 													?>
 													<span><?php echo esc_html(__('Voice Skipped.', 'teddybearsprompts')); ?></span>
 													<?php
-												} elseif (isset($_row['attaced']['blob'])) {
-													$voicePath = TEDDY_BEAR_CUSTOMIZE_ADDON_UPLOAD_DIR . $_row['attaced']['blob'];
-													if (file_exists($voicePath) && !is_dir($voicePath)) {
+												} elseif (isset($_row['attached']['blob'])) {
+													$voicePath = TEDDY_BEAR_CUSTOMIZE_ADDON_UPLOAD_DIR . $_row['attached']['blob'];
+													// if (file_exists($voicePath) && !is_dir($voicePath)) {
 														$voiceInfo = (object) [
 															'path'			=> $voicePath,
 															'size'			=> filesize($voicePath),
@@ -241,15 +240,17 @@ class Order {
 														];
 														?>
 														<div class="voicegrid">
-															<span class="voicegrid__method"><?php echo esc_html(sprintf(__('Method: %s', 'teddybearsprompts'), ucfirst($_row['attaced']['method']))); ?></span>
+															<span class="voicegrid__method"><?php echo esc_html(sprintf(__('Method: %s', 'teddybearsprompts'), ucfirst($_row['attached']['method']))); ?></span>
 															<div class="voicegrid__block">
 																<div class="voicegrid__player" data-config="<?php echo esc_attr(wp_json_encode($voiceInfo)); ?>"></div>
 															</div>
 														</div>
 														<?php
-													}
+													// }
 												} else {
-													?><span><?php echo esc_html(__('No voice attached for this item.', 'teddybearsprompts')); ?></span><?php
+													?>
+													<span><?php echo esc_html(__('No voice attached for this item.', 'teddybearsprompts')); ?></span>
+													<?php
 												}
 											}
 											break;

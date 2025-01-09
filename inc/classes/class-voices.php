@@ -37,14 +37,14 @@ class Voices {
 		if (!$_dataset) {return $voices;}
 		foreach ($_dataset as $row) {
 			if (!is_array($row) || !isset($row['type']) || $row['type'] != 'voice') {continue;}
-			if (!isset($row['attaced']) || empty($row['attaced'])) {$row['attaced'] = ['skip' => true];}
-			if (isset($row['attaced']['blob']) && !empty($row['attaced']['blob'])) {
-				$row['attaced']['blob'] = apply_filters('teddybear/project/slashes/fix', TEDDY_BEAR_CUSTOMIZE_ADDON_UPLOAD_DIR . $row['attaced']['blob']);
+			if (!isset($row['attached']) || empty($row['attached'])) {$row['attached'] = ['skip' => true];}
+			if (isset($row['attached']['blob']) && !empty($row['attached']['blob'])) {
+				$row['attached']['blob'] = apply_filters('teddybear/project/slashes/fix', TEDDY_BEAR_CUSTOMIZE_ADDON_UPLOAD_DIR . $row['attached']['blob']);
 			}
 			if ($return_object) {
-				$voices[] = $row['attaced'];
+				$voices[] = $row['attached'];
 			} else {
-				$voices[] = $row['attaced']['blob'];
+				$voices[] = $row['attached']['blob'];
 			}
 		}
 		return $voices;
@@ -58,10 +58,10 @@ class Voices {
 		if (!$_dataset) {return $voices;}
 		foreach ($_dataset as $row) {
 			if (!is_array($row) || !isset($row['type']) || $row['type'] != 'voice') {continue;}
-			if (!isset($row['attaced']) || empty($row['attaced'])) {$row['attaced'] = ['skip' => true];}
-			if (isset($row['attaced']['blob']) && !empty($row['attaced']['blob'])) {
-				$row['attaced']['blob'] = apply_filters('teddybear/project/slashes/fix', TEDDY_BEAR_CUSTOMIZE_ADDON_UPLOAD_DIR . $row['attaced']['blob']);
-				if (file_exists($row['attaced']['blob']) && !is_dir($row['attaced']['blob'])) {
+			if (!isset($row['attached']) || empty($row['attached'])) {$row['attached'] = ['skip' => true];}
+			if (isset($row['attached']['blob']) && !empty($row['attached']['blob'])) {
+				$row['attached']['blob'] = apply_filters('teddybear/project/slashes/fix', TEDDY_BEAR_CUSTOMIZE_ADDON_UPLOAD_DIR . $row['attached']['blob']);
+				if (file_exists($row['attached']['blob']) && !is_dir($row['attached']['blob'])) {
 					return true;
 				}
 			}
@@ -125,8 +125,8 @@ class Voices {
 		if (!$_dataset) {return $_laters;}
 		foreach ($_dataset as $row) {
 			if (!is_array($row) || !isset($row['type']) || $row['type'] != 'voice') {continue;}
-			if (!isset($row['attaced']) || empty($row['attaced'])) {continue;}
-			if (isset($row['attaced']['later'])) {$_laters = true;break;}
+			if (!isset($row['attached']) || empty($row['attached'])) {continue;}
+			if (isset($row['attached']['later'])) {$_laters = true;break;}
 		}
 		return $_laters;
 	}

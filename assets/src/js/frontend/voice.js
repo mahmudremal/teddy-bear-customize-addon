@@ -33,19 +33,19 @@ class Voice {
     voiceClass.implement_elements(root, thisClass);
   }
   do_store(mode, attach = false, thisClass) {
-    this.row.attaced = this.row?.attaced??{};
+    this.row.attached = this.row?.attached??{};
     switch (mode) {
       case 'skip':
       case 'durExceed':
       case 'sizeExceed':
-        this.row.attaced = {skip: true};
+        this.row.attached = {skip: true};
         break;
       case 'later':
-        this.row.attaced = {later: true};
+        this.row.attached = {later: true};
         break;
       case 'record':
       case 'upload':
-        this.row.attaced = {blob: attach, method: mode};
+        this.row.attached = {blob: attach, method: mode};
         break;
       default:
         console.log('Unknown Request type', mode);
