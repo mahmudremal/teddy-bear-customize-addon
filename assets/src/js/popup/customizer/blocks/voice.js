@@ -11,6 +11,7 @@ const BUTTON_STATES = {
   ADD_LATER: 'add_later',
   SKIPPED: 'skipped'
 };
+const audioElements =[];
 
 const MAX_FILE_SIZE = 20 * 1024 * 1024; // 20MB
 
@@ -31,10 +32,9 @@ export default function Voice({ currentField, setError, combinedCart, updateObjR
   }
   
   // Refs
-  const waveformRef = useRef(null);
-  const wavesurferRef = useRef(null);
+  const audioContainerRef = useRef({} instanceof HTMLElement);
+  const waveAudioRef = useRef({} instanceof WaveSurfer);
   const recordPluginRef = useRef(null);
-  const audioRef = useRef(null);
   const timerIntervalRef = useRef(null);
 
   // Cost management effect
@@ -54,21 +54,19 @@ export default function Voice({ currentField, setError, combinedCart, updateObjR
       try {
         // Cleanup existing instance
         try {
-          if (wavesurferRef.current) {
-            await wavesurferRef.current.destroy();
-            wavesurferRef.current = null;
+          if (waveAudioRef.current) {
+            await waveAudioRef.current.destroy();
+            waveAudioRef.current = null;
           }
         } catch (error) {
           // console.log(error?.message??'Failed to destroy things.');
           // carefully just skipped
         }
         
-        // console.log(waveformRef.current)
-        // if (!waveformRef.current) return;
-
-        // Create new instance
-        wavesurferRef.current = await WaveSurfer.create({
-          container: waveformRef.current,
+        // 
+        console.log('Create new instance')
+        const waveform = await WaveSurfer.create({
+          container: audioContainerRef.current,
           waveColor: '#fec52e',
           progressColor: '#e63f51',
           cursorColor: 'transparent',
@@ -79,18 +77,20 @@ export default function Voice({ currentField, setError, combinedCart, updateObjR
           responsive: true,
           interact: !forRecording,
         });
+        audioElements.push(waveform);
+        waveAudioRef.current = waveform;
 
         // Initialize record plugin immediately for recording
         if (forRecording) {
-        // console.log('Record plugin pre.')
-        recordPluginRef.current = await RecordPlugin.create({
+          // console.log('Record plugin pre.')
+          recordPluginRef.current = await RecordPlugin.create({
             mediaRecorder: { 
               audioBitsPerSecond: 128000,
               mimeType: 'audio/wav'
             },
           });
           // 
-          wavesurferRef.current.registerPlugin(recordPluginRef.current);
+          waveAudioRef.current.registerPlugin(recordPluginRef.current);
           // 
           // Set up Record events
           recordPluginRef.current.on('record-start', () => {
@@ -111,15 +111,15 @@ export default function Voice({ currentField, setError, combinedCart, updateObjR
               handleVoiceRecord(audioUrl);
 
               // Reinitialize WaveSurfer for playback
-              await initializeWaveSurfer();
-              await wavesurferRef.current.load(audioUrl);
+              // await initializeWaveSurfer();
+              await waveAudioRef.current.load(audioUrl);
           });
         }
 
         // Set up WaveSurfer events
-        wavesurferRef.current.on('play', () => setIsPlaying(true));
-        wavesurferRef.current.on('pause', () => setIsPlaying(false));
-        wavesurferRef.current.on('finish', () => setIsPlaying(false));
+        waveAudioRef.current.on('play', () => setIsPlaying(true));
+        waveAudioRef.current.on('pause', () => setIsPlaying(false));
+        waveAudioRef.current.on('finish', () => setIsPlaying(false));
         // 
         resolve(true);
 
@@ -137,10 +137,12 @@ export default function Voice({ currentField, setError, combinedCart, updateObjR
     return async () => {
       clearInterval(timerIntervalRef.current);
       try {
-        if (wavesurferRef.current) {
-          await wavesurferRef.current.destroy();
-          wavesurferRef.current = null;
-        }
+        waveAudioRef.current.destroy();
+        audioElements.splice(0, audioElements.length);
+        // if (waveAudioRef.current) {
+          await waveAudioRef.current.destroy();
+          waveAudioRef.current = null;
+        // }
       } catch (error) {
         // console.log(error?.message??'Failed to destroy things.');
       }
@@ -149,7 +151,7 @@ export default function Voice({ currentField, setError, combinedCart, updateObjR
 
   const startRecording = async () => {
     try {
-      console.log(recordPluginRef.current, wavesurferRef.current)
+      console.log(recordPluginRef.current, waveAudioRef.current)
       // Initialize for recording first
       await initializeWaveSurfer(true);
       
@@ -235,7 +237,7 @@ export default function Voice({ currentField, setError, combinedCart, updateObjR
       
       // Reinitialize WaveSurfer for the uploaded file
       await initializeWaveSurfer();
-      await wavesurferRef.current.load(audioUrl);
+      await waveAudioRef.current.load(audioUrl);
       
       handleVoiceRecord(audioUrl);
     } catch (err) {
@@ -244,17 +246,17 @@ export default function Voice({ currentField, setError, combinedCart, updateObjR
       console.error('Error uploading file:', err);
     }
   };
-
+  // 
   const handleVoiceRecord = async (audioBlobUrl) => {
     // console.log('handleVoiceRecord touched!', audioBlobUrl, audioData.current);
     if (!audioBlobUrl) {
-        updateObjRows(currentField, { attached: null });
-        return;
+      updateObjRows(currentField, { attached: null });
+      return;
     }
-
+    // 
     const timestamp = Date.now();
     const isLater = audioBlobUrl === 'later';
-    
+    // 
     if (!isLater && audioData.current) {
       const blobName = `${timestamp}-${audioBlobUrl.includes('/') ? 'recording.mp3' : audioBlobUrl.split('/').pop()}`;
       const audioBlob = new Blob([audioData.current], {
@@ -264,10 +266,10 @@ export default function Voice({ currentField, setError, combinedCart, updateObjR
         value: blobName,
         writable: false
       });
-      
+      // 
       setBlobFiles(audioBlob);
     } else {
-        // console.log('Unfortunately this has been skipped')
+      // console.log('Unfortunately this has been skipped')
     }
 
     updateObjRows(currentField, {
@@ -298,6 +300,7 @@ export default function Voice({ currentField, setError, combinedCart, updateObjR
     BUTTON_STATES.NONE
   ].includes(activeButton);
 
+
   return (
     <div className="tb_p-2">
       <div className="tb_space-y-4">
@@ -316,16 +319,12 @@ export default function Voice({ currentField, setError, combinedCart, updateObjR
                 <Upload className="tb_w-6 tb_h-6 tb_text-gray-600" />
               </div>
               <span className="tb_mt-2 tb_text-xs tb_text-gray-600 tb_block tb_text-center">Upload</span>
-              {/*  */}
-              {/* <input type="file" accept="audio/*" onChange={handleFileUpload} className="tb_hidden" /> */}
-              {/*  */}
               <input
                 type="file"
                 // accept="audio/*"
                 accept=".mp3,.wav,.aac,.m4a,.ogg,.opus,.flac,.alac,.aiff,.amr,.wma"
                 onChange={handleFileUpload} className="tb_hidden"
               />
-              {/*  */}
             </label>
           </div>
 
@@ -362,16 +361,16 @@ export default function Voice({ currentField, setError, combinedCart, updateObjR
           </p>
         )}
 
-        <div className={ `tb_flex tb_items-center tb_gap-4 ${ ! shouldShowWaveform && 'tb_hidden' }` }>
+        <div className={`tb_flex tb_items-center tb_gap-4 ${ ! shouldShowWaveform && 'tb_hidden' }`}>
           {audioFile && !isRecording && (
             <button 
-              onClick={() => wavesurferRef.current?.[isPlaying ? 'pause' : 'play']()}
+              onClick={() => waveAudioRef.current?.[isPlaying ? 'pause' : 'play']()}
               className="tb_w-10 tb_h-10 tb_flex tb_items-center tb_justify-center tb_rounded-full tb_bg-gray-200"
             >
               {isPlaying ? <Pause className="tb_w-5 tb_h-5" /> : <Play className="tb_w-5 tb_h-5" />}
             </button>
           )}
-          <div ref={waveformRef} className="tb_w-full tb_h-[40px]" />
+          <div ref={audioContainerRef} className="tb_w-full tb_h-[40px]" id="audio-container-ref" />
           <span className="tb_text-sm tb_text-gray-600">
             {`${Math.floor(timer)}:${('00' + Math.floor((timer % 1) * 1000)).slice(-2)}`}
           </span>

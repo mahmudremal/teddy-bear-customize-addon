@@ -1,5 +1,7 @@
 import axios from 'axios';
 import { Toaster } from 'react-hot-toast';
+import React, { useState, useCallback, useEffect } from 'react';
+import ProductPage from './ProductPage';
 
 function removeAllClickListeners(element) {
   // Get all click event listeners and remove them
@@ -30,8 +32,6 @@ function freezeBody(freeze = false) {
 }
 
 function App() {
-  const { useState, useCallback, useEffect } = React;
-  const ProductPage = require('./ProductPage').default;
   const [productData, setProductData] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -71,6 +71,7 @@ function App() {
         if (!response.data || !response.data.data || !response.data.data.product) {
           throw new Error('Invalid response format');
         }
+
         const data = response.data.data;let uniqueID = 0;
 
         Object.keys(data.product.custom_fields).forEach(fieldsKey => {
@@ -141,58 +142,52 @@ function App() {
   }, []);
 
   const closePopup = (showConfirmation = true) => {
+    // setVisiblePopup(false);return;
     const userConfirmed = (showConfirmation && !allowClose) ? window.confirm("Are you sure you want to close it? Any unsaved changes will be lost.") : true;
     if (userConfirmed) {
+      document.querySelectorAll('#audio-container-ref').forEach(e => e.remove());
+      freezeBody(false);
       setProductId(null);
+      setIsLoading(false);
       setProductData(null);
       setVisiblePopup(false);
-      freezeBody(false);
     }
   };
 
-  if (error) {
-    return (
-      <div className="tb_App">
-        <div className="tb_bg-white tb_p-8 tb_rounded-lg tb_shadow-lg tb_max-w-full md:tb_w-[450px] md:tb_min-w-4xl tb_mx-auto">
-          <div className="tb_text-center">
-            <svg className="tb_mx-auto tb_h-12 tb_w-12 tb_text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
-            <h3 className="tb_mt-2 tb_text-lg tb_font-medium tb_text-gray-900">{__('somethingwentwrong', 'Product Not Found')}</h3>
-            <p className="tb_mt-1 tb_text-sm tb_text-gray-500">{error}</p>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div className="tb_App">
-      {visiblePopup && (
-        <div className='tb_absolute tb_inset-0 tb_z-[99999]'>
-          <Toaster position="top-right" reverseOrder={true} />
-          <div className="tb_fixed tb_inset-0 tb_bg-gray-900 tb_bg-opacity-95 tb_z-40" onClick={closePopup} ></div>
-          <div className="tb_w-[90vw] tb_h-[650px] tb_max-h-[95vh] tb_overflow-hidden tb_overflow-y-auto tb_fixed tb_top-1/2 tb_left-1/2 tb_transform tb_-translate-x-1/2 tb_-translate-y-1/2 tb_z-50 tb_bg-white tb_p-0 tb_rounded-lg tb_shadow-lg tb_max-w-full md:tb_w-[450px] md:tb_min-w-4xl">
-            { isLoading ? (
-              <div className="tb_p-8 tb_text-center tb_flex tb_absolute tb_w-full tb_h-full tb_items-center tb_justify-center tb_flex-col">
-                <div className="tb_animate-spin tb_rounded-full tb_h-8 tb_w-8 tb_border-b-2 tb_border-gray-900 tb_mx-auto"></div>
-                <p className="tb_mt-4 tb_text-gray-600">{__('pls_wait', 'Loading product data...')}</p>
-              </div>
-            ) : productData ? (
-              <ProductPage 
-                React={React} 
-                ReactDOM={ReactDOM} 
-                product_id={productId} 
-                product={productData} 
-                setProduct={setProductData}
-                updateProductData={updateProductData} 
-                closePopup={closePopup}
-                setAllowClose={setAllowClose}
-              />
-            ) : null }
-          </div>
+      <div className={`tb_bg-white tb_p-8 tb_rounded-lg tb_shadow-lg tb_max-w-full md:tb_w-[450px] md:tb_min-w-4xl tb_mx-auto ${! error && 'tb_hidden'}`}>
+        <div className="tb_text-center">
+          <svg className="tb_mx-auto tb_h-12 tb_w-12 tb_text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          <h3 className="tb_mt-2 tb_text-lg tb_font-medium tb_text-gray-900">{__('somethingwentwrong', 'Product Not Found')}</h3>
+          <p className="tb_mt-1 tb_text-sm tb_text-gray-500">{error}</p>
         </div>
-      )}
+      </div>
+      <div className={`tb_absolute tb_inset-0 tb_z-[99999] ${error && 'tb_hidden'} ${! visiblePopup && 'tb_hidden'}`}>
+        <Toaster position="top-right" reverseOrder={true} />
+        <div className="tb_fixed tb_inset-0 tb_bg-gray-900 tb_bg-opacity-95 tb_z-40" onClick={closePopup} ></div>
+        <div className="tb_w-[90vw] tb_h-[650px] tb_max-h-[95vh] tb_overflow-hidden tb_overflow-y-auto tb_fixed tb_top-1/2 tb_left-1/2 tb_transform tb_-translate-x-1/2 tb_-translate-y-1/2 tb_z-50 tb_bg-white tb_p-0 tb_rounded-lg tb_shadow-lg tb_max-w-full md:tb_w-[450px] md:tb_min-w-4xl">
+          {/*  */}
+          <div className={ `tb_p-8 tb_text-center tb_flex tb_absolute tb_w-full tb_h-full tb_items-center tb_justify-center tb_flex-col ${ ! isLoading && 'tb_hidden' }` }>
+            <div className="tb_animate-spin tb_rounded-full tb_h-8 tb_w-8 tb_border-b-2 tb_border-gray-900 tb_mx-auto"></div>
+            <p className="tb_mt-4 tb_text-gray-600">{__('pls_wait', 'Loading product data...')}</p>
+          </div>
+          <div className={ `tb_h-full ${! productData && 'tb_hidden' }` }>
+            <ProductPage 
+              React={React} 
+              ReactDOM={ReactDOM} 
+              product_id={productId} 
+              product={productData} 
+              updateProductData={updateProductData} 
+              closePopup={closePopup}
+              setAllowClose={setAllowClose}
+            />
+          </div>
+          {/*  */}
+        </div>
+      </div>
       {/* <style jsx>{`.tb_App button:hover {background-color: none;}`}</style> */}
     </div>
   );

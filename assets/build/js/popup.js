@@ -88484,17 +88484,19 @@ var Confirmation = function Confirmation(_ref) {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
-/* harmony import */ var _blocks_PreviewCanvas__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./blocks/PreviewCanvas */ "./src/js/popup/customizer/blocks/PreviewCanvas.js");
-/* harmony import */ var _blocks_voice__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./blocks/voice */ "./src/js/popup/customizer/blocks/voice.js");
-/* harmony import */ var _blocks_outfit__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./blocks/outfit */ "./src/js/popup/customizer/blocks/outfit.js");
-/* harmony import */ var _blocks_radio__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./blocks/radio */ "./src/js/popup/customizer/blocks/radio.js");
-/* harmony import */ var _blocks_info__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./blocks/info */ "./src/js/popup/customizer/blocks/info.js");
-/* harmony import */ var lucide_react__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! lucide-react */ "./node_modules/lucide-react/dist/esm/lucide-react.js");
-/* harmony import */ var _blocks_Loading__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./blocks/Loading */ "./src/js/popup/customizer/blocks/Loading.js");
-/* harmony import */ var _blocks_priceBlock__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./blocks/priceBlock */ "./src/js/popup/customizer/blocks/priceBlock.js");
-/* harmony import */ var _blocks_checkbox__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./blocks/checkbox */ "./src/js/popup/customizer/blocks/checkbox.js");
-/* harmony import */ var _blocks_input__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./blocks/input */ "./src/js/popup/customizer/blocks/input.js");
-/* harmony import */ var _Confirmation__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./Confirmation */ "./src/js/popup/customizer/Confirmation.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! react */ "react");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _blocks_PreviewCanvas__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./blocks/PreviewCanvas */ "./src/js/popup/customizer/blocks/PreviewCanvas.js");
+/* harmony import */ var _blocks_voice__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./blocks/voice */ "./src/js/popup/customizer/blocks/voice.js");
+/* harmony import */ var _blocks_outfit__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./blocks/outfit */ "./src/js/popup/customizer/blocks/outfit.js");
+/* harmony import */ var _blocks_radio__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./blocks/radio */ "./src/js/popup/customizer/blocks/radio.js");
+/* harmony import */ var _blocks_info__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./blocks/info */ "./src/js/popup/customizer/blocks/info.js");
+/* harmony import */ var lucide_react__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! lucide-react */ "./node_modules/lucide-react/dist/esm/lucide-react.js");
+/* harmony import */ var _blocks_Loading__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./blocks/Loading */ "./src/js/popup/customizer/blocks/Loading.js");
+/* harmony import */ var _blocks_priceBlock__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./blocks/priceBlock */ "./src/js/popup/customizer/blocks/priceBlock.js");
+/* harmony import */ var _blocks_checkbox__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./blocks/checkbox */ "./src/js/popup/customizer/blocks/checkbox.js");
+/* harmony import */ var _blocks_input__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./blocks/input */ "./src/js/popup/customizer/blocks/input.js");
+/* harmony import */ var _Confirmation__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./Confirmation */ "./src/js/popup/customizer/Confirmation.js");
 function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
 function _toConsumableArray(r) { return _arrayWithoutHoles(r) || _iterableToArray(r) || _unsupportedIterableToArray(r) || _nonIterableSpread(); }
 function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
@@ -88526,13 +88528,35 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
 
 
 
-var ProductCustomization = function ProductCustomization(_ref) {
+
+var ProductPage = function ProductPage(_ref) {
   var _product$custom_field, _product$custom_field4;
   var product = _ref.product,
-    setProduct = _ref.setProduct,
     updateProductData = _ref.updateProductData,
     closePopup = _ref.closePopup,
     setAllowClose = _ref.setAllowClose;
+  if (!product || !(product !== null && product !== void 0 && product.custom_fields)) {
+    return /*#__PURE__*/React.createElement("div", {
+      className: "tb_App"
+    }, /*#__PURE__*/React.createElement("div", {
+      className: "tb_bg-white tb_p-8 tb_rounded-lg tb_shadow-lg tb_max-w-full md:tb_w-[450px] md:tb_min-w-4xl tb_mx-auto"
+    }, /*#__PURE__*/React.createElement("div", {
+      className: "tb_text-center"
+    }, /*#__PURE__*/React.createElement("svg", {
+      className: "tb_mx-auto tb_h-12 tb_w-12 tb_text-gray-400",
+      fill: "none",
+      viewBox: "0 0 24 24",
+      stroke: "currentColor",
+      "aria-hidden": "true"
+    }, /*#__PURE__*/React.createElement("path", {
+      strokeLinecap: "round",
+      strokeLinejoin: "round",
+      strokeWidth: "2",
+      d: "M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+    })), /*#__PURE__*/React.createElement("h3", {
+      className: "tb_mt-2 tb_text-lg tb_font-medium tb_text-gray-900"
+    }, __('somethingwentwrong', 'Product Not Found')))));
+  }
   var iFRows = product.custom_fields[product.custom_data.product_type].map(function (f) {
     var nf = _objectSpread({}, f);
     if (f.options) {
@@ -88547,70 +88571,66 @@ var ProductCustomization = function ProductCustomization(_ref) {
     }
     return nf;
   });
-  var _React = React,
-    useEffect = _React.useEffect,
-    useState = _React.useState,
-    useRef = _React.useRef;
-  var _useState = useState(null),
+  var _useState = Object(react__WEBPACK_IMPORTED_MODULE_1__["useState"])(null),
     _useState2 = _slicedToArray(_useState, 2),
     canvasBlob = _useState2[0],
     setCanvasBlob = _useState2[1];
   // const [objRows, setObjRows] = useState(iFRows);
-  var objRows = useRef(iFRows);
-  var _useState3 = useState(null),
+  var objRows = Object(react__WEBPACK_IMPORTED_MODULE_1__["useRef"])(iFRows);
+  var _useState3 = Object(react__WEBPACK_IMPORTED_MODULE_1__["useState"])(null),
     _useState4 = _slicedToArray(_useState3, 2),
     activeTab = _useState4[0],
     setActiveTab = _useState4[1];
-  var _useState5 = useState(false),
+  var _useState5 = Object(react__WEBPACK_IMPORTED_MODULE_1__["useState"])(false),
     _useState6 = _slicedToArray(_useState5, 2),
     isLoading = _useState6[0],
     setIsLoading = _useState6[1];
-  var _useState7 = useState(0),
+  var _useState7 = Object(react__WEBPACK_IMPORTED_MODULE_1__["useState"])(0),
     _useState8 = _slicedToArray(_useState7, 2),
     currentStep = _useState8[0],
     setCurrentStep = _useState8[1];
-  var _useState9 = useState(null),
+  var _useState9 = Object(react__WEBPACK_IMPORTED_MODULE_1__["useState"])(null),
     _useState10 = _slicedToArray(_useState9, 2),
     error = _useState10[0],
     setError = _useState10[1];
-  var _useState11 = useState(null),
+  var _useState11 = Object(react__WEBPACK_IMPORTED_MODULE_1__["useState"])(null),
     _useState12 = _slicedToArray(_useState11, 2),
     selectedOutfit = _useState12[0],
     setSelectedOutfit = _useState12[1];
-  var _useState13 = useState({}),
+  var _useState13 = Object(react__WEBPACK_IMPORTED_MODULE_1__["useState"])({}),
     _useState14 = _slicedToArray(_useState13, 2),
     imgLayers = _useState14[0],
     setImgLayers = _useState14[1];
-  var _useState15 = useState([]),
+  var _useState15 = Object(react__WEBPACK_IMPORTED_MODULE_1__["useState"])([]),
     _useState16 = _slicedToArray(_useState15, 2),
     canvasImages = _useState16[0],
     setCanvasImages = _useState16[1];
-  var _useState17 = useState(null),
+  var _useState17 = Object(react__WEBPACK_IMPORTED_MODULE_1__["useState"])(null),
     _useState18 = _slicedToArray(_useState17, 2),
     selectedType = _useState18[0],
     setSelectedType = _useState18[1];
-  var _useState19 = useState(0),
+  var _useState19 = Object(react__WEBPACK_IMPORTED_MODULE_1__["useState"])(0),
     _useState20 = _slicedToArray(_useState19, 2),
     discountTotal = _useState20[0],
     setDiscountTotal = _useState20[1];
-  var _useState21 = useState(0),
+  var _useState21 = Object(react__WEBPACK_IMPORTED_MODULE_1__["useState"])(0),
     _useState22 = _slicedToArray(_useState21, 2),
     inTotal = _useState22[0],
     setInTotal = _useState22[1];
-  var _useState23 = useState(false),
+  var _useState23 = Object(react__WEBPACK_IMPORTED_MODULE_1__["useState"])(false),
     _useState24 = _slicedToArray(_useState23, 2),
     add2CartLoading = _useState24[0],
     setAdd2CartLoading = _useState24[1];
-  var blobFiles = useRef(null);
-  var _useState25 = useState(new Set()),
+  var blobFiles = Object(react__WEBPACK_IMPORTED_MODULE_1__["useRef"])(null);
+  var _useState25 = Object(react__WEBPACK_IMPORTED_MODULE_1__["useState"])(new Set()),
     _useState26 = _slicedToArray(_useState25, 2),
     visitedTabs = _useState26[0],
     setVisitedTabs = _useState26[1];
-  var _useState27 = useState(null),
+  var _useState27 = Object(react__WEBPACK_IMPORTED_MODULE_1__["useState"])(null),
     _useState28 = _slicedToArray(_useState27, 2),
     confirmation = _useState28[0],
     setConfirmation = _useState28[1];
-  var _useState29 = useState(((_product$custom_field = product.custom_fields[product.custom_data.product_type]) === null || _product$custom_field === void 0 ? void 0 : _product$custom_field.length) === 1),
+  var _useState29 = Object(react__WEBPACK_IMPORTED_MODULE_1__["useState"])(((_product$custom_field = product.custom_fields[product.custom_data.product_type]) === null || _product$custom_field === void 0 ? void 0 : _product$custom_field.length) === 1),
     _useState30 = _slicedToArray(_useState29, 2),
     isSingleTab = _useState30[0],
     setIsSingleTab = _useState30[1];
@@ -88618,7 +88638,7 @@ var ProductCustomization = function ProductCustomization(_ref) {
     // console.log('Adding blob file...')
     blobFiles.current = data;
   };
-  useEffect(function () {
+  Object(react__WEBPACK_IMPORTED_MODULE_1__["useEffect"])(function () {
     var _product$custom_field2;
     setSelectedType(product.custom_data.product_type);
     setIsSingleTab(((_product$custom_field2 = product.custom_fields[product.custom_data.product_type]) === null || _product$custom_field2 === void 0 ? void 0 : _product$custom_field2.length) === 1);
@@ -88862,7 +88882,6 @@ var ProductCustomization = function ProductCustomization(_ref) {
     return setInTotal(getTotalCost(obj));
   };
   var currentFields = ((_product$custom_field4 = product.custom_fields) === null || _product$custom_field4 === void 0 ? void 0 : _product$custom_field4[selectedType]) || [];
-  var currentField = currentFields[currentStep];
   var combinedCart = {
     discountTotal: discountTotal,
     inTotal: inTotal,
@@ -88883,8 +88902,8 @@ var ProductCustomization = function ProductCustomization(_ref) {
     rel: "stylesheet",
     type: "text/css",
     href: "https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.6.0/slick-theme.min.css"
-  }), confirmation === null ? /*#__PURE__*/React.createElement("div", {
-    className: "tb_h-full"
+  }), /*#__PURE__*/React.createElement("div", {
+    className: "tb_h-full ".concat(confirmation && 'tb_hidden')
   }, /*#__PURE__*/React.createElement("div", {
     className: "tb_flex tb_justify-between tb_items-center tb_w-full tb_flex-nowrap tb_h-[60px] tb_overflow-hidden tb_mx-auto tb_px-[15px] tb_py-[10px] tb_border-b tb_border-[#eee] tb_box-border height-500-640:tb_h-12"
   }, /*#__PURE__*/React.createElement("div", {
@@ -88913,13 +88932,13 @@ var ProductCustomization = function ProductCustomization(_ref) {
     className: "tb_w-1/3 tb_flex tb_justify-end"
   }, /*#__PURE__*/React.createElement("div", {
     className: "tb_text-sm tb_font-semibold price_amount tb_rounded tb_px-6 tb_py-2 tb_text-black tb_bg-primary-100"
-  }, /*#__PURE__*/React.createElement(_blocks_priceBlock__WEBPACK_IMPORTED_MODULE_8__["default"], {
+  }, /*#__PURE__*/React.createElement(_blocks_priceBlock__WEBPACK_IMPORTED_MODULE_9__["default"], {
     price_html: product.priceHtml,
     inTotal: inTotal,
     discountTotal: discountTotal
   })))), isLoading ? /*#__PURE__*/React.createElement("div", {
     className: "tb_flex tb_justify-center tb_items-center tb_h-auto"
-  }, /*#__PURE__*/React.createElement(_blocks_Loading__WEBPACK_IMPORTED_MODULE_7__["default"], null), " ") : /*#__PURE__*/React.createElement("div", {
+  }, /*#__PURE__*/React.createElement(_blocks_Loading__WEBPACK_IMPORTED_MODULE_8__["default"], null), " ") : /*#__PURE__*/React.createElement("div", {
     className: "tb_relative tb_min-h-96 tb_flex tb_flex-col tb_justify-between tb_h-[calc(100%-60px)]"
   }, !['standing', 'sitting'].includes(selectedType) && /*#__PURE__*/React.createElement("div", {
     className: "tb_flex tb_justify-between tb_mb-8"
@@ -88947,7 +88966,7 @@ var ProductCustomization = function ProductCustomization(_ref) {
     className: "tb_text-center tb_mt-2 tb_font-semibold"
   }, __('sittingplushies', 'Sitting')))), ['standing', 'sitting'].includes(selectedType) && /*#__PURE__*/React.createElement("div", {
     className: "tb_m-auto tb_mb-4 tb_h-auto ".concat(activeTab === null ? 'height-500-640:tb_w-52 tb_w-96 md:tb_w-[320px]' : 'height-500-640:tb_w-48 tb_w-48 md:tb_w-52')
-  }, /*#__PURE__*/React.createElement(_blocks_PreviewCanvas__WEBPACK_IMPORTED_MODULE_1__["default"], {
+  }, /*#__PURE__*/React.createElement(_blocks_PreviewCanvas__WEBPACK_IMPORTED_MODULE_2__["default"], {
     images: canvasImages,
     baseImage: product.custom_data._canvas,
     setCanvasBlob: setCanvasBlob,
@@ -88985,7 +89004,7 @@ var ProductCustomization = function ProductCustomization(_ref) {
     }, currentStep === (((_product$custom_field6 = product.custom_fields[selectedType]) === null || _product$custom_field6 === void 0 ? void 0 : _product$custom_field6.length) || 0) - 1 ? __('done', 'Done') : __('next', 'Next'))), function () {
       switch (field.type) {
         case 'radio':
-          return /*#__PURE__*/React.createElement(_blocks_radio__WEBPACK_IMPORTED_MODULE_4__["default"], {
+          return /*#__PURE__*/React.createElement(_blocks_radio__WEBPACK_IMPORTED_MODULE_5__["default"], {
             setError: setError,
             currentField: field,
             handleOptionChange: handleOptionChange,
@@ -88994,7 +89013,7 @@ var ProductCustomization = function ProductCustomization(_ref) {
             updateObjRows: updateObjRows
           });
         case 'checkbox':
-          return /*#__PURE__*/React.createElement(_blocks_checkbox__WEBPACK_IMPORTED_MODULE_9__["default"], {
+          return /*#__PURE__*/React.createElement(_blocks_checkbox__WEBPACK_IMPORTED_MODULE_10__["default"], {
             setError: setError,
             currentField: field,
             handleOptionChange: handleOptionChange,
@@ -89003,7 +89022,7 @@ var ProductCustomization = function ProductCustomization(_ref) {
             updateObjRows: updateObjRows
           });
         case 'outfit':
-          return /*#__PURE__*/React.createElement(_blocks_outfit__WEBPACK_IMPORTED_MODULE_3__["default"], {
+          return /*#__PURE__*/React.createElement(_blocks_outfit__WEBPACK_IMPORTED_MODULE_4__["default"], {
             setError: setError,
             currentField: field,
             handleOptionChange: handleOptionChange,
@@ -89014,7 +89033,7 @@ var ProductCustomization = function ProductCustomization(_ref) {
             updateObjRows: updateObjRows
           });
         case 'voice':
-          return /*#__PURE__*/React.createElement(_blocks_voice__WEBPACK_IMPORTED_MODULE_2__["default"], {
+          return /*#__PURE__*/React.createElement(_blocks_voice__WEBPACK_IMPORTED_MODULE_3__["default"], {
             setError: setError,
             currentField: field,
             handleOptionChange: handleOptionChange,
@@ -89024,7 +89043,7 @@ var ProductCustomization = function ProductCustomization(_ref) {
             updateObjRows: updateObjRows
           });
         case 'info':
-          return /*#__PURE__*/React.createElement(_blocks_info__WEBPACK_IMPORTED_MODULE_5__["default"], {
+          return /*#__PURE__*/React.createElement(_blocks_info__WEBPACK_IMPORTED_MODULE_6__["default"], {
             setError: setError,
             currentField: field,
             handleOptionChange: handleOptionChange,
@@ -89034,7 +89053,7 @@ var ProductCustomization = function ProductCustomization(_ref) {
             updateObjRows: updateObjRows
           });
         default:
-          return /*#__PURE__*/React.createElement(_blocks_input__WEBPACK_IMPORTED_MODULE_10__["default"], {
+          return /*#__PURE__*/React.createElement(_blocks_input__WEBPACK_IMPORTED_MODULE_11__["default"], {
             setError: setError,
             currentField: field,
             handleOptionChange: handleOptionChange,
@@ -89062,7 +89081,7 @@ var ProductCustomization = function ProductCustomization(_ref) {
       className: "tb_w-8 tb_h-8 tb_mx-auto"
     }), visitedTabs.has(idx) && /*#__PURE__*/React.createElement("div", {
       className: "tb_absolute tb_top-0 tb_right-0"
-    }, /*#__PURE__*/React.createElement(lucide_react__WEBPACK_IMPORTED_MODULE_6__["Check"], {
+    }, /*#__PURE__*/React.createElement(lucide_react__WEBPACK_IMPORTED_MODULE_7__["Check"], {
       color: "#e63f51"
     })), /*#__PURE__*/React.createElement("p", {
       className: "tb_text-center tb_mt-2 tb_text-sm"
@@ -89073,9 +89092,9 @@ var ProductCustomization = function ProductCustomization(_ref) {
     onClick: addToCart,
     className: "tb_w-full tb_bg-primary tb_text-white tb_px-4 tb_py-2 tb_rounded-lg tb_font-medium hover:tb_bg-primary-dark",
     disabled: add2CartLoading
-  }, add2CartLoading ? __('adding_', 'Adding...') : __('add_to_cart', 'Add to Cart')))))) : /*#__PURE__*/React.createElement("div", {
-    className: "tb_h-full"
-  }, /*#__PURE__*/React.createElement(_Confirmation__WEBPACK_IMPORTED_MODULE_11__["default"], {
+  }, add2CartLoading ? __('adding_', 'Adding...') : __('add_to_cart', 'Add to Cart')))))), /*#__PURE__*/React.createElement("div", {
+    className: "tb_h-full ".concat(!confirmation && 'tb_hidden')
+  }, confirmation && /*#__PURE__*/React.createElement(_Confirmation__WEBPACK_IMPORTED_MODULE_12__["default"], {
     data: confirmation,
     closePopup: closePopup,
     selectedType: selectedType,
@@ -89085,7 +89104,7 @@ var ProductCustomization = function ProductCustomization(_ref) {
     product: product
   })));
 };
-/* harmony default export */ __webpack_exports__["default"] = (ProductCustomization);
+/* harmony default export */ __webpack_exports__["default"] = (ProductPage);
 
 /***/ }),
 
@@ -89101,6 +89120,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
 /* harmony import */ var react_hot_toast__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! react-hot-toast */ "./node_modules/react-hot-toast/dist/index.js");
 /* harmony import */ var react_hot_toast__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(react_hot_toast__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! react */ "react");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _ProductPage__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./ProductPage */ "./src/js/popup/customizer/ProductPage.js");
 function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
 function ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
 function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t = null != arguments[r] ? arguments[r] : {}; r % 2 ? ownKeys(Object(t), !0).forEach(function (r) { _defineProperty(e, r, t[r]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : ownKeys(Object(t)).forEach(function (r) { Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r)); }); } return e; }
@@ -89116,6 +89138,8 @@ function _unsupportedIterableToArray(r, a) { if (r) { if ("string" == typeof r) 
 function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length); for (var e = 0, n = Array(a); e < a; e++) n[e] = r[e]; return n; }
 function _iterableToArrayLimit(r, l) { var t = null == r ? null : "undefined" != typeof Symbol && r[Symbol.iterator] || r["@@iterator"]; if (null != t) { var e, n, i, u, a = [], f = !0, o = !1; try { if (i = (t = t.call(r)).next, 0 === l) { if (Object(t) !== t) return; f = !1; } else for (; !(f = (e = i.call(t)).done) && (a.push(e.value), a.length !== l); f = !0); } catch (r) { o = !0, n = r; } finally { try { if (!f && null != t.return && (u = t.return(), Object(u) !== u)) return; } finally { if (o) throw n; } } return a; } }
 function _arrayWithHoles(r) { if (Array.isArray(r)) return r; }
+
+
 
 
 function removeAllClickListeners(element) {
@@ -89146,36 +89170,31 @@ function freezeBody() {
   }
 }
 function App() {
-  var _React = React,
-    useState = _React.useState,
-    useCallback = _React.useCallback,
-    useEffect = _React.useEffect;
-  var ProductPage = __webpack_require__(/*! ./ProductPage */ "./src/js/popup/customizer/ProductPage.js").default;
-  var _useState = useState(null),
+  var _useState = Object(react__WEBPACK_IMPORTED_MODULE_2__["useState"])(null),
     _useState2 = _slicedToArray(_useState, 2),
     productData = _useState2[0],
     setProductData = _useState2[1];
-  var _useState3 = useState(false),
+  var _useState3 = Object(react__WEBPACK_IMPORTED_MODULE_2__["useState"])(false),
     _useState4 = _slicedToArray(_useState3, 2),
     isLoading = _useState4[0],
     setIsLoading = _useState4[1];
-  var _useState5 = useState(null),
+  var _useState5 = Object(react__WEBPACK_IMPORTED_MODULE_2__["useState"])(null),
     _useState6 = _slicedToArray(_useState5, 2),
     error = _useState6[0],
     setError = _useState6[1];
-  var _useState7 = useState(null),
+  var _useState7 = Object(react__WEBPACK_IMPORTED_MODULE_2__["useState"])(null),
     _useState8 = _slicedToArray(_useState7, 2),
     productId = _useState8[0],
     setProductId = _useState8[1];
-  var _useState9 = useState(false),
+  var _useState9 = Object(react__WEBPACK_IMPORTED_MODULE_2__["useState"])(false),
     _useState10 = _slicedToArray(_useState9, 2),
     visiblePopup = _useState10[0],
     setVisiblePopup = _useState10[1];
-  var _useState11 = useState(null),
+  var _useState11 = Object(react__WEBPACK_IMPORTED_MODULE_2__["useState"])(null),
     _useState12 = _slicedToArray(_useState11, 2),
     allowClose = _useState12[0],
     setAllowClose = _useState12[1];
-  useEffect(function () {
+  Object(react__WEBPACK_IMPORTED_MODULE_2__["useEffect"])(function () {
     var handleButtonClick = /*#__PURE__*/function () {
       var _ref = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee(e) {
         var button, _button$dataset, product_id, config, formData, response, data, uniqueID;
@@ -89287,73 +89306,74 @@ function App() {
       });
     };
   }, []);
-  var updateProductData = useCallback(function (newData) {
+  var updateProductData = Object(react__WEBPACK_IMPORTED_MODULE_2__["useCallback"])(function (newData) {
     setProductData(function (prevData) {
       return _objectSpread(_objectSpread({}, prevData), newData);
     });
   }, []);
   var closePopup = function closePopup() {
     var showConfirmation = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : true;
+    // setVisiblePopup(false);return;
     var userConfirmed = showConfirmation && !allowClose ? window.confirm("Are you sure you want to close it? Any unsaved changes will be lost.") : true;
     if (userConfirmed) {
+      document.querySelectorAll('#audio-container-ref').forEach(function (e) {
+        return e.remove();
+      });
+      freezeBody(false);
       setProductId(null);
+      setIsLoading(false);
       setProductData(null);
       setVisiblePopup(false);
-      freezeBody(false);
     }
   };
-  if (error) {
-    return /*#__PURE__*/React.createElement("div", {
-      className: "tb_App"
-    }, /*#__PURE__*/React.createElement("div", {
-      className: "tb_bg-white tb_p-8 tb_rounded-lg tb_shadow-lg tb_max-w-full md:tb_w-[450px] md:tb_min-w-4xl tb_mx-auto"
-    }, /*#__PURE__*/React.createElement("div", {
-      className: "tb_text-center"
-    }, /*#__PURE__*/React.createElement("svg", {
-      className: "tb_mx-auto tb_h-12 tb_w-12 tb_text-gray-400",
-      fill: "none",
-      viewBox: "0 0 24 24",
-      stroke: "currentColor",
-      "aria-hidden": "true"
-    }, /*#__PURE__*/React.createElement("path", {
-      strokeLinecap: "round",
-      strokeLinejoin: "round",
-      strokeWidth: "2",
-      d: "M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-    })), /*#__PURE__*/React.createElement("h3", {
-      className: "tb_mt-2 tb_text-lg tb_font-medium tb_text-gray-900"
-    }, __('somethingwentwrong', 'Product Not Found')), /*#__PURE__*/React.createElement("p", {
-      className: "tb_mt-1 tb_text-sm tb_text-gray-500"
-    }, error))));
-  }
-  return /*#__PURE__*/React.createElement("div", {
+  return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_2___default.a.createElement("div", {
     className: "tb_App"
-  }, visiblePopup && /*#__PURE__*/React.createElement("div", {
-    className: "tb_absolute tb_inset-0 tb_z-[99999]"
-  }, /*#__PURE__*/React.createElement(react_hot_toast__WEBPACK_IMPORTED_MODULE_1__["Toaster"], {
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_2___default.a.createElement("div", {
+    className: "tb_bg-white tb_p-8 tb_rounded-lg tb_shadow-lg tb_max-w-full md:tb_w-[450px] md:tb_min-w-4xl tb_mx-auto ".concat(!error && 'tb_hidden')
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_2___default.a.createElement("div", {
+    className: "tb_text-center"
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_2___default.a.createElement("svg", {
+    className: "tb_mx-auto tb_h-12 tb_w-12 tb_text-gray-400",
+    fill: "none",
+    viewBox: "0 0 24 24",
+    stroke: "currentColor",
+    "aria-hidden": "true"
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_2___default.a.createElement("path", {
+    strokeLinecap: "round",
+    strokeLinejoin: "round",
+    strokeWidth: "2",
+    d: "M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+  })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_2___default.a.createElement("h3", {
+    className: "tb_mt-2 tb_text-lg tb_font-medium tb_text-gray-900"
+  }, __('somethingwentwrong', 'Product Not Found')), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_2___default.a.createElement("p", {
+    className: "tb_mt-1 tb_text-sm tb_text-gray-500"
+  }, error))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_2___default.a.createElement("div", {
+    className: "tb_absolute tb_inset-0 tb_z-[99999] ".concat(error && 'tb_hidden', " ").concat(!visiblePopup && 'tb_hidden')
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_2___default.a.createElement(react_hot_toast__WEBPACK_IMPORTED_MODULE_1__["Toaster"], {
     position: "top-right",
     reverseOrder: true
-  }), /*#__PURE__*/React.createElement("div", {
+  }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_2___default.a.createElement("div", {
     className: "tb_fixed tb_inset-0 tb_bg-gray-900 tb_bg-opacity-95 tb_z-40",
     onClick: closePopup
-  }), /*#__PURE__*/React.createElement("div", {
+  }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_2___default.a.createElement("div", {
     className: "tb_w-[90vw] tb_h-[650px] tb_max-h-[95vh] tb_overflow-hidden tb_overflow-y-auto tb_fixed tb_top-1/2 tb_left-1/2 tb_transform tb_-translate-x-1/2 tb_-translate-y-1/2 tb_z-50 tb_bg-white tb_p-0 tb_rounded-lg tb_shadow-lg tb_max-w-full md:tb_w-[450px] md:tb_min-w-4xl"
-  }, isLoading ? /*#__PURE__*/React.createElement("div", {
-    className: "tb_p-8 tb_text-center tb_flex tb_absolute tb_w-full tb_h-full tb_items-center tb_justify-center tb_flex-col"
-  }, /*#__PURE__*/React.createElement("div", {
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_2___default.a.createElement("div", {
+    className: "tb_p-8 tb_text-center tb_flex tb_absolute tb_w-full tb_h-full tb_items-center tb_justify-center tb_flex-col ".concat(!isLoading && 'tb_hidden')
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_2___default.a.createElement("div", {
     className: "tb_animate-spin tb_rounded-full tb_h-8 tb_w-8 tb_border-b-2 tb_border-gray-900 tb_mx-auto"
-  }), /*#__PURE__*/React.createElement("p", {
+  }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_2___default.a.createElement("p", {
     className: "tb_mt-4 tb_text-gray-600"
-  }, __('pls_wait', 'Loading product data...'))) : productData ? /*#__PURE__*/React.createElement(ProductPage, {
-    React: React,
+  }, __('pls_wait', 'Loading product data...'))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_2___default.a.createElement("div", {
+    className: "tb_h-full ".concat(!productData && 'tb_hidden')
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_2___default.a.createElement(_ProductPage__WEBPACK_IMPORTED_MODULE_3__["default"], {
+    React: react__WEBPACK_IMPORTED_MODULE_2___default.a,
     ReactDOM: ReactDOM,
     product_id: productId,
     product: productData,
-    setProduct: setProductData,
     updateProductData: updateProductData,
     closePopup: closePopup,
     setAllowClose: setAllowClose
-  }) : null)));
+  })))));
 }
 /* harmony default export */ __webpack_exports__["default"] = (App);
 
@@ -90392,6 +90412,7 @@ var BUTTON_STATES = {
   ADD_LATER: 'add_later',
   SKIPPED: 'skipped'
 };
+var audioElements = [];
 var MAX_FILE_SIZE = 20 * 1024 * 1024; // 20MB
 
 function Voice(_ref) {
@@ -90437,10 +90458,9 @@ function Voice(_ref) {
   };
 
   // Refs
-  var waveformRef = Object(react__WEBPACK_IMPORTED_MODULE_0__["useRef"])(null);
-  var wavesurferRef = Object(react__WEBPACK_IMPORTED_MODULE_0__["useRef"])(null);
+  var audioContainerRef = Object(react__WEBPACK_IMPORTED_MODULE_0__["useRef"])({} instanceof HTMLElement);
+  var waveAudioRef = Object(react__WEBPACK_IMPORTED_MODULE_0__["useRef"])({} instanceof wavesurfer_js__WEBPACK_IMPORTED_MODULE_2__["default"]);
   var recordPluginRef = Object(react__WEBPACK_IMPORTED_MODULE_0__["useRef"])(null);
-  var audioRef = Object(react__WEBPACK_IMPORTED_MODULE_0__["useRef"])(null);
   var timerIntervalRef = Object(react__WEBPACK_IMPORTED_MODULE_0__["useRef"])(null);
 
   // Cost management effect
@@ -90460,7 +90480,7 @@ function Voice(_ref) {
       });
     }
   }, [activeButton, hasVoiceOption]);
-  var _initializeWaveSurfer = /*#__PURE__*/function () {
+  var initializeWaveSurfer = /*#__PURE__*/function () {
     var _ref2 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee3() {
       var forRecording,
         _args3 = arguments;
@@ -90470,19 +90490,20 @@ function Voice(_ref) {
             forRecording = _args3.length > 0 && _args3[0] !== undefined ? _args3[0] : false;
             return _context3.abrupt("return", new Promise(/*#__PURE__*/function () {
               var _ref3 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee2(resolve, reject) {
+                var waveform;
                 return _regeneratorRuntime().wrap(function _callee2$(_context2) {
                   while (1) switch (_context2.prev = _context2.next) {
                     case 0:
                       _context2.prev = 0;
                       _context2.prev = 1;
-                      if (!wavesurferRef.current) {
+                      if (!waveAudioRef.current) {
                         _context2.next = 6;
                         break;
                       }
                       _context2.next = 5;
-                      return wavesurferRef.current.destroy();
+                      return waveAudioRef.current.destroy();
                     case 5:
-                      wavesurferRef.current = null;
+                      waveAudioRef.current = null;
                     case 6:
                       _context2.next = 10;
                       break;
@@ -90490,9 +90511,11 @@ function Voice(_ref) {
                       _context2.prev = 8;
                       _context2.t0 = _context2["catch"](1);
                     case 10:
-                      _context2.next = 12;
+                      // 
+                      console.log('Create new instance');
+                      _context2.next = 13;
                       return wavesurfer_js__WEBPACK_IMPORTED_MODULE_2__["default"].create({
-                        container: waveformRef.current,
+                        container: audioContainerRef.current,
                         waveColor: '#fec52e',
                         progressColor: '#e63f51',
                         cursorColor: 'transparent',
@@ -90503,23 +90526,27 @@ function Voice(_ref) {
                         responsive: true,
                         interact: !forRecording
                       });
-                    case 12:
-                      wavesurferRef.current = _context2.sent;
+                    case 13:
+                      waveform = _context2.sent;
+                      audioElements.push(waveform);
+                      waveAudioRef.current = waveform;
+
+                      // Initialize record plugin immediately for recording
                       if (!forRecording) {
-                        _context2.next = 20;
+                        _context2.next = 23;
                         break;
                       }
-                      _context2.next = 16;
+                      _context2.next = 19;
                       return wavesurfer_js_dist_plugins_record_esm_js__WEBPACK_IMPORTED_MODULE_3__["default"].create({
                         mediaRecorder: {
                           audioBitsPerSecond: 128000,
                           mimeType: 'audio/wav'
                         }
                       });
-                    case 16:
+                    case 19:
                       recordPluginRef.current = _context2.sent;
                       // 
-                      wavesurferRef.current.registerPlugin(recordPluginRef.current);
+                      waveAudioRef.current.registerPlugin(recordPluginRef.current);
                       // 
                       // Set up Record events
                       recordPluginRef.current.on('record-start', function () {
@@ -90547,12 +90574,10 @@ function Voice(_ref) {
                                 handleVoiceRecord(audioUrl);
 
                                 // Reinitialize WaveSurfer for playback
+                                // await initializeWaveSurfer();
                                 _context.next = 12;
-                                return _initializeWaveSurfer();
+                                return waveAudioRef.current.load(audioUrl);
                               case 12:
-                                _context.next = 14;
-                                return wavesurferRef.current.load(audioUrl);
-                              case 14:
                               case "end":
                                 return _context.stop();
                             }
@@ -90562,31 +90587,31 @@ function Voice(_ref) {
                           return _ref4.apply(this, arguments);
                         };
                       }());
-                    case 20:
+                    case 23:
                       // Set up WaveSurfer events
-                      wavesurferRef.current.on('play', function () {
+                      waveAudioRef.current.on('play', function () {
                         return setIsPlaying(true);
                       });
-                      wavesurferRef.current.on('pause', function () {
+                      waveAudioRef.current.on('pause', function () {
                         return setIsPlaying(false);
                       });
-                      wavesurferRef.current.on('finish', function () {
+                      waveAudioRef.current.on('finish', function () {
                         return setIsPlaying(false);
                       });
                       // 
                       resolve(true);
-                      _context2.next = 30;
+                      _context2.next = 33;
                       break;
-                    case 26:
-                      _context2.prev = 26;
+                    case 29:
+                      _context2.prev = 29;
                       _context2.t1 = _context2["catch"](0);
                       console.error('Error initializing WaveSurfer:', _context2.t1);
                       setRecordingStatus('Error initializing audio recorder');
-                    case 30:
+                    case 33:
                     case "end":
                       return _context2.stop();
                   }
-                }, _callee2, null, [[0, 26], [1, 8]]);
+                }, _callee2, null, [[0, 29], [1, 8]]);
               }));
               return function (_x, _x2) {
                 return _ref3.apply(this, arguments);
@@ -90609,7 +90634,7 @@ function Voice(_ref) {
       while (1) switch (_context5.prev = _context5.next) {
         case 0:
           _context5.next = 2;
-          return _initializeWaveSurfer();
+          return initializeWaveSurfer();
         case 2:
           return _context5.abrupt("return", /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee4() {
             return _regeneratorRuntime().wrap(function _callee4$(_context4) {
@@ -90617,25 +90642,24 @@ function Voice(_ref) {
                 case 0:
                   clearInterval(timerIntervalRef.current);
                   _context4.prev = 1;
-                  if (!wavesurferRef.current) {
-                    _context4.next = 6;
-                    break;
-                  }
-                  _context4.next = 5;
-                  return wavesurferRef.current.destroy();
-                case 5:
-                  wavesurferRef.current = null;
+                  waveAudioRef.current.destroy();
+                  audioElements.splice(0, audioElements.length);
+                  // if (waveAudioRef.current) {
+                  _context4.next = 6;
+                  return waveAudioRef.current.destroy();
                 case 6:
-                  _context4.next = 10;
+                  waveAudioRef.current = null;
+                  // }
+                  _context4.next = 11;
                   break;
-                case 8:
-                  _context4.prev = 8;
+                case 9:
+                  _context4.prev = 9;
                   _context4.t0 = _context4["catch"](1);
-                case 10:
+                case 11:
                 case "end":
                   return _context4.stop();
               }
-            }, _callee4, null, [[1, 8]]);
+            }, _callee4, null, [[1, 9]]);
           })));
         case 3:
         case "end":
@@ -90649,10 +90673,10 @@ function Voice(_ref) {
         while (1) switch (_context6.prev = _context6.next) {
           case 0:
             _context6.prev = 0;
-            console.log(recordPluginRef.current, wavesurferRef.current);
+            console.log(recordPluginRef.current, waveAudioRef.current);
             // Initialize for recording first
             _context6.next = 4;
-            return _initializeWaveSurfer(true);
+            return initializeWaveSurfer(true);
           case 4:
             if (recordPluginRef.current) {
               _context6.next = 6;
@@ -90781,10 +90805,10 @@ function Voice(_ref) {
 
             // Reinitialize WaveSurfer for the uploaded file
             _context8.next = 31;
-            return _initializeWaveSurfer();
+            return initializeWaveSurfer();
           case 31:
             _context8.next = 33;
-            return wavesurferRef.current.load(audioUrl);
+            return waveAudioRef.current.load(audioUrl);
           case 33:
             handleVoiceRecord(audioUrl);
             _context8.next = 40;
@@ -90805,6 +90829,7 @@ function Voice(_ref) {
       return _ref9.apply(this, arguments);
     };
   }();
+  // 
   var handleVoiceRecord = /*#__PURE__*/function () {
     var _ref10 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee9(audioBlobUrl) {
       var timestamp, isLater, blobName, audioBlob;
@@ -90820,8 +90845,9 @@ function Voice(_ref) {
             });
             return _context9.abrupt("return");
           case 3:
+            // 
             timestamp = Date.now();
-            isLater = audioBlobUrl === 'later';
+            isLater = audioBlobUrl === 'later'; // 
             if (!isLater && audioData.current) {
               blobName = "".concat(timestamp, "-").concat(audioBlobUrl.includes('/') ? 'recording.mp3' : audioBlobUrl.split('/').pop());
               audioBlob = new Blob([audioData.current], {
@@ -90831,6 +90857,7 @@ function Voice(_ref) {
                 value: blobName,
                 writable: false
               });
+              // 
               setBlobFiles(audioBlob);
             } else {
               // console.log('Unfortunately this has been skipped')
@@ -90909,8 +90936,8 @@ function Voice(_ref) {
     className: "tb_flex tb_items-center tb_gap-4 ".concat(!shouldShowWaveform && 'tb_hidden')
   }, audioFile && !isRecording && /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
     onClick: function onClick() {
-      var _wavesurferRef$curren;
-      return (_wavesurferRef$curren = wavesurferRef.current) === null || _wavesurferRef$curren === void 0 ? void 0 : _wavesurferRef$curren[isPlaying ? 'pause' : 'play']();
+      var _waveAudioRef$current;
+      return (_waveAudioRef$current = waveAudioRef.current) === null || _waveAudioRef$current === void 0 ? void 0 : _waveAudioRef$current[isPlaying ? 'pause' : 'play']();
     },
     className: "tb_w-10 tb_h-10 tb_flex tb_items-center tb_justify-center tb_rounded-full tb_bg-gray-200"
   }, isPlaying ? /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(lucide_react__WEBPACK_IMPORTED_MODULE_1__["Pause"], {
@@ -90918,8 +90945,9 @@ function Voice(_ref) {
   }) : /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(lucide_react__WEBPACK_IMPORTED_MODULE_1__["Play"], {
     className: "tb_w-5 tb_h-5"
   })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-    ref: waveformRef,
-    className: "tb_w-full tb_h-[40px]"
+    ref: audioContainerRef,
+    className: "tb_w-full tb_h-[40px]",
+    id: "audio-container-ref"
   }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", {
     className: "tb_text-sm tb_text-gray-600"
   }, "".concat(Math.floor(timer), ":").concat(('00' + Math.floor(timer % 1 * 1000)).slice(-2)))), isRecording && /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
