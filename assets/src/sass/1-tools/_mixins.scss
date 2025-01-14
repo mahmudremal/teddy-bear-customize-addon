@@ -20,13 +20,13 @@
  * This will add font-size and line-height with different breakpoints.
  */
 @mixin body-text( $level: normal, $body-text: $body-text, $device-size: false ) {
-	@if type-of($body-text) != "map" {
+	@if meta.type-of($body-text) != "map" {
 		@error "`#{$body-text}` is not a valid value for $values. It must be a list.";
 	}
 
 	$size: map_get($body-text, $level);
 
-	@if type-of($size) == "map" {
+	@if meta.type-of($size) == "map" {
 
 		@if $device-size == false {
 			@each $device, $values in $size {

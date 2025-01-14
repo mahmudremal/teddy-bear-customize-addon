@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Mic, Play, Pause, Square, Upload, Mail, SkipForward } from 'lucide-react';
 import WaveSurfer from 'wavesurfer.js';
 import RecordPlugin from 'wavesurfer.js/dist/plugins/record.esm.js';
-import { sprintf } from 'sprintf-js';
+// import { sprintf } from 'sprintf-js';
 
 const BUTTON_STATES = {
   NONE: 'none',
@@ -11,14 +11,12 @@ const BUTTON_STATES = {
   ADD_LATER: 'add_later',
   SKIPPED: 'skipped'
 };
-const audioElements =[];
 
 const MAX_FILE_SIZE = 20 * 1024 * 1024; // 20MB
 
 export default function Voice({ currentField, setError, combinedCart, updateObjRows }) {
   const { setInTotal, setBlobFiles } = combinedCart;
-  
-  // State
+
   const [activeButton, setActiveButton] = useState(BUTTON_STATES.NONE);
   const [isRecording, setIsRecording] = useState(false);
   const [audioFile, setAudioFile] = useState(null);
@@ -26,147 +24,86 @@ export default function Voice({ currentField, setError, combinedCart, updateObjR
   const [isPlaying, setIsPlaying] = useState(false);
   const [timer, setTimer] = useState(0);
   const [hasVoiceOption, setHasVoiceOption] = useState(false);
-  const audioData = useRef(null);
-  const setAudioData = (audio_blob) => {
-    audioData.current = audio_blob;
-  }
-  
-  // Refs
-  const audioContainerRef = useRef({} instanceof HTMLElement);
-  const waveAudioRef = useRef({} instanceof WaveSurfer);
+
+  const audioContainerRef = useRef(null);
+  const waveAudioRef = useRef(null);
   const recordPluginRef = useRef(null);
   const timerIntervalRef = useRef(null);
 
-  // Cost management effect
   useEffect(() => {
     const shouldCharge = activeButton !== BUTTON_STATES.NONE && activeButton !== BUTTON_STATES.SKIPPED;
     if (!hasVoiceOption && shouldCharge) {
       setHasVoiceOption(true);
-      setInTotal(prevTotal => prevTotal + parseFloat(currentField?.cost ?? '0'));
+      setInTotal((prevTotal) => prevTotal + parseFloat(currentField?.cost ?? '0'));
     } else if (hasVoiceOption && !shouldCharge) {
       setHasVoiceOption(false);
-      setInTotal(prevTotal => prevTotal - parseFloat(currentField?.cost ?? '0'));
+      setInTotal((prevTotal) => prevTotal - parseFloat(currentField?.cost ?? '0'));
     }
   }, [activeButton, hasVoiceOption]);
 
-  const initializeWaveSurfer = async (forRecording = false) => {
-    return new Promise(async (resolve, reject) => {
-      try {
-        // Cleanup existing instance
-        try {
-          if (waveAudioRef.current) {
-            await waveAudioRef.current.destroy();
-            waveAudioRef.current = null;
-          }
-        } catch (error) {
-          // console.log(error?.message??'Failed to destroy things.');
-          // carefully just skipped
-        }
-        
-        // 
-        console.log('Create new instance')
-        const waveform = await WaveSurfer.create({
-          container: audioContainerRef.current,
-          waveColor: '#fec52e',
-          progressColor: '#e63f51',
-          cursorColor: 'transparent',
-          barWidth: 2,
-          barRadius: 3,
-          barGap: 3,
-          height: 40,
-          responsive: true,
-          interact: !forRecording,
-        });
-        audioElements.push(waveform);
-        waveAudioRef.current = waveform;
+  useEffect(() => {
+    if (!waveAudioRef.current) {
+      waveAudioRef.current = WaveSurfer.create({
+        container: audioContainerRef.current,
+        waveColor: '#fec52e',
+        progressColor: '#e63f51',
+        cursorColor: 'transparent',
+        barWidth: 2,
+        barRadius: 3,
+        barGap: 3,
+        height: 40,
+        responsive: true,
+        interact: true,
+      });
 
-        // Initialize record plugin immediately for recording
-        if (forRecording) {
-          // console.log('Record plugin pre.')
-          recordPluginRef.current = await RecordPlugin.create({
-            mediaRecorder: { 
-              audioBitsPerSecond: 128000,
-              mimeType: 'audio/wav'
-            },
-          });
-          // 
-          waveAudioRef.current.registerPlugin(recordPluginRef.current);
-          // 
-          // Set up Record events
-          recordPluginRef.current.on('record-start', () => {
-            setIsRecording(true);
-            setRecordingStatus('Recording started...');
-            startTimer();
-          });
+      waveAudioRef.current.on('play', () => setIsPlaying(true));
+      waveAudioRef.current.on('pause', () => setIsPlaying(false));
+      waveAudioRef.current.on('finish', () => setIsPlaying(false));
+    }
 
-          recordPluginRef.current.on('record-end', async (blob) => {
-              // console.log('Record end triggired');
-              clearInterval(timerIntervalRef.current);
-              const audioUrl = await URL.createObjectURL(blob);
-              setAudioFile(audioUrl);
-              setError(null);
-              setAudioData(blob);
-              setIsRecording(false);
-              setRecordingStatus('Recording saved!');
-              handleVoiceRecord(audioUrl);
-
-              // Reinitialize WaveSurfer for playback
-              // await initializeWaveSurfer();
-              await waveAudioRef.current.load(audioUrl);
-          });
-        }
-
-        // Set up WaveSurfer events
-        waveAudioRef.current.on('play', () => setIsPlaying(true));
-        waveAudioRef.current.on('pause', () => setIsPlaying(false));
-        waveAudioRef.current.on('finish', () => setIsPlaying(false));
-        // 
-        resolve(true);
-
-      } catch (error) {
-        console.error('Error initializing WaveSurfer:', error);
-        setRecordingStatus('Error initializing audio recorder');
-      }
-    });
-  };
-
-  // Initialize on mount and cleanup on unmount
-  useEffect(async () => {
-    await initializeWaveSurfer();
-
-    return async () => {
-      clearInterval(timerIntervalRef.current);
-      try {
+    return () => {
+      if (waveAudioRef.current) {
         waveAudioRef.current.destroy();
-        audioElements.splice(0, audioElements.length);
-        // if (waveAudioRef.current) {
-          await waveAudioRef.current.destroy();
-          waveAudioRef.current = null;
-        // }
-      } catch (error) {
-        // console.log(error?.message??'Failed to destroy things.');
+        waveAudioRef.current = null;
       }
     };
   }, []);
 
   const startRecording = async () => {
     try {
-      console.log(recordPluginRef.current, waveAudioRef.current)
-      // Initialize for recording first
-      await initializeWaveSurfer(true);
-      
-      // Ensure record plugin is initialized
       if (!recordPluginRef.current) {
-        throw new Error('Recording plugin not initialized');
+        recordPluginRef.current = RecordPlugin.create({
+          mediaRecorder: {
+            audioBitsPerSecond: 128000,
+            mimeType: 'audio/wav',
+          },
+        });
+        waveAudioRef.current.registerPlugin(recordPluginRef.current);
+
+        recordPluginRef.current.on('record-start', () => {
+          setIsRecording(true);
+          setRecordingStatus(__('recstarted', 'Recording started...'));
+          startTimer();
+        });
+
+        recordPluginRef.current.on('record-end', async (blob) => {
+          clearInterval(timerIntervalRef.current);
+          const audioUrl = URL.createObjectURL(blob);
+          setAudioFile(audioUrl);
+          setError(null);
+          setIsRecording(false);
+          setRecordingStatus('Recording saved!');
+          handleVoiceRecord(audioUrl);
+          waveAudioRef.current.load(audioUrl);
+        });
       }
 
-      // Request microphone permission and start recording
       await recordPluginRef.current.startRecording();
       setActiveButton(BUTTON_STATES.RECORDING);
-      setRecordingStatus(`Please record your voice up to ${currentField.duration} seconds.`);
+      setRecordingStatus(sprintf(__('audiorecord_instuction', `Please record your voice up to %s seconds.`), currentField.duration));
     } catch (err) {
       console.error('Error accessing microphone:', err);
-      setRecordingStatus('Error accessing microphone. Please ensure microphone permissions are granted.');
+      setRecordingStatus(__('mic_erraccess', 'Error accessing microphone. Please ensure microphone permissions are granted.'));
       setIsRecording(false);
     }
   };
@@ -182,12 +119,12 @@ export default function Voice({ currentField, setError, combinedCart, updateObjR
     const duration = parseFloat(currentField.duration);
     setTimer(duration);
     const startTime = Date.now();
-    
+
     timerIntervalRef.current = setInterval(() => {
       const currentTime = (Date.now() - startTime) / 1000;
       const remainingTime = duration - currentTime;
       setTimer(Math.max(0, remainingTime));
-      
+
       if (remainingTime <= 0) {
         stopRecording();
         clearInterval(timerIntervalRef.current);
@@ -195,60 +132,31 @@ export default function Voice({ currentField, setError, combinedCart, updateObjR
     }, 100);
   };
 
-  const validateFile = async (file) => {
-    if (file.size > MAX_FILE_SIZE) {
-      throw new Error('File size must be up to 20Mb');
-    }
-    if (!file.type || (!file.type.startsWith('video/') && !file.type.startsWith('audio/'))) {
-      throw new Error('Invalid file type');
-    }
-  };
-
   const handleFileUpload = async (event) => {
     const file = event.target.files[0];
     if (!file) return;
-
     try {
-      try {
-        await validateFile(file);
-      } catch (err) {
-        setError(err?.message??'Something went wrong.');
-        return;
-      }
-      
-      const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-      const arrayBuffer = await file.arrayBuffer();
-      const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
-
-      if (audioBuffer.duration > parseFloat(currentField.duration)) {
-        // throw new Error(`File duration exceeds ${currentField.duration} seconds`);
-        setError(
-          sprintf(__('audioexcedduration', `File duration exceeds %s seconds`), currentField.duration)
-        );
-        return;
+      if (file.size > MAX_FILE_SIZE) {
+        throw new Error('sizeover');
       }
 
       const audioUrl = URL.createObjectURL(file);
       setAudioFile(audioUrl);
       setError(null);
-      setAudioData(file);
       setActiveButton(BUTTON_STATES.UPLOADED);
       setRecordingStatus('Audio file uploaded!');
-      
-      // Reinitialize WaveSurfer for the uploaded file
-      await initializeWaveSurfer();
-      await waveAudioRef.current.load(audioUrl);
-      
-      handleVoiceRecord(audioUrl);
+      waveAudioRef.current.load(audioUrl);
     } catch (err) {
-      // err.message
-      setError(__('erroruploadvoice', "Oopsi, we couldn't load your file"));
+      if (err?.message == 'sizeover') {
+        setError(__('maxuploadmb', 'File size must be up to 20Mb'));
+      } else {
+        setError(__('erroruploadvoice', "Oopsi, we couldn't load your file"));
+      }
       console.error('Error uploading file:', err);
     }
   };
   // 
   const handleVoiceRecord = async (audioBlobUrl) => {
-    // console.log('handleVoiceRecord touched!', audioBlobUrl, audioData.current);
     if (!audioBlobUrl) {
       updateObjRows(currentField, { attached: null });
       return;
@@ -257,11 +165,18 @@ export default function Voice({ currentField, setError, combinedCart, updateObjR
     const timestamp = Date.now();
     const isLater = audioBlobUrl === 'later';
     // 
-    if (!isLater && audioData.current) {
-      const blobName = `${timestamp}-${audioBlobUrl.includes('/') ? 'recording.mp3' : audioBlobUrl.split('/').pop()}`;
-      const audioBlob = new Blob([audioData.current], {
-        type: 'audio/mpeg',
-      });
+    // const audioBlobArr = await fetch(audioBlobUrl).then(r => r.blob());
+    const response = (isLater || audioBlobUrl === null) ? {ok: true} : await fetch(audioBlobUrl);
+    if (!response.ok) throw new Error('Failed to fetch audio blob');
+    if (!isLater && response) {
+      const audioBlob = await response.blob();
+      const blobName = `${timestamp}-${audioBlobUrl.includes('/') ? 'recording.mp3' : 'recording.wav'}`;
+      // 
+      // const blobName = `${timestamp}-${audioBlobUrl.includes('/') ? 'recording.mp3' : audioBlobUrl.split('/').pop()}`;
+      // const audioBlob = new Blob([audioBlobArr], {
+      //   type: 'audio/mpeg',
+      // });
+      // 
       Object.defineProperty(audioBlob, 'name', {
         value: blobName,
         writable: false
@@ -307,7 +222,7 @@ export default function Voice({ currentField, setError, combinedCart, updateObjR
         <div className="tb_grid tb_grid-cols-4 tb_gap-5 tb_justify-items-center">
           {renderActionButton(
             isRecording ? <Square className="tb_w-6 tb_h-6" /> : <Mic className="tb_w-6 tb_h-6" />,
-            'Record',
+            __('record', 'Record'),
             isRecording ? stopRecording : startRecording,
             activeButton === BUTTON_STATES.RECORDING
           )}
@@ -318,7 +233,7 @@ export default function Voice({ currentField, setError, combinedCart, updateObjR
                 ${activeButton === BUTTON_STATES.UPLOADED ? 'tb_border-2 tb_border-primary-500' : 'tb_bg-gray-200'}`}>
                 <Upload className="tb_w-6 tb_h-6 tb_text-gray-600" />
               </div>
-              <span className="tb_mt-2 tb_text-xs tb_text-gray-600 tb_block tb_text-center">Upload</span>
+              <span className="tb_mt-2 tb_text-xs tb_text-gray-600 tb_block tb_text-center">{ __('upload', 'Upload') }</span>
               <input
                 type="file"
                 // accept="audio/*"
@@ -330,7 +245,7 @@ export default function Voice({ currentField, setError, combinedCart, updateObjR
 
           {renderActionButton(
             <Mail className="tb_w-6 tb_h-6" />,
-            'Add Later',
+            __('add_later', 'Add Later'),
             () => {
               setActiveButton(BUTTON_STATES.ADD_LATER);
               handleVoiceRecord('later');
@@ -340,7 +255,7 @@ export default function Voice({ currentField, setError, combinedCart, updateObjR
 
           {renderActionButton(
             <SkipForward className="tb_w-6 tb_h-6" />,
-            'Skip',
+            __('skip', 'Skip'),
             () => {
               setActiveButton(BUTTON_STATES.SKIPPED);
               handleVoiceRecord(null);
@@ -354,10 +269,10 @@ export default function Voice({ currentField, setError, combinedCart, updateObjR
         )}
 
         {activeButton === BUTTON_STATES.ADD_LATER && (
-          <p className="tb_text-sm tb_text-gray-600">
-            1. Receive instructions & button in order email.<br />
-            2. Upload audio file anytime later.<br />
-            3. We will ship when your audio file is received.
+          <p
+            className="tb_text-sm tb_text-gray-600"
+            dangerouslySetInnerHTML={{ __html: __('audiolater_instuction', '1. Receive instructions & button in order email.\n2. Upload audio file anytime later.\n3. We will ship when your audio file is received.').replace(/\\n/g, '<br />') }}
+          >
           </p>
         )}
 
@@ -379,22 +294,24 @@ export default function Voice({ currentField, setError, combinedCart, updateObjR
         {isRecording && (
           <div className="tb_max-h-36 tb_overflow-y-auto tb_text-sm tb_text-gray-500 tb_mt-4">
             <p>
-              You are permitted to record any message of your liking up to {currentField.duration} seconds, 
-              with the exclusion of profanity or copyrighted materials, which are prohibited.
+              {sprintf(__('audioupload_instuction', 'You are permitted to record any message of your liking up to %s seconds, with the exclusion of profanity or copyrighted materials, which are prohibited.'), currentField.duration)}
             </p>
           </div>
         )}
 
         {activeButton === BUTTON_STATES.SKIPPED && (
-          <p className="tb_text-sm tb_text-primary-500 tb_text-center">
-            {__('plsrecvoice', 'Please record your voice.')}<br />
-            {__('rusurenot2advoice', 'Are you sure you choose not to add your voice?')}
+          <p
+            className="tb_text-sm tb_text-primary-500 tb_text-center"
+            dangerouslySetInnerHTML={{ __html: `
+              ${ __('rusurenot2advoice', "Are you sure you don't want to add your voice?\nBy clicking on skip, you choose to not have your voice recording").replace(/\\n/g, '<br />') }
+            `}}
+          >
           </p>
         )}
 
         {activeButton === BUTTON_STATES.NONE && (
           <p className="tb_text-sm tb_text-primary-500 tb_text-center">
-            Please record your voice.
+            {__('plsrecvoice', 'Please record your voice.')}
           </p>
         )}
       </div>

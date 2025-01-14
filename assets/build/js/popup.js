@@ -85980,249 +85980,6 @@ var index = (function () {
 
 /***/ }),
 
-/***/ "./node_modules/sprintf-js/src/sprintf.js":
-/*!************************************************!*\
-  !*** ./node_modules/sprintf-js/src/sprintf.js ***!
-  \************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-var __WEBPACK_AMD_DEFINE_RESULT__;/* global window, exports, define */
-
-!function() {
-    'use strict'
-
-    var re = {
-        not_string: /[^s]/,
-        not_bool: /[^t]/,
-        not_type: /[^T]/,
-        not_primitive: /[^v]/,
-        number: /[diefg]/,
-        numeric_arg: /[bcdiefguxX]/,
-        json: /[j]/,
-        not_json: /[^j]/,
-        text: /^[^\x25]+/,
-        modulo: /^\x25{2}/,
-        placeholder: /^\x25(?:([1-9]\d*)\$|\(([^)]+)\))?(\+)?(0|'[^$])?(-)?(\d+)?(?:\.(\d+))?([b-gijostTuvxX])/,
-        key: /^([a-z_][a-z_\d]*)/i,
-        key_access: /^\.([a-z_][a-z_\d]*)/i,
-        index_access: /^\[(\d+)\]/,
-        sign: /^[+-]/
-    }
-
-    function sprintf(key) {
-        // `arguments` is not an array, but should be fine for this call
-        return sprintf_format(sprintf_parse(key), arguments)
-    }
-
-    function vsprintf(fmt, argv) {
-        return sprintf.apply(null, [fmt].concat(argv || []))
-    }
-
-    function sprintf_format(parse_tree, argv) {
-        var cursor = 1, tree_length = parse_tree.length, arg, output = '', i, k, ph, pad, pad_character, pad_length, is_positive, sign
-        for (i = 0; i < tree_length; i++) {
-            if (typeof parse_tree[i] === 'string') {
-                output += parse_tree[i]
-            }
-            else if (typeof parse_tree[i] === 'object') {
-                ph = parse_tree[i] // convenience purposes only
-                if (ph.keys) { // keyword argument
-                    arg = argv[cursor]
-                    for (k = 0; k < ph.keys.length; k++) {
-                        if (arg == undefined) {
-                            throw new Error(sprintf('[sprintf] Cannot access property "%s" of undefined value "%s"', ph.keys[k], ph.keys[k-1]))
-                        }
-                        arg = arg[ph.keys[k]]
-                    }
-                }
-                else if (ph.param_no) { // positional argument (explicit)
-                    arg = argv[ph.param_no]
-                }
-                else { // positional argument (implicit)
-                    arg = argv[cursor++]
-                }
-
-                if (re.not_type.test(ph.type) && re.not_primitive.test(ph.type) && arg instanceof Function) {
-                    arg = arg()
-                }
-
-                if (re.numeric_arg.test(ph.type) && (typeof arg !== 'number' && isNaN(arg))) {
-                    throw new TypeError(sprintf('[sprintf] expecting number but found %T', arg))
-                }
-
-                if (re.number.test(ph.type)) {
-                    is_positive = arg >= 0
-                }
-
-                switch (ph.type) {
-                    case 'b':
-                        arg = parseInt(arg, 10).toString(2)
-                        break
-                    case 'c':
-                        arg = String.fromCharCode(parseInt(arg, 10))
-                        break
-                    case 'd':
-                    case 'i':
-                        arg = parseInt(arg, 10)
-                        break
-                    case 'j':
-                        arg = JSON.stringify(arg, null, ph.width ? parseInt(ph.width) : 0)
-                        break
-                    case 'e':
-                        arg = ph.precision ? parseFloat(arg).toExponential(ph.precision) : parseFloat(arg).toExponential()
-                        break
-                    case 'f':
-                        arg = ph.precision ? parseFloat(arg).toFixed(ph.precision) : parseFloat(arg)
-                        break
-                    case 'g':
-                        arg = ph.precision ? String(Number(arg.toPrecision(ph.precision))) : parseFloat(arg)
-                        break
-                    case 'o':
-                        arg = (parseInt(arg, 10) >>> 0).toString(8)
-                        break
-                    case 's':
-                        arg = String(arg)
-                        arg = (ph.precision ? arg.substring(0, ph.precision) : arg)
-                        break
-                    case 't':
-                        arg = String(!!arg)
-                        arg = (ph.precision ? arg.substring(0, ph.precision) : arg)
-                        break
-                    case 'T':
-                        arg = Object.prototype.toString.call(arg).slice(8, -1).toLowerCase()
-                        arg = (ph.precision ? arg.substring(0, ph.precision) : arg)
-                        break
-                    case 'u':
-                        arg = parseInt(arg, 10) >>> 0
-                        break
-                    case 'v':
-                        arg = arg.valueOf()
-                        arg = (ph.precision ? arg.substring(0, ph.precision) : arg)
-                        break
-                    case 'x':
-                        arg = (parseInt(arg, 10) >>> 0).toString(16)
-                        break
-                    case 'X':
-                        arg = (parseInt(arg, 10) >>> 0).toString(16).toUpperCase()
-                        break
-                }
-                if (re.json.test(ph.type)) {
-                    output += arg
-                }
-                else {
-                    if (re.number.test(ph.type) && (!is_positive || ph.sign)) {
-                        sign = is_positive ? '+' : '-'
-                        arg = arg.toString().replace(re.sign, '')
-                    }
-                    else {
-                        sign = ''
-                    }
-                    pad_character = ph.pad_char ? ph.pad_char === '0' ? '0' : ph.pad_char.charAt(1) : ' '
-                    pad_length = ph.width - (sign + arg).length
-                    pad = ph.width ? (pad_length > 0 ? pad_character.repeat(pad_length) : '') : ''
-                    output += ph.align ? sign + arg + pad : (pad_character === '0' ? sign + pad + arg : pad + sign + arg)
-                }
-            }
-        }
-        return output
-    }
-
-    var sprintf_cache = Object.create(null)
-
-    function sprintf_parse(fmt) {
-        if (sprintf_cache[fmt]) {
-            return sprintf_cache[fmt]
-        }
-
-        var _fmt = fmt, match, parse_tree = [], arg_names = 0
-        while (_fmt) {
-            if ((match = re.text.exec(_fmt)) !== null) {
-                parse_tree.push(match[0])
-            }
-            else if ((match = re.modulo.exec(_fmt)) !== null) {
-                parse_tree.push('%')
-            }
-            else if ((match = re.placeholder.exec(_fmt)) !== null) {
-                if (match[2]) {
-                    arg_names |= 1
-                    var field_list = [], replacement_field = match[2], field_match = []
-                    if ((field_match = re.key.exec(replacement_field)) !== null) {
-                        field_list.push(field_match[1])
-                        while ((replacement_field = replacement_field.substring(field_match[0].length)) !== '') {
-                            if ((field_match = re.key_access.exec(replacement_field)) !== null) {
-                                field_list.push(field_match[1])
-                            }
-                            else if ((field_match = re.index_access.exec(replacement_field)) !== null) {
-                                field_list.push(field_match[1])
-                            }
-                            else {
-                                throw new SyntaxError('[sprintf] failed to parse named argument key')
-                            }
-                        }
-                    }
-                    else {
-                        throw new SyntaxError('[sprintf] failed to parse named argument key')
-                    }
-                    match[2] = field_list
-                }
-                else {
-                    arg_names |= 2
-                }
-                if (arg_names === 3) {
-                    throw new Error('[sprintf] mixing positional and named placeholders is not (yet) supported')
-                }
-
-                parse_tree.push(
-                    {
-                        placeholder: match[0],
-                        param_no:    match[1],
-                        keys:        match[2],
-                        sign:        match[3],
-                        pad_char:    match[4],
-                        align:       match[5],
-                        width:       match[6],
-                        precision:   match[7],
-                        type:        match[8]
-                    }
-                )
-            }
-            else {
-                throw new SyntaxError('[sprintf] unexpected placeholder')
-            }
-            _fmt = _fmt.substring(match[0].length)
-        }
-        return sprintf_cache[fmt] = parse_tree
-    }
-
-    /**
-     * export to either browser or node.js
-     */
-    /* eslint-disable quote-props */
-    if (true) {
-        exports['sprintf'] = sprintf
-        exports['vsprintf'] = vsprintf
-    }
-    if (typeof window !== 'undefined') {
-        window['sprintf'] = sprintf
-        window['vsprintf'] = vsprintf
-
-        if (true) {
-            !(__WEBPACK_AMD_DEFINE_RESULT__ = (function() {
-                return {
-                    'sprintf': sprintf,
-                    'vsprintf': vsprintf
-                }
-            }).call(exports, __webpack_require__, exports, module),
-				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__))
-        }
-    }
-    /* eslint-enable quote-props */
-}(); // eslint-disable-line
-
-
-/***/ }),
-
 /***/ "./node_modules/string-convert/camel2hyphen.js":
 /*!*****************************************************!*\
   !*** ./node_modules/string-convert/camel2hyphen.js ***!
@@ -90388,8 +90145,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var lucide_react__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! lucide-react */ "./node_modules/lucide-react/dist/esm/lucide-react.js");
 /* harmony import */ var wavesurfer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! wavesurfer.js */ "./node_modules/wavesurfer.js/dist/wavesurfer.js");
 /* harmony import */ var wavesurfer_js_dist_plugins_record_esm_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! wavesurfer.js/dist/plugins/record.esm.js */ "./node_modules/wavesurfer.js/dist/plugins/record.esm.js");
-/* harmony import */ var sprintf_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! sprintf-js */ "./node_modules/sprintf-js/src/sprintf.js");
-/* harmony import */ var sprintf_js__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(sprintf_js__WEBPACK_IMPORTED_MODULE_4__);
 function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
 function _regeneratorRuntime() { "use strict"; /*! regenerator-runtime -- Copyright (c) 2014-present, Facebook, Inc. -- license (MIT): https://github.com/facebook/regenerator/blob/main/LICENSE */ _regeneratorRuntime = function _regeneratorRuntime() { return e; }; var t, e = {}, r = Object.prototype, n = r.hasOwnProperty, o = Object.defineProperty || function (t, e, r) { t[e] = r.value; }, i = "function" == typeof Symbol ? Symbol : {}, a = i.iterator || "@@iterator", c = i.asyncIterator || "@@asyncIterator", u = i.toStringTag || "@@toStringTag"; function define(t, e, r) { return Object.defineProperty(t, e, { value: r, enumerable: !0, configurable: !0, writable: !0 }), t[e]; } try { define({}, ""); } catch (t) { define = function define(t, e, r) { return t[e] = r; }; } function wrap(t, e, r, n) { var i = e && e.prototype instanceof Generator ? e : Generator, a = Object.create(i.prototype), c = new Context(n || []); return o(a, "_invoke", { value: makeInvokeMethod(t, r, c) }), a; } function tryCatch(t, e, r) { try { return { type: "normal", arg: t.call(e, r) }; } catch (t) { return { type: "throw", arg: t }; } } e.wrap = wrap; var h = "suspendedStart", l = "suspendedYield", f = "executing", s = "completed", y = {}; function Generator() {} function GeneratorFunction() {} function GeneratorFunctionPrototype() {} var p = {}; define(p, a, function () { return this; }); var d = Object.getPrototypeOf, v = d && d(d(values([]))); v && v !== r && n.call(v, a) && (p = v); var g = GeneratorFunctionPrototype.prototype = Generator.prototype = Object.create(p); function defineIteratorMethods(t) { ["next", "throw", "return"].forEach(function (e) { define(t, e, function (t) { return this._invoke(e, t); }); }); } function AsyncIterator(t, e) { function invoke(r, o, i, a) { var c = tryCatch(t[r], t, o); if ("throw" !== c.type) { var u = c.arg, h = u.value; return h && "object" == _typeof(h) && n.call(h, "__await") ? e.resolve(h.__await).then(function (t) { invoke("next", t, i, a); }, function (t) { invoke("throw", t, i, a); }) : e.resolve(h).then(function (t) { u.value = t, i(u); }, function (t) { return invoke("throw", t, i, a); }); } a(c.arg); } var r; o(this, "_invoke", { value: function value(t, n) { function callInvokeWithMethodAndArg() { return new e(function (e, r) { invoke(t, n, e, r); }); } return r = r ? r.then(callInvokeWithMethodAndArg, callInvokeWithMethodAndArg) : callInvokeWithMethodAndArg(); } }); } function makeInvokeMethod(e, r, n) { var o = h; return function (i, a) { if (o === f) throw Error("Generator is already running"); if (o === s) { if ("throw" === i) throw a; return { value: t, done: !0 }; } for (n.method = i, n.arg = a;;) { var c = n.delegate; if (c) { var u = maybeInvokeDelegate(c, n); if (u) { if (u === y) continue; return u; } } if ("next" === n.method) n.sent = n._sent = n.arg;else if ("throw" === n.method) { if (o === h) throw o = s, n.arg; n.dispatchException(n.arg); } else "return" === n.method && n.abrupt("return", n.arg); o = f; var p = tryCatch(e, r, n); if ("normal" === p.type) { if (o = n.done ? s : l, p.arg === y) continue; return { value: p.arg, done: n.done }; } "throw" === p.type && (o = s, n.method = "throw", n.arg = p.arg); } }; } function maybeInvokeDelegate(e, r) { var n = r.method, o = e.iterator[n]; if (o === t) return r.delegate = null, "throw" === n && e.iterator.return && (r.method = "return", r.arg = t, maybeInvokeDelegate(e, r), "throw" === r.method) || "return" !== n && (r.method = "throw", r.arg = new TypeError("The iterator does not provide a '" + n + "' method")), y; var i = tryCatch(o, e.iterator, r.arg); if ("throw" === i.type) return r.method = "throw", r.arg = i.arg, r.delegate = null, y; var a = i.arg; return a ? a.done ? (r[e.resultName] = a.value, r.next = e.nextLoc, "return" !== r.method && (r.method = "next", r.arg = t), r.delegate = null, y) : a : (r.method = "throw", r.arg = new TypeError("iterator result is not an object"), r.delegate = null, y); } function pushTryEntry(t) { var e = { tryLoc: t[0] }; 1 in t && (e.catchLoc = t[1]), 2 in t && (e.finallyLoc = t[2], e.afterLoc = t[3]), this.tryEntries.push(e); } function resetTryEntry(t) { var e = t.completion || {}; e.type = "normal", delete e.arg, t.completion = e; } function Context(t) { this.tryEntries = [{ tryLoc: "root" }], t.forEach(pushTryEntry, this), this.reset(!0); } function values(e) { if (e || "" === e) { var r = e[a]; if (r) return r.call(e); if ("function" == typeof e.next) return e; if (!isNaN(e.length)) { var o = -1, i = function next() { for (; ++o < e.length;) if (n.call(e, o)) return next.value = e[o], next.done = !1, next; return next.value = t, next.done = !0, next; }; return i.next = i; } } throw new TypeError(_typeof(e) + " is not iterable"); } return GeneratorFunction.prototype = GeneratorFunctionPrototype, o(g, "constructor", { value: GeneratorFunctionPrototype, configurable: !0 }), o(GeneratorFunctionPrototype, "constructor", { value: GeneratorFunction, configurable: !0 }), GeneratorFunction.displayName = define(GeneratorFunctionPrototype, u, "GeneratorFunction"), e.isGeneratorFunction = function (t) { var e = "function" == typeof t && t.constructor; return !!e && (e === GeneratorFunction || "GeneratorFunction" === (e.displayName || e.name)); }, e.mark = function (t) { return Object.setPrototypeOf ? Object.setPrototypeOf(t, GeneratorFunctionPrototype) : (t.__proto__ = GeneratorFunctionPrototype, define(t, u, "GeneratorFunction")), t.prototype = Object.create(g), t; }, e.awrap = function (t) { return { __await: t }; }, defineIteratorMethods(AsyncIterator.prototype), define(AsyncIterator.prototype, c, function () { return this; }), e.AsyncIterator = AsyncIterator, e.async = function (t, r, n, o, i) { void 0 === i && (i = Promise); var a = new AsyncIterator(wrap(t, r, n, o), i); return e.isGeneratorFunction(r) ? a : a.next().then(function (t) { return t.done ? t.value : a.next(); }); }, defineIteratorMethods(g), define(g, u, "Generator"), define(g, a, function () { return this; }), define(g, "toString", function () { return "[object Generator]"; }), e.keys = function (t) { var e = Object(t), r = []; for (var n in e) r.push(n); return r.reverse(), function next() { for (; r.length;) { var t = r.pop(); if (t in e) return next.value = t, next.done = !1, next; } return next.done = !0, next; }; }, e.values = values, Context.prototype = { constructor: Context, reset: function reset(e) { if (this.prev = 0, this.next = 0, this.sent = this._sent = t, this.done = !1, this.delegate = null, this.method = "next", this.arg = t, this.tryEntries.forEach(resetTryEntry), !e) for (var r in this) "t" === r.charAt(0) && n.call(this, r) && !isNaN(+r.slice(1)) && (this[r] = t); }, stop: function stop() { this.done = !0; var t = this.tryEntries[0].completion; if ("throw" === t.type) throw t.arg; return this.rval; }, dispatchException: function dispatchException(e) { if (this.done) throw e; var r = this; function handle(n, o) { return a.type = "throw", a.arg = e, r.next = n, o && (r.method = "next", r.arg = t), !!o; } for (var o = this.tryEntries.length - 1; o >= 0; --o) { var i = this.tryEntries[o], a = i.completion; if ("root" === i.tryLoc) return handle("end"); if (i.tryLoc <= this.prev) { var c = n.call(i, "catchLoc"), u = n.call(i, "finallyLoc"); if (c && u) { if (this.prev < i.catchLoc) return handle(i.catchLoc, !0); if (this.prev < i.finallyLoc) return handle(i.finallyLoc); } else if (c) { if (this.prev < i.catchLoc) return handle(i.catchLoc, !0); } else { if (!u) throw Error("try statement without catch or finally"); if (this.prev < i.finallyLoc) return handle(i.finallyLoc); } } } }, abrupt: function abrupt(t, e) { for (var r = this.tryEntries.length - 1; r >= 0; --r) { var o = this.tryEntries[r]; if (o.tryLoc <= this.prev && n.call(o, "finallyLoc") && this.prev < o.finallyLoc) { var i = o; break; } } i && ("break" === t || "continue" === t) && i.tryLoc <= e && e <= i.finallyLoc && (i = null); var a = i ? i.completion : {}; return a.type = t, a.arg = e, i ? (this.method = "next", this.next = i.finallyLoc, y) : this.complete(a); }, complete: function complete(t, e) { if ("throw" === t.type) throw t.arg; return "break" === t.type || "continue" === t.type ? this.next = t.arg : "return" === t.type ? (this.rval = this.arg = t.arg, this.method = "return", this.next = "end") : "normal" === t.type && e && (this.next = e), y; }, finish: function finish(t) { for (var e = this.tryEntries.length - 1; e >= 0; --e) { var r = this.tryEntries[e]; if (r.finallyLoc === t) return this.complete(r.completion, r.afterLoc), resetTryEntry(r), y; } }, catch: function _catch(t) { for (var e = this.tryEntries.length - 1; e >= 0; --e) { var r = this.tryEntries[e]; if (r.tryLoc === t) { var n = r.completion; if ("throw" === n.type) { var o = n.arg; resetTryEntry(r); } return o; } } throw Error("illegal catch attempt"); }, delegateYield: function delegateYield(e, r, n) { return this.delegate = { iterator: values(e), resultName: r, nextLoc: n }, "next" === this.method && (this.arg = t), y; } }, e; }
 function asyncGeneratorStep(n, t, e, r, o, a, c) { try { var i = n[a](c), u = i.value; } catch (n) { return void e(n); } i.done ? t(u) : Promise.resolve(u).then(r, o); }
@@ -90404,6 +90159,7 @@ function _arrayWithHoles(r) { if (Array.isArray(r)) return r; }
 
 
 
+// import { sprintf } from 'sprintf-js';
 
 var BUTTON_STATES = {
   NONE: 'none',
@@ -90412,7 +90168,6 @@ var BUTTON_STATES = {
   ADD_LATER: 'add_later',
   SKIPPED: 'skipped'
 };
-var audioElements = [];
 var MAX_FILE_SIZE = 20 * 1024 * 1024; // 20MB
 
 function Voice(_ref) {
@@ -90422,8 +90177,6 @@ function Voice(_ref) {
     updateObjRows = _ref.updateObjRows;
   var setInTotal = combinedCart.setInTotal,
     setBlobFiles = combinedCart.setBlobFiles;
-
-  // State
   var _useState = Object(react__WEBPACK_IMPORTED_MODULE_0__["useState"])(BUTTON_STATES.NONE),
     _useState2 = _slicedToArray(_useState, 2),
     activeButton = _useState2[0],
@@ -90452,18 +90205,10 @@ function Voice(_ref) {
     _useState14 = _slicedToArray(_useState13, 2),
     hasVoiceOption = _useState14[0],
     setHasVoiceOption = _useState14[1];
-  var audioData = Object(react__WEBPACK_IMPORTED_MODULE_0__["useRef"])(null);
-  var setAudioData = function setAudioData(audio_blob) {
-    audioData.current = audio_blob;
-  };
-
-  // Refs
-  var audioContainerRef = Object(react__WEBPACK_IMPORTED_MODULE_0__["useRef"])({} instanceof HTMLElement);
-  var waveAudioRef = Object(react__WEBPACK_IMPORTED_MODULE_0__["useRef"])({} instanceof wavesurfer_js__WEBPACK_IMPORTED_MODULE_2__["default"]);
+  var audioContainerRef = Object(react__WEBPACK_IMPORTED_MODULE_0__["useRef"])(null);
+  var waveAudioRef = Object(react__WEBPACK_IMPORTED_MODULE_0__["useRef"])(null);
   var recordPluginRef = Object(react__WEBPACK_IMPORTED_MODULE_0__["useRef"])(null);
   var timerIntervalRef = Object(react__WEBPACK_IMPORTED_MODULE_0__["useRef"])(null);
-
-  // Cost management effect
   Object(react__WEBPACK_IMPORTED_MODULE_0__["useEffect"])(function () {
     var shouldCharge = activeButton !== BUTTON_STATES.NONE && activeButton !== BUTTON_STATES.SKIPPED;
     if (!hasVoiceOption && shouldCharge) {
@@ -90480,231 +90225,102 @@ function Voice(_ref) {
       });
     }
   }, [activeButton, hasVoiceOption]);
-  var initializeWaveSurfer = /*#__PURE__*/function () {
-    var _ref2 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee3() {
-      var forRecording,
-        _args3 = arguments;
-      return _regeneratorRuntime().wrap(function _callee3$(_context3) {
-        while (1) switch (_context3.prev = _context3.next) {
-          case 0:
-            forRecording = _args3.length > 0 && _args3[0] !== undefined ? _args3[0] : false;
-            return _context3.abrupt("return", new Promise(/*#__PURE__*/function () {
-              var _ref3 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee2(resolve, reject) {
-                var waveform;
-                return _regeneratorRuntime().wrap(function _callee2$(_context2) {
-                  while (1) switch (_context2.prev = _context2.next) {
-                    case 0:
-                      _context2.prev = 0;
-                      _context2.prev = 1;
-                      if (!waveAudioRef.current) {
-                        _context2.next = 6;
-                        break;
-                      }
-                      _context2.next = 5;
-                      return waveAudioRef.current.destroy();
-                    case 5:
-                      waveAudioRef.current = null;
-                    case 6:
-                      _context2.next = 10;
-                      break;
-                    case 8:
-                      _context2.prev = 8;
-                      _context2.t0 = _context2["catch"](1);
-                    case 10:
-                      // 
-                      console.log('Create new instance');
-                      _context2.next = 13;
-                      return wavesurfer_js__WEBPACK_IMPORTED_MODULE_2__["default"].create({
-                        container: audioContainerRef.current,
-                        waveColor: '#fec52e',
-                        progressColor: '#e63f51',
-                        cursorColor: 'transparent',
-                        barWidth: 2,
-                        barRadius: 3,
-                        barGap: 3,
-                        height: 40,
-                        responsive: true,
-                        interact: !forRecording
-                      });
-                    case 13:
-                      waveform = _context2.sent;
-                      audioElements.push(waveform);
-                      waveAudioRef.current = waveform;
-
-                      // Initialize record plugin immediately for recording
-                      if (!forRecording) {
-                        _context2.next = 23;
-                        break;
-                      }
-                      _context2.next = 19;
-                      return wavesurfer_js_dist_plugins_record_esm_js__WEBPACK_IMPORTED_MODULE_3__["default"].create({
-                        mediaRecorder: {
-                          audioBitsPerSecond: 128000,
-                          mimeType: 'audio/wav'
-                        }
-                      });
-                    case 19:
-                      recordPluginRef.current = _context2.sent;
-                      // 
-                      waveAudioRef.current.registerPlugin(recordPluginRef.current);
-                      // 
-                      // Set up Record events
-                      recordPluginRef.current.on('record-start', function () {
-                        setIsRecording(true);
-                        setRecordingStatus('Recording started...');
-                        startTimer();
-                      });
-                      recordPluginRef.current.on('record-end', /*#__PURE__*/function () {
-                        var _ref4 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee(blob) {
-                          var audioUrl;
-                          return _regeneratorRuntime().wrap(function _callee$(_context) {
-                            while (1) switch (_context.prev = _context.next) {
-                              case 0:
-                                // console.log('Record end triggired');
-                                clearInterval(timerIntervalRef.current);
-                                _context.next = 3;
-                                return URL.createObjectURL(blob);
-                              case 3:
-                                audioUrl = _context.sent;
-                                setAudioFile(audioUrl);
-                                setError(null);
-                                setAudioData(blob);
-                                setIsRecording(false);
-                                setRecordingStatus('Recording saved!');
-                                handleVoiceRecord(audioUrl);
-
-                                // Reinitialize WaveSurfer for playback
-                                // await initializeWaveSurfer();
-                                _context.next = 12;
-                                return waveAudioRef.current.load(audioUrl);
-                              case 12:
-                              case "end":
-                                return _context.stop();
-                            }
-                          }, _callee);
-                        }));
-                        return function (_x3) {
-                          return _ref4.apply(this, arguments);
-                        };
-                      }());
-                    case 23:
-                      // Set up WaveSurfer events
-                      waveAudioRef.current.on('play', function () {
-                        return setIsPlaying(true);
-                      });
-                      waveAudioRef.current.on('pause', function () {
-                        return setIsPlaying(false);
-                      });
-                      waveAudioRef.current.on('finish', function () {
-                        return setIsPlaying(false);
-                      });
-                      // 
-                      resolve(true);
-                      _context2.next = 33;
-                      break;
-                    case 29:
-                      _context2.prev = 29;
-                      _context2.t1 = _context2["catch"](0);
-                      console.error('Error initializing WaveSurfer:', _context2.t1);
-                      setRecordingStatus('Error initializing audio recorder');
-                    case 33:
-                    case "end":
-                      return _context2.stop();
-                  }
-                }, _callee2, null, [[0, 29], [1, 8]]);
-              }));
-              return function (_x, _x2) {
-                return _ref3.apply(this, arguments);
-              };
-            }()));
-          case 2:
-          case "end":
-            return _context3.stop();
-        }
-      }, _callee3);
-    }));
-    return function initializeWaveSurfer() {
-      return _ref2.apply(this, arguments);
-    };
-  }();
-
-  // Initialize on mount and cleanup on unmount
-  Object(react__WEBPACK_IMPORTED_MODULE_0__["useEffect"])(/*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee5() {
-    return _regeneratorRuntime().wrap(function _callee5$(_context5) {
-      while (1) switch (_context5.prev = _context5.next) {
-        case 0:
-          _context5.next = 2;
-          return initializeWaveSurfer();
-        case 2:
-          return _context5.abrupt("return", /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee4() {
-            return _regeneratorRuntime().wrap(function _callee4$(_context4) {
-              while (1) switch (_context4.prev = _context4.next) {
-                case 0:
-                  clearInterval(timerIntervalRef.current);
-                  _context4.prev = 1;
-                  waveAudioRef.current.destroy();
-                  audioElements.splice(0, audioElements.length);
-                  // if (waveAudioRef.current) {
-                  _context4.next = 6;
-                  return waveAudioRef.current.destroy();
-                case 6:
-                  waveAudioRef.current = null;
-                  // }
-                  _context4.next = 11;
-                  break;
-                case 9:
-                  _context4.prev = 9;
-                  _context4.t0 = _context4["catch"](1);
-                case 11:
-                case "end":
-                  return _context4.stop();
-              }
-            }, _callee4, null, [[1, 9]]);
-          })));
-        case 3:
-        case "end":
-          return _context5.stop();
+  Object(react__WEBPACK_IMPORTED_MODULE_0__["useEffect"])(function () {
+    if (!waveAudioRef.current) {
+      waveAudioRef.current = wavesurfer_js__WEBPACK_IMPORTED_MODULE_2__["default"].create({
+        container: audioContainerRef.current,
+        waveColor: '#fec52e',
+        progressColor: '#e63f51',
+        cursorColor: 'transparent',
+        barWidth: 2,
+        barRadius: 3,
+        barGap: 3,
+        height: 40,
+        responsive: true,
+        interact: true
+      });
+      waveAudioRef.current.on('play', function () {
+        return setIsPlaying(true);
+      });
+      waveAudioRef.current.on('pause', function () {
+        return setIsPlaying(false);
+      });
+      waveAudioRef.current.on('finish', function () {
+        return setIsPlaying(false);
+      });
+    }
+    return function () {
+      if (waveAudioRef.current) {
+        waveAudioRef.current.destroy();
+        waveAudioRef.current = null;
       }
-    }, _callee5);
-  })), []);
+    };
+  }, []);
   var startRecording = /*#__PURE__*/function () {
-    var _ref7 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee6() {
-      return _regeneratorRuntime().wrap(function _callee6$(_context6) {
-        while (1) switch (_context6.prev = _context6.next) {
+    var _ref2 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee2() {
+      return _regeneratorRuntime().wrap(function _callee2$(_context2) {
+        while (1) switch (_context2.prev = _context2.next) {
           case 0:
-            _context6.prev = 0;
-            console.log(recordPluginRef.current, waveAudioRef.current);
-            // Initialize for recording first
-            _context6.next = 4;
-            return initializeWaveSurfer(true);
-          case 4:
-            if (recordPluginRef.current) {
-              _context6.next = 6;
-              break;
+            _context2.prev = 0;
+            if (!recordPluginRef.current) {
+              recordPluginRef.current = wavesurfer_js_dist_plugins_record_esm_js__WEBPACK_IMPORTED_MODULE_3__["default"].create({
+                mediaRecorder: {
+                  audioBitsPerSecond: 128000,
+                  mimeType: 'audio/wav'
+                }
+              });
+              waveAudioRef.current.registerPlugin(recordPluginRef.current);
+              recordPluginRef.current.on('record-start', function () {
+                setIsRecording(true);
+                setRecordingStatus(__('recstarted', 'Recording started...'));
+                startTimer();
+              });
+              recordPluginRef.current.on('record-end', /*#__PURE__*/function () {
+                var _ref3 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee(blob) {
+                  var audioUrl;
+                  return _regeneratorRuntime().wrap(function _callee$(_context) {
+                    while (1) switch (_context.prev = _context.next) {
+                      case 0:
+                        clearInterval(timerIntervalRef.current);
+                        audioUrl = URL.createObjectURL(blob);
+                        setAudioFile(audioUrl);
+                        setError(null);
+                        setIsRecording(false);
+                        setRecordingStatus('Recording saved!');
+                        handleVoiceRecord(audioUrl);
+                        waveAudioRef.current.load(audioUrl);
+                      case 8:
+                      case "end":
+                        return _context.stop();
+                    }
+                  }, _callee);
+                }));
+                return function (_x) {
+                  return _ref3.apply(this, arguments);
+                };
+              }());
             }
-            throw new Error('Recording plugin not initialized');
-          case 6:
-            _context6.next = 8;
+            _context2.next = 4;
             return recordPluginRef.current.startRecording();
-          case 8:
+          case 4:
             setActiveButton(BUTTON_STATES.RECORDING);
-            setRecordingStatus("Please record your voice up to ".concat(currentField.duration, " seconds."));
-            _context6.next = 17;
+            setRecordingStatus(sprintf(__('audiorecord_instuction', "Please record your voice up to %s seconds."), currentField.duration));
+            _context2.next = 13;
             break;
-          case 12:
-            _context6.prev = 12;
-            _context6.t0 = _context6["catch"](0);
-            console.error('Error accessing microphone:', _context6.t0);
-            setRecordingStatus('Error accessing microphone. Please ensure microphone permissions are granted.');
+          case 8:
+            _context2.prev = 8;
+            _context2.t0 = _context2["catch"](0);
+            console.error('Error accessing microphone:', _context2.t0);
+            setRecordingStatus(__('mic_erraccess', 'Error accessing microphone. Please ensure microphone permissions are granted.'));
             setIsRecording(false);
-          case 17:
+          case 13:
           case "end":
-            return _context6.stop();
+            return _context2.stop();
         }
-      }, _callee6, null, [[0, 12]]);
+      }, _callee2, null, [[0, 8]]);
     }));
     return function startRecording() {
-      return _ref7.apply(this, arguments);
+      return _ref2.apply(this, arguments);
     };
   }();
   var stopRecording = function stopRecording() {
@@ -90727,141 +90343,118 @@ function Voice(_ref) {
       }
     }, 100);
   };
-  var validateFile = /*#__PURE__*/function () {
-    var _ref8 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee7(file) {
-      return _regeneratorRuntime().wrap(function _callee7$(_context7) {
-        while (1) switch (_context7.prev = _context7.next) {
-          case 0:
-            if (!(file.size > MAX_FILE_SIZE)) {
-              _context7.next = 2;
-              break;
-            }
-            throw new Error('File size must be up to 20Mb');
-          case 2:
-            if (!(!file.type || !file.type.startsWith('video/') && !file.type.startsWith('audio/'))) {
-              _context7.next = 4;
-              break;
-            }
-            throw new Error('Invalid file type');
-          case 4:
-          case "end":
-            return _context7.stop();
-        }
-      }, _callee7);
-    }));
-    return function validateFile(_x4) {
-      return _ref8.apply(this, arguments);
-    };
-  }();
   var handleFileUpload = /*#__PURE__*/function () {
-    var _ref9 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee8(event) {
-      var file, _err$message, audioContext, arrayBuffer, audioBuffer, audioUrl;
-      return _regeneratorRuntime().wrap(function _callee8$(_context8) {
-        while (1) switch (_context8.prev = _context8.next) {
+    var _ref4 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee3(event) {
+      var file, audioUrl;
+      return _regeneratorRuntime().wrap(function _callee3$(_context3) {
+        while (1) switch (_context3.prev = _context3.next) {
           case 0:
             file = event.target.files[0];
             if (file) {
-              _context8.next = 3;
+              _context3.next = 3;
               break;
             }
-            return _context8.abrupt("return");
+            return _context3.abrupt("return");
           case 3:
-            _context8.prev = 3;
-            _context8.prev = 4;
-            _context8.next = 7;
-            return validateFile(file);
-          case 7:
-            _context8.next = 13;
-            break;
-          case 9:
-            _context8.prev = 9;
-            _context8.t0 = _context8["catch"](4);
-            setError((_err$message = _context8.t0 === null || _context8.t0 === void 0 ? void 0 : _context8.t0.message) !== null && _err$message !== void 0 ? _err$message : 'Something went wrong.');
-            return _context8.abrupt("return");
-          case 13:
-            audioContext = new (window.AudioContext || window.webkitAudioContext)();
-            _context8.next = 16;
-            return file.arrayBuffer();
-          case 16:
-            arrayBuffer = _context8.sent;
-            _context8.next = 19;
-            return audioContext.decodeAudioData(arrayBuffer);
-          case 19:
-            audioBuffer = _context8.sent;
-            if (!(audioBuffer.duration > parseFloat(currentField.duration))) {
-              _context8.next = 23;
+            _context3.prev = 3;
+            if (!(file.size > MAX_FILE_SIZE)) {
+              _context3.next = 6;
               break;
             }
-            // throw new Error(`File duration exceeds ${currentField.duration} seconds`);
-            setError(Object(sprintf_js__WEBPACK_IMPORTED_MODULE_4__["sprintf"])(__('audioexcedduration', "File duration exceeds %s seconds"), currentField.duration));
-            return _context8.abrupt("return");
-          case 23:
+            throw new Error('sizeover');
+          case 6:
             audioUrl = URL.createObjectURL(file);
             setAudioFile(audioUrl);
             setError(null);
-            setAudioData(file);
             setActiveButton(BUTTON_STATES.UPLOADED);
             setRecordingStatus('Audio file uploaded!');
-
-            // Reinitialize WaveSurfer for the uploaded file
-            _context8.next = 31;
-            return initializeWaveSurfer();
-          case 31:
-            _context8.next = 33;
-            return waveAudioRef.current.load(audioUrl);
-          case 33:
-            handleVoiceRecord(audioUrl);
-            _context8.next = 40;
+            waveAudioRef.current.load(audioUrl);
+            _context3.next = 18;
             break;
-          case 36:
-            _context8.prev = 36;
-            _context8.t1 = _context8["catch"](3);
-            // err.message
-            setError(__('erroruploadvoice', "Oopsi, we couldn't load your file"));
-            console.error('Error uploading file:', _context8.t1);
-          case 40:
+          case 14:
+            _context3.prev = 14;
+            _context3.t0 = _context3["catch"](3);
+            if ((_context3.t0 === null || _context3.t0 === void 0 ? void 0 : _context3.t0.message) == 'sizeover') {
+              setError(__('maxuploadmb', 'File size must be up to 20Mb'));
+            } else {
+              setError(__('erroruploadvoice', "Oopsi, we couldn't load your file"));
+            }
+            console.error('Error uploading file:', _context3.t0);
+          case 18:
           case "end":
-            return _context8.stop();
+            return _context3.stop();
         }
-      }, _callee8, null, [[3, 36], [4, 9]]);
+      }, _callee3, null, [[3, 14]]);
     }));
-    return function handleFileUpload(_x5) {
-      return _ref9.apply(this, arguments);
+    return function handleFileUpload(_x2) {
+      return _ref4.apply(this, arguments);
     };
   }();
   // 
   var handleVoiceRecord = /*#__PURE__*/function () {
-    var _ref10 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee9(audioBlobUrl) {
-      var timestamp, isLater, blobName, audioBlob;
-      return _regeneratorRuntime().wrap(function _callee9$(_context9) {
-        while (1) switch (_context9.prev = _context9.next) {
+    var _ref5 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee4(audioBlobUrl) {
+      var timestamp, isLater, response, audioBlob, blobName;
+      return _regeneratorRuntime().wrap(function _callee4$(_context4) {
+        while (1) switch (_context4.prev = _context4.next) {
           case 0:
             if (audioBlobUrl) {
-              _context9.next = 3;
+              _context4.next = 3;
               break;
             }
             updateObjRows(currentField, {
               attached: null
             });
-            return _context9.abrupt("return");
+            return _context4.abrupt("return");
           case 3:
             // 
             timestamp = Date.now();
             isLater = audioBlobUrl === 'later'; // 
-            if (!isLater && audioData.current) {
-              blobName = "".concat(timestamp, "-").concat(audioBlobUrl.includes('/') ? 'recording.mp3' : audioBlobUrl.split('/').pop());
-              audioBlob = new Blob([audioData.current], {
-                type: 'audio/mpeg'
-              });
-              Object.defineProperty(audioBlob, 'name', {
-                value: blobName,
-                writable: false
-              });
-              // 
-              setBlobFiles(audioBlob);
-            } else {
-              // console.log('Unfortunately this has been skipped')
+            // const audioBlobArr = await fetch(audioBlobUrl).then(r => r.blob());
+            if (!(isLater || audioBlobUrl === null)) {
+              _context4.next = 9;
+              break;
             }
+            _context4.t0 = {
+              ok: true
+            };
+            _context4.next = 12;
+            break;
+          case 9:
+            _context4.next = 11;
+            return fetch(audioBlobUrl);
+          case 11:
+            _context4.t0 = _context4.sent;
+          case 12:
+            response = _context4.t0;
+            if (response.ok) {
+              _context4.next = 15;
+              break;
+            }
+            throw new Error('Failed to fetch audio blob');
+          case 15:
+            if (!(!isLater && response)) {
+              _context4.next = 24;
+              break;
+            }
+            _context4.next = 18;
+            return response.blob();
+          case 18:
+            audioBlob = _context4.sent;
+            blobName = "".concat(timestamp, "-").concat(audioBlobUrl.includes('/') ? 'recording.mp3' : 'recording.wav'); // 
+            // const blobName = `${timestamp}-${audioBlobUrl.includes('/') ? 'recording.mp3' : audioBlobUrl.split('/').pop()}`;
+            // const audioBlob = new Blob([audioBlobArr], {
+            //   type: 'audio/mpeg',
+            // });
+            // 
+            Object.defineProperty(audioBlob, 'name', {
+              value: blobName,
+              writable: false
+            });
+            // 
+            setBlobFiles(audioBlob);
+            _context4.next = 24;
+            break;
+          case 24:
             updateObjRows(currentField, {
               attached: isLater ? {
                 later: true
@@ -90870,14 +90463,14 @@ function Voice(_ref) {
                 method: audioBlobUrl.includes('/') ? 'record' : 'upload'
               }
             });
-          case 7:
+          case 25:
           case "end":
-            return _context9.stop();
+            return _context4.stop();
         }
-      }, _callee9);
+      }, _callee4);
     }));
-    return function handleVoiceRecord(_x6) {
-      return _ref10.apply(this, arguments);
+    return function handleVoiceRecord(_x3) {
+      return _ref5.apply(this, arguments);
     };
   }();
   var renderActionButton = function renderActionButton(icon, label, onClick, isActive) {
@@ -90901,7 +90494,7 @@ function Voice(_ref) {
     className: "tb_w-6 tb_h-6"
   }) : /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(lucide_react__WEBPACK_IMPORTED_MODULE_1__["Mic"], {
     className: "tb_w-6 tb_h-6"
-  }), 'Record', isRecording ? stopRecording : startRecording, activeButton === BUTTON_STATES.RECORDING), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+  }), __('record', 'Record'), isRecording ? stopRecording : startRecording, activeButton === BUTTON_STATES.RECORDING), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
     className: "tb_flex tb_flex-col tb_items-center"
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", {
     className: "tb_cursor-pointer"
@@ -90911,7 +90504,7 @@ function Voice(_ref) {
     className: "tb_w-6 tb_h-6 tb_text-gray-600"
   })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", {
     className: "tb_mt-2 tb_text-xs tb_text-gray-600 tb_block tb_text-center"
-  }, "Upload"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
+  }, __('upload', 'Upload')), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
     type: "file"
     // accept="audio/*"
     ,
@@ -90920,19 +90513,22 @@ function Voice(_ref) {
     className: "tb_hidden"
   }))), renderActionButton(/*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(lucide_react__WEBPACK_IMPORTED_MODULE_1__["Mail"], {
     className: "tb_w-6 tb_h-6"
-  }), 'Add Later', function () {
+  }), __('add_later', 'Add Later'), function () {
     setActiveButton(BUTTON_STATES.ADD_LATER);
     handleVoiceRecord('later');
   }, activeButton === BUTTON_STATES.ADD_LATER), renderActionButton(/*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(lucide_react__WEBPACK_IMPORTED_MODULE_1__["SkipForward"], {
     className: "tb_w-6 tb_h-6"
-  }), 'Skip', function () {
+  }), __('skip', 'Skip'), function () {
     setActiveButton(BUTTON_STATES.SKIPPED);
     handleVoiceRecord(null);
   }, activeButton === BUTTON_STATES.SKIPPED)), recordingStatus && /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("p", {
     className: "tb_text-sm tb_text-gray-600 tb_text-center"
   }, recordingStatus), activeButton === BUTTON_STATES.ADD_LATER && /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("p", {
-    className: "tb_text-sm tb_text-gray-600"
-  }, "1. Receive instructions & button in order email.", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("br", null), "2. Upload audio file anytime later.", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("br", null), "3. We will ship when your audio file is received."), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+    className: "tb_text-sm tb_text-gray-600",
+    dangerouslySetInnerHTML: {
+      __html: __('audiolater_instuction', '1. Receive instructions & button in order email.\n2. Upload audio file anytime later.\n3. We will ship when your audio file is received.').replace(/\\n/g, '<br />')
+    }
+  }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
     className: "tb_flex tb_items-center tb_gap-4 ".concat(!shouldShowWaveform && 'tb_hidden')
   }, audioFile && !isRecording && /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
     onClick: function onClick() {
@@ -90952,11 +90548,14 @@ function Voice(_ref) {
     className: "tb_text-sm tb_text-gray-600"
   }, "".concat(Math.floor(timer), ":").concat(('00' + Math.floor(timer % 1 * 1000)).slice(-2)))), isRecording && /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
     className: "tb_max-h-36 tb_overflow-y-auto tb_text-sm tb_text-gray-500 tb_mt-4"
-  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("p", null, "You are permitted to record any message of your liking up to ", currentField.duration, " seconds, with the exclusion of profanity or copyrighted materials, which are prohibited.")), activeButton === BUTTON_STATES.SKIPPED && /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("p", {
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("p", null, sprintf(__('audioupload_instuction', 'You are permitted to record any message of your liking up to %s seconds, with the exclusion of profanity or copyrighted materials, which are prohibited.'), currentField.duration))), activeButton === BUTTON_STATES.SKIPPED && /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("p", {
+    className: "tb_text-sm tb_text-primary-500 tb_text-center",
+    dangerouslySetInnerHTML: {
+      __html: "\n              ".concat(__('rusurenot2advoice', "Are you sure you don't want to add your voice?\nBy clicking on skip, you choose to not have your voice recording").replace(/\\n/g, '<br />'), "\n            ")
+    }
+  }), activeButton === BUTTON_STATES.NONE && /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("p", {
     className: "tb_text-sm tb_text-primary-500 tb_text-center"
-  }, __('plsrecvoice', 'Please record your voice.'), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("br", null), __('rusurenot2advoice', 'Are you sure you choose not to add your voice?')), activeButton === BUTTON_STATES.NONE && /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("p", {
-    className: "tb_text-sm tb_text-primary-500 tb_text-center"
-  }, "Please record your voice.")));
+  }, __('plsrecvoice', 'Please record your voice.'))));
 }
 
 /***/ }),
@@ -90994,6 +90593,36 @@ window.__ = function (str) {
   return fwpSiteConfig.i18n[str] || def;
 };
 reactRoot.render(/*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react__WEBPACK_IMPORTED_MODULE_0___default.a.StrictMode, null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_customizer_app__WEBPACK_IMPORTED_MODULE_2__["default"], null)));
+document.querySelectorAll('#sidebar_offcanvas .minicart-aside .widget_shopping_cart_title b:not([data-handled])').forEach(function (cartTitle) {
+  cartTitle.dataset.handled = true;
+  cartTitle.parentElement.style.display = 'flex';
+  cartTitle.parentElement.style.flexWrap = 'nowrap';
+  cartTitle.parentElement.style.alignItems = 'center';
+  cartTitle.parentElement.style.justifyContent = 'space-between';
+  // 
+  var clearButton = document.createElement('button');
+  clearButton.style.color = '#333';
+  clearButton.style.border = 'none';
+  clearButton.style.padding = '3px 7px';
+  clearButton.style.backgroundColor = 'none';
+  clearButton.style.textDecoration = 'underline';
+  clearButton.innerHTML = 'Clear';
+  clearButton.addEventListener('click', function (event) {
+    clearButton.innerText = "Cleaning...";
+    event.preventDefault();
+    event.stopPropagation();
+    fetch("".concat(fwpSiteConfig.ajaxUrl, "?action=teddybear/project/ajax/empty/cart&_nonce=").concat(fwpSiteConfig.ajax_nonce)).then(function (res) {
+      return res.json();
+    }).then(function (res) {
+      return clearButton.innerText = "Cleared";
+    }).then(function (res) {
+      return location.reload();
+    }).catch(function (err) {
+      return console.error(err);
+    });
+  });
+  cartTitle.parentElement.appendChild(clearButton);
+});
 
 /***/ }),
 

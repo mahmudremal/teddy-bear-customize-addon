@@ -480,7 +480,7 @@ class I18n {
 			'recsaved' => __('Recording saved!', 'teddybearsprompts'),
 			'recstarted' => __('Recording started...', 'teddybearsprompts'),
 			'plsrecvoice' => __('Please record your voice.', 'teddybearsprompts'),
-			'rusurenot2advoice' => __('Are you sure you choose not to add your voice?', 'teddybearsprompts'),
+			'rusurenot2advoice' => __("Are you sure you don't want to add your voice?\nBy clicking on skip, you choose to not have your voice recording", 'teddybearsprompts'),
 			'willadlater' => __('Will add voice later', 'teddybearsprompts'),
 			'audiofileuped' => __('Audio file uploaded!', 'teddybearsprompts'),
 			'erroruploadvoice' => __("Oopsi, we couldn't load your file", 'teddybearsprompts'),

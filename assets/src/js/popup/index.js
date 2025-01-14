@@ -24,3 +24,25 @@ reactRoot.render(
         <App />
     </React.StrictMode>
 );
+
+document.querySelectorAll('#sidebar_offcanvas .minicart-aside .widget_shopping_cart_title b:not([data-handled])').forEach(cartTitle => {
+    cartTitle.dataset.handled = true;
+    cartTitle.parentElement.style.display = 'flex';
+    cartTitle.parentElement.style.flexWrap = 'nowrap';
+    cartTitle.parentElement.style.alignItems = 'center';
+    cartTitle.parentElement.style.justifyContent = 'space-between';
+    // 
+    const clearButton = document.createElement('button');
+    clearButton.style.color = '#333';
+    clearButton.style.border = 'none';
+    clearButton.style.padding = '3px 7px';
+    clearButton.style.backgroundColor = 'none';
+    clearButton.style.textDecoration = 'underline';
+    clearButton.innerHTML = 'Clear';
+    clearButton.addEventListener('click', (event) => {
+        clearButton.innerText = "Cleaning...";
+        event.preventDefault();event.stopPropagation();
+        fetch(`${fwpSiteConfig.ajaxUrl}?action=teddybear/project/ajax/empty/cart&_nonce=${fwpSiteConfig.ajax_nonce}`).then(res => res.json()).then(res => clearButton.innerText = "Cleared").then(res => location.reload()).catch(err => console.error(err));
+    });
+    cartTitle.parentElement.appendChild(clearButton);
+});
