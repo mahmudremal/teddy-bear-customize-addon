@@ -192,6 +192,13 @@ class Cart {
 				'checkoutUrl'		=> wc_get_checkout_url(),
 				'cartItemKey'		=> $cart_item_key
 			];
+			ob_start();
+			woocommerce_mini_cart();
+			$_minicart = ob_get_clean();
+			$json['cartsidebar'] = [
+				'_count' => WC()->cart->get_cart_contents_count(),
+				'_cont' => $_minicart
+			];
 			wp_send_json_success($json);
 		} catch (\Exception $e) {
 			// Handle the exception here

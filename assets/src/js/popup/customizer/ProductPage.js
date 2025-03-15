@@ -62,6 +62,7 @@ const ProductPage = ({ product, updateProductData, closePopup, setAllowClose }) 
     const [isSingleTab, setIsSingleTab] = useState(
         product.custom_fields[product.custom_data.product_type]?.length === 1
     );
+    const [allowNextStep, setAllowNextStep] = useState(true);
 
     const setBlobFiles = (data) => {
         // console.log('Adding blob file...')
@@ -119,6 +120,8 @@ const ProductPage = ({ product, updateProductData, closePopup, setAllowClose }) 
 
         formData.append('dataset', JSON.stringify(objRows.current));
 
+        // console.log(blobFiles.current);
+
         if (blobFiles.current) {
             formData.append('_blobs', blobFiles.current, blobFiles.current?.name??'voice.mp3');
         }
@@ -134,6 +137,15 @@ const ProductPage = ({ product, updateProductData, closePopup, setAllowClose }) 
                 if (data?.confirmation && data.confirmation?.title) {
                     setConfirmation(data.confirmation);
                     setAllowClose(true);
+                    // 
+                    const _sidebar = data?.cartsidebar??{};
+                    if (_sidebar?._count) {
+                        document.querySelectorAll('#count_cart_items').forEach(_content => _content.innerHTML = _sidebar?._count??0);
+                    }
+                    if (_sidebar?._cont) {
+                        document.querySelectorAll('.widget_shopping_cart_content').forEach(_content => _content.innerHTML = _sidebar?._cont??_content.innerHTML);
+                    }
+                    // 
                 } else {
                     setError(data.message);
                 }
@@ -366,7 +378,8 @@ const ProductPage = ({ product, updateProductData, closePopup, setAllowClose }) 
                                     {!isSingleTab && (
                                         <button
                                             onClick={currentStep === (product.custom_fields[selectedType]?.length || 0) - 1 ? handleDone : handleNextStep}
-                                            className="tb_text-primary tb_font-medium tb_px-2 tb_rounded-md"
+                                            className="tb_text-primary tb_font-medium tb_px-2 tb_rounded-md disabled:tb_cursor-wait disabled:tb_bg-gray-200 disabled:tb_text-gray-500"
+                                            disabled={!allowNextStep}
                                         >
                                             {currentStep === (product.custom_fields[selectedType]?.length || 0) - 1 ? __('done', 'Done') : __('next', 'Next')}
                                         </button>
@@ -376,17 +389,17 @@ const ProductPage = ({ product, updateProductData, closePopup, setAllowClose }) 
                                 {(() => {
                                     switch (field.type) {
                                         case 'radio':
-                                            return <Radio setError={setError} currentField={field} handleOptionChange={handleOptionChange} updateProductData={updateProductData} combinedCart={combinedCart} updateObjRows={updateObjRows} />
+                                            return <Radio setError={setError} currentField={field} handleOptionChange={handleOptionChange} updateProductData={updateProductData} combinedCart={combinedCart} updateObjRows={updateObjRows} setAllowNextStep={setAllowNextStep} />
                                         case 'checkbox':
-                                            return <Checkbox setError={setError} currentField={field} handleOptionChange={handleOptionChange} updateProductData={updateProductData} combinedCart={combinedCart} updateObjRows={updateObjRows} />
+                                            return <Checkbox setError={setError} currentField={field} handleOptionChange={handleOptionChange} updateProductData={updateProductData} combinedCart={combinedCart} updateObjRows={updateObjRows} setAllowNextStep={setAllowNextStep} />
                                         case 'outfit':
-                                            return <Outfit setError={setError} currentField={field} handleOptionChange={handleOptionChange} selectedOutfit={selectedOutfit} setSelectedOutfit={setSelectedOutfit} updateProductData={updateProductData} combinedCart={combinedCart} updateObjRows={updateObjRows} />
+                                            return <Outfit setError={setError} currentField={field} handleOptionChange={handleOptionChange} selectedOutfit={selectedOutfit} setSelectedOutfit={setSelectedOutfit} updateProductData={updateProductData} combinedCart={combinedCart} updateObjRows={updateObjRows} setAllowNextStep={setAllowNextStep} />
                                         case 'voice':
-                                            return <Voice setError={setError} currentField={field} handleOptionChange={handleOptionChange} setActiveTab={setActiveTab} updateProductData={updateProductData} combinedCart={combinedCart} updateObjRows={updateObjRows} />
+                                            return <Voice setError={setError} currentField={field} handleOptionChange={handleOptionChange} setActiveTab={setActiveTab} updateProductData={updateProductData} combinedCart={combinedCart} updateObjRows={updateObjRows} setAllowNextStep={setAllowNextStep} />
                                         case 'info':
-                                            return <Info setError={setError} currentField={field} handleOptionChange={handleOptionChange} setActiveTab={setActiveTab} updateProductData={updateProductData} combinedCart={combinedCart} updateObjRows={updateObjRows} />
+                                            return <Info setError={setError} currentField={field} handleOptionChange={handleOptionChange} setActiveTab={setActiveTab} updateProductData={updateProductData} combinedCart={combinedCart} updateObjRows={updateObjRows} setAllowNextStep={setAllowNextStep} />
                                         default:
-                                            return <Input setError={setError} currentField={field} handleOptionChange={handleOptionChange} setActiveTab={setActiveTab} updateProductData={updateProductData} combinedCart={combinedCart} updateObjRows={updateObjRows} />
+                                            return <Input setError={setError} currentField={field} handleOptionChange={handleOptionChange} setActiveTab={setActiveTab} updateProductData={updateProductData} combinedCart={combinedCart} updateObjRows={updateObjRows} setAllowNextStep={setAllowNextStep} />
                                     }
                                 })()}
                                 {/*  */}

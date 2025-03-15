@@ -88391,6 +88391,10 @@ var ProductPage = function ProductPage(_ref) {
     _useState30 = _slicedToArray(_useState29, 2),
     isSingleTab = _useState30[0],
     setIsSingleTab = _useState30[1];
+  var _useState31 = Object(react__WEBPACK_IMPORTED_MODULE_1__["useState"])(true),
+    _useState32 = _slicedToArray(_useState31, 2),
+    allowNextStep = _useState32[0],
+    setAllowNextStep = _useState32[1];
   var setBlobFiles = function setBlobFiles(data) {
     // console.log('Adding blob file...')
     blobFiles.current = data;
@@ -88438,7 +88442,7 @@ var ProductPage = function ProductPage(_ref) {
   };
   var addToCart = /*#__PURE__*/function () {
     var _ref2 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee() {
-      var formData, _blobFiles$current$na, _blobFiles$current, response, _data$confirmation, data, _response$data;
+      var formData, _blobFiles$current$na, _blobFiles$current, response, _data$confirmation, data, _data$cartsidebar, _sidebar, _response$data;
       return _regeneratorRuntime().wrap(function _callee$(_context) {
         while (1) switch (_context.prev = _context.next) {
           case 0:
@@ -88449,6 +88453,9 @@ var ProductPage = function ProductPage(_ref) {
             formData.append('product_id', product.id);
             formData.append('quantity', 1);
             formData.append('dataset', JSON.stringify(objRows.current));
+
+            // console.log(blobFiles.current);
+
             if (blobFiles.current) {
               formData.append('_blobs', blobFiles.current, (_blobFiles$current$na = (_blobFiles$current = blobFiles.current) === null || _blobFiles$current === void 0 ? void 0 : _blobFiles$current.name) !== null && _blobFiles$current$na !== void 0 ? _blobFiles$current$na : 'voice.mp3');
             }
@@ -88468,6 +88475,21 @@ var ProductPage = function ProductPage(_ref) {
             if (data !== null && data !== void 0 && data.confirmation && (_data$confirmation = data.confirmation) !== null && _data$confirmation !== void 0 && _data$confirmation.title) {
               setConfirmation(data.confirmation);
               setAllowClose(true);
+              // 
+              _sidebar = (_data$cartsidebar = data === null || data === void 0 ? void 0 : data.cartsidebar) !== null && _data$cartsidebar !== void 0 ? _data$cartsidebar : {};
+              if (_sidebar !== null && _sidebar !== void 0 && _sidebar._count) {
+                document.querySelectorAll('#count_cart_items').forEach(function (_content) {
+                  var _sidebar$_count;
+                  return _content.innerHTML = (_sidebar$_count = _sidebar === null || _sidebar === void 0 ? void 0 : _sidebar._count) !== null && _sidebar$_count !== void 0 ? _sidebar$_count : 0;
+                });
+              }
+              if (_sidebar !== null && _sidebar !== void 0 && _sidebar._cont) {
+                document.querySelectorAll('.widget_shopping_cart_content').forEach(function (_content) {
+                  var _sidebar$_cont;
+                  return _content.innerHTML = (_sidebar$_cont = _sidebar === null || _sidebar === void 0 ? void 0 : _sidebar._cont) !== null && _sidebar$_cont !== void 0 ? _sidebar$_cont : _content.innerHTML;
+                });
+              }
+              // 
             } else {
               setError(data.message);
             }
@@ -88757,7 +88779,8 @@ var ProductPage = function ProductPage(_ref) {
       className: "tb_text-sm tb_text-gray-500"
     }, field.heading)), !isSingleTab && /*#__PURE__*/React.createElement("button", {
       onClick: currentStep === (((_product$custom_field5 = product.custom_fields[selectedType]) === null || _product$custom_field5 === void 0 ? void 0 : _product$custom_field5.length) || 0) - 1 ? handleDone : handleNextStep,
-      className: "tb_text-primary tb_font-medium tb_px-2 tb_rounded-md"
+      className: "tb_text-primary tb_font-medium tb_px-2 tb_rounded-md disabled:tb_cursor-wait disabled:tb_bg-gray-200 disabled:tb_text-gray-500",
+      disabled: !allowNextStep
     }, currentStep === (((_product$custom_field6 = product.custom_fields[selectedType]) === null || _product$custom_field6 === void 0 ? void 0 : _product$custom_field6.length) || 0) - 1 ? __('done', 'Done') : __('next', 'Next'))), function () {
       switch (field.type) {
         case 'radio':
@@ -88767,7 +88790,8 @@ var ProductPage = function ProductPage(_ref) {
             handleOptionChange: handleOptionChange,
             updateProductData: updateProductData,
             combinedCart: combinedCart,
-            updateObjRows: updateObjRows
+            updateObjRows: updateObjRows,
+            setAllowNextStep: setAllowNextStep
           });
         case 'checkbox':
           return /*#__PURE__*/React.createElement(_blocks_checkbox__WEBPACK_IMPORTED_MODULE_10__["default"], {
@@ -88776,7 +88800,8 @@ var ProductPage = function ProductPage(_ref) {
             handleOptionChange: handleOptionChange,
             updateProductData: updateProductData,
             combinedCart: combinedCart,
-            updateObjRows: updateObjRows
+            updateObjRows: updateObjRows,
+            setAllowNextStep: setAllowNextStep
           });
         case 'outfit':
           return /*#__PURE__*/React.createElement(_blocks_outfit__WEBPACK_IMPORTED_MODULE_4__["default"], {
@@ -88787,7 +88812,8 @@ var ProductPage = function ProductPage(_ref) {
             setSelectedOutfit: setSelectedOutfit,
             updateProductData: updateProductData,
             combinedCart: combinedCart,
-            updateObjRows: updateObjRows
+            updateObjRows: updateObjRows,
+            setAllowNextStep: setAllowNextStep
           });
         case 'voice':
           return /*#__PURE__*/React.createElement(_blocks_voice__WEBPACK_IMPORTED_MODULE_3__["default"], {
@@ -88797,7 +88823,8 @@ var ProductPage = function ProductPage(_ref) {
             setActiveTab: setActiveTab,
             updateProductData: updateProductData,
             combinedCart: combinedCart,
-            updateObjRows: updateObjRows
+            updateObjRows: updateObjRows,
+            setAllowNextStep: setAllowNextStep
           });
         case 'info':
           return /*#__PURE__*/React.createElement(_blocks_info__WEBPACK_IMPORTED_MODULE_6__["default"], {
@@ -88807,7 +88834,8 @@ var ProductPage = function ProductPage(_ref) {
             setActiveTab: setActiveTab,
             updateProductData: updateProductData,
             combinedCart: combinedCart,
-            updateObjRows: updateObjRows
+            updateObjRows: updateObjRows,
+            setAllowNextStep: setAllowNextStep
           });
         default:
           return /*#__PURE__*/React.createElement(_blocks_input__WEBPACK_IMPORTED_MODULE_11__["default"], {
@@ -88817,7 +88845,8 @@ var ProductPage = function ProductPage(_ref) {
             setActiveTab: setActiveTab,
             updateProductData: updateProductData,
             combinedCart: combinedCart,
-            updateObjRows: updateObjRows
+            updateObjRows: updateObjRows,
+            setAllowNextStep: setAllowNextStep
           });
       }
     }());
@@ -90174,7 +90203,8 @@ function Voice(_ref) {
   var currentField = _ref.currentField,
     setError = _ref.setError,
     combinedCart = _ref.combinedCart,
-    updateObjRows = _ref.updateObjRows;
+    updateObjRows = _ref.updateObjRows,
+    setAllowNextStep = _ref.setAllowNextStep;
   var setInTotal = combinedCart.setInTotal,
     setBlobFiles = combinedCart.setBlobFiles;
   var _useState = Object(react__WEBPACK_IMPORTED_MODULE_0__["useState"])(BUTTON_STATES.NONE),
@@ -90274,6 +90304,7 @@ function Voice(_ref) {
                 setIsRecording(true);
                 setRecordingStatus(__('recstarted', 'Recording started...'));
                 startTimer();
+                setAllowNextStep(false);
               });
               recordPluginRef.current.on('record-end', /*#__PURE__*/function () {
                 var _ref3 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee(blob) {
@@ -90289,7 +90320,8 @@ function Voice(_ref) {
                         setRecordingStatus('Recording saved!');
                         handleVoiceRecord(audioUrl);
                         waveAudioRef.current.load(audioUrl);
-                      case 8:
+                        setAllowNextStep(true);
+                      case 9:
                       case "end":
                         return _context.stop();
                     }
@@ -90324,7 +90356,7 @@ function Voice(_ref) {
     };
   }();
   var stopRecording = function stopRecording() {
-    if (recordPluginRef.current && isRecording) {
+    if (recordPluginRef.current && isRecording || !isRecording) {
       recordPluginRef.current.stopRecording();
       clearInterval(timerIntervalRef.current);
     }
@@ -90345,7 +90377,7 @@ function Voice(_ref) {
   };
   var handleFileUpload = /*#__PURE__*/function () {
     var _ref4 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee3(event) {
-      var file, audioUrl;
+      var file, _file$name, audioUrl;
       return _regeneratorRuntime().wrap(function _callee3$(_context3) {
         while (1) switch (_context3.prev = _context3.next) {
           case 0:
@@ -90369,10 +90401,22 @@ function Voice(_ref) {
             setActiveButton(BUTTON_STATES.UPLOADED);
             setRecordingStatus('Audio file uploaded!');
             waveAudioRef.current.load(audioUrl);
-            _context3.next = 18;
+            Object.defineProperty(file, 'name', {
+              value: (_file$name = file === null || file === void 0 ? void 0 : file.name) !== null && _file$name !== void 0 ? _file$name : 'upload-voice-' + Date.now() + '.mp3',
+              writable: false
+            });
+            // 
+            setBlobFiles(file);
+            updateObjRows(currentField, {
+              attached: {
+                blob: file.name,
+                method: 'upload'
+              }
+            });
+            _context3.next = 21;
             break;
-          case 14:
-            _context3.prev = 14;
+          case 17:
+            _context3.prev = 17;
             _context3.t0 = _context3["catch"](3);
             if ((_context3.t0 === null || _context3.t0 === void 0 ? void 0 : _context3.t0.message) == 'sizeover') {
               setError(__('maxuploadmb', 'File size must be up to 20Mb'));
@@ -90380,11 +90424,11 @@ function Voice(_ref) {
               setError(__('erroruploadvoice', "Oopsi, we couldn't load your file"));
             }
             console.error('Error uploading file:', _context3.t0);
-          case 18:
+          case 21:
           case "end":
             return _context3.stop();
         }
-      }, _callee3, null, [[3, 14]]);
+      }, _callee3, null, [[3, 17]]);
     }));
     return function handleFileUpload(_x2) {
       return _ref4.apply(this, arguments);

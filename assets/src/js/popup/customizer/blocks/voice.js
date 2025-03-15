@@ -14,7 +14,7 @@ const BUTTON_STATES = {
 
 const MAX_FILE_SIZE = 20 * 1024 * 1024; // 20MB
 
-export default function Voice({ currentField, setError, combinedCart, updateObjRows }) {
+export default function Voice({ currentField, setError, combinedCart, updateObjRows, setAllowNextStep }) {
   const { setInTotal, setBlobFiles } = combinedCart;
 
   const [activeButton, setActiveButton] = useState(BUTTON_STATES.NONE);
@@ -84,6 +84,7 @@ export default function Voice({ currentField, setError, combinedCart, updateObjR
           setIsRecording(true);
           setRecordingStatus(__('recstarted', 'Recording started...'));
           startTimer();
+          setAllowNextStep(false);
         });
 
         recordPluginRef.current.on('record-end', async (blob) => {
@@ -95,6 +96,7 @@ export default function Voice({ currentField, setError, combinedCart, updateObjR
           setRecordingStatus('Recording saved!');
           handleVoiceRecord(audioUrl);
           waveAudioRef.current.load(audioUrl);
+          setAllowNextStep(true);
         });
       }
 
@@ -109,7 +111,9 @@ export default function Voice({ currentField, setError, combinedCart, updateObjR
   };
 
   const stopRecording = () => {
-    if (recordPluginRef.current && isRecording) {
+    if (recordPluginRef.current && isRecording
+      || !isRecording
+    ) {
       recordPluginRef.current.stopRecording();
       clearInterval(timerIntervalRef.current);
     }
@@ -124,7 +128,6 @@ export default function Voice({ currentField, setError, combinedCart, updateObjR
       const currentTime = (Date.now() - startTime) / 1000;
       const remainingTime = duration - currentTime;
       setTimer(Math.max(0, remainingTime));
-
       if (remainingTime <= 0) {
         stopRecording();
         clearInterval(timerIntervalRef.current);
@@ -146,6 +149,20 @@ export default function Voice({ currentField, setError, combinedCart, updateObjR
       setActiveButton(BUTTON_STATES.UPLOADED);
       setRecordingStatus('Audio file uploaded!');
       waveAudioRef.current.load(audioUrl);
+
+      Object.defineProperty(file, 'name', {
+        value: file?.name??'upload-voice-' + Date.now() + '.mp3',
+        writable: false
+      });
+      // 
+      setBlobFiles(file);
+      updateObjRows(currentField, {
+        attached: {
+          blob: file.name,
+          method: 'upload'
+        }
+      });
+
     } catch (err) {
       if (err?.message == 'sizeover') {
         setError(__('maxuploadmb', 'File size must be up to 20Mb'));
